@@ -1,24 +1,32 @@
-# What Happens When Open Is Called
-> An Axiomatic, From-Scratch Deconstruction of the `open()` System Call.
+# Open() Pre-Syscall Worksheet
 
-## The Philosophy
-You are a primate who understands counting, symbols, and basic math. You do NOT understand "magic", "abstractions", or "hand-waving".
-This repository explains the journey of a file path `open("file.txt")` becoming a file descriptor `3`.
+## Live Blog
+Visit: https://raikrahul.github.io/what-happens-when-open-is-called/
 
-## The Rules
-1.  **Zero Magic**: No "it just works". We derive it.
-2.  **Zero Inference**: We don't assume you know what an Inode is. We prove it exists.
-3.  **Visual Proof**: Input → Computation → Output.
+## About
+This worksheet walks through the complete journey of `open()` system call from source code to kernel boundary, covering:
 
-## How to Read This
-Start at `AXIOMATIC_CURRICULUM.md`.
-Go in order. Do not skip lines.
+- Static linking and relocations
+- Dynamic linking with PLT/GOT  
+- ASLR and address randomization
+- Register transformations
+- VMA memory mappings
+- Pre-syscall preparation steps
 
-## Content Structure
-- `axiomatic_lessons/`: The step-by-step breakdown.
-- `proofs/`: C programs that prove the axioms (run these!).
-- `machine_truth.json`: The constants we verified on this machine.
+## Usage
+Clone and explore the source code:
+```bash
+git clone https://github.com/raikrahul/what-happens-when-open-is-called.git
+cd what-happens-when-open-is-called
+```
 
-## Deploying
-This site is hosted on GitHub Pages.
-Run `gh pages build` (or equivalent) to see the rendered output.
+Run the proof programs:
+```bash
+cd proofs
+./register_dump
+./path_walk_simulator /etc/passwd
+./fd_exhaustion
+```
+
+## License
+MIT License
