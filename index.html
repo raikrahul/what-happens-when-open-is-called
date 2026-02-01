@@ -8,21 +8,21 @@
             background: #000;
             color: #fff;
             font-family: 'Courier New', monospace;
-            line-height: 1.2;
+            line-height: 1.3;
             margin: 0;
-            padding: 20px;
-            font-size: 11px;
+            padding: 15px;
+            font-size: 12px;
         }
         
         .book {
             display: flex;
-            max-width: 1400px;
+            max-width: 1600px;
             margin: 0 auto;
         }
         
         .column {
             flex: 1;
-            padding: 0 20px;
+            padding: 0 25px;
             border-right: 1px solid #333;
         }
         
@@ -31,8 +31,7 @@
         }
         
         .chapter {
-            margin-bottom: 40px;
-            text-align: justify;
+            margin-bottom: 30px;
         }
         
         .address {
@@ -40,21 +39,11 @@
             font-weight: bold;
         }
         
-        code {
-            color: #fff;
-            background: transparent;
-            padding: 1px 2px;
-        }
-        
         .page-number {
             text-align: center;
             color: #666;
-            margin-top: 20px;
+            margin-top: 30px;
             font-size: 10px;
-        }
-        
-        .break {
-            page-break-before: always;
         }
     </style>
 </head>
@@ -63,11 +52,11 @@
         <div class="column">
             
             <div class="chapter">
-                You write int main() { open("somefile", O_RDWR); } in test.c. The compiler has no idea where open() lives. It creates an object file with a placeholder. The call instruction contains zeros: e8 00 00 00 00. The linker will fill these zeros later. You run readelf -r test.o and see open listed as UND. UND means undefined. The compiler cheated - it promised the linker would fix this.
+                You write int main() { open("somefile", O_RDWR); } in test.c. The compiler has no idea where open() lives. It creates an object file with a placeholder. The call instruction contains zeros: e8 00 00 00 00. The linker will fill these zeros later. You run readelf -r test.o and see open listed as UND. UND means undefined. The compiler cheated - it promised to linker would fix this.
             </div>
             
             <div class="chapter">
-                The linker takes your object file and creates an executable. It finds the PLT section and writes a stub. The call instruction becomes call <span class="address">0x1050</span>. This is not the real open(). This is a trampoline. The PLT stub says jmp QWORD PTR [rip+<span class="address">0x2f76</span>]. Your CPU calculates next instruction address + offset = <span class="address">0x555555557fd0</span>. This is the GOT slot. The GOT contains the real address of open() in libc. But who wrote that address?
+                The linker takes your object file and creates an executable. It finds the PLT section and writes a stub. The call instruction becomes call <span class="address">0x1050</span>. This is not real open(). This is a trampoline. The PLT stub says jmp QWORD PTR [rip+<span class="address">0x2f76</span>]. Your CPU calculates next instruction address + offset = <span class="address">0x555555557fd0</span>. This is the GOT slot. The GOT contains the real address of open() in libc. But who wrote that address?
             </div>
             
             <div class="chapter">
@@ -82,6 +71,10 @@
                 The CPU jumps to <span class="address">0x7ffff7d1b150</span>. This is __libc_open64. The function pushes rbp and saves registers. It checks your flags: O_RDWR = 2. The code says and $<span class="address">0x40</span>,%r10d. This checks if O_CREAT is set. 2 & 64 = 0. The zero flag is set. The jne instruction does not jump. It falls through to the fast path. No mode argument is needed.
             </div>
             
+            <div class="chapter">
+                The function checks __libc_single_threaded. The assembly says cmpb $0x0,<span class="address">0xefeae</span>(%rip). This reads a global variable. In your program it contains 1. 1 != 0, so the zero flag is not set. The je instruction does not jump. It continues to the cancellation-safe path. Even though you are single-threaded, libc takes the careful route.
+            </div>
+            
             <div class="page-number">1</div>
             
         </div>
@@ -89,11 +82,7 @@
         <div class="column">
             
             <div class="chapter">
-                The function checks __libc_single_threaded. The assembly says cmpb $0x0,<span class="address">0xefeae</span>(%rip). This reads a global variable. In your program it contains 1. 1 != 0, so the zero flag is not set. The je instruction does not jump. It continues to the cancellation-safe path. Even though you are single-threaded, libc takes the careful route.
-            </div>
-            
-            <div class="chapter">
-                The register shuffle begins. The kernel expects openat(), not open(). The arguments must move. First: mov $<span class="address">0xffffff9c</span>,%edi. This is -100 in two's complement. AT_FDCWD is defined as -100 in the kernel headers. Second: mov %r12,%rsi. Your filename pointer moves to RSI. Third: mov %ebx,%edx. Your O_RDWR flag moves to RDX. Fourth: mov $<span class="address">0x101</span>,%eax. This is 257 decimal, the syscall number for openat.
+                The register shuffle begins. The kernel expects openat(), not open(). The arguments must move. First: mov $<span class="address">0xffffff9c</span>,%edi. This is -100 in two's complement. AT_FDCWD is defined as -100 in kernel headers. Second: mov %r12,%rsi. Your filename pointer moves to RSI. Third: mov %ebx,%edx. Your O_RDWR flag moves to RDX. Fourth: mov $<span class="address">0x101</span>,%eax. This is 257 decimal, the syscall number for openat.
             </div>
             
             <div class="chapter">
@@ -109,7 +98,11 @@
             </div>
             
             <div class="chapter">
-                The prediction exercises: If gcc -static, there is no PLT/GOT. The call instruction contains the absolute address of open(). If AT_FDCWD becomes -200, the hex value changes to <span class="address">0xffffff38</span>. If GOT corruption occurs at <span class="address">0x41414141</span>, the CPU jumps to invalid memory and segmentation faults. If ASLR disabled, addresses stay constant across runs. If O_CREAT added, the flag value becomes <span class="address">0x41</span> (65 decimal) and R10 gets the mode argument.
+                The prediction exercises: If gcc -static, there is no PLT/GOT. The call instruction contains the absolute address of open(). If AT_FDCWD becomes -200, hex value changes to <span class="address">0xffffff38</span>. If GOT corruption occurs at <span class="address">0x41414141</span>, CPU jumps to invalid memory and segmentation faults. If ASLR disabled, addresses stay constant across runs. If O_CREAT added, flag value becomes <span class="address">0x41</span> (65 decimal) and R10 gets the mode argument.
+            </div>
+            
+            <div class="chapter">
+                When the CPU executes syscall, it transitions from Ring 3 to Ring 0. The kernel takes over. Your program pauses. The kernel will look up sys_call_table[257] which points to do_sys_openat. It will copy arguments from your registers into kernel memory. It will perform permission checks. It will walk the directory structure to find the inode. It will allocate a file descriptor structure. It will return the file descriptor number in RAX.
             </div>
             
             <div class="page-number">2</div>
