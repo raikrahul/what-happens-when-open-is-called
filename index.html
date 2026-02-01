@@ -2,51 +2,37 @@
 <html>
 <head>
     <meta charset="UTF-8">
-    <title>WORKSHEET: THE OPEN() PRE-SYSCALL ODYSSEY</title>
+    <title>The Open() Pre-Syscall Odyssey</title>
     <style>
         body {
             background: #000;
             color: #fff;
             font-family: 'Courier New', monospace;
-            line-height: 1.4;
-            max-width: 1000px;
+            line-height: 1.2;
+            margin: 0;
+            padding: 20px;
+            font-size: 11px;
+        }
+        
+        .book {
+            display: flex;
+            max-width: 1400px;
             margin: 0 auto;
-            padding: 20px;
-            font-size: 14px;
         }
         
-        h1, h2, h3 {
-            color: #fff;
-            border-bottom: 2px solid #0f0;
-            padding-bottom: 5px;
+        .column {
+            flex: 1;
+            padding: 0 20px;
+            border-right: 1px solid #333;
         }
         
-        .step {
-            margin: 30px 0;
-            padding: 20px;
-            border: 1px solid #333;
-            background: #111;
+        .column:last-child {
+            border-right: none;
         }
         
-        .step-number {
-            color: #0f0;
-            font-weight: bold;
-            font-size: 18px;
-        }
-        
-        code {
-            color: #0f0;
-            background: #222;
-            padding: 2px 4px;
-            border-radius: 3px;
-        }
-        
-        pre {
-            background: #1a1a1a;
-            padding: 15px;
-            border-left: 3px solid #0f0;
-            overflow-x: auto;
-            white-space: pre-wrap;
+        .chapter {
+            margin-bottom: 40px;
+            text-align: justify;
         }
         
         .address {
@@ -54,207 +40,81 @@
             font-weight: bold;
         }
         
-        .question {
-            color: #ff0;
-            margin: 10px 0;
+        code {
+            color: #fff;
+            background: transparent;
+            padding: 1px 2px;
         }
         
-        .prediction {
-            background: #1a1a1a;
-            border: 2px solid #0f0;
-            padding: 20px;
-            margin: 30px 0;
+        .page-number {
+            text-align: center;
+            color: #666;
+            margin-top: 20px;
+            font-size: 10px;
         }
         
-        .chain-diagram {
-            font-family: monospace;
-            background: #0a0a0a;
-            padding: 15px;
-            border: 1px solid #333;
-            margin: 15px 0;
-        }
-        
-        .register-box {
-            background: #1a1a1a;
-            border: 1px solid #0f0;
-            padding: 10px;
-            margin: 10px 0;
-            display: inline-block;
-        }
-        
-        a {
-            color: #0f0;
-            text-decoration: none;
-        }
-        
-        a:hover {
-            text-decoration: underline;
+        .break {
+            page-break-before: always;
         }
     </style>
 </head>
 <body>
-    <h1>WORKSHEET: THE OPEN() PRE-SYSCALL ODYSSEY</h1>
-
-    <div class="step">
-        <div class="step-number">STEP 1: THE STATIC PUZZLE</div>
-        <p>1. Write <code>int main() { open("somefile", O_RDWR); }</code> in test.c</p>
-        <p>2. Run: <code>gcc -c test.c -o test.o</code></p>
-        <p>3. Run: <code>readelf -r test.o | grep open</code></p>
-        <p class="question">4. Question: Why is symbol "open" listed as "UND" (undefined)?</p>
-        <p class="question">5. Calculate: If compiler knew where <code>open</code> is, what would <code>readelf -r</code> show instead?</p>
-        <p>6. Run: <code>objdump -d test.o | grep call</code></p>
-        <p class="question">7. Question: What address does <code>call</code> instruction jump to? (Write exact bytes)</p>
-        <p class="question">8. Question: Can a jump to address <span class="address">0x00000000</span> work? Answer yes/no with reason.</p>
-    </div>
-
-    <div class="step">
-        <div class="step-number">STEP 2: THE LINKER MAGIC</div>
-        <p>9. Run: <code>gcc test.o -o test</code></p>
-        <p>10. Run: <code>objdump -d test | grep "call.*open"</code></p>
-        <p class="question">11. Question: What address does <code>call</code> jump to now? (Copy exact instruction)</p>
-        <p>12. Calculate: Next_IP = <span class="address">0x[call_address]</span> + 5. Show your work.</p>
-        <p class="question">13. Question: What bytes are at <span class="address">0x[call_address]</span> + 1 through <span class="address">0x[call_address]</span> + 4?</p>
-        <p>14. Run: <code>readelf -x .text test | grep -A1 -B1 [call_address]</code></p>
-        <p>15. Verify: Does calculated Next_IP + offset = <span class="address">0x[plt_address]</span>? Show math.</p>
-        <p>16. Draw ASCII box of 5-byte call instruction with labels for each byte field.</p>
-    </div>
-
-    <div class="step">
-        <div class="step-number">STEP 3: THE DYNAMIC MYSTERY</div>
-        <p>17. Run: <code>ldd test</code> - Write the libc base address from output.</p>
-        <p>18. Run: <code>readelf -s /lib/x86_64-linux-gnu/libc.so.6 | grep " open"</code></p>
-        <p class="question">19. Question: How many "open" symbols exist? List their addresses and types.</p>
-        <p>20. Calculate: LIBC_BASE + OPEN_OFFSET = REAL_OPEN_ADDRESS</p>
-        <p>21. Run: <code>objdump -d /lib/x86_64-linux-gnu/libc.so.6 | grep -A10 [REAL_OPEN_ADDRESS]</code></p>
-        <p class="question">22. Question: What function name is at that address? Is it "open"?</p>
-        <p>23. Run: <code>gdb test</code>, then <code>b main</code>, then <code>r</code>, then <code>disassemble open</code></p>
-        <p class="question">24. Question: What is the actual function GDB shows for "open"?</p>
-    </div>
-
-    <div class="step">
-        <div class="step-number">STEP 4: THE GLOBAL OFFSET TABLE</div>
-        <p>25. Run: <code>gdb test</code>, then <code>b main</code>, then <code>r</code>, then <code>x/10gx 0x[got_address]</code></p>
-        <p class="question">26. Question: What value is stored at the GOT slot for open?</p>
-        <p>27. Calculate: Is this value equal to LIBC_BASE + OPEN_OFFSET? Show math.</p>
-        <p class="question">28. Question: When did this value get written to GOT? (multiple choice: compile time, link time, load time)</p>
-        <p>29. Run: <code>gdb test</code>, then <code>set environment LD_DEBUG=files</code>, then <code>r</code></p>
-        <p class="question">30. Question: In LD_DEBUG output, find where libc is mapped. Copy address range.</p>
-        <p>31. Verify: GOT_value matches libc_base + offset within the mapped range.</p>
-    </div>
-
-    <div class="step">
-        <div class="step-number">STEP 5: THE ASLR CHALLENGE</div>
-        <p>32. Run: <code>gdb test</code>, then <code>b main</code>, then <code>r</code>, then <code>p open</code></p>
-        <p>33. Run: <code>gdb test</code>, then <code>b main</code>, then <code>r</code>, then <code>p open</code> (repeat 3 times)</p>
-        <p class="question">34. Question: Does the open address change each run? yes/no</p>
-        <p>35. Calculate: If open moves, how does the static binary know where to jump?</p>
-        <p class="question">36. Question: What is the purpose of the PLT trampoline? (one sentence)</p>
-        <div class="chain-diagram">
-37. Draw: A box diagram showing [main]→[PLT]→[GOT]→[libc] with actual addresses from your run.
+    <div class="book">
+        <div class="column">
+            
+            <div class="chapter">
+                You write int main() { open("somefile", O_RDWR); } in test.c. The compiler has no idea where open() lives. It creates an object file with a placeholder. The call instruction contains zeros: e8 00 00 00 00. The linker will fill these zeros later. You run readelf -r test.o and see open listed as UND. UND means undefined. The compiler cheated - it promised the linker would fix this.
+            </div>
+            
+            <div class="chapter">
+                The linker takes your object file and creates an executable. It finds the PLT section and writes a stub. The call instruction becomes call <span class="address">0x1050</span>. This is not the real open(). This is a trampoline. The PLT stub says jmp QWORD PTR [rip+<span class="address">0x2f76</span>]. Your CPU calculates next instruction address + offset = <span class="address">0x555555557fd0</span>. This is the GOT slot. The GOT contains the real address of open() in libc. But who wrote that address?
+            </div>
+            
+            <div class="chapter">
+                The dynamic linker runs when your program starts. It sees you need libc.so.6. It maps this library at a random address thanks to ASLR. Let's say it maps at <span class="address">0x7ffff7c00000</span>. The linker reads libc's symbol table. It finds open() at offset <span class="address">0x11b150</span>. It adds these: <span class="address">0x7ffff7c00000</span> + <span class="address">0x11b150</span> = <span class="address">0x7ffff7d1b150</span>. It writes this address to the GOT slot at <span class="address">0x555555557fd0</span>. Now the indirect jump will work.
+            </div>
+            
+            <div class="chapter">
+                You run the program multiple times. Each time the address changes. First run: open() at <span class="address">0x7ffff7d1b150</span>. Second run: open() at <span class="address">0x7ffff7e2a000</span>. Third run: open() at <span class="address">0x7ffff7c48000</span>. But your compiled binary still contains call <span class="address">0x1050</span>. How does this work? The PLT is a fixed address in your binary. The GOT is in your writable data segment. The dynamic linker rewrites the GOT each time. Your code never changes.
+            </div>
+            
+            <div class="chapter">
+                The CPU jumps to <span class="address">0x7ffff7d1b150</span>. This is __libc_open64. The function pushes rbp and saves registers. It checks your flags: O_RDWR = 2. The code says and $<span class="address">0x40</span>,%r10d. This checks if O_CREAT is set. 2 & 64 = 0. The zero flag is set. The jne instruction does not jump. It falls through to the fast path. No mode argument is needed.
+            </div>
+            
+            <div class="page-number">1</div>
+            
+        </div>
+        
+        <div class="column">
+            
+            <div class="chapter">
+                The function checks __libc_single_threaded. The assembly says cmpb $0x0,<span class="address">0xefeae</span>(%rip). This reads a global variable. In your program it contains 1. 1 != 0, so the zero flag is not set. The je instruction does not jump. It continues to the cancellation-safe path. Even though you are single-threaded, libc takes the careful route.
+            </div>
+            
+            <div class="chapter">
+                The register shuffle begins. The kernel expects openat(), not open(). The arguments must move. First: mov $<span class="address">0xffffff9c</span>,%edi. This is -100 in two's complement. AT_FDCWD is defined as -100 in the kernel headers. Second: mov %r12,%rsi. Your filename pointer moves to RSI. Third: mov %ebx,%edx. Your O_RDWR flag moves to RDX. Fourth: mov $<span class="address">0x101</span>,%eax. This is 257 decimal, the syscall number for openat.
+            </div>
+            
+            <div class="chapter">
+                The final register state before syscall: RAX contains 257, RDI contains <span class="address">0xffffff9c</span> (-100), RSI contains the filename address, RDX contains 2. The CPU will execute the syscall instruction next. It will save the next instruction address to RCX, save flags to R11, and jump to the kernel entry point at MSR_LSTAR. Your journey in user space is complete.
+            </div>
+            
+            <div class="chapter">
+                The complete address chain: main calls <span class="address">0x1050</span> (PLT). PLT jumps to [RIP+<span class="address">0x2f76</span>] = <span class="address">0x555555557fd0</span> (GOT). GOT contains <span class="address">0x7ffff7d1b150</span> (libc). libc base is <span class="address">0x7ffff7c00000</span> + offset <span class="address">0x11b150</span> = <span class="address">0x7ffff7d1b150</span>. Four memory reads, two address calculations, one register indirection.
+            </div>
+            
+            <div class="chapter">
+                The VMA mappings show your binary layout: <span class="address">0x5555555000</span>-<span class="address">0x5555556000</span> r-xp for code, <span class="address">0x5555556000</span>-<span class="address">0x5555557000</span> rw-p for data. The PLT lives in the executable segment. The GOT lives in the data segment. libc maps at <span class="address">0x7ffff7c00000</span>-<span class="address">0x7ffff7db0000</span> r-xp for code, <span class="address">0x7ffff7db0000</span>-<span class="address">0x7ffff7dd0000</span> rw-p for data. All permissions match their usage.
+            </div>
+            
+            <div class="chapter">
+                The prediction exercises: If gcc -static, there is no PLT/GOT. The call instruction contains the absolute address of open(). If AT_FDCWD becomes -200, the hex value changes to <span class="address">0xffffff38</span>. If GOT corruption occurs at <span class="address">0x41414141</span>, the CPU jumps to invalid memory and segmentation faults. If ASLR disabled, addresses stay constant across runs. If O_CREAT added, the flag value becomes <span class="address">0x41</span> (65 decimal) and R10 gets the mode argument.
+            </div>
+            
+            <div class="page-number">2</div>
+            
         </div>
     </div>
-
-    <div class="step">
-        <div class="step-number">STEP 6: THE REGISTER TRANSFORMATION</div>
-        <p>38. Run: <code>gdb test</code>, then <code>b open</code>, then <code>r</code>, then <code>info registers</code></p>
-        <p class="question">39. Question: What are RDI, RSI, RDX values when <code>open</code> starts?</p>
-        <p class="question">40. Question: What is the numeric value of O_RDWR? (<code>man 2 open</code>)</p>
-        <p>41. Calculate: Convert O_RDWR decimal to binary. Show work.</p>
-        <p>42. Run: <code>objdump -d /lib/x86_64-linux-gnu/libc.so.6 | grep -A20 [open_function_address]</code></p>
-        <p class="question">43. Question: Does libc check for O_CREAT flag in your flags?</p>
-        <p>44. Calculate: Your flags & O_CREAT = ? Show binary AND operation.</p>
-        <p class="question">45. Question: If result is 0, which instruction path does libc take? (find in assembly)</p>
-    </div>
-
-    <div class="step">
-        <div class="step-number">STEP 7: THE THREAD SAFETY CHECK</div>
-        <p>46. Find in libc assembly: <code>cmpb $0x0, [address]</code></p>
-        <p>47. Run: <code>gdb test</code>, then <code>b [cmpb_instruction_address]</code>, then <code>r</code>, then <code>x/1bx [address]</code></p>
-        <p class="question">48. Question: What value is stored at that address?</p>
-        <p>49. Calculate: Is this process single-threaded? Answer based on value.</p>
-        <p class="question">50. Question: What instruction comes after the cmpb? Does it jump or fall through?</p>
-    </div>
-
-    <div class="step">
-        <div class="step-number">STEP 8: THE SYSCALL PREPARATION</div>
-        <p>51. Find in libc assembly: <code>mov $0xffffff9c, %edi</code></p>
-        <p class="question">52. Question: What is <span class="address">0xffffff9c</span> in decimal? Show two's complement calculation.</p>
-        <p>53. Run: <code>grep -r "AT_FDCWD" /usr/include/</code></p>
-        <p class="question">54. Question: What is AT_FDCWD defined as? Does it match?</p>
-        <p>55. Find in libc assembly: <code>mov $0x101, %eax</code></p>
-        <p class="question">56. Question: What is <span class="address">0x101</span> in decimal?</p>
-        <p>57. Run: <code>grep "257" /usr/include/x86_64-linux-gnu/asm/unistd_64.h</code></p>
-        <p class="question">58. Question: Is syscall 257 really <code>openat</code>? Verify.</p>
-    </div>
-
-    <div class="step">
-        <div class="step-number">STEP 9: THE FINAL REGISTER STATE</div>
-        <p>59. Run: <code>gdb test</code>, then <code>b syscall</code>, then <code>r</code>, then <code>info registers rdi rsi rdx rax</code></p>
-        <p class="question">60. Question: Are RDI, RSI, RDX, RAX ready for <code>openat</code> syscall?</p>
-        <p>61. Calculate: Verify mapping:</p>
-        <div class="register-box">
-        RDI = AT_FDCWD? ✓/✗<br>
-        RSI = filename_address? ✓/✗<br>
-        RDX = flags? ✓/✗<br>
-        RAX = syscall_257? ✓/✗
-        </div>
-        <p>62. Draw final register state box with all 4 registers labeled.</p>
-    </div>
-
-    <div class="step">
-        <div class="step-number">STEP 10: THE ADDRESS TRANSLATION CHAIN</div>
-        <pre class="chain-diagram">63. Fill complete chain with your actual addresses:
-   main_call: 0x______ → PLT_entry: 0x______ 
-   PLT_jmp: [RIP+0x____] → GOT_slot: 0x______
-   GOT_value: 0x______ → libc_base: 0x______
-   libc_base + offset: 0x______ → __libc_open64: 0x______</pre>
-        <p>64. Calculate each arrow's arithmetic. Show all work.</p>
-        <p class="question">65. Question: Where does the CPU actually jump after <code>call open@plt</code>?</p>
-        <p class="question">66. Question: How many memory reads happen in this chain? Count them.</p>
-    </div>
-
-    <div class="step">
-        <div class="step-number">STEP 11: THE VMA MAPPINGS</div>
-        <p>67. Run: <code>cat /proc/self/maps | grep test</code></p>
-        <p class="question">68. Question: What are the VMA ranges for your test binary?</p>
-        <p>69. Identify: Which VMA contains the PLT section?</p>
-        <p>70. Identify: Which VMA contains the GOT section?</p>
-        <p>71. Run: <code>cat /proc/self/maps | grep libc</code></p>
-        <p class="question">72. Question: What are the libc VMA ranges? Copy them.</p>
-        <p>73. Verify: Does your PLT address fall within the binary's executable VMA?</p>
-        <p>74. Verify: Does your GOT address fall within the binary's data VMA?</p>
-        <p>75. Verify: Does the libc function address fall within libc's executable VMA?</p>
-        <p>76. Question: What permissions (rwxp) does each VMA have? Copy the full lines.</p>
-    </div>
-
-    <div class="prediction">
-        <h2>PREDICTION EXERCISES (No solutions shown)</h2>
-        
-        <p><strong>P1. If <code>gcc -static test.c -o test_static</code>:</strong></p>
-        <p>- What will <code>ldd test_static</code> show?</p>
-        <p>- Will there be a PLT/GOT? yes/no</p>
-        <p>- Where will the <code>open</code> symbol be resolved?</p>
-        
-        <p><strong>P2. If AT_FDCWD was changed to -200:</strong></p>
-        <p>- What hex value would libc mov to EDI?</p>
-        <p>- Would the syscall still work? yes/no with reason</p>
-        
-        <p><strong>P3. If GOT was corrupted to <span class="address">0x41414141</span>:</strong></p>
-        <p>- What error occurs when open is called?</p>
-        <p>- At which stage: compile/link/load/runtime?</p>
-        
-        <p><strong>P4. If ASLR disabled: <code>echo 0 | sudo tee /proc/sys/kernel/randomize_va_space</code></strong></p>
-        <p>- Will open address change between runs? yes/no</p>
-        <p>- Does this affect security? yes/no with what risk</p>
-        
-        <p><strong>P5. If flags = O_CREAT | O_WRONLY (mode argument added):</strong></p>
-        <p>- What is the hex value of flags?</p>
-        <p>- Which register gets the mode argument?</p>
-        <p>- Does the assembly path change? yes/no</p>
-    </div>
-
-    <p style="text-align: center; margin-top: 50px; color: #666;">
-        Generated from <a href="https://github.com/anomalyco/opencode">opencode</a>
-    </p>
 </body>
 </html>
