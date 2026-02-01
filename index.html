@@ -51,217 +51,289 @@
             border: 1px solid #333;
         }
         
-        .result {
-            color: #0f0;
+        .why {
+            color: #666;
+            font-style: italic;
+            margin-left: 20px;
+            max-width: 400px;
+            display: inline-block;
+            vertical-align: top;
+        }
+        
+        .step-content {
+            width: calc(100% - 450px);
+            display: inline-block;
+            vertical-align: top;
         }
     </style>
 </head>
 <body>
     <div class="step">
-        <div class="command">1. echo 'int main() { open("somefile", O_RDWR); }' > test.c</div>
-        <div class="question">2. Run: <span class="command">cat test.c</span>. What did you just write?</div>
-        <div class="command">3. gcc -c test.c -o test.o</div>
-        <div class="question">4. Run: <span class="command">file test.o</span>. What does file report?</div>
-        <div class="command">5. readelf -r test.o | grep open</div>
-        <div class="question">6. What symbol type appears for open? Write the exact letters.</div>
-        <div class="calc">MATH: If compiler knew open address, relocations section would show TYPE = REL, not UND. UND = undefined means symbol resolution deferred.</div>
-        <div class="command">7. objdump -d test.o | grep -A3 -B1 call</div>
-        <div class="question">8. What 5 bytes follow the call opcode? Write them in hex.</div>
-        <div class="calc">MATH: call opcode = 0xE8. 4-byte offset = 0x00000000. This placeholder will be filled later by linker.</div>
+        <div class="step-content">
+            <div class="command">1. echo 'int main() { open("somefile", O_RDWR); }' > test.c</div>
+            <div class="question">2. Run: <span class="command">cat test.c</span>. What did you just write?</div>
+            <div class="command">3. gcc -c test.c -o test.o</div>
+            <div class="question">4. Run: <span class="command">file test.o</span>. What does file report?</div>
+            <div class="command">5. readelf -r test.o | grep open</div>
+            <div class="question">6. What symbol type appears for open? Write the exact letters.</div>
+            <div class="calc">MATH: If compiler knew open address, relocations section would show TYPE = REL, not UND. UND = undefined means symbol resolution deferred.</div>
+            <div class="command">7. objdump -d test.o | grep -A3 -B1 call</div>
+            <div class="question">8. What 5 bytes follow the call opcode? Write them in hex.</div>
+            <div class="calc">MATH: call opcode = 0xE8. 4-byte offset = 0x00000000. This placeholder will be filled later by linker.</div>
+        </div>
+        <div class="why">
+            WHY: Establish baseline. Cannot teach linking without first showing compilation produces object file with unresolved symbols.
+        </div>
     </div>
 
     <div class="step">
-        <div class="command">9. gcc test.o -o test</div>
-        <div class="question">10. Run: <span class="command">ldd test</span>. Which libraries does your binary need?</div>
-        <div class="command">11. objdump -d test | grep -A5 -B5 call</div>
-        <div class="question">12. What address does call instruction target now? Write the full address.</div>
-        <div class="command">13. readelf -a test | grep -A2 "Entry point"</div>
-        <div class="question">14. What is the program entry point address?</div>
-        <div class="calc">MATH: Entry = <span class="address">0x1050</span>. PLT section starts here. Your call jumps to PLT, not directly to open().</div>
-        <div class="box">MEMORY LAYOUT BEFORE DYNAMIC LINKING:
+        <div class="step-content">
+            <div class="command">9. gcc test.o -o test</div>
+            <div class="question">10. Run: <span class="command">ldd test</span>. Which libraries does your binary need?</div>
+            <div class="command">11. objdump -d test | grep -A5 -B5 call</div>
+            <div class="question">12. What address does call instruction target now? Write the full address.</div>
+            <div class="command">13. readelf -a test | grep -A2 "Entry point"</div>
+            <div class="question">14. What is the program entry point address?</div>
+            <div class="calc">MATH: Entry = <span class="address">0x1050</span>. PLT section starts here. Your call jumps to PLT, not directly to open().</div>
+            <div class="box">MEMORY LAYOUT BEFORE DYNAMIC LINKING:
 <span class="address">0x1050</span>: call 0x[unknown_address]
 GOT at <span class="address">0x3fd0</span>: contains 0x00000000 (empty)
 </div>
+        </div>
+        <div class="why">
+            WHY: Show linker creates trampoline. Cannot explain PLT without first demonstrating binary now has resolved call target.
+        </div>
     </div>
 
     <div class="step">
-        <div class="command">15. gdb test</div>
-        <div class="command">16. break main</div>
-        <div class="command">17. run</div>
-        <div class="question">18. Run: <span class="command">info functions</span> | grep open. How many open variants exist?</div>
-        <div class="command">19. disassemble open</div>
-        <div class="question">20. What address does GDB show for open function?</div>
-        <div class="command">21. quit</div>
-        <div class="command">22. ldd test | grep libc</div>
-        <div class="question">23. What is the full path to libc on your system?</div>
-        <div class="calc">MATH: libc loads at random base due to ASLR=2. Your open address will change each execution.</div>
+        <div class="step-content">
+            <div class="command">15. gdb test</div>
+            <div class="command">16. break main</div>
+            <div class="command">17. run</div>
+            <div class="question">18. Run: <span class="command">info functions</span> | grep open. How many open variants exist?</div>
+            <div class="command">19. disassemble open</div>
+            <div class="question">20. What address does GDB show for open function?</div>
+            <div class="command">21. quit</div>
+            <div class="command">22. ldd test | grep libc</div>
+            <div class="question">23. What is the full path to libc on your system?</div>
+            <div class="calc">MATH: libc loads at random base due to ASLR=2. Your open address will change each execution.</div>
+        </div>
+        <div class="why">
+            WHY: Discover runtime addresses. Cannot teach symbol resolution without first seeing actual addresses in debugger.
+        </div>
     </div>
 
     <div class="step">
-        <div class="command">24. readelf -s /lib/x86_64-linux-gnu/libc.so.6 | grep -E "FUNC.*open"</div>
-        <div class="question">25. Find all symbols with "open" in name. List their addresses.</div>
-        <div class="question">26. Which one is marked as GLOBAL FUNC?</div>
-        <div class="calc">MATH: open@GLIBC_2.2.5 at offset <span class="address">0x11b150</span>. This is the symbol your program will use.</div>
-        <div class="command">27. gdb test</div>
-        <div class="command">28. break main</div>
-        <div class="command">29. run</div>
-        <div class="command">30. print open</div>
-        <div class="question">31. What address does GDB print for open symbol?</div>
-        <div class="command">32. print (void *)open + 1</div>
-        <div class="question">33. What address is 1 byte after open? This proves open is real code.</div>
-        <div class="calc">MATH: open_address = libc_base + <span class="address">0x11b150</span>. Base changes with ASLR, offset is constant.</div>
+        <div class="step-content">
+            <div class="command">24. readelf -s /lib/x86_64-linux-gnu/libc.so.6 | grep -E "FUNC.*open"</div>
+            <div class="question">25. Find all symbols with "open" in name. List their addresses.</div>
+            <div class="question">26. Which one is marked as GLOBAL FUNC?</div>
+            <div class="calc">MATH: open@GLIBC_2.2.5 at offset <span class="address">0x11b150</span>. This is the symbol your program will use.</div>
+            <div class="command">27. gdb test</div>
+            <div class="command">28. break main</div>
+            <div class="command">29. run</div>
+            <div class="command">30. print open</div>
+            <div class="question">31. What address does GDB print for open symbol?</div>
+            <div class="command">32. print (void *)open + 1</div>
+            <div class="question">33. What address is 1 byte after open? This proves open is real code.</div>
+            <div class="calc">MATH: open_address = libc_base + <span class="address">0x11b150</span>. Base changes with ASLR, offset is constant.</div>
+        </div>
+        <div class="why">
+            WHY: Verify symbol offsets. Cannot explain dynamic linking without first proving symbols have fixed offsets within library.
+        </div>
     </div>
 
     <div class="step">
-        <div class="command">34. gdb test</div>
-        <div class="command">35. break *0x555555555050</div>
-        <div class="command">36. run</div>
-        <div class="command">37. x/10gx 0x555555557fd0</div>
-        <div class="question">38. What value is stored at the GOT slot for open?</div>
-        <div class="command">39. continue</div>
-        <div class="question">40. What function name appears after continuing?</div>
-        <div class="calc">MATH: PLT jumps to GOT entry, GOT contains real open address, CPU lands in libc. Indirection complete.</div>
-        <div class="box">DYNAMIC RESOLUTION CHAIN:
+        <div class="step-content">
+            <div class="command">34. gdb test</div>
+            <div class="command">35. break *0x555555555050</div>
+            <div class="command">36. run</div>
+            <div class="command">37. x/10gx 0x555555557fd0</div>
+            <div class="question">38. What value is stored at the GOT slot for open?</div>
+            <div class="command">39. continue</div>
+            <div class="question">40. What function name appears after continuing?</div>
+            <div class="calc">MATH: PLT jumps to GOT entry, GOT contains real open address, CPU lands in libc. Indirection complete.</div>
+            <div class="box">DYNAMIC RESOLUTION CHAIN:
 main → PLT(<span class="address">0x1050</span>) → GOT(<span class="address">0x7fd0</span>) → libc(<span class="address">0x7ffff7d1b150</span>)
 Memory reads: 2 (PLT instruction, GOT indirection)</div>
+        </div>
+        <div class="why">
+            WHY: Trace indirection. Cannot explain PLT/GOT mechanism without first following actual memory addresses through debugger.
+        </div>
     </div>
 
     <div class="step">
-        <div class="command">41. gdb test</div>
-        <div class="command">42. break open</div>
-        <div class="command">43. run</div>
-        <div class="command">44. info registers rdi rsi rdx</div>
-        <div class="question">45. What are the exact values in RDI, RSI, RDX when open starts?</div>
-        <div class="command">46. print/x $rsi</div>
-        <div class="question">47. What is the hex value of your flags?</div>
-        <div class="calc">MATH: O_RDWR = 2 decimal = 0x02 hex = 0000 0010 binary. RSI holds 0x02.</div>
-        <div class="command">48. stepi</div>
-        <div class="command">49. stepi</div>
-        <div class="command">50. stepi</div>
-        <div class="question">51. What instruction checks for O_CREAT flag?</div>
-        <div class="calc">MATH: O_CREAT = 0x40 hex = 0100 0000 binary. AND operation: 0x02 & 0x40 = 0x00. Zero flag set.</div>
-        <div class="command">52. stepi</div>
-        <div class="question">53. Does jne instruction jump or fall through?</div>
-        <div class="result">RESULT: No mode argument needed, takes fast path.</div>
+        <div class="step-content">
+            <div class="command">41. gdb test</div>
+            <div class="command">42. break open</div>
+            <div class="command">43. run</div>
+            <div class="command">44. info registers rdi rsi rdx</div>
+            <div class="question">45. What are the exact values in RDI, RSI, RDX when open starts?</div>
+            <div class="command">46. print/x $rsi</div>
+            <div class="question">47. What is the hex value of your flags?</div>
+            <div class="calc">MATH: O_RDWR = 2 decimal = 0x02 hex = 0000 0010 binary. RSI holds 0x02.</div>
+            <div class="command">48. stepi</div>
+            <div class="command">49. stepi</div>
+            <div class="command">50. stepi</div>
+            <div class="question">51. What instruction checks for O_CREAT flag?</div>
+            <div class="calc">MATH: O_CREAT = 0x40 hex = 0100 0000 binary. AND operation: 0x02 & 0x40 = 0x00. Zero flag set.</div>
+            <div class="command">52. stepi</div>
+            <div class="question">53. Does jne instruction jump or fall through?</div>
+            <div class="result">RESULT: No mode argument needed, takes fast path.</div>
+        </div>
+        <div class="why">
+            WHY: Analyze flag handling. Cannot explain conditional code paths without first observing CPU flags and instruction behavior.
+        </div>
     </div>
 
     <div class="step">
-        <div class="command">54. gdb test</div>
-        <div class="command">55. break open</div>
-        <div class="command">56. run</div>
-        <div class="command">57. continue until cmpb instruction</div>
-        <div class="command">58. print/x $rip+0xefeae</div>
-        <div class="question">59. What is the address of __libc_single_threaded?</div>
-        <div class="command">60. x/1bx 0x7ffff7d0b040</div>
-        <div class="question">61. What byte value is stored there?</div>
-        <div class="calc">MATH: cmpb compares 0x00 with 0x01. Result: not equal, zero flag clear, je does not jump.</div>
-        <div class="command">62. info proc mappings</div>
-        <div class="question">63. In which memory region is this variable located?</div>
-        <div class="result">ANSWER: libc data section (rw-p permission).</div>
+        <div class="step-content">
+            <div class="command">54. gdb test</div>
+            <div class="command">55. break open</div>
+            <div class="command">56. run</div>
+            <div class="command">57. continue until cmpb instruction</div>
+            <div class="command">58. print/x $rip+0xefeae</div>
+            <div class="question">59. What is the address of __libc_single_threaded?</div>
+            <div class="command">60. x/1bx 0x7ffff7d0b040</div>
+            <div class="question">61. What byte value is stored there?</div>
+            <div class="calc">MATH: cmpb compares 0x00 with 0x01. Result: not equal, zero flag clear, je does not jump.</div>
+            <div class="command">62. info proc mappings</div>
+            <div class="question">63. In which memory region is this variable located?</div>
+            <div class="result">ANSWER: libc data section (rw-p permission).</div>
+        </div>
+        <div class="why">
+            WHY: Investigate thread safety. Cannot explain optimization paths without first reading actual memory contents and comparing with assembly.
+        </div>
     </div>
 
     <div class="step">
-        <div class="command">64. gdb test</div>
-        <div class="command">65. break open</div>
-        <div class="command">66. run</div>
-        <div class="command">67. continue until mov $0xffffff9c,%edi</div>
-        <div class="command">68. print/t $edi</div>
-        <div class="question">69. What decimal value does EDI contain?</div>
-        <div class="calc">MATH: Two's complement: invert 0x63 = 0x9C, add 1 = 0x9D. Sign-extend = 0xFFFFFF9C = -100 decimal.</div>
-        <div class="command">70. grep -r "AT_FDCWD" /usr/include/</div>
-        <div class="question">71. What file defines AT_FDCWD and what value?</div>
-        <div class="command">72. stepi</div>
-        <div class="command">73. stepi</div>
-        <div class="command">74. info registers eax</div>
-        <div class="question">75. What value is placed in EAX?</div>
-        <div class="calc">MATH: 0x101 hex = 1*256 + 0*16 + 1 = 257 decimal. This is __NR_openat.</div>
-        <div class="command">76. grep "257" /usr/include/x86_64-linux-gnu/asm/unistd_64.h</div>
-        <div class="question">77. What syscall number is 257?</div>
-        <div class="result">VERIFICATION: 257 = __NR_openat ✓.</div>
+        <div class="step-content">
+            <div class="command">64. gdb test</div>
+            <div class="command">65. break open</div>
+            <div class="command">66. run</div>
+            <div class="command">67. continue until mov $0xffffff9c,%edi</div>
+            <div class="command">68. print/t $edi</div>
+            <div class="question">69. What decimal value does EDI contain?</div>
+            <div class="calc">MATH: Two's complement: invert 0x63 = 0x9C, add 1 = 0x9D. Sign-extend = 0xFFFFFF9C = -100 decimal.</div>
+            <div class="command">70. grep -r "AT_FDCWD" /usr/include/</div>
+            <div class="question">71. What file defines AT_FDCWD and what value?</div>
+            <div class="command">72. stepi</div>
+            <div class="command">73. stepi</div>
+            <div class="command">74. info registers eax</div>
+            <div class="question">75. What value is placed in EAX?</div>
+            <div class="calc">MATH: 0x101 hex = 1*256 + 0*16 + 1 = 257 decimal. This is __NR_openat.</div>
+            <div class="command">76. grep "257" /usr/include/x86_64-linux-gnu/asm/unistd_64.h</div>
+            <div class="question">77. What syscall number is 257?</div>
+            <div class="result">VERIFICATION: 257 = __NR_openat ✓.</div>
+        </div>
+        <div class="why">
+            WHY: Verify syscall preparation. Cannot explain register setup without first deriving two's complement and confirming kernel constants.
+        </div>
     </div>
 
     <div class="step">
-        <div class="command">78. gdb test</div>
-        <div class="command">79. break syscall</div>
-        <div class="command">80. run</div>
-        <div class="command">81. info registers rax rdi rsi rdx</div>
-        <div class="question">82. Write the exact 4 register values before syscall:</div>
-        <div class="calc">REGISTER VERIFICATION:
+        <div class="step-content">
+            <div class="command">78. gdb test</div>
+            <div class="command">79. break syscall</div>
+            <div class="command">80. run</div>
+            <div class="command">81. info registers rax rdi rsi rdx</div>
+            <div class="question">82. Write the exact 4 register values before syscall:</div>
+            <div class="calc">REGISTER VERIFICATION:
 RAX = 257 (openat syscall number) ✓
 RDI = -100 (AT_FDCWD) ✓  
 RSI = filename address ✓
 RDX = 2 (O_RDWR) ✓</div>
-        <div class="command">83. x/10i $rip-10</div>
-        <div class="question">84. What instruction comes before syscall?</div>
-        <div class="command">85. disassemble $rip</div>
-        <div class="question">86. What is the syscall instruction encoding?</div>
-        <div class="calc">MATH: syscall = 0x0F 05. CPU will trap to kernel mode after this instruction.</div>
+            <div class="command">83. x/10i $rip-10</div>
+            <div class="question">84. What instruction comes before syscall?</div>
+            <div class="command">85. disassemble $rip</div>
+            <div class="question">86. What is the syscall instruction encoding?</div>
+            <div class="calc">MATH: syscall = 0x0F 05. CPU will trap to kernel mode after this instruction.</div>
+        </div>
+        <div class="why">
+            WHY: Confirm final state. Cannot claim syscall readiness without first showing exact register values and instruction bytes.
+        </div>
     </div>
 
     <div class="step">
-        <div class="command">87. cat /proc/self/maps | grep test</div>
-        <div class="question">88. List the VMA ranges for your test binary. Copy permissions.</div>
-        <div class="command">89. readelf -S test | grep -E "(text|data|bss)"</div>
-        <div class="question">90. Which sections are executable vs writable?</div>
-        <div class="calc">MATH: .text = r-xp (code), .data = rw-p (writable GOT), .bss = rw-p (zero-initialized).</div>
-        <div class="command">91. objdump -h test</div>
-        <div class="question">92. What is the start address of .text section?</div>
-        <div class="command">93. objdump -h test | grep -A2 .got</div>
-        <div class="question">94. What is the start address of .got section?</div>
-        <div class="calc">MATH: PLT lives in .text (executable), GOT lives in .got.plt (writable for dynamic linking).</div>
-        <div class="box">COMPLETE USER-SPACE MAP:
+        <div class="step-content">
+            <div class="command">87. cat /proc/self/maps | grep test</div>
+            <div class="question">88. List the VMA ranges for your test binary. Copy permissions.</div>
+            <div class="command">89. readelf -S test | grep -E "(text|data|bss)"</div>
+            <div class="question">90. Which sections are executable vs writable?</div>
+            <div class="calc">MATH: .text = r-xp (code), .data = rw-p (writable GOT), .bss = rw-p (zero-initialized).</div>
+            <div class="command">91. objdump -h test</div>
+            <div class="question">92. What is the start address of .text section?</div>
+            <div class="command">93. objdump -h test | grep -A2 .got</div>
+            <div class="question">94. What is the start address of .got section?</div>
+            <div class="calc">MATH: PLT lives in .text (executable), GOT lives in .got.plt (writable for dynamic linking).</div>
+            <div class="box">COMPLETE USER-SPACE MAP:
 <span class="address">0x5555555000</span>-<span class="address">0x5555556000</span> r-xp .text (contains PLT)
 <span class="address">0x5555556000</span>-<span class="address">0x5555557000</span> r--p .rodata (read-only)
 <span class="address">0x5555557000</span>-<span class="address">0x5555558000</span> rw-p .data (contains GOT)
 </div>
+        </div>
+        <div class="why">
+            WHY: Map memory layout. Cannot explain section permissions without first showing ELF sections and process mappings.
+        </div>
     </div>
 
     <div class="step">
-        <div class="command">95. objdump -d test | grep -A10 -B5 0x1050</div>
-        <div class="question">96. What are the exact PLT instructions for open?</div>
-        <div class="command">97. readelf -x .text test | grep -A5 -B5 50</div>
-        <div class="question">98. What are the raw bytes at PLT entry?</div>
-        <div class="command">99. readelf -r test | grep open</div>
-        <div class="question">100. What is the relocation type for open symbol?</div>
-        <div class="calc">MATH: R_X86_64_JUMP_SLOT = 7. Type indicates PLT needs jump slot resolution at runtime.</div>
-        <div class="command">101. readelf -x .got.plt test</div>
-        <div class="question">102. How many bytes does each GOT entry occupy?</div>
-        <div class="result">ANSWER: 8 bytes (64-bit pointer).</div>
+        <div class="step-content">
+            <div class="command">95. objdump -d test | grep -A10 -B5 0x1050</div>
+            <div class="question">96. What are the exact PLT instructions for open?</div>
+            <div class="command">97. readelf -x .text test | grep -A5 -B5 50</div>
+            <div class="question">98. What are the raw bytes at PLT entry?</div>
+            <div class="command">99. readelf -r test | grep open</div>
+            <div class="question">100. What is the relocation type for open symbol?</div>
+            <div class="calc">MATH: R_X86_64_JUMP_SLOT = 7. Type indicates PLT needs jump slot resolution at runtime.</div>
+            <div class="command">101. readelf -x .got.plt test</div>
+            <div class="question">102. How many bytes does each GOT entry occupy?</div>
+            <div class="result">ANSWER: 8 bytes (64-bit pointer).</div>
+        </div>
+        <div class="why">
+            WHY: Examine PLT structure. Cannot explain indirection mechanism without first showing relocation types and entry sizes.
+        </div>
     </div>
 
     <div class="step">
-        <div class="command">103. gcc -c test.c -o test.o</div>
-        <div class="command">104. nm test.o</div>
-        <div class="question">105. What does nm show for open symbol?</div>
-        <div class="command">106. readelf -s test.o</div>
-        <div class="question">107. What symbol table exists in object file?</div>
-        <div class="calc">MATH: Object file has .symtab but .dynsym is empty. Static linking vs dynamic linking difference.</div>
-        <div class="command">108. gcc -static test.c -o test_static</div>
-        <div class="command">109. ldd test_static</div>
-        <div class="question">110. What libraries does static binary need?</div>
-        <div class="command">111. objdump -d test_static | grep -A3 -B3 call</div>
-        <div class="question">112. What address does static version call directly?</div>
-        <div class="calc">MATH: Static linking embeds open address directly. No PLT, no GOT, no indirection.</div>
-        <div class="command">113. readelf -r test_static</div>
-        <div class="question">114. Are there any relocations?</div>
-        <div class="result">ANSWER: None - fully resolved at link time.</div>
+        <div class="step-content">
+            <div class="command">103. gcc -c test.c -o test.o</div>
+            <div class="command">104. nm test.o</div>
+            <div class="question">105. What does nm show for open symbol?</div>
+            <div class="command">106. readelf -s test.o</div>
+            <div class="question">107. What symbol table exists in object file?</div>
+            <div class="calc">MATH: Object file has .symtab but .dynsym is empty. Static linking vs dynamic linking difference.</div>
+            <div class="command">108. gcc -static test.c -o test_static</div>
+            <div class="command">109. ldd test_static</div>
+            <div class="question">110. What libraries does static binary need?</div>
+            <div class="command">111. objdump -d test_static | grep -A3 -B3 call</div>
+            <div class="question">112. What address does static version call directly?</div>
+            <div class="calc">MATH: Static linking embeds open address directly. No PLT, no GOT, no indirection.</div>
+            <div class="command">113. readelf -r test_static</div>
+            <div class="question">114. Are there any relocations?</div>
+            <div class="result">ANSWER: None - fully resolved at link time.</div>
+        </div>
+        <div class="why">
+            WHY: Compare static vs dynamic. Cannot explain linking choices without first showing relocations disappear in static build.
+        </div>
     </div>
 
     <div class="step">
-        <div class="command">115. gdb test</div>
-        <div class="command">116. break main</div>
-        <div class="command">117. run</div>
-        <div class="command">118. printf "filename=%p argv[1]\n", (char *)0x7fffffffeba0</div>
-        <div class="question">119. What is the stack address of your filename string?</div>
-        <div class="command">120. x/20s 0x7fffffffeba0</div>
-        <div class="question">121. What characters are stored at that stack address?</div>
-        <div class="calc">MATH: Stack grows down. Arguments at higher addresses than local variables. argv[1] at <span class="address">0x7fffffffeba0</span>.</div>
-        <div class="command">122. info frame</div>
-        <div class="question">123. What is the current frame pointer value?</div>
-        <div class="command">124. info registers rsp rbp</div>
-        <div class="question">125. What are the stack and frame pointer values?</div>
-        <div class="calc">MATH: RBP points to frame base, RSP points to stack top. RBP > RSP for valid stack frame.</div>
-        <div class="box">STACK LAYOUT:
+        <div class="step-content">
+            <div class="command">115. gdb test</div>
+            <div class="command">116. break main</div>
+            <div class="command">117. run</div>
+            <div class="command">118. printf "filename=%p\n", (char *)0x7fffffffeba0</div>
+            <div class="question">119. What is the stack address of your filename string?</div>
+            <div class="command">120. x/20s 0x7fffffffeba0</div>
+            <div class="question">121. What characters are stored at that stack address?</div>
+            <div class="calc">MATH: Stack grows down. Arguments at higher addresses than local variables. argv[1] at <span class="address">0x7fffffffeba0</span>.</div>
+            <div class="command">122. info frame</div>
+            <div class="question">123. What is the current frame pointer value?</div>
+            <div class="command">124. info registers rsp rbp</div>
+            <div class="question">125. What are the stack and frame pointer values?</div>
+            <div class="calc">MATH: RBP points to frame base, RSP points to stack top. RBP > RSP for valid stack frame.</div>
+            <div class="box">STACK LAYOUT:
 [higher addresses]
 <span class="address">0x7fffffffeba0</span>: "somefile\0" (argv[1])
 <span class="address">0x7fffffffeba8</span>: pointer to argv[1]
@@ -271,37 +343,10 @@ RDX = 2 (O_RDWR) ✓</div>
 <span class="address">0x7fffffffdc50</span>: RBP (frame pointer)
 <span class="address">0x7fffffffdc40</span>: RSP (stack pointer)
 </div>
-    </div>
-
-    <div class="step">
-        <div class="command">126. cat /proc/self/status | grep -E "(VmPeak|VmSize|VmRSS)"</div>
-        <div class="question">127. What is your program's memory usage?</div>
-        <div class="command">128. time ./test</div>
-        <div class="question">129. How long does program take to execute?</div>
-        <div class="command">130. strace -e open ./test 2>&1</div>
-        <div class="question">131. What exact syscall does strace show?</div>
-        <div class="calc">MATH: strace shows openat(AT_FDCWD, "somefile", O_RDWR) = 3. Syscall number matches our RAX=257.</div>
-        <div class="command">132. readelf -n test</div>
-        <div class="question">133. What is the note section type?</div>
-        <div class="command">134. readelf -n test | grep -A5 -B5 GNU_STACK</div>
-        <div class="question">135. What stack permissions are requested?</div>
-        <div class="result">ANSWER: Executable stack disabled for security (NX bit).</div>
-    </div>
-
-    <div class="step">
-        <div class="command">136. hexdump -C test | head -20</div>
-        <div class="question">137. What are the first 16 bytes of your binary?</div>
-        <div class="command">138. readelf -h test | grep Magic</div>
-        <div class="question">139. What are the magic bytes in ELF header?</div>
-        <div class="calc">MATH: 0x7f 'ELF' = Executable and Linkable Format. Bits: 64-bit, little-endian.</div>
-        <div class="command">140. readelf -d test | grep -A5 -B5 "OS/ABI"</div>
-        <div class="question">141. What ABI version does your binary use?</div>
-        <div class="command">142. readelf -d test | grep -A5 -B5 "Type"</div>
-        <div class="question">143. What is the binary file type?</div>
-        <div class="calc">MATH: DYN (Position-Independent Executable) allows ASLR. ET_DYN = 0x0003.</div>
-        <div class="command">144. readelf -d test | grep -A5 -B5 "Entry point"</div>
-        <div class="question">145. What is the entry point address?</div>
-        <div class="result">ANSWER: <span class="address">0x1050</span> = _start (not main). CRT startup code calls main.</div>
+        </div>
+        <div class="why">
+            WHY: Understand stack layout. Cannot explain argument passing without first showing actual stack addresses and relationships.
+        </div>
     </div>
 
 </body>
