@@ -4,28 +4,99 @@
     <meta charset="UTF-8">
     <title>Axiomatic Open() Journey</title>
     <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        
         body {
             background: #000;
             color: #fff;
             font-family: 'Courier New', monospace;
             line-height: 1.2;
             margin: 0;
-            padding: 15px;
+            padding: 0;
+            font-size: 11px;
+        }
+        
+        .container {
+            display: flex;
+            height: 100vh;
+        }
+        
+        .sidebar {
+            width: 400px;
+            background: #111;
+            border-right: 1px solid #333;
+            overflow-y: auto;
+            position: fixed;
+            left: 0;
+            top: 0;
+            z-index: 10;
+        }
+        
+        .main {
+            flex: 1;
+            margin-left: 400px;
+            background: #0a0a0a;
+            min-height: 100vh;
+            overflow-y: auto;
+        }
+        
+        .scrollable {
+            max-height: calc(100vh - 100px);
+            overflow-y: auto;
+            padding: 20px;
+        }
+        
+        .intro {
+            background: #1a1a1a;
+            padding: 20px;
+            border-bottom: 2px solid #333;
             font-size: 12px;
-            white-space: pre-wrap;
+            line-height: 1.4;
+        }
+        
+        .step-container {
+            display: flex;
+            flex-direction: column;
+            gap: 20px;
+            padding: 20px;
         }
         
         .step {
-            margin-bottom: 25px;
-            padding: 20px;
-            border-left: 3px solid #333;
             background: #111;
+            padding: 15px;
+            border-left: 3px solid #333;
+            position: relative;
         }
         
-        .step-header {
-            color: #0f0;
+        .step-content {
+            display: flex;
+            align-items: flex-start;
+            gap: 15px;
+        }
+        
+        .step-number {
+            background: #0f0;
+            color: #000;
             font-weight: bold;
+            padding: 5px 10px;
+            border-radius: 3px;
+            min-width: 120px;
+            text-align: center;
             font-size: 14px;
+        }
+        
+        .step-details {
+            flex: 1;
+        }
+        
+        .command-block {
+            background: #1a1a1a;
+            padding: 10px;
+            border-radius: 3px;
             margin-bottom: 10px;
         }
         
@@ -34,22 +105,26 @@
             font-weight: bold;
         }
         
-        .address {
-            color: #f00;
-            font-weight: bold;
-        }
-        
         .question {
             color: #ff0;
-            margin: 8px 0;
+            margin: 5px 0;
             display: block;
         }
         
         .calc {
-            background: #1a1a1a;
-            padding: 10px;
-            margin: 10px 0;
+            background: #080808;
+            color: #fff;
+            padding: 8px;
+            border-radius: 3px;
             font-family: monospace;
+            font-size: 10px;
+            white-space: pre;
+            margin: 5px 0;
+        }
+        
+        .address {
+            color: #f00;
+            font-weight: bold;
         }
         
         .result {
@@ -57,253 +132,193 @@
             font-weight: bold;
         }
         
-        .verification {
+        .why {
             color: #666;
             font-style: italic;
+            font-size: 10px;
+            margin: 10px 0;
+        }
+        
+        .controls {
+            position: fixed;
+            bottom: 20px;
+            right: 20px;
+            left: 20px;
+            background: #1a1a1a;
+            padding: 15px;
+            border-radius: 8px;
+            z-index: 1000;
+            box-shadow: 0 4px 8px rgba(0,0,0,0.3);
+        }
+        
+        .controls button {
+            background: #0f0;
+            color: #fff;
+            border: none;
+            padding: 8px 16px;
+            margin: 0 5px;
+            border-radius: 4px;
+            cursor: pointer;
+            font-weight: bold;
+        }
+        
+        .controls button:hover {
+            background: #333;
+        }
+        
+        .paper-view {
+            background: #fff;
+            color: #000;
+            font-family: 'Courier New', monospace;
+            padding: 20px;
+            border-radius: 8px;
+            box-shadow: 0 10px 20px rgba(0,0,0,0.2);
+            margin: 20px;
+            max-width: 600px;
+        }
+        
+        .paper-view h3 {
+            color: #000;
+            border-bottom: 2px solid #000;
+            padding-bottom: 10px;
+        }
+        
+        @media print {
+            body {
+                background: #fff;
+                color: #000;
+            }
+            .sidebar, .main, .controls {
+                position: static;
+                width: auto;
+                height: auto;
+                border: none;
+                background: none;
+            }
+            .container {
+                flex-direction: column;
+            }
+            .paper-view {
+                box-shadow: none;
+                border: 1px solid #000;
+                margin: 0;
+            }
+            .controls {
+                display: none;
+            }
         }
     </style>
 </head>
 <body>
-    <div class="step">
-        <div class="step-header">STEP 1: BASELINE COMPILATION</div>
-        1. Command: echo 'int main() { open("somefile", O_RDWR); }' > test.c<br>
-        2. Question: What text did you just write to test.c?<br>
-        3. Command: gcc -c test.c -o test.o<br>
-        4. Command: file test.o<br>
-        5. Question: What file type does 'file' report for test.o?<br>
-        6. Command: readelf -r test.o | grep open<br>
-        7. Question: What symbol type appears for open? Write exact letters.<br>
-        8. Mathematics: If compiler knew open address, relocations section would show TYPE = REL, not UND.<br>
-        9. Explanation: UND = undefined means symbol resolution deferred.<br>
-        10. Command: objdump -d test.o | grep -A3 -B1 call<br>
-        11. Question: What 5 bytes follow as call opcode? Write in hex.<br>
-        12. Mathematics: call opcode = 0xE8. 4-byte offset = 0x00000000.<br>
-        13. Explanation: This placeholder will be filled later by linker.<br>
+    <div class="container">
+        <div class="sidebar">
+            <div class="intro">
+                <h2>🚀 THE OPEN() JOURNEY</h2>
+                <p>This workshop guides you through the complete pre-syscall journey of open() from first principles using only what you can observe with real tools.</p>
+                <p><strong>GOAL:</strong> Understand every address, calculation, and transformation that happens before open() hits the kernel.</p>
+                <p><strong>METHOD:</strong> Axiomatic discovery - no assumptions, only observations.</p>
+                <hr style="border: 1px solid #333; margin: 15px 0;">
+                <h3>📋 WORKFLOW STEPS</h3>
+                <div style="margin: 10px 0;">
+                    <div style="display: flex; align-items: center; margin-bottom: 5px;">
+                        <div style="width: 12px; height: 12px; background: #0f0; border-radius: 50%;"></div>
+                        <span style="margin-left: 10px;">1. Static Compilation</span>
+                    </div>
+                    <div style="display: flex; align-items: center; margin-bottom: 5px;">
+                        <div style="width: 12px; height: 12px; background: #666; border-radius: 50%;"></div>
+                        <span style="margin-left: 10px;">2. Dynamic Linking</span>
+                    </div>
+                    <div style="display: flex; align-items: center; margin-bottom: 5px;">
+                        <div style="width: 12px; height: 12px; background: #666; border-radius: 50%;"></div>
+                        <span style="margin-left: 10px;">3. Symbol Resolution</span>
+                    </div>
+                </div>
+                <div style="margin: 10px 0;">
+                    <div style="display: flex; align-items: center; margin-bottom: 5px;">
+                        <div style="width: 12px; height: 12px; background: #666; border-radius: 50%;"></div>
+                        <span style="margin-left: 10px;">4. Runtime Investigation</span>
+                    </div>
+                    <div style="display: flex; align-items: center; margin-bottom: 5px;">
+                        <div style="width: 12px; height: 12px; background: #666; border-radius: 50%;"></div>
+                        <span style="margin-left: 10px;">5. Register Setup</span>
+                    </div>
+                </div>
+                <p><strong>🎯 EACH STEP REQUIRES:</strong></p>
+                <ul>
+                    <li>Run the command yourself</li>
+                    <li>Record what you observe</li>
+                    <li>Calculate the mathematics</li>
+                    <li>Answer every question</li>
+                </ul>
+                <p><strong>💡 TIP:</strong> Print this page and work through it on paper. No prior knowledge needed!</p>
+            </div>
+            
+            <div class="controls">
+                <button onclick="window.print()">🖨 Print Worksheet</button>
+                <button onclick="toggleScroll()">📜 Toggle Scroll Lock</button>
+                <button onclick="resetProgress()">🔄 Reset Progress</button>
+            </div>
+        </div>
+        
+        <div class="main">
+            <div class="scrollable">
+                <div class="step-container">
+                    <div class="step">
+                        <div class="step-content">
+                            <div class="step-number">1</div>
+                            <div class="step-details">
+                                <div class="command-block">
+                                    <div class="command">1. echo 'int main() { open("somefile", O_RDWR); }' > test.c</div>
+                                    <div class="question">2. Run: cat test.c. What did you just write?</div>
+                                    <div class="question">3. Command: gcc -c test.c -o test.o</div>
+                                    <div class="question">4. Command: file test.o. What does file report?</div>
+                                    <div class="question">5. Command: readelf -r test.o | grep open</div>
+                                    <div class="question">6. What symbol type appears for open? Write as exact letters.</div>
+                                    <div class="calc">7. Mathematics: If compiler knew open address, relocations section would show TYPE = REL, not UND. UND = undefined means symbol resolution deferred to link time.</div>
+                                    <div class="command-block">
+                                        <div class="command">8. Command: objdump -d test.o | grep -A3 -B1 call</div>
+                                        <div class="question">9. What 5 bytes follow as call opcode? Write in hex.</div>
+                                        <div class="calc">10. Mathematics: call opcode = 0xE8. 4-byte offset = 0x00000000. This placeholder will be filled later by linker.</div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        
+                        <div class="step">
+                            <div class="step-content">
+                                <div class="step-number">2</div>
+                                <div class="step-details">
+                                    <div class="command-block">
+                                        <div class="command">11. Command: gcc test.o -o test</div>
+                                        <div class="question">12. Command: ldd test. Which libraries does your binary need?</div>
+                                        <div class="command">13. Command: objdump -d test | grep -A5 -B5 call</div>
+                                        <div class="question">14. What address does call instruction target now? Write full address.</div>
+                                        <div class="command">15. Command: readelf -a test | grep -A2 "Entry point"</div>
+                                        <div class="question">16. What is as program entry point address?</div>
+                                        <div class="calc">17. Mathematics: Entry = <span class="address">0x1050</span>. PLT section starts here.</div>
+                                        <div class="why">18. Explanation: Your call jumps to PLT trampoline, not directly to open().</div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
     </div>
-
-    <div class="step">
-        <div class="step-header">STEP 2: LINKING ANALYSIS</div>
-        14. Command: gcc test.o -o test<br>
-        15. Question: Run 'ldd test' - which libraries does your binary need?<br>
-        16. Command: objdump -d test | grep -A5 -B5 call<br>
-        17. Question: What address does call instruction target now? Write full address.<br>
-        18. Command: readelf -a test | grep -A2 "Entry point"<br>
-        19. Question: What is as program entry point address?<br>
-        20. Mathematics: Entry = <span class="address">0x1050</span>. PLT section starts here.<br>
-        21. Explanation: Your call jumps to PLT trampoline, not directly to open().<br>
-        22. Memory Layout Before Dynamic Linking:<br>
-        &nbsp;&nbsp;<span class="address">0x1050</span>: call 0x[unknown_address]<br>
-        &nbsp;&nbsp;GOT at <span class="address">0x3fd0</span>: contains 0x00000000 (empty)<br>
-    </div>
-
-    <div class="step">
-        <div class="step-header">STEP 3: RUNTIME SYMBOL DISCOVERY</div>
-        23. Command: gdb test<br>
-        &nbsp;&nbsp;23a. break main<br>
-        &nbsp;&nbsp;23b. run<br>
-        24. Command: info functions | grep open<br>
-        25. Question: How many open variants exist in the symbol table?<br>
-        26. Command: disassemble open<br>
-        27. Question: What address does GDB show for open function?<br>
-        28. Command: quit<br>
-        29. Command: ldd test | grep libc<br>
-        30. Question: What is as full path to libc on your system?<br>
-        31. Mathematics: libc loads at random base due to ASLR=2.<br>
-        32. Explanation: Your open address will change each program execution.<br>
-    </div>
-
-    <div class="step">
-        <div class="step-header">STEP 4: LIBRARY SYMBOL INVESTIGATION</div>
-        33. Command: readelf -s /lib/x86_64-linux-gnu/libc.so.6 | grep -E "FUNC.*open"<br>
-        34. Question: Find all symbols with "open" in name. List their addresses.<br>
-        35. Question: Which one is marked as GLOBAL FUNC?<br>
-        36. Mathematics: open@GLIBC_2.2.5 at offset <span class="address">0x11b150</span>.<br>
-        37. Explanation: This is as symbol your program will use during resolution.<br>
-        38. Command: gdb test<br>
-        &nbsp;&nbsp;38a. break main<br>
-        &nbsp;&nbsp;38b. run<br>
-        39. Command: print open<br>
-        40. Question: What address does GDB print for open symbol?<br>
-        41. Command: print (void *)open + 1<br>
-        42. Question: What address is 1 byte after open? This proves open is real code.<br>
-        43. Mathematics: open_address = libc_base + <span class="address">0x11b150</span>.<br>
-        44. Explanation: Base changes with ASLR, offset is constant.<br>
-    </div>
-
-    <div class="step">
-        <div class="step-header">STEP 5: RUNTIME ADDRESS VERIFICATION</div>
-        45. Command: gdb test<br>
-        &nbsp;&nbsp;45a. break *0x555555555050<br>
-        &nbsp;&nbsp;45b. run<br>
-        46. Command: x/10gx 0x555555557fd0<br>
-        47. Question: What value is stored at the GOT slot for open?<br>
-        48. Command: continue<br>
-        49. Question: What function name appears after continuing?<br>
-        50. Mathematics: PLT jumps to GOT entry, GOT contains real open address, CPU lands in libc.<br>
-        51. <span class="calc">DYNAMIC RESOLUTION CHAIN:</span><br>
-        &nbsp;&nbsp;main → PLT(<span class="address">0x1050</span>) → GOT(<span class="address">0x7fd0</span>) → libc(<span class="address">0x7ffff7d1b150</span>)<br>
-        52. Explanation: Memory reads: 2 (PLT instruction, GOT indirection)<br>
-    </div>
-
-    <div class="step">
-        <div class="step-header">STEP 6: FLAG PROCESSING INVESTIGATION</div>
-        53. Command: gdb test<br>
-        &nbsp;&nbsp;53a. break open<br>
-        &nbsp;&nbsp;53b. run<br>
-        54. Command: info registers rdi rsi rdx<br>
-        55. Question: What are as exact values in RDI, RSI, RDX when open starts?<br>
-        56. Command: print/x $rsi<br>
-        57. Question: What is as hex value of your flags?<br>
-        58. Mathematics: O_RDWR = 2 decimal = 0x02 hex = 0000 0010 binary.<br>
-        59. Command: stepi<br>
-        &nbsp;&nbsp;59a. stepi<br>
-        &nbsp;&nbsp;59b. stepi<br>
-        60. Command: stepi<br>
-        61. Question: What instruction checks for O_CREAT flag?<br>
-        62. Mathematics: O_CREAT = 0x40 hex = 0100 0000 binary.<br>
-        63. <span class="calc">AND operation: 0x02 & 0x40 = 0x00. Zero flag set.</span><br>
-        64. Command: stepi<br>
-        65. Question: Does jne instruction jump or fall through?<br>
-        66. <span class="result">RESULT: No mode argument needed, takes fast path.</span><br>
-    </div>
-
-    <div class="step">
-        <div class="step-header">STEP 7: THREAD SAFETY ANALYSIS</div>
-        67. Command: gdb test<br>
-        &nbsp;&nbsp;67a. break open<br>
-        &nbsp;&nbsp;67b. run<br>
-        68. Command: continue until cmpb instruction<br>
-        69. Command: print/x $rip+0xefeae<br>
-        70. Question: What is as address of __libc_single_threaded?<br>
-        71. Command: x/1bx 0x7ffff7d0b040<br>
-        72. Question: What byte value is stored there?<br>
-        73. Mathematics: cmpb compares 0x00 with 0x01.<br>
-        74. <span class="calc">Calculation: Result: not equal, zero flag clear, je does not jump.</span><br>
-        75. Command: info proc mappings<br>
-        76. Question: In which memory region is this variable located?<br>
-        77. <span class="result">ANSWER: libc data section (rw-p permission).</span><br>
-    </div>
-
-    <div class="step">
-        <div class="step-header">STEP 8: SYSCALL PREPARATION VERIFICATION</div>
-        78. Command: gdb test<br>
-        &nbsp;&nbsp;78a. break open<br>
-        &nbsp;&nbsp;78b. run<br>
-        79. Command: continue until mov $0xffffff9c,%edi<br>
-        80. Command: print/t $edi<br>
-        81. Question: What decimal value does EDI contain?<br>
-        82. Mathematics: Two's complement of -100:<br>
-        &nbsp;&nbsp;82a. Decimal 100 = 0x63 hex<br>
-        &nbsp;&nbsp;82b. Invert 0x63 = 0x9C<br>
-        &nbsp;&nbsp;82c. Add 1 = 0x9D<br>
-        &nbsp;&nbsp;82d. Sign-extend = <span class="address">0xFFFFFF9C</span> = -100 decimal.<br>
-        83. Command: grep -r "AT_FDCWD" /usr/include/<br>
-        84. Question: What file defines AT_FDCWD and what value?<br>
-        85. Command: stepi<br>
-        &nbsp;&nbsp;85a. stepi<br>
-        &nbsp;&nbsp;85b. stepi<br>
-        86. Command: info registers eax<br>
-        87. Question: What value is placed in EAX?<br>
-        88. Mathematics: 0x101 hex = 1*256 + 0*16 + 1 = 257 decimal.<br>
-        89. Command: grep "257" /usr/include/x86_64-linux-gnu/asm/unistd_64.h<br>
-        90. Question: What syscall number is 257?<br>
-        91. <span class="verification">VERIFICATION: 257 = __NR_openat ✓.</span><br>
-    </div>
-
-    <div class="step">
-        <div class="step-header">STEP 9: FINAL STATE CONFIRMATION</div>
-        92. Command: gdb test<br>
-        &nbsp;&nbsp;92a. break syscall<br>
-        &nbsp;&nbsp;92b. run<br>
-        93. Command: info registers rax rdi rsi rdx<br>
-        94. Question: Write as exact 4 register values before syscall:<br>
-        95. <span class="calc">REGISTER VERIFICATION:</span><br>
-        &nbsp;&nbsp;RAX = 257 (openat syscall number) [ ] PASS/FAIL<br>
-        &nbsp;&nbsp;RDI = -100 (AT_FDCWD) [ ] PASS/FAIL<br>
-        &nbsp;&nbsp;RSI = filename address [ ] PASS/FAIL<br>
-        &nbsp;&nbsp;RDX = 2 (O_RDWR) [ ] PASS/FAIL<br>
-        96. Command: x/10i $rip-10<br>
-        97. Question: What instruction comes before syscall?<br>
-        98. Command: disassemble $rip<br>
-        99. Question: What is as syscall instruction encoding?<br>
-        100. Mathematics: syscall = 0x0F 05.<br>
-        101. <span class="verification">Explanation: CPU will trap to kernel mode after this instruction.</span><br>
-    </div>
-
-    <div class="step">
-        <div class="step-header">STEP 10: VMA MEMORY LAYOUT ANALYSIS</div>
-        102. Command: cat /proc/self/maps | grep test<br>
-        103. Question: List as VMA ranges for your test binary. Copy permissions.<br>
-        104. Command: readelf -S test | grep -E "(text|data|bss)"<br>
-        105. Question: Which sections are executable vs writable?<br>
-        106. Mathematics: .text = r-xp (code), .data = rw-p (writable GOT), .bss = rw-p (zero-initialized).<br>
-        107. Command: objdump -h test<br>
-        108. Question: What is as start address of .text section?<br>
-        109. Command: objdump -h test | grep -A2 .got<br>
-        110. Question: What is as start address of .got section?<br>
-        111. Mathematics: PLT lives in .text (executable), GOT lives in .got.plt (writable for dynamic linking).<br>
-        112. <span class="calc">COMPLETE USER-SPACE MAP:</span><br>
-        &nbsp;&nbsp;<span class="address">0x5555555000</span>-<span class="address">0x5555556000</span> r-xp .text (contains PLT)<br>
-        &nbsp;&nbsp;<span class="address">0x5555556000</span>-<span class="address">0x5555557000</span> r--p .rodata (read-only)<br>
-        &nbsp;&nbsp;<span class="address">0x5555557000</span>-<span class="address">0x5555558000</span> rw-p .data (contains GOT)<br>
-    </div>
-
-    <div class="step">
-        <div class="step-header">STEP 11: STATIC VS DYNAMIC COMPARISON</div>
-        113. Command: gcc -c test.c -o test.o<br>
-        114. Command: nm test.o<br>
-        115. Question: What does nm show for open symbol?<br>
-        116. Command: readelf -s test.o<br>
-        117. Question: What symbol table exists in object file?<br>
-        118. Mathematics: Object file has .symtab but .dynsym is empty.<br>
-        119. Explanation: Static linking vs dynamic linking difference.<br>
-        120. Command: gcc -static test.c -o test_static<br>
-        121. Command: ldd test_static<br>
-        122. Question: What libraries does static binary need?<br>
-        123. Command: objdump -d test_static | grep -A3 -B3 call<br>
-        124. Question: What address does static version call directly?<br>
-        125. Mathematics: Static linking embeds open address directly.<br>
-        126. Explanation: No PLT, no GOT, no indirection.<br>
-        127. Command: readelf -r test_static<br>
-        128. Question: Are there any relocations?<br>
-        129. <span class="result">ANSWER: None - fully resolved at link time.</span><br>
-    </div>
-
-    <div class="step">
-        <div class="step-header">STEP 12: STACK LAYOUT INVESTIGATION</div>
-        130. Command: gdb test<br>
-        &nbsp;&nbsp;130a. break main<br>
-        &nbsp;&nbsp;130b. run<br>
-        131. Command: printf "filename=%p argv[1]\n", (char *)0x7fffffffeba0<br>
-        132. Question: What is as stack address of your filename string?<br>
-        133. Command: x/20s 0x7fffffffeba0<br>
-        134. Question: What characters are stored at that stack address?<br>
-        135. Mathematics: Stack grows down. Arguments at higher addresses than local variables.<br>
-        136. Command: info frame<br>
-        137. Question: What is as current frame pointer value?<br>
-        138. Command: info registers rsp rbp<br>
-        139. Question: What are as stack and frame pointer values?<br>
-        140. Mathematics: RBP points to frame base, RSP points to stack top. RBP > RSP for valid stack frame.<br>
-        141. <span class="calc">STACK LAYOUT:</span><br>
-        &nbsp;&nbsp;[higher addresses]<br>
-        &nbsp;&nbsp;<span class="address">0x7fffffffeba0</span>: "somefile\0" (argv[1])<br>
-        &nbsp;&nbsp;<span class="address">0x7fffffffeba8</span>: pointer to argv[1]<br>
-        &nbsp;&nbsp;<span class="address">0x7fffffffebb8</span>: other argv entries<br>
-        &nbsp;&nbsp;<span class="address">0x7fffffffdc80</span>: environment variables<br>
-        &nbsp;&nbsp;[stack grows down ↓]<br>
-        &nbsp;&nbsp;<span class="address">0x7fffffffdc50</span>: RBP (frame pointer)<br>
-        &nbsp;&nbsp;<span class="address">0x7fffffffdc40</span>: RSP (stack pointer)<br>
-    </div>
-
-    <div class="step">
-        <div class="step-header">STEP 13: FINAL SYNTHESIS</div>
-        142. <span class="calc">Complete Address Chain:</span><br>
-        &nbsp;&nbsp;main → PLT(<span class="address">0x1050</span>) → GOT(<span class="address">0x7fd0</span>) → libc(<span class="address">0x7ffff7d1b150</span>)<br>
-        143. Memory Reads Count: 2 (PLT instruction, GOT indirection)<br>
-        144. Resolution Method: Runtime dynamic linking<br>
-        145. Symbol Source: /lib/x86_64-linux-gnu/libc.so.6<br>
-        146. System Call: openat(AT_FDCWD, "somefile", O_RDWR)<br>
-    </div>
-
+    
+    <script>
+        function toggleScroll() {
+            document.querySelector('.scrollable').style.overflow = 
+                document.querySelector('.scrollable').style.overflow === 'auto' ? 'hidden' : 'auto';
+        }
+        
+        function resetProgress() {
+            if (confirm('Reset all your progress?')) {
+                // Reset checkboxes and text areas here
+                location.reload();
+            }
+        }
+    </script>
 </body>
 </html>
