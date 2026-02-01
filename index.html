@@ -2,16 +2,16 @@
 <html>
 <head>
     <meta charset="UTF-8">
-    <title>The Open() Pre-Syscall Odyssey</title>
+    <title>Axiomatic Open() Journey</title>
     <style>
         body {
             background: #000;
             color: #fff;
             font-family: 'Courier New', monospace;
-            line-height: 1.3;
+            line-height: 1.2;
             margin: 0;
-            padding: 15px;
-            font-size: 12px;
+            padding: 20px;
+            font-size: 11px;
         }
         
         .book {
@@ -22,7 +22,7 @@
         
         .column {
             flex: 1;
-            padding: 0 25px;
+            padding: 0 20px;
             border-right: 1px solid #333;
         }
         
@@ -30,7 +30,7 @@
             border-right: none;
         }
         
-        .chapter {
+        .axiom {
             margin-bottom: 30px;
         }
         
@@ -39,11 +39,19 @@
             font-weight: bold;
         }
         
-        .page-number {
-            text-align: center;
-            color: #666;
-            margin-top: 30px;
-            font-size: 10px;
+        .box {
+            font-family: monospace;
+            background: #111;
+            padding: 10px;
+            border: 1px solid #333;
+            margin: 10px 0;
+            white-space: pre;
+        }
+        
+        .calculation {
+            margin: 15px 0;
+            padding: 10px;
+            background: #1a1a1a;
         }
     </style>
 </head>
@@ -51,61 +59,181 @@
     <div class="book">
         <div class="column">
             
-            <div class="chapter">
-                You write int main() { open("somefile", O_RDWR); } in test.c. The compiler has no idea where open() lives. It creates an object file with a placeholder. The call instruction contains zeros: e8 00 00 00 00. The linker will fill these zeros later. You run readelf -r test.o and see open listed as UND. UND means undefined. The compiler cheated - it promised to linker would fix this.
+            <div class="axiom">
+                1. Write int main() { open("somefile", O_RDWR); } in test.c
+                2. Run: gcc -c test.c -o test.o
+                3. Run: readelf -r test.o | grep open
+                4. Observe: UND means undefined. Symbol table shows no address.
+                5. The compiler cannot know open() location at compile time.
+                6. Run: objdump -d test.o | grep call
+                7. Instruction bytes: e8 00 00 00 00
+                8. Call offset = 0x00000000 = placeholder
+                9. Question: Can CPU jump to address <span class="address">0x00000000</span>? No.
             </div>
             
-            <div class="chapter">
-                The linker takes your object file and creates an executable. It finds the PLT section and writes a stub. The call instruction becomes call <span class="address">0x1050</span>. This is not real open(). This is a trampoline. The PLT stub says jmp QWORD PTR [rip+<span class="address">0x2f76</span>]. Your CPU calculates next instruction address + offset = <span class="address">0x555555557fd0</span>. This is the GOT slot. The GOT contains the real address of open() in libc. But who wrote that address?
+            <div class="axiom">
+                10. Run: gcc test.o -o test
+                11. Run: objdump -d test | grep -A1 -B1 call
+                12. Call target = <span class="address">0x1050</span>
+                13. Next instruction = <span class="address">0x1055</span>
+                14. PLT jump instruction: jmp QWORD PTR [rip+<span class="address">0x2f76</span>]
+                15. RIP-relative calculation: <span class="address">0x1055</span> + <span class="address">0x2f76</span> = <span class="address">0x3fcb</span>
+                16. GOT slot = <span class="address">0x3fcb</span> after load address adjustment
+                17. Who writes value to <span class="address">0x3fcb</span>? Not compiler, not linker.
             </div>
             
-            <div class="chapter">
-                The dynamic linker runs when your program starts. It sees you need libc.so.6. It maps this library at a random address thanks to ASLR. Let's say it maps at <span class="address">0x7ffff7c00000</span>. The linker reads libc's symbol table. It finds open() at offset <span class="address">0x11b150</span>. It adds these: <span class="address">0x7ffff7c00000</span> + <span class="address">0x11b150</span> = <span class="address">0x7ffff7d1b150</span>. It writes this address to the GOT slot at <span class="address">0x555555557fd0</span>. Now the indirect jump will work.
+            <div class="axiom">
+                18. Run: ldd test
+                19. libc.so.6 => /lib/x86_64-linux-gnu/libc.so.6 (<span class="address">0x7ffff7e00000</span>)
+                20. libc base address = <span class="address">0x7ffff7e00000</span>
+                21. Run: readelf -s /lib/x86_64-linux-gnu/libc.so.6 | grep -E "open.*FUNC"
+                22. __libc_open64 at <span class="address">0x000000000011b150</span>
+                23. Real open() address = <span class="address">0x7ffff7e00000</span> + <span class="address">0x11b150</span> = <span class="address">0x7ffff7f1b150</span>
+                24. Who calculates this sum? Dynamic linker at program startup.
             </div>
             
-            <div class="chapter">
-                You run the program multiple times. Each time the address changes. First run: open() at <span class="address">0x7ffff7d1b150</span>. Second run: open() at <span class="address">0x7ffff7e2a000</span>. Third run: open() at <span class="address">0x7ffff7c48000</span>. But your compiled binary still contains call <span class="address">0x1050</span>. How does this work? The PLT is a fixed address in your binary. The GOT is in your writable data segment. The dynamic linker rewrites the GOT each time. Your code never changes.
+            <div class="box">
+25. BEFORE program execution:
+   GOT[<span class="address">0x3fcb</span>] = 0x00000000 (empty)
+   libc_base = ? (not mapped)
+   open_address = ?
+
+AFTER dynamic linker runs:
+   GOT[<span class="address">0x3fcb</span>] = <span class="address">0x7ffff7f1b150</span>
+   libc_base = <span class="address">0x7ffff7e00000</span>
+   open_address = <span class="address">0x7ffff7f1b150</span>
             </div>
             
-            <div class="chapter">
-                The CPU jumps to <span class="address">0x7ffff7d1b150</span>. This is __libc_open64. The function pushes rbp and saves registers. It checks your flags: O_RDWR = 2. The code says and $<span class="address">0x40</span>,%r10d. This checks if O_CREAT is set. 2 & 64 = 0. The zero flag is set. The jne instruction does not jump. It falls through to the fast path. No mode argument is needed.
+            <div class="axiom">
+                26. Run: gdb test
+                27. break main
+                28. run
+                29. p open
+                30. Address = <span class="address">0x7ffff7f1b150</span>
+                31. quit
+                32. run again
+                33. p open
+                34. Address = <span class="address">0x7ffff7d0a000</span>
+                35. run again
+                36. p open
+                37. Address = <span class="address">0x7ffff7f58000</span>
+                38. Addresses change. Binary unchanged. How?
             </div>
             
-            <div class="chapter">
-                The function checks __libc_single_threaded. The assembly says cmpb $0x0,<span class="address">0xefeae</span>(%rip). This reads a global variable. In your program it contains 1. 1 != 0, so the zero flag is not set. The je instruction does not jump. It continues to the cancellation-safe path. Even though you are single-threaded, libc takes the careful route.
+            <div class="axiom">
+                39. PLT address is constant = <span class="address">0x1050</span>
+                40. GOT address is constant = <span class="address">0x3fcb</span>
+                41. GOT content changes each run.
+                42. CPU jumps: main → PLT → GOT → libc
+                43. PLT is in your binary (fixed).
+                44. GOT is in your data segment (writable).
+                45. Dynamic linker updates GOT at load time.
             </div>
-            
-            <div class="page-number">1</div>
             
         </div>
         
         <div class="column">
             
-            <div class="chapter">
-                The register shuffle begins. The kernel expects openat(), not open(). The arguments must move. First: mov $<span class="address">0xffffff9c</span>,%edi. This is -100 in two's complement. AT_FDCWD is defined as -100 in kernel headers. Second: mov %r12,%rsi. Your filename pointer moves to RSI. Third: mov %ebx,%edx. Your O_RDWR flag moves to RDX. Fourth: mov $<span class="address">0x101</span>,%eax. This is 257 decimal, the syscall number for openat.
+            <div class="axiom">
+                46. Run: gdb test
+                47. break open
+                48. run
+                49. info registers
+                50. RDI = <span class="address">0x555555556004</span> (filename pointer)
+                51. RSI = 0x00000002 (O_RDWR)
+                52. RDX = 0x00000000
+                53. Check: man 2 open
+                54. O_RDONLY = 0x00000000
+                55. O_WRONLY = 0x00000001  
+                56. O_RDWR = 0x00000002
+                57. Your RSI = 0x00000002 ✓
             </div>
             
-            <div class="chapter">
-                The final register state before syscall: RAX contains 257, RDI contains <span class="address">0xffffff9c</span> (-100), RSI contains the filename address, RDX contains 2. The CPU will execute the syscall instruction next. It will save the next instruction address to RCX, save flags to R11, and jump to the kernel entry point at MSR_LSTAR. Your journey in user space is complete.
+            <div class="calculation">
+58. O_RDWR binary: 0000 0010
+59. O_CREAT value: 0x00000040 (0100 0000)
+60. AND operation: 0000 0010 & 0100 0000 = 0000 0000
+61. Result = 0. Zero flag set in CPU.
+62. Assembly: and $<span class="address">0x40</span>,%r10d
+63. jne instruction follows. Zero flag = true → no jump.
             </div>
             
-            <div class="chapter">
-                The complete address chain: main calls <span class="address">0x1050</span> (PLT). PLT jumps to [RIP+<span class="address">0x2f76</span>] = <span class="address">0x555555557fd0</span> (GOT). GOT contains <span class="address">0x7ffff7d1b150</span> (libc). libc base is <span class="address">0x7ffff7c00000</span> + offset <span class="address">0x11b150</span> = <span class="address">0x7ffff7d1b150</span>. Four memory reads, two address calculations, one register indirection.
+            <div class="axiom">
+                64. Continue in gdb: stepi
+                65. cmpb $0x0,<span class="address">0xefeae</span>(%rip)
+                66. Memory location = <span class="address">0x7ffff7d0b040</span>
+                67. x/1bx <span class="address">0x7ffff7d0b040</span>
+                68. Value = 0x01
+                69. cmpb compares 0x00 with 0x01
+                70. Result: 0x01 != 0x00 → zero flag = false
+                71. je instruction does NOT jump.
             </div>
             
-            <div class="chapter">
-                The VMA mappings show your binary layout: <span class="address">0x5555555000</span>-<span class="address">0x5555556000</span> r-xp for code, <span class="address">0x5555556000</span>-<span class="address">0x5555557000</span> rw-p for data. The PLT lives in the executable segment. The GOT lives in the data segment. libc maps at <span class="address">0x7ffff7c00000</span>-<span class="address">0x7ffff7db0000</span> r-xp for code, <span class="address">0x7ffff7db0000</span>-<span class="address">0x7ffff7dd0000</span> rw-p for data. All permissions match their usage.
+            <div class="axiom">
+                72. Continue: stepi
+                73. mov $<span class="address">0xffffff9c</span>,%edi
+                74. Two's complement calculation: ~99 + 1
+                75. 99 decimal = 0x63
+                76. ~0x63 = 0x9C
+                77. 0x9C + 1 = 0x9D
+                78. Extend to 32-bit: <span class="address">0xFFFFFF9C</span>
+                79. Result: -100 decimal ✓
             </div>
             
-            <div class="chapter">
-                The prediction exercises: If gcc -static, there is no PLT/GOT. The call instruction contains the absolute address of open(). If AT_FDCWD becomes -200, hex value changes to <span class="address">0xffffff38</span>. If GOT corruption occurs at <span class="address">0x41414141</span>, CPU jumps to invalid memory and segmentation faults. If ASLR disabled, addresses stay constant across runs. If O_CREAT added, flag value becomes <span class="address">0x41</span> (65 decimal) and R10 gets the mode argument.
+            <div class="axiom">
+                80. Check: grep -r "AT_FDCWD" /usr/include/
+                81. File: /usr/include/x86_64-linux-gnu/fcntl.h
+                82. Line: #define AT_FDCWD -100
+                83. EDI now holds -100 ✓
+                84. mov %r12,%rsi (filename pointer)
+                85. mov %ebx,%edx (flags = 2)
+                86. mov $<span class="address">0x101</span>,%eax
+                87. <span class="address">0x101</span> hex = 257 decimal
+                88. grep "257" /usr/include/x86_64-linux-gnu/asm/unistd_64.h
+                89. Line: #define __NR_openat 257
+                90. RAX = 257 ✓
             </div>
             
-            <div class="chapter">
-                When the CPU executes syscall, it transitions from Ring 3 to Ring 0. The kernel takes over. Your program pauses. The kernel will look up sys_call_table[257] which points to do_sys_openat. It will copy arguments from your registers into kernel memory. It will perform permission checks. It will walk the directory structure to find the inode. It will allocate a file descriptor structure. It will return the file descriptor number in RAX.
+            <div class="box">
+91. FINAL REGISTER STATE:
+   RAX = 257 (sys_openat)
+   RDI = -100 (AT_FDCWD)  
+   RSI = <span class="address">0x555555556004</span> (filename)
+   RDX = 2 (O_RDWR flags)
+
+ADDRESS CHAIN:
+main call → PLT[<span class="address">0x1050</span>]
+PLT jump → GOT[<span class="address">0x3fcb</span>]  
+GOT value → <span class="address">0x7ffff7f1b150</span> (__libc_open64)
             </div>
             
-            <div class="page-number">2</div>
+            <div class="axiom">
+                92. Check: cat /proc/self/maps | grep test
+                93. Range1: <span class="address">0x5555555000</span>-<span class="address">0x5555556000</span> r-xp (code)
+                94. Range2: <span class="address">0x5555556000</span>-<span class="address">0x5555557000</span> r--p (rodata)
+                95. Range3: <span class="address">0x5555557000</span>-<span class="address">0x5555558000</span> rw-p (data)
+                96. PLT at <span class="address">0x1050</span> ∈ Range1 ✓
+                97. GOT at <span class="address">0x3fcb</span> ∈ Range3 ✓
+            </div>
+            
+            <div class="axiom">
+                98. Check: cat /proc/self/maps | grep libc
+                99. libc range: <span class="address">0x7ffff7e00000</span>-<span class="address">0x7ffff7fc0000</span>
+                100. __libc_open64 = <span class="address">0x7ffff7f1b150</span>
+                101. Verify: <span class="address">0x7ffff7e00000</span> ≤ <span class="address">0x7ffff7f1b150</span> < <span class="address">0x7ffff7fc0000</span> ✓
+                102. Permissions: r-xp (executable, readable)
+            </div>
+            
+            <div class="axiom">
+                103. Next instruction: syscall
+                104. CPU saves RCX = return address
+                105. CPU saves R11 = flags register
+                106. CPU reads MSR_LSTAR register
+                107. CPU jumps to kernel entry point
+                108. Ring changes from 3 to 0
+                109. Your program execution pauses
+                110. User space journey complete
+            </div>
             
         </div>
     </div>
