@@ -1,7 +1,17 @@
 # Open() Pre-Syscall Worksheet
 
-## Live Blog
-Visit: https://raikrahul.github.io/what-happens-when-open-is-called/
+## 📱 Live Blog
+**URL**: https://raikrahul.github.io/what-happens-when-open-is-called/
+**Design**: Black/White/Green with red memory addresses
+**Format**: Interactive worksheet - 11 steps + VMA mappings
+
+## 🐙 GitHub Wiki
+**Wiki URL**: https://github.com/raikrahul/what-happens-when-open-is-called/wiki
+**Setup**: Run `gh repo edit --enable-wiki=true` to enable
+
+## 📦 Repository
+**Source**: https://github.com/raikrahul/what-happens-when-open-is-called
+**Branch**: `gh-pages` (deployed to GitHub Pages)
 
 ## About
 This worksheet walks through the complete journey of `open()` system call from source code to kernel boundary, covering:
