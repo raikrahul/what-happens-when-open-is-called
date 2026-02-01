@@ -1,199 +1,253 @@
-1. echo 'int main() { open("somefile", O_RDWR); }' > test.c
-2. Run: cat test.c. What did you just write?
-3. gcc -c test.c -o test.o
-4. Run: file test.o. What does file report?
-5. readelf -r test.o | grep open
-6. What symbol type appears for open? Write as exact letters.
-7. MATH: If compiler knew open address, relocations section would show TYPE = REL, not UND. UND = undefined means symbol resolution deferred.
-8. objdump -d test.o | grep -A3 -B1 call
-9. What 5 bytes follow as call opcode? Write in hex.
-10. MATH: call opcode = 0xE8. 4-byte offset = 0x00000000. This placeholder will be filled later by linker.
-11. WHY: Establish baseline. Cannot teach linking without first showing compilation produces object file with unresolved symbols.
+===============================================================================
+                      AXIOMATIC OPEN() JOURNEY - WORKSHOP
+===============================================================================
 
-12. gcc test.o -o test
-13. Run: ldd test. Which libraries does your binary need?
-14. objdump -d test | grep -A5 -B5 call
-15. What address does call instruction target now? Write full address.
-16. readelf -a test | grep -A2 "Entry point"
-17. What is as program entry point address?
-18. MATH: Entry = 0x1050. PLT section starts here. Your call jumps to PLT, not directly to open().
-19. MEMORY LAYOUT BEFORE DYNAMIC LINKING:
-0x1050: call 0x[unknown_address]
-GOT at 0x3fd0: contains 0x00000000 (empty)
-20. WHY: Show linker creates trampoline. Cannot explain PLT without first demonstrating binary now has resolved call target.
+STEP 1: BASELINE COMPILATION
+-------------------------------------------
+1. Command: echo 'int main() { open("somefile", O_RDWR); }' > test.c
+2. Question: What text did you just write to test.c?
+3. Command: gcc -c test.c -o test.o
+4. Command: file test.o
+5. Question: What file type does 'file' report for test.o?
+6. Command: readelf -r test.o | grep open
+7. Question: What symbol type appears for open? Write exact letters.
+8. Mathematics: If compiler knew open address, relocations section would show TYPE = REL, not UND.
+   Explanation: UND = undefined means symbol resolution deferred to link time.
 
-21. gdb test
-22. break main
-23. run
-24. Run: info functions | grep open. How many open variants exist?
-25. disassemble open
-26. What address does GDB show for open function?
-27. quit
-28. ldd test | grep libc
-29. What is as full path to libc on your system?
-30. MATH: libc loads at random base due to ASLR=2. Your open address will change each execution.
-31. WHY: Discover runtime addresses. Cannot teach symbol resolution without first seeing actual addresses in debugger.
+STEP 2: LINKING ANALYSIS  
+-------------------------------------------
+9. Command: gcc test.o -o test
+10. Question: Run 'ldd test' - which libraries does your binary need?
+11. Command: objdump -d test | grep -A5 -B5 call
+12. Question: What address does call instruction target now? Write full address.
+13. Command: readelf -a test | grep -A2 "Entry point"
+14. Question: What is the program entry point address?
+15. Mathematics: Entry = 0x1050. PLT section starts here.
+   Explanation: Your call jumps to PLT trampoline, not directly to open().
 
-32. readelf -s /lib/x86_64-linux-gnu/libc.so.6 | grep -E "FUNC.*open"
-33. Find all symbols with "open" in name. List their addresses.
-34. Which one is marked as GLOBAL FUNC?
-35. MATH: open@GLIBC_2.2.5 at offset 0x11b150. This is as symbol your program will use.
-36. gdb test
-37. break main
-38. run
-39. print open
-40. What address does GDB print for open symbol?
-41. print (void *)open + 1
-42. What address is 1 byte after open? This proves open is real code.
-43. MATH: open_address = libc_base + 0x11b150. Base changes with ASLR, offset is constant.
-44. WHY: Verify symbol offsets. Cannot explain dynamic linking without first proving symbols have fixed offsets within library.
+STEP 3: RUNTIME SYMBOL DISCOVERY
+-------------------------------------------
+16. Command: gdb test
+   16a. break main
+   16b. run
+17. Command: info functions | grep open
+18. Question: How many open variants exist in the symbol table?
+19. Command: disassemble open
+20. Question: What address does GDB show for open function?
+21. Command: quit
+22. Command: ldd test | grep libc
+23. Question: What is the full path to libc on your system?
+24. Mathematics: libc loads at random base due to ASLR=2.
+   Explanation: Your open address will change each program execution.
 
-45. gdb test
-46. break *0x555555555050
-47. run
-48. x/10gx 0x555555557fd0
-49. What value is stored at as GOT slot for open?
-50. continue
-51. What function name appears after continuing?
-52. MATH: PLT jumps to GOT entry, GOT contains real open address, CPU lands in libc. Indirection complete.
-53. DYNAMIC RESOLUTION CHAIN:
-main → PLT(0x1050) → GOT(0x7fd0) → libc(0x7ffff7d1b150)
-Memory reads: 2 (PLT instruction, GOT indirection)
-54. WHY: Trace indirection. Cannot explain PLT/GOT mechanism without first following actual memory addresses through debugger.
+STEP 4: LIBRARY SYMBOL INVESTIGATION
+-------------------------------------------
+25. Command: readelf -s /lib/x86_64-linux-gnu/libc.so.6 | grep -E "FUNC.*open"
+26. Question: Find all symbols with "open" in name. List their addresses.
+27. Question: Which one is marked as GLOBAL FUNC?
+28. Mathematics: open@GLIBC_2.2.5 at offset 0x11b150.
+   Explanation: This is the symbol your program will use during resolution.
 
-55. gdb test
-56. break open
-57. run
-58. info registers rdi rsi rdx
-59. What are as exact values in RDI, RSI, RDX when open starts?
-60. print/x $rsi
-61. What is as hex value of your flags?
-62. MATH: O_RDWR = 2 decimal = 0x02 hex = 0000 0010 binary. RSI holds 0x02.
-63. stepi
-64. stepi
-65. stepi
-66. What instruction checks for O_CREAT flag?
-67. MATH: O_CREAT = 0x40 hex = 0100 0000 binary. AND operation: 0x02 & 0x40 = 0x00. Zero flag set.
-68. stepi
-69. Does jne instruction jump or fall through?
-70. RESULT: No mode argument needed, takes fast path.
-71. WHY: Analyze flag handling. Cannot explain conditional code paths without first observing CPU flags and instruction behavior.
+STEP 5: RUNTIME ADDRESS VERIFICATION  
+-------------------------------------------
+29. Command: gdb test
+   29a. break main
+   29b. run
+30. Command: print open
+31. Question: What address does GDB print for open symbol?
+32. Command: print (void *)open + 1
+33. Question: What address is 1 byte after open? This proves open is real code.
+34. Mathematics: open_address = libc_base + 0x11b150.
+   Explanation: Base changes with ASLR, offset is constant.
 
-72. gdb test
-73. break open
-74. run
-75. continue until cmpb instruction
-76. print/x $rip+0xefeae
-77. What is as address of __libc_single_threaded?
-78. x/1bx 0x7ffff7d0b040
-79. What byte value is stored there?
-80. MATH: cmpb compares 0x00 with 0x01. Result: not equal, zero flag clear, je does not jump.
-81. info proc mappings
-82. In which memory region is this variable located?
-83. ANSWER: libc data section (rw-p permission).
-84. WHY: Investigate thread safety. Cannot explain optimization paths without first reading actual memory contents and comparing with assembly.
+STEP 6: INDIRECT MEMORY ACCESS PROOF
+-------------------------------------------
+35. Command: gdb test
+   35a. break *0x555555555050
+   35b. run
+36. Command: x/10gx 0x555555557fd0
+37. Question: What value is stored at the GOT slot for open?
+38. Command: continue
+39. Question: What function name appears after continuing?
+40. Mathematics: PLT jumps to GOT entry, GOT contains real open address.
+   Explanation: CPU lands in libc. Indirection complete with 2 memory reads.
 
-85. gdb test
-86. break open
-87. run
-88. continue until mov $0xffffff9c,%edi
-89. print/t $edi
-90. What decimal value does EDI contain?
-91. MATH: Two's complement: invert 0x63 = 0x9C, add 1 = 0x9D. Sign-extend = 0xFFFFFF9C = -100 decimal.
-92. grep -r "AT_FDCWD" /usr/include/
-93. What file defines AT_FDCWD and what value?
-94. stepi
-95. stepi
-96. info registers eax
-97. What value is placed in EAX?
-98. MATH: 0x101 hex = 1*256 + 0*16 + 1 = 257 decimal. This is as __NR_openat.
-99. grep "257" /usr/include/x86_64-linux-gnu/asm/unistd_64.h
-100. What syscall number is 257?
-101. VERIFICATION: 257 = __NR_openat ✓.
-102. WHY: Verify syscall preparation. Cannot explain register setup without first deriving two's complement and confirming kernel constants.
+STEP 7: FLAG PROCESSING INVESTIGATION
+-------------------------------------------
+41. Command: gdb test
+   41a. break open
+   41b. run
+42. Command: info registers rdi rsi rdx
+43. Question: What are the exact values in RDI, RSI, RDX when open starts?
+44. Command: print/x $rsi
+45. Question: What is the hex value of your flags?
+46. Mathematics: O_RDWR = 2 decimal = 0x02 hex = 0000 0010 binary.
+47. Command: stepi
+   47a. stepi
+   47b. stepi
+48. Command: stepi
+49. Question: What instruction checks for O_CREAT flag?
+50. Mathematics: O_CREAT = 0x40 hex = 0100 0000 binary.
+51. Calculation: AND operation: 0x02 & 0x40 = 0x00. Zero flag set.
+52. Command: stepi
+53. Question: Does jne instruction jump or fall through?
 
-103. gdb test
-104. break syscall
-105. run
-106. info registers rax rdi rsi rdx
-107. Write as exact 4 register values before syscall:
-108. REGISTER VERIFICATION:
-RAX = 257 (openat syscall number) ✓
-RDI = -100 (AT_FDCWD) ✓  
-RSI = filename address ✓
-RDX = 2 (O_RDWR) ✓
-109. x/10i $rip-10
-110. What instruction comes before syscall?
-111. disassemble $rip
-112. What is as syscall instruction encoding?
-113. MATH: syscall = 0x0F 05. CPU will trap to kernel mode after this instruction.
-114. WHY: Confirm final state. Cannot claim syscall readiness without first showing exact register values and instruction bytes.
+STEP 8: THREAD SAFETY ANALYSIS
+-------------------------------------------
+54. Command: gdb test
+   54a. break open
+   54b. run
+55. Command: continue until cmpb instruction
+56. Command: print/x $rip+0xefeae
+57. Question: What is the address of __libc_single_threaded?
+58. Command: x/1bx 0x7ffff7d0b040
+59. Question: What byte value is stored there?
+60. Mathematics: cmpb compares 0x00 with 0x01.
+   Calculation: Result: not equal, zero flag clear, je does not jump.
+61. Command: info proc mappings
+62. Question: In which memory region is this variable located?
 
-115. cat /proc/self/maps | grep test
-116. List as VMA ranges for your test binary. Copy permissions.
-117. readelf -S test | grep -E "(text|data|bss)"
-118. Which sections are executable vs writable?
-119. MATH: .text = r-xp (code), .data = rw-p (writable GOT), .bss = rw-p (zero-initialized).
-120. objdump -h test
-121. What is as start address of .text section?
-122. objdump -h test | grep -A2 .got
-123. What is as start address of .got section?
-124. MATH: PLT lives in .text (executable), GOT lives in .got.plt (writable for dynamic linking).
-125. COMPLETE USER-SPACE MAP:
-0x5555555000-0x5555556000 r-xp .text (contains PLT)
-0x5555556000-0x5555557000 r--p .rodata (read-only)
-0x5555557000-0x5555558000 rw-p .data (contains GOT)
-126. WHY: Map memory layout. Cannot explain section permissions without first showing ELF sections and process mappings.
+STEP 9: SYSCALL PREPARATION VERIFICATION
+-------------------------------------------
+63. Command: gdb test
+   63a. break open
+   63b. run
+64. Command: continue until mov $0xffffff9c,%edi
+65. Command: print/t $edi
+66. Question: What decimal value does EDI contain?
+67. Mathematics: Two's complement of -100:
+   67a. Decimal 100 = 0x63 hex
+   67b. Invert 0x63 = 0x9C
+   67c. Add 1 = 0x9D
+   67d. Sign-extend = 0xFFFFFF9C
+68. Command: grep -r "AT_FDCWD" /usr/include/
+69. Question: What file defines AT_FDCWD and what value?
+70. Command: stepi
+70. Command: stepi
+71. Command: info registers eax
+72. Question: What value is placed in EAX?
+73. Mathematics: 0x101 hex = 1*256 + 0*16 + 1 = 257 decimal.
+74. Command: grep "257" /usr/include/x86_64-linux-gnu/asm/unistd_64.h
+75. Question: What syscall number is 257?
 
-127. objdump -d test | grep -A10 -B5 0x1050
-128. What are as exact PLT instructions for open?
-129. readelf -x .text test | grep -A5 -B5 50
-130. What are as raw bytes at PLT entry?
-131. readelf -r test | grep open
-132. What is as relocation type for open symbol?
-133. MATH: R_X86_64_JUMP_SLOT = 7. Type indicates PLT needs jump slot resolution at runtime.
-134. readelf -x .got.plt test
-135. How many bytes does each GOT entry occupy?
-136. ANSWER: 8 bytes (64-bit pointer).
-137. WHY: Examine PLT structure. Cannot explain indirection mechanism without first showing relocation types and entry sizes.
+STEP 10: FINAL STATE CONFIRMATION
+-------------------------------------------
+76. Command: gdb test
+   76a. break syscall
+   76b. run
+77. Command: info registers rax rdi rsi rdx
+78. Question: Write the exact 4 register values before syscall:
+79. Verification Mathematics:
+   RAX = 257 (openat syscall number) [ ] PASS/FAIL
+   RDI = -100 (AT_FDCWD) [ ] PASS/FAIL  
+   RSI = filename address [ ] PASS/FAIL
+   RDX = 2 (O_RDWR) [ ] PASS/FAIL
+80. Command: x/10i $rip-10
+81. Question: What instruction comes before syscall?
+82. Command: disassemble $rip
+83. Question: What is the syscall instruction encoding?
+84. Mathematics: syscall = 0x0F 05.
+   Explanation: CPU will trap to kernel mode after this instruction.
 
-138. gcc -c test.c -o test.o
-139. nm test.o
-140. What does nm show for open symbol?
-141. readelf -s test.o
-142. What symbol table exists in object file?
-143. MATH: Object file has .symtab but .dynsym is empty. Static linking vs dynamic linking difference.
-144. gcc -static test.c -o test_static
-145. ldd test_static
-146. What libraries does static binary need?
-147. objdump -d test_static | grep -A3 -B3 call
-148. What address does static version call directly?
-149. MATH: Static linking embeds open address directly. No PLT, no GOT, no indirection.
-150. readelf -r test_static
-151. Are there any relocations?
-152. ANSWER: None - fully resolved at link time.
-153. WHY: Compare static vs dynamic. Cannot explain linking choices without first showing relocations disappear in static build.
+STEP 11: VMA MEMORY LAYOUT ANALYSIS
+-------------------------------------------
+85. Command: cat /proc/self/maps | grep test
+86. Question: List the VMA ranges for your test binary. Copy permissions.
+87. Command: readelf -S test | grep -E "(text|data|bss)"
+88. Question: Which sections are executable vs writable?
+89. Mathematics: .text = r-xp (code), .data = rw-p (writable GOT).
+90. Command: objdump -h test
+91. Question: What is the start address of .text section?
+92. Command: objdump -h test | grep -A2 .got
+93. Question: What is the start address of .got section?
+94. Mathematics: PLT lives in .text (executable), GOT in .got.plt.
+95. Memory Layout Calculation:
+   0x5555555000-0x5555556000 r-xp .text (contains PLT)
+   0x5555556000-0x5555557000 r--p .rodata (read-only)
+   0x5555557000-0x5555558000 rw-p .data (contains GOT)
 
-154. gdb test
-155. break main
-156. run
-157. printf "filename=%p argv[1]\n", (char *)0x7fffffffeba0
-158. What is as stack address of your filename string?
-159. x/20s 0x7fffffffeba0
-160. What characters are stored at that stack address?
-161. MATH: Stack grows down. Arguments at higher addresses than local variables. argv[1] at 0x7fffffffeba0.
-162. info frame
-163. What is as current frame pointer value?
-164. info registers rsp rbp
-165. What are as stack and frame pointer values?
-166. MATH: RBP points to frame base, RSP points to stack top. RBP > RSP for valid stack frame.
-167. STACK LAYOUT:
-[higher addresses]
-0x7fffffffeba0: "somefile\0" (argv[1])
-0x7fffffffeba8: pointer to argv[1]
-0x7fffffffebb8: other argv entries
-0x7fffffffdc80: environment variables
-[stack grows down ↓]
-0x7fffffffdc50: RBP (frame pointer)
-0x7fffffffdc40: RSP (stack pointer)
-168. WHY: Understand stack layout. Cannot explain argument passing without first showing actual stack addresses and relationships.
+STEP 12: STATIC VS DYNAMIC COMPARISON
+-------------------------------------------
+96. Command: gcc -c test.c -o test.o
+97. Command: nm test.o
+98. Question: What does nm show for open symbol?
+99. Command: readelf -s test.o
+100. Question: What symbol table exists in object file?
+101. Mathematics: Object file has .symtab but .dynsym is empty.
+102. Command: gcc -static test.c -o test_static
+103. Command: ldd test_static
+104. Question: What libraries does static binary need?
+105. Command: objdump -d test_static | grep -A3 -B3 call
+106. Question: What address does static version call directly?
+107. Mathematics: Static linking embeds open address directly.
+   Explanation: No PLT, no GOT, no indirection.
+108. Command: readelf -r test_static
+109. Question: Are there any relocations?
+110. Result: None - fully resolved at link time.
+
+STEP 13: STACK LAYOUT INVESTIGATION
+-------------------------------------------
+111. Command: gdb test
+   111a. break main
+   111b. run
+112. Command: printf "filename=%p argv[1]\n", (char *)0x7fffffffeba0
+113. Question: What is the stack address of your filename string?
+114. Command: x/20s 0x7fffffffeba0
+115. Question: What characters are stored at that stack address?
+116. Mathematics: Stack grows down. Arguments at higher addresses.
+117. Command: info frame
+118. Question: What is the current frame pointer value?
+119. Command: info registers rsp rbp
+120. Question: What are the stack and frame pointer values?
+121. Mathematics: RBP points to frame base, RSP points to stack top.
+122. Stack Layout Calculation:
+   [higher addresses]
+   0x7fffffffeba0: "somefile\0" (argv[1])
+   0x7fffffffeba8: pointer to argv[1]
+   0x7fffffffebb8: other argv entries
+   0x7fffffffdc80: environment variables
+   [stack grows down ↓]
+   0x7fffffffdc50: RBP (frame pointer)
+   0x7fffffffdc40: RSP (stack pointer)
+
+STEP 14: PLT STRUCTURE EXAMINATION
+-------------------------------------------
+123. Command: objdump -d test | grep -A10 -B5 0x1050
+124. Question: What are the exact PLT instructions for open?
+125. Command: readelf -x .text test | grep -A5 -B5 50
+126. Question: What are the raw bytes at PLT entry?
+127. Command: readelf -r test | grep open
+128. Question: What is the relocation type for open symbol?
+129. Mathematics: R_X86_64_JUMP_SLOT = 7.
+130. Command: readelf -x .got.plt test
+131. Question: How many bytes does each GOT entry occupy?
+132. Result: 8 bytes (64-bit pointer).
+
+STEP 15: BINARY FORMAT ANALYSIS
+-------------------------------------------
+133. Command: hexdump -C test | head -20
+134. Question: What are the first 16 bytes of your binary?
+135. Command: readelf -h test | grep Magic
+136. Question: What are the magic bytes in ELF header?
+137. Mathematics: 0x7f 'ELF' = Executable and Linkable Format.
+138. Command: readelf -d test | grep -A5 -B5 "OS/ABI"
+139. Question: What ABI version does your binary use?
+140. Command: readelf -d test | grep -A5 -B5 "Type"
+141. Question: What is the binary file type?
+142. Mathematics: DYN (Position-Independent Executable) allows ASLR.
+143. Command: readelf -d test | grep -A5 -B5 "Entry point"
+144. Question: What is the entry point address?
+145. Result: 0x1050 = _start (not main).
+
+STEP 16: FINAL SYNTHESIS
+-------------------------------------------
+146. Complete Address Chain:
+    main → PLT(0x1050) → GOT(0x7fd0) → libc(0x7ffff7d1b150)
+147. Memory Reads Count: 2 (PLT instruction, GOT indirection)
+148. Resolution Method: Runtime dynamic linking
+149. Symbol Source: /lib/x86_64-linux-gnu/libc.so.6
+150. System Call: openat(AT_FDCWD, "somefile", O_RDWR)
+
+===============================================================================
+                      WORKSHOP COMPLETE
+===============================================================================
