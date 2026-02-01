@@ -1,158 +1,106 @@
-ABSTRACT
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>What Happens When Open Is Called</title>
+    <link rel="stylesheet" href="assets/css/style.css">
+</head>
+<body>
+    <div class="container">
+        <header>
+            <h1>WHAT HAPPENS WHEN OPEN() IS CALLED <span class="cursor"></span></h1>
+            <p>> AXIOMATIC INVESTIGATION: PRE-SYSCALL EXECUTION PATH</p>
+            <p>> TARGET: <span class="addr">LINUX x86_64</span></p>
+        </header>
 
-This paper presents a complete axiomatic investigation of the pre-syscall execution path of the open() system call. Each observation is derived from first principles using only system tools and mathematical analysis. No assumptions are made without empirical verification through instrumentation.
+        <section class="step">
+            <h2>01. CALCULATE RUNTIME BASE ADDRESS</h2>
+            <div class="cmd-block">
+FACT: libc.so.6 Start Address = <span class="addr">0x7ffff7c00000</span>
+OFFSET: Beginning of file = <span class="addr">0x000000</span>
+CALCULATION: <span class="addr">0x7ffff7c00000</span> + 0 = <span class="addr">0x7ffff7c00000</span>
+            </div>
+            <p class="output-block">MATCHES: info proc mappings output ✓</p>
+        </section>
 
-1.0 INTRODUCTION
+        <section class="step">
+            <h2>02. CALCULATE STATIC OFFSET OF OPEN()</h2>
+            <div class="cmd-block">
+FACT: Runtime Address of open() = <span class="addr">0x7ffff7d1b150</span>
+FACT: Base Address = <span class="addr">0x7ffff7c00000</span>
+CALCULATION: <span class="addr">0x7ffff7d1b150</span> - <span class="addr">0x7ffff7c00000</span> = <span class="addr">0x11b150</span>
+            </div>
+            <p class="output-block">MATCHES: readelf -s libc.so.6 | grep open ✓</p>
+        </section>
 
-The open() system call represents a fundamental boundary between user space and kernel space. While commonly treated as a simple function call, the actual journey from source code to kernel invocation involves multiple transformations, address translations, and register preparations. This paper investigates each step using the methodology of "observe, measure, calculate, verify" - establishing a complete chain of causality from compilation to syscall preparation.
+        <section class="step">
+            <h2>03. CALCULATE GOT ENTRY ADDR (RIP-RELATIVE)</h2>
+            <div class="cmd-block">
+FACT: RIP at JMP (Next Instruction) = <span class="addr">0x55555555505a</span>
+FACT: Offset from Machine Code (ff 25 76 2f 00 00) = <span class="addr">0x2f76</span>
+CALCULATION: <span class="addr">0x55555555505a</span> + <span class="addr">0x2f76</span> = <span class="addr">0x555555557fd0</span>
+            </div>
+            <p class="output-block">MATCHES: objdump output ✓</p>
+        </section>
 
-2.0 METHODOLOGY
+        <section class="step">
+            <h2>04. VERIFY GOT CONTENT</h2>
+            <div class="cmd-block">
+FACT: GOT Address = <span class="addr">0x555555557fd0</span>
+FACT: Content at GOT Address = <span class="addr">0x00007ffff7d1b150</span>
+VERIFICATION: <span class="addr">0x555555557fd0</span> -> <span class="addr">0x7ffff7d1b150</span>
+            </div>
+            <p class="output-block">MATCHES: Runtime Address from Step 02 ✓</p>
+        </section>
 
-The investigation proceeds through six phases:
-- Phase 1: Static compilation analysis
-- Phase 2: Dynamic linking investigation  
-- Phase 3: Runtime symbol resolution
-- Phase 4: Indirection mechanism verification
-- Phase 5: Register transformation analysis
-- Phase 6: Memory layout verification
+        <section class="step">
+            <h2>05. CALCULATE O_CREAT CHECK</h2>
+            <div class="cmd-block">
+FACT: User Flags (O_RDWR) = 2 = <span class="math">00000010</span>
+FACT: O_CREAT Mask = 0x40 = <span class="math">01000000</span>
+CALCULATION: <span class="math">00000010</span> & <span class="math">01000000</span> = 0
+            </div>
+            <p class="output-block">RESULT: Zero Flag Set. No Jump to Mode Logic. ✓</p>
+        </section>
 
-Each phase consists of executable exercises that must be performed by the reader, with all results recorded and verified mathematically.
+        <section class="step">
+            <h2>06. THREAD SAFETY CHECK</h2>
+            <div class="cmd-block">
+FACT: __libc_single_threaded = 1 (True)
+FACT: Comparison Value = 0 (False)
+CALCULATION: 1 != 0 -> True
+            </div>
+            <p class="output-block">RESULT: JE (Jump Equal) does NOT jump. Fast Path taken. ✓</p>
+        </section>
 
-3.0 PHASE 1: STATIC COMPILATION ANALYSIS
+        <section class="step">
+            <h2>07. TWO'S COMPLEMENT (AT_FDCWD)</h2>
+            <div class="cmd-block">
+FACT: AT_FDCWD = -100
+CALCULATION: 100 = <span class="math">0x64</span>
+INVERT BITS: ~0x64 = <span class="math">0xFFFFFF9B</span>
+ADD 1: <span class="math">0xFFFFFF9B</span> + 1 = <span class="addr">0xFFFFFF9C</span>
+            </div>
+            <p class="output-block">MATCHES: mov $0xffffff9c,%edi instruction ✓</p>
+        </section>
 
-EXERCISE 1.1: Object File Symbol Resolution
-Command: echo 'int main() { open("somefile", O_RDWR); }' > test.c
-Command: gcc -c test.c -o test.o
-Command: readelf -r test.o | grep open
-Observation Record: Symbol type for open appears as "UND"
-Question: What does "UND" indicate about symbol resolution?
-Verification: "UND" (undefined) confirms that compiler cannot resolve open() address at compile time, necessitating deferred resolution.
-
-MATHEMATICAL VERIFICATION: If compiler knew address, relocations would show "REL" type. The observation of "UND" mathematically proves the need for dynamic linking.
-
-EXERCISE 1.2: Call Instruction Analysis
-Command: objdump -d test.o | grep -A3 -B1 call
-Observation Record: Call instruction bytes = [e8 00 00 00 00]
-Question: What is the 4-byte displacement value in the call instruction?
-Verification: 0x00000000 confirms placeholder awaiting linker resolution.
-
-MATHEMATICAL VERIFICATION: Call opcode = 0xE8. The 4-byte displacement equals zero, proving incomplete address requiring post-compilation resolution.
-
-3.1 PHASE 2: DYNAMIC LINKING INVESTIGATION
-
-EXERCISE 2.1: Executable Address Mapping
-Command: gcc test.o -o test
-Command: objdump -d test | grep -A5 -B5 call
-Observation Record: Call target address = 0x1050
-Command: readelf -a test | grep -A2 "Entry point"
-Observation Record: Entry point address = 0x1050
-Question: Why does call instruction target 0x1050 instead of open() symbol address?
-Verification: The equality of call target and entry point proves the binary jumps to PLT section, not directly to resolved symbol.
-
-MATHEMATICAL ANALYSIS: The PLT (Procedure Linkage Table) begins at program entry point, creating a trampoline mechanism for indirect symbol resolution.
-
-EXERCISE 2.2: Library Dependency Analysis
-Command: ldd test
-Observation Record: libc.so.6 mapped at [specific address will vary]
-Question: What phenomenon causes the libc address to change between executions?
-Verification: Random base address confirms ASLR (Address Space Layout Randomization) is active.
-
-MATHEMATICAL IMPLICATION: ASLR = 2 confirms kernel randomizes shared library base addresses each execution for security.
-
-3.2 PHASE 3: RUNTIME SYMBOL RESOLUTION
-
-EXERCISE 3.1: Library Symbol Table Investigation
-Command: readelf -s /lib/x86_64-linux-gnu/libc.so.6 | grep -E "FUNC.*open"
-Observation Record: Multiple open variants found at specific offsets
-Question: Which symbol variant will your program actually use at runtime?
-Verification: Global FUNC symbol with lowest address typically selected by dynamic linker.
-
-MATHEMATICAL VERIFICATION: Symbol addresses within library are fixed offsets from library base. Dynamic linker calculates: final_address = library_base + symbol_offset.
-
-EXERCISE 3.2: Runtime Address Verification
-Command: gdb test
-Commands: break main, run, print open, quit
-Observation Record: open() function address = [specific address varies per run]
-Question: How can the same binary resolve to different addresses each execution?
-Verification: Varying addresses with fixed offsets prove GOT (Global Offset Table) modification at runtime.
-
-MATHEMATICAL ANALYSIS: Address = library_base + 0x11b150. Base varies, offset constant = mathematical proof of runtime resolution.
-
-3.3 PHASE 4: INDIRECTION MECHANISM VERIFICATION
-
-EXERCISE 4.1: GOT Population Analysis
-Command: gdb test
-Commands: break main, run, x/10gx 0x555555557fd0, continue
-Observation Record: GOT entry value = [libc_base + 0x11b150]
-Question: How does the GOT entry receive the correct address if the binary was compiled with unknown address?
-Verification: Dynamic linker writes resolved address to GOT before program execution begins.
-
-MATHEMATICAL VERIFICATION: Indirection chain = main → PLT → GOT → libc. Each step involves one memory read and one pointer dereference.
-
-EXERCISE 4.2: PLT Instruction Analysis
-Command: objdump -d test | grep -A10 -B5 0x1050
-Observation Record: PLT contains [specific instruction sequence]
-Question: What instruction performs the actual jump to the resolved address?
-Verification: The PLT contains an indirect jump instruction that reads from GOT and transfers control to resolved address.
-
-3.4 PHASE 5: REGISTER TRANSFORMATION ANALYSIS
-
-EXERCISE 5.1: Flag Processing Investigation
-Command: gdb test
-Commands: break open, run, info registers rdi rsi rdx, stepi
-Observation Record: RDI=[filename_ptr], RSI=2, RDX=[value], instruction sequence for O_CREAT check
-Question: What mathematical operation determines if mode argument is required?
-Verification: Binary AND operation (flags & O_CREAT) results in zero when O_CREAT is not set, confirming fast path selection.
-
-MATHEMATICAL ANALYSIS: O_RDWR = 0x02, O_CREAT = 0x40. Binary AND: 0x02 & 0x40 = 0x00. Mathematical proof of condition evaluation.
-
-EXERCISE 5.2: Thread Safety Analysis
-Command: gdb test
-Commands: break open, run until cmpb, x/1bx [address]
-Observation Record: Memory location contains value, comparison instruction observed
-Question: How does the thread safety check affect the execution path?
-Verification: Comparison result determines whether je (jump if equal) or jne (jump if not equal) instruction is taken, affecting code path selection.
-
-EXERCISE 5.3: Syscall Number Verification
-Command: grep -r "AT_FDCWD" /usr/include/
-Commands: break open, run until mov, stepi
-Observation Record: EDI receives -100, EAX receives 257
-Question: What mathematical operation converts -100 to the two's complement form stored in EDI?
-Verification: Two's complement: invert(100) + 1 = 0x9C, sign-extend = 0xFFFFFF9C. Mathematical proof of negative constant encoding.
-
-3.5 PHASE 6: MEMORY LAYOUT VERIFICATION
-
-EXERCISE 6.1: Virtual Memory Area Analysis
-Command: cat /proc/self/maps | grep test
-Commands: readelf -S test | grep -E "(text|data|bss)"
-Observation Record: VMA ranges with specific permissions for each section
-Question: Why are .text and .data sections in different VMA ranges with different permissions?
-Verification: .text (code) mapped as r-xp (readable, executable), .data (GOT) mapped as rw-p (readable, writable), proving security memory protection.
-
-MATHEMATICAL ANALYSIS: Memory protection implemented through page-level permissions aligns with security requirements (NX bit prevents executable stack).
-
-EXERCISE 6.2: Static vs Dynamic Comparison
-Command: gcc -static test.c -o test_static
-Commands: ldd test_static, objdump -d test_static, readelf -r test_static
-Observation Record: Static binary has no library dependencies, direct calls
-Question: What mechanism difference exists between static and dynamic linking?
-Verification: Absence of relocations in static binary proves all addresses resolved at link time.
-
-4.0 CONCLUSION
-
-This axiomatic investigation establishes a complete causal chain from source code compilation to kernel invocation. Each step was verified through mathematical analysis and system tool observation. The pre-syscall transformation involves: static compilation → dynamic linking → runtime resolution → indirect memory access → register preparation → kernel transition. 
-
-All observations derive from first principles without assumption, demonstrating that the open() system call invocation is a deterministic, measurable, and verifiable process.
-
-5.0 EXERCISE REPRODUCTION INSTRUCTIONS
-
-To validate these findings:
-1. Create test.c with the exact content shown
-2. Execute each command sequence as specified
-3. Record all observations in the spaces provided
-4. Perform each mathematical calculation independently
-5. Verify each result matches the expected values
-6. Compare static vs dynamic compilation approaches
-7. Document all addresses and memory layouts observed
-
-The complete investigation should be reproducible on any x86_64 Linux system with the same toolchain and glibc version.
+        <section class="step">
+            <h2>08. SYSCALL NUMBER (OPENAT)</h2>
+            <div class="cmd-block">
+FACT: __NR_openat defined in asm/unistd_64.h
+VALUE: 257 = <span class="addr">0x101</span>
+            </div>
+            <p class="output-block">MATCHES: mov $0x101, %eax instruction ✓</p>
+        </section>
+        
+        <section class="step" style="border-color: #ff5555;">
+            <h2 style="color: #ff5555;">FAILURE PREDICTIONS</h2>
+            <div class="cmd-block" style="border-left-color: #ff5555;">
+1. GOT OFFSET ERROR: If Step 03 is off by 1 byte -> <span class="addr">SEGFAULT</span> (Jumping to garbage).
+2. BITMASK ERROR: If O_CREAT mask was 0x3 -> Result Non-Zero -> Logic Error (Reading garbage stack args).
+            </div>
+        </section>
+    </div>
+</body>
+</html>
