@@ -388,6 +388,10 @@ OBSERVE:
     Operand: e2 fe ff ff (was 00 00 00 00 in object file!)
     Target: 0x1050 (open@plt)
 
+    DEFINITION: What is a PATCH?
+    Modifying the binary code after it has been generated.
+    The Linker overwrote the "00 00 00 00" placeholder with a real calculated value.
+
 MATH (Verify the Displacement):
     Displacement bytes: e2 fe ff ff (little-endian)
     As 32-bit signed: 0xfffffee2
@@ -406,6 +410,20 @@ MATH (Verify the Displacement):
     0x116e + (-286) = 0x116e - 0x11e = 0x1050
 
     CORRECT!
+
+    MATH (The Direction Pattern):
+    Call is at 0x1169.
+    Target is at 0x1050.
+    1169 > 1050.
+    Therefore, the call must jump BACKWARDS (Negative displacement).
+    
+    EXERCISE:
+    If the function was at 0x2000, would displacement be positive or negative?
+    0x2000 > 0x116e.
+    Target > RIP.
+    Result would be POSITIVE.
+
+    AXIOM: Linker computed displacement = target - next_RIP = 0x1050 - 0x116e = -286.
 
 AXIOM: Linker computed displacement = target - next_RIP = 0x1050 - 0x116e = -286.
 
