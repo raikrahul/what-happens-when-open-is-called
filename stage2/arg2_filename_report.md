@@ -333,6 +333,22 @@ Consumer code always reads 'name' pointer.
 - Consumer doesn't need to know which phase was used.
 ```
 
+DERIVATION 7.4: aname and uptr
+```
+SOURCE: fs/namei.c:202-203
+result->uptr = filename;
+result->aname = NULL;
+
+uptr (User Pointer):
+    Stores the ORIGINAL user-space address (0x7ffe...).
+    Purpose: Audit logs need to know WHERE the string came from.
+
+aname (Audit Name):
+    Starts as NULL.
+    Pointer to 'struct audit_names'.
+    Purpose: If auditing is enabled, this links to the audit record.
+```
+
 
 ## AXIOM 8: EMBEDDED_NAME_MAX
 SOURCE: fs/namei.c:127
