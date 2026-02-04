@@ -103,9 +103,9 @@ echo "----------------------------------------"
 
 # Test error demos
 error_demos=(
-    "error_demo_enoent"
-    "error_demo_eacces"
-    "error_demo_emfile"
+    "src/error_demos/error_demo_enoent"
+    "src/error_demos/error_demo_eacces"
+    "src/error_demos/error_demo_emfile"
 )
 
 for demo in "${error_demos[@]}"; do
