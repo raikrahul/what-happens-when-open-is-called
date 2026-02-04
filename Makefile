@@ -1,6 +1,6 @@
 CC = gcc
 CFLAGS = -Wall -Wextra -g -O2 -no-pie
-PROOFS_DIR = docs/proofs
+PROOFS_DIR = docs/proof_simulators
 LESSON_DIR = docs/lesson_details
 SRC_DIR = src
 
