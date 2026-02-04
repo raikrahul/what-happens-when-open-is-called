@@ -612,6 +612,10 @@ STEP 15: STACK CANARY - BUFFER OVERFLOW DETECTION
 DO:   Find the canary instruction.
 RUN:  gdb -batch -ex "x/15i 0x7ffff7d1b150" ./minimal_open | grep fs
 
+    EXPLANATION (GDB Flags):
+    x/15i: eXamine 15 Instructions (Opcode listing).
+    grep fs: Only show lines containing "fs" register.
+
 OUTPUT:
     mov    %fs:0x28,%rax
     mov    %rax,-0x48(%rbp)
@@ -623,6 +627,7 @@ OBSERVE:
 INQUIRY:
     Q: What is %fs?
     A: Segment register pointing to Thread Local Storage (TLS).
+       In modern Linux, it points to the TCB (Thread Control Block).
 
     Q: What is at offset 0x28?
     A: The stack canary - a random value set at program start.
@@ -635,6 +640,16 @@ MATH (Canary Location):
     Base pointer: rbp
     Canary stored at: rbp - 0x48
     0x48 = 72 bytes below rbp
+
+    MATH (The Buffer Pattern):
+    Variables = rbp - 0x48 to rbp (72 bytes).
+    If a variable writes 73 bytes, it overwrites the Canary.
+    
+    EXERCISE:
+    If you declare 'char buf[80]', where does it go?
+    It needs 80 bytes. Canary is at 72.
+    Compiler must grow the stack frame!
+    (See Step 14 - sub $0x60 is not enough, it would increase).
 
 AXIOM: Stack canary detects buffer overflows at function return.
 
@@ -661,6 +676,18 @@ INQUIRY:
     Q: Why two paths?
     A: Fast path avoids lock overhead.
        Slow path enables thread cancellation.
+
+    MATH (The Logic Pattern):
+    Instruction: cmpb $0x0, 0xefeae(%rip)
+    Logic: if (variable != 0) -> Fast.
+    Logic: if (variable == 0) -> Slow. (Wait, non-zero usually means TRUE?)
+    Here: 'Single Threaded' is TRUE (1) -> Optimized.
+    
+    EXERCISE:
+    If your program spawns a thread (`pthread_create`).
+    What happens to this variable?
+    Answer: libc sets it to 0 immediately!
+    The whole program switches to "Safe Mode" (Slow).
 
 AXIOM: Single-threaded programs take the fast path (no locks).
 
@@ -695,6 +722,19 @@ MATH (Bitwise AND):
 
     Result is 0, so O_CREAT is NOT set.
     No third argument (mode) is needed.
+
+    MATH (The Logic Pattern):
+    AND instruction acts as a FILTER using a MASK.
+    Mask: 0x40 (Only bit 6 is 1).
+    Input: O_RDWR (0x02).
+    Result: 0.
+
+    EXERCISE:
+    If you passed `O_CREAT | O_RDWR` (0x42).
+    0x42 = 0100 0010.
+    AND 0x40 (0100 0000).
+    Result = 0100 0000 (0x40).
+    Non-zero result -> Libc reads the 3rd argument!
 
 INQUIRY:
     Q: Why check O_CREAT?
