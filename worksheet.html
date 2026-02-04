@@ -340,6 +340,10 @@ OBSERVE:
     0x1030 is a STUB in .plt section.
     It pushes 0 (index) and jumps to 0x1020 (resolver).
 
+    DEFINITION: What is a STUB?
+    A tiny piece of code (glue) that handles the transition between two bigger pieces.
+    Here: It is the "glue" that pauses the program to call the linker.
+
 INQUIRY:
     Q: Why push 0?
     A: Index 0 means "first function in relocation table" = open.
@@ -350,12 +354,21 @@ INQUIRY:
 MATH (The Lazy Binding Loop):
     1. Code calls 0x1050 (open@plt)
     2. 0x1050 jumps to *0x3fd0
-    3. 0x3fd0 contains 0x1030
-    4. 0x1030 pushes index, jumps to 0x1020
+    3. 0x3fd0 contains 0x1030 (The Stub) - LOOP BACK!
+    4. 0x1030 pushes index, jumps to 0x1020 (The Manager)
     5. 0x1020 calls resolver
     6. Resolver finds real open() in libc
     7. Resolver writes real address to 0x3fd0
     8. Next call goes directly to libc (fast!)
+
+    MATH (The Loop Pattern):
+    Fast Path: 1050 -> 3fd0 -> Libc (Forward)
+    Slow Path: 1050 -> 3fd0 -> 1030 (Backward!!)
+    
+    EXERCISE:
+    Check the address direction.
+    1050 > 1030. The jump goes BACKWARDS in memory initially.
+    1050 < Libc. The jump goes FORWARDS in memory eventually.
 
 AXIOM: First call is SLOW (resolver). Subsequent calls are FAST (direct).
 
