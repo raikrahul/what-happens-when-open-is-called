@@ -1,0 +1,67 @@
+# PSEUDO-DEBUGGER TRACE: minimal_open
+
+> **FORMAT**: Step Number | Function | Line | Action | Data State
+
+```text
+#01. Call Site
+    Function: main
+    File: minimal_open.c (Line 4)
+    Action: Call 'open'
+    Values: file="somefile" (Address 0x2004), oflag=O_RDWR (2)
+    Real Data: RDI -> "somefile", RSI -> 2
+    Next: Jump to PLT (0x1050)
+
+#02. The Trampoline
+    Function: open@plt
+    File: minimal_open (Binary)
+    Action: Indirect Jump
+    Note: Reads address from GOT (Global Offset Table)
+    Real Data: GOT[0x18] contains 0x7ffff7d1b150 (Address of __libc_open64)
+    Next: Jump to 0x7ffff7d1b150
+
+#03. Library Entry
+    Function: __libc_open64
+    File: sysdeps/unix/sysv/linux/open64.c (Line 29)
+    Action: Prologue (Save Stack Frame)
+    Values: file="somefile", oflag=2
+    Work: push %rbp; mov %rsp, %rbp; sub $0x60, %rsp
+    Next: Line 33
+
+#04. Mode Logic
+    Function: __libc_open64
+    File: sysdeps/unix/sysv/linux/open64.c (Line 33)
+    Action: Check if (oflag & O_CREAT)
+    Values: oflag=2, O_CREAT=64 (0x40)
+    Calculation: 2 & 64 = 0 (False)
+    Real Data: %r10d = 2; and $0x40, %r10d; jne ...
+    Result: Skip Variable Arguments logic
+    Next: Line 41
+
+#05. Thread Safety Check
+    Function: __libc_open64
+    File: sysdeps/unix/sysv/linux/open64.c (Line 41 - SYSCALL_CANCEL Macro)
+    Action: Check global variable '__libc_single_threaded'
+    Real Data: cmpb $0x0, 0xefeae(%rip)
+    Value: 0 (Single Threaded Process)
+    Result: Take "Fast Path" (No async cancellation)
+    Next: Syscall Setup
+
+#06. Argument Translation
+    Function: __libc_open64
+    File: sysdeps/unix/sysv/linux/open64.c (Line 41 - openat)
+    Action: Convert 'open' args to 'openat' regs
+    Transformation:
+        1. New Arg1 (Directory): AT_FDCWD (-100) -> Put in RDI
+        2. Old Arg1 (File): "somefile"           -> Moved to RSI
+        3. Old Arg2 (Flags): 2                   -> Moved to RDX (via EBX)
+        4. Syscall Number: 257 (openat)          -> Put in RAX
+    Real Data: RDI=0xffffff9c (-100), RSI=Ptr, RDX=2, RAX=0x101 (257)
+
+#07. The Trap
+    Function: __libc_open64
+    File: sysdeps/unix/sysv/linux/open64.c (Line 41)
+    Action: Execute 'syscall' instruction
+    Current State: CPU in Ring 3 (User)
+    Caller Line: minimal_open.c:4 is waiting...
+    Work: CPU switches to Ring 0 (Kernel) and jumps to address in MSR_LSTAR
+```

@@ -1,0 +1,12 @@
+This is a **Work Order** for the Loader.
+
+`000000003fd0  ... R_X86_64_JUMP_SLO ... open ...`
+
+It means:
+1.  **Where**: Go to address `0x3fd0` (The Mailbox).
+2.  **What**: Find the real address of `open`.
+3.  **Action**: Write it there.
+
+Remember the **Impossible Jump**?
+`jmp *0x3fd0`
+The code jumps to `3fd0` because the Loader promised to put the answer there.
