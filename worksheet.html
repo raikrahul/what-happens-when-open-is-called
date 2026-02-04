@@ -514,6 +514,15 @@ INQUIRY:
     A: So you can write your OWN open() and libc will use yours.
        Example: LD_PRELOAD tricks for debugging or interception.
 
+    EXPLANATION (The Override Pattern):
+    Strong Symbol (Your code) > Weak Symbol (Libc).
+    If you define 'int open(...)', the linker picks YOURS.
+    
+    EXERCISE:
+    If you wrote a function called 'read' in your C file.
+    Would libc use your 'read' or its own?
+    Answer: Yours! (Because libc symbols are weak).
+
 AXIOM: open = __open_nocancel = __libc_open64 (same address, different names).
 
 
@@ -539,6 +548,15 @@ INQUIRY:
     Q: Why is this here?
     A: If malicious code jumps to middle of a function, CPU will crash.
        This protects against ROP (Return Oriented Programming) attacks.
+
+    MATH (The NOP Pattern):
+    Opcode: f3 0f 1e fa (4 bytes).
+    On older CPUs: This executes as a NOP (No Operation).
+    On newer CPUs: It checks for valid branching.
+    
+    EXERCISE:
+    Why use an instruction that does nothing on old CPUs?
+    Answer: Backward Compatibility! Old CPUs don't crash, they just ignore it.
 
 AXIOM: endbr64 marks the start of a valid function entry point.
 
@@ -566,6 +584,19 @@ MATH (Stack Frame Size):
     0x60 in hex
     = 6*16 + 0*1
     = 96 bytes
+
+    MATH (The Growth Pattern):
+    Instruction: sub $0x60, %rsp
+    Subtraction means the stack grows DOWN (towards lower addresses).
+    
+    EXERCISE:
+    If a function needed 200 bytes of local variables.
+    What hex value would follow 'sub'?
+    200 / 16 = 12 remainder 8. (Wait, 200 = 12*16 + 8).
+    12 = 0xC.
+    So 0xC8?
+    Check: 12*16 + 8 = 192 + 8 = 200.
+    Answer: sub $0xc8, %rsp.
 
 INQUIRY:
     Q: Why save r12 and rbx?
