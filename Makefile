@@ -1,8 +1,7 @@
 CC = gcc
 CFLAGS = -Wall -Wextra -g -O2 -no-pie
-PROOFS_DIR = docs/proof_simulators
-LESSON_DIR = docs/lesson_details
-SRC_DIR = src
+PROOFS_DIR = proofs
+AXIOMATIC_DIR = axiomatic_lessons
 
 # Proof programs
 PROOFS = $(PROOFS_DIR)/register_dump \
@@ -11,16 +10,17 @@ PROOFS = $(PROOFS_DIR)/register_dump \
          $(PROOFS_DIR)/kernel_permission_simulation
 
 # Axiomatic lesson programs
-AXIOMATIC_PROGS = $(LESSON_DIR)/00_failure_predictions/lesson_demo \
-                  $(LESSON_DIR)/01_the_syscall_interface/lesson_demo \
-                  $(LESSON_DIR)/02_the_kernel_entry/lesson_demo \
-                  $(LESSON_DIR)/03_the_path_walk/lesson_demo \
-                  $(LESSON_DIR)/04_the_allocation/lesson_demo \
-                  $(LESSON_DIR)/05_the_return/lesson_demo
+AXIOMATIC_PROGS = $(AXIOMATIC_DIR)/00_failure_predictions/lesson_demo \
+                  $(AXIOMATIC_DIR)/01_the_syscall_interface/lesson_demo \
+                  $(AXIOMATIC_DIR)/02_the_kernel_entry/lesson_demo \
+                  $(AXIOMATIC_DIR)/03_the_path_walk/lesson_demo \
+                  $(AXIOMATIC_DIR)/04_the_allocation/lesson_demo \
+                  $(AXIOMATIC_DIR)/05_the_return/lesson_demo
 
 # Error demonstration programs
-ERROR_DEMOS = $(SRC_DIR)/error_demos/error_demo_enoent \
-             $(SRC_DIR)/error_demos/error_demo_eacces
+ERROR_DEMOS = error_demo_enoent \
+             error_demo_eacces \
+             error_demo_emfile
 
 .PHONY: all clean proofs axiomatic errors test install-deps
 
