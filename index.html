@@ -12,25 +12,22 @@
     }
 
     body {
-      background: #0a0a0a;
-      overflow: hidden;
-      font-family: 'Courier New', monospace;
+      background: #111;
+      font-family: monospace;
+      font-size: 12px;
     }
 
     .header {
-      background: #111;
+      background: #222;
       color: #888;
-      padding: 8px 20px;
-      font-size: 12px;
+      padding: 5px 20px;
       display: flex;
       justify-content: space-between;
-      border-bottom: 1px solid #333;
     }
 
     .container {
       display: flex;
-      height: calc(100vh - 30px);
-      width: 100vw;
+      height: calc(100vh - 25px);
     }
 
     .panel {
@@ -44,32 +41,26 @@
       border-right: none;
     }
 
-    .panel iframe {
+    iframe {
       width: 100%;
-      min-width: 1200px;
       height: 100%;
       border: none;
-      display: block;
-    }
-
-    .scroll-hint {
-      color: #444;
     }
   </style>
 </head>
 
 <body>
   <div class="header">
-    <span>EXPLANATION (Left)</span>
-    <span class="scroll-hint">Each panel scrolls independently (vertical + horizontal)</span>
-    <span>WORKSHEET (Right)</span>
+    <span>EXPLANATION</span>
+    <span>Scroll each panel independently</span>
+    <span>WORKSHEET</span>
   </div>
   <div class="container">
     <div class="panel">
-      <iframe src="explanation.html" scrolling="yes"></iframe>
+      <iframe src="explanation.html"></iframe>
     </div>
     <div class="panel">
-      <iframe src="worksheet.html" scrolling="yes"></iframe>
+      <iframe src="worksheet.html"></iframe>
     </div>
   </div>
 </body>

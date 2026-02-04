@@ -1,43 +1,27 @@
 <!DOCTYPE html>
 <html>
-
 <head>
-  <meta charset="UTF-8">
-  <title>Worksheet: open() Complete with Axiom Comments</title>
-  <style>
-    body {
-      background: #fff;
-      color: #000;
-      font-family: 'Courier New', monospace;
-      font-size: 13px;
-      line-height: 1.5;
-      padding: 20px 40px;
-      min-width: 1200px;
-      width: max-content;
-    }
-
-    pre {
-      margin: 0;
-      white-space: pre;
-      overflow-x: visible;
-    }
-
-    .cmd {
-      font-style: italic;
-    }
-
-    .ptr {
-      font-weight: bold;
-    }
-
-    .cmt {
-      color: #666;
-    }
-  </style>
+<meta charset="UTF-8">
+<title>Worksheet: open() Axiomatic Derivation</title>
+<style>
+body {
+  background: #fff;
+  color: #000;
+  font-family: monospace;
+  font-size: 14px;
+  line-height: 1.6;
+  padding: 20px;
+  margin: 0;
+}
+pre {
+  margin: 0;
+  white-space: pre-wrap;
+  word-wrap: break-word;
+}
+</style>
 </head>
-
 <body>
-  <pre>
+<pre>
 ========================================================================================================================
 PART A: PLT-GOT ARITHMETIC
 ========================================================================================================================
@@ -46,209 +30,209 @@ PART A: PLT-GOT ARITHMETIC
 A00. AXIOM: WHAT IS GOT?
 ------------------------------------------------------------------------------------------------------------------------
 
-Before we calculate GOT addresses, we must define GOT.                         <span class="cmt">// Why do we need this? Without definition, GOT is magic.</span>
+Before we calculate GOT addresses, we must define GOT.                         // Why do we need this? Without definition, GOT is magic.
 
-GOT = Global Offset Table.                                                     <span class="cmt">// Definition: A table of pointers.</span>
-Purpose: Store addresses of external functions.                                <span class="cmt">// Why? Because addresses are unknown at compile time.</span>
-Location: In the .got section of the executable.                               <span class="cmt">// Where did this come from? From ELF specification.</span>
-Entry Size: 8 bytes (64-bit pointer).                                          <span class="cmt">// Why 8? Because x86_64 uses 64-bit addresses = 8 bytes.</span>
+GOT = Global Offset Table.                                                     // Definition: A table of pointers.
+Purpose: Store addresses of external functions.                                // Why? Because addresses are unknown at compile time.
+Location: In the .got section of the executable.                               // Where did this come from? From ELF specification.
+Entry Size: 8 bytes (64-bit pointer).                                          // Why 8? Because x86_64 uses 64-bit addresses = 8 bytes.
 
-How do we find GOT location?                                                   <span class="cmt">// This is the key question.</span>
+How do we find GOT location?                                                   // This is the key question.
 
-<span class="cmd">$ readelf -S minimal_open | grep got</span>                                            <span class="cmt">// Command: read ELF Section headers, filter for "got".</span>
+$ readelf -S minimal_open | grep got                                            // Command: read ELF Section headers, filter for "got".
 
-Output will show: .got at address <span class="ptr">0x____</span>                                        <span class="cmt">// Fill this blank from YOUR machine's output.</span>
+Output will show: .got at address 0x____                                        // Fill this blank from YOUR machine's output.
 
-This address is our AXIOM. We did not calculate it.                            <span class="cmt">// Critical: This is observed, not derived.</span>
-The linker decided this address. We accept it as given.                        <span class="cmt">// Why? Because the linker is the authority here.</span>
+This address is our AXIOM. We did not calculate it.                            // Critical: This is observed, not derived.
+The linker decided this address. We accept it as given.                        // Why? Because the linker is the authority here.
 
 ------------------------------------------------------------------------------------------------------------------------
 A01. GOT ADDRESS EQUATION
 ------------------------------------------------------------------------------------------------------------------------
 
-Now we derive the GOT address for a specific function.                         <span class="cmt">// What are we doing? Calculating where "open" is stored.</span>
+Now we derive the GOT address for a specific function.                         // What are we doing? Calculating where "open" is stored.
 
-Step 1: Identify GOT base address.                                             <span class="cmt">// Where does this come from? Section A00 above.</span>
-got_base = <span class="ptr">0x3fb8</span>                                                              <span class="cmt">// AXIOM: Observed from readelf -S. Not calculated.</span>
+Step 1: Identify GOT base address.                                             // Where does this come from? Section A00 above.
+got_base = 0x3fb8                                                              // AXIOM: Observed from readelf -S. Not calculated.
 
-Step 2: Identify function index.                                               <span class="cmt">// How do we know the index? We must derive it.</span>
+Step 2: Identify function index.                                               // How do we know the index? We must derive it.
 
-<span class="cmd">$ readelf -r minimal_open | grep "rela.plt" -A5</span>                                 <span class="cmt">// Command: read relocation table for PLT.</span>
+$ readelf -r minimal_open | grep "rela.plt" -A5                                 // Command: read relocation table for PLT.
 
-Output shows entries in order:                                                 <span class="cmt">// The ORDER is the index assignment.</span>
-  Entry 0: open                                                                <span class="cmt">// First entry = index 0. WHY? Because arrays start at 0.</span>
+Output shows entries in order:                                                 // The ORDER is the index assignment.
+  Entry 0: open                                                                // First entry = index 0. WHY? Because arrays start at 0.
 
-But wait - GOT has reserved entries!                                           <span class="cmt">// NEW THING ALERT: Where did "reserved" come from?</span>
+But wait - GOT has reserved entries!                                           // NEW THING ALERT: Where did "reserved" come from?
 
-GOT[0] = address of _DYNAMIC                                                   <span class="cmt">// AXIOM: ELF ABI specification says so.</span>
-GOT[1] = address of link_map                                                   <span class="cmt">// AXIOM: ELF ABI specification says so.</span>
-GOT[2] = address of _dl_runtime_resolve                                        <span class="cmt">// AXIOM: ELF ABI specification says so.</span>
+GOT[0] = address of _DYNAMIC                                                   // AXIOM: ELF ABI specification says so.
+GOT[1] = address of link_map                                                   // AXIOM: ELF ABI specification says so.
+GOT[2] = address of _dl_runtime_resolve                                        // AXIOM: ELF ABI specification says so.
 
-Therefore: First function slot = index 3.                                      <span class="cmt">// DERIVATION: 0,1,2 reserved. open is first. 0+3=3.</span>
+Therefore: First function slot = index 3.                                      // DERIVATION: 0,1,2 reserved. open is first. 0+3=3.
 
-Step 3: Calculate GOT address for open.                                        <span class="cmt">// Now we have all inputs. Let's compute.</span>
+Step 3: Calculate GOT address for open.                                        // Now we have all inputs. Let's compute.
 
-Equation: got_addr = got_base + (index * entry_size)                           <span class="cmt">// Where did this equation come from? Array indexing math.</span>
+Equation: got_addr = got_base + (index * entry_size)                           // Where did this equation come from? Array indexing math.
 
-got_addr = 0x3fb8 + (3 * 8)                                                    <span class="cmt">// Substitution: base=0x3fb8, index=3, size=8.</span>
+got_addr = 0x3fb8 + (3 * 8)                                                    // Substitution: base=0x3fb8, index=3, size=8.
 
-0x3fb8 in decimal:                                                             <span class="cmt">// WHY convert? To do the arithmetic properly.</span>
-  3 * 4096 = 12288                                                             <span class="cmt">// 0x3 * 0x1000</span>
-  f * 256  = 15 * 256 = 3840                                                   <span class="cmt">// 0xf * 0x100</span>
-  b * 16   = 11 * 16 = 176                                                     <span class="cmt">// 0xb * 0x10</span>
-  8 * 1    = 8                                                                 <span class="cmt">// 0x8 * 0x1</span>
-  sum      = 12288 + 3840 + 176 + 8 = <span class="ptr">16312</span>                                     <span class="cmt">// CALCULATION: add them up.</span>
+0x3fb8 in decimal:                                                             // WHY convert? To do the arithmetic properly.
+  3 * 4096 = 12288                                                             // 0x3 * 0x1000
+  f * 256  = 15 * 256 = 3840                                                   // 0xf * 0x100
+  b * 16   = 11 * 16 = 176                                                     // 0xb * 0x10
+  8 * 1    = 8                                                                 // 0x8 * 0x1
+  sum      = 12288 + 3840 + 176 + 8 = 16312                                     // CALCULATION: add them up.
 
-3 * 8 = 24                                                                     <span class="cmt">// CALCULATION: index * size.</span>
+3 * 8 = 24                                                                     // CALCULATION: index * size.
 
-16312 + 24 = <span class="ptr">16336</span>                                                             <span class="cmt">// CALCULATION: base + offset.</span>
+16312 + 24 = 16336                                                             // CALCULATION: base + offset.
 
-16336 in hex:                                                                  <span class="cmt">// WHY convert back? To verify against tools.</span>
-  16336 / 16 = 1021 remainder 0                                                <span class="cmt">// Last digit: 0</span>
-  1021 / 16  = 63 remainder 13 = d                                             <span class="cmt">// Next digit: d</span>
-  63 / 16    = 3 remainder 15 = f                                              <span class="cmt">// Next digit: f</span>
-  3 / 16     = 0 remainder 3                                                   <span class="cmt">// First digit: 3</span>
-  Result     = <span class="ptr">0x3fd0</span>                                                          <span class="cmt">// DERIVED: GOT address for open.</span>
+16336 in hex:                                                                  // WHY convert back? To verify against tools.
+  16336 / 16 = 1021 remainder 0                                                // Last digit: 0
+  1021 / 16  = 63 remainder 13 = d                                             // Next digit: d
+  63 / 16    = 3 remainder 15 = f                                              // Next digit: f
+  3 / 16     = 0 remainder 3                                                   // First digit: 3
+  Result     = 0x3fd0                                                          // DERIVED: GOT address for open.
 
-Step 4: VERIFY.                                                                <span class="cmt">// Never trust your calculation. Check against tool.</span>
+Step 4: VERIFY.                                                                // Never trust your calculation. Check against tool.
 
-<span class="cmd">$ readelf -r minimal_open | grep open</span>                                          <span class="cmt">// Command: find open in relocation table.</span>
+$ readelf -r minimal_open | grep open                                          // Command: find open in relocation table.
 
-Output shows: 0x3fd0 ... open                                                  <span class="cmt">// Does it match? If not, which step was wrong?</span>
+Output shows: 0x3fd0 ... open                                                  // Does it match? If not, which step was wrong?
 
 ------------------------------------------------------------------------------------------------------------------------
 A02. WHERE DID THE DISPLACEMENT COME FROM?
 ------------------------------------------------------------------------------------------------------------------------
 
-The PLT instruction contains a displacement. We must derive it.                <span class="cmt">// What are we doing? Reverse-engineering the jmp.</span>
+The PLT instruction contains a displacement. We must derive it.                // What are we doing? Reverse-engineering the jmp.
 
-<span class="cmd">$ objdump -d minimal_open | grep -A3 "open@plt"</span>                                 <span class="cmt">// Command: disassemble, find open's PLT entry.</span>
+$ objdump -d minimal_open | grep -A3 "open@plt"                                 // Command: disassemble, find open's PLT entry.
 
-Output:                                                                        <span class="cmt">// Read carefully. Every byte matters.</span>
-  1050: f3 0f 1e fa    endbr64                                                 <span class="cmt">// What is this? Security instruction. 4 bytes. Ignore for now.</span>
-  1054: ff 25 76 2f 00 00    jmp *0x2f76(%rip)                                  <span class="cmt">// THIS is the jump. Bytes: ff 25 76 2f 00 00.</span>
+Output:                                                                        // Read carefully. Every byte matters.
+  1050: f3 0f 1e fa    endbr64                                                 // What is this? Security instruction. 4 bytes. Ignore for now.
+  1054: ff 25 76 2f 00 00    jmp *0x2f76(%rip)                                  // THIS is the jump. Bytes: ff 25 76 2f 00 00.
 
-Let's decode the jmp instruction:                                              <span class="cmt">// Why? To understand how CPU calculates the target.</span>
+Let's decode the jmp instruction:                                              // Why? To understand how CPU calculates the target.
 
-ff 25 = opcode for "jmp *displacement(%rip)"                                   <span class="cmt">// AXIOM: Intel manual says so. Not derived.</span>
-76 2f 00 00 = displacement in little-endian                                    <span class="cmt">// What is little-endian? Low byte first. So 76, 2f, 00, 00.</span>
+ff 25 = opcode for "jmp *displacement(%rip)"                                   // AXIOM: Intel manual says so. Not derived.
+76 2f 00 00 = displacement in little-endian                                    // What is little-endian? Low byte first. So 76, 2f, 00, 00.
 
-Convert to big-endian (human readable):                                        <span class="cmt">// Reverse the bytes.</span>
-  76 2f 00 00 -> 00 00 2f 76                                                   <span class="cmt">// CALCULATION: swap byte order.</span>
-  = 0x00002f76                                                                 <span class="cmt">// RESULT: displacement is 0x2f76.</span>
+Convert to big-endian (human readable):                                        // Reverse the bytes.
+  76 2f 00 00 -> 00 00 2f 76                                                   // CALCULATION: swap byte order.
+  = 0x00002f76                                                                 // RESULT: displacement is 0x2f76.
 
-Now: what is %rip at this point?                                               <span class="cmt">// CRITICAL: RIP points to NEXT instruction, not current.</span>
+Now: what is %rip at this point?                                               // CRITICAL: RIP points to NEXT instruction, not current.
 
-jmp instruction at 0x1054.                                                     <span class="cmt">// AXIOM: observed from objdump.</span>
-jmp instruction is 6 bytes.                                                    <span class="cmt">// AXIOM: ff 25 XX XX XX XX = 6 bytes.</span>
-RIP = 0x1054 + 6 = 0x105a.                                                     <span class="cmt">// CALCULATION: instruction_addr + instruction_length.</span>
+jmp instruction at 0x1054.                                                     // AXIOM: observed from objdump.
+jmp instruction is 6 bytes.                                                    // AXIOM: ff 25 XX XX XX XX = 6 bytes.
+RIP = 0x1054 + 6 = 0x105a.                                                     // CALCULATION: instruction_addr + instruction_length.
 
-GOT address = RIP + displacement                                               <span class="cmt">// AXIOM: how RIP-relative addressing works.</span>
-            = 0x105a + 0x2f76                                                  <span class="cmt">// Substitution.</span>
+GOT address = RIP + displacement                                               // AXIOM: how RIP-relative addressing works.
+            = 0x105a + 0x2f76                                                  // Substitution.
 
-0x105a in decimal:                                                             <span class="cmt">// Convert for addition.</span>
-  1 * 4096 = 4096                                                              <span class="cmt">// 0x1 * 0x1000</span>
-  0 * 256  = 0                                                                 <span class="cmt">// 0x0 * 0x100</span>
-  5 * 16   = 80                                                                <span class="cmt">// 0x5 * 0x10</span>
-  a * 1    = 10                                                                <span class="cmt">// 0xa * 0x1</span>
-  sum      = 4096 + 0 + 80 + 10 = <span class="ptr">4186</span>                                          <span class="cmt">// CALCULATION.</span>
+0x105a in decimal:                                                             // Convert for addition.
+  1 * 4096 = 4096                                                              // 0x1 * 0x1000
+  0 * 256  = 0                                                                 // 0x0 * 0x100
+  5 * 16   = 80                                                                // 0x5 * 0x10
+  a * 1    = 10                                                                // 0xa * 0x1
+  sum      = 4096 + 0 + 80 + 10 = 4186                                          // CALCULATION.
 
-0x2f76 in decimal:                                                             <span class="cmt">// Convert displacement.</span>
-  2 * 4096 = 8192                                                              <span class="cmt">// 0x2 * 0x1000</span>
-  f * 256  = 15 * 256 = 3840                                                   <span class="cmt">// 0xf * 0x100</span>
-  7 * 16   = 112                                                               <span class="cmt">// 0x7 * 0x10</span>
-  6 * 1    = 6                                                                 <span class="cmt">// 0x6 * 0x1</span>
-  sum      = 8192 + 3840 + 112 + 6 = <span class="ptr">12150</span>                                       <span class="cmt">// CALCULATION.</span>
+0x2f76 in decimal:                                                             // Convert displacement.
+  2 * 4096 = 8192                                                              // 0x2 * 0x1000
+  f * 256  = 15 * 256 = 3840                                                   // 0xf * 0x100
+  7 * 16   = 112                                                               // 0x7 * 0x10
+  6 * 1    = 6                                                                 // 0x6 * 0x1
+  sum      = 8192 + 3840 + 112 + 6 = 12150                                       // CALCULATION.
 
-4186 + 12150 = <span class="ptr">16336</span>                                                            <span class="cmt">// CALCULATION: RIP + displacement.</span>
+4186 + 12150 = 16336                                                            // CALCULATION: RIP + displacement.
 
-16336 in hex = <span class="ptr">0x3fd0</span>                                                           <span class="cmt">// We calculated this in A01!</span>
+16336 in hex = 0x3fd0                                                           // We calculated this in A01!
 
-VERIFICATION: GOT address matches A01? ___                                     <span class="cmt">// Circle: YES/NO. If NO, find the error.</span>
+VERIFICATION: GOT address matches A01? ___                                     // Circle: YES/NO. If NO, find the error.
 
 ------------------------------------------------------------------------------------------------------------------------
 A03. CALL DISPLACEMENT (TWO'S COMPLEMENT)
 ------------------------------------------------------------------------------------------------------------------------
 
-The call instruction has bytes: e8 e2 fe ff ff                                 <span class="cmt">// AXIOM: observed from objdump.</span>
-We must derive where these bytes came from.                                    <span class="cmt">// What are we doing? Proving the linker's math.</span>
+The call instruction has bytes: e8 e2 fe ff ff                                 // AXIOM: observed from objdump.
+We must derive where these bytes came from.                                    // What are we doing? Proving the linker's math.
 
-<span class="cmd">$ objdump -d minimal_open | grep "call.*open"</span>                                   <span class="cmt">// Command: find the call instruction.</span>
+$ objdump -d minimal_open | grep "call.*open"                                   // Command: find the call instruction.
 
-Output: 1169: e8 e2 fe ff ff    call 1050 &lt;open@plt&gt;                            <span class="cmt">// call at 0x1169, target 0x1050.</span>
+Output: 1169: e8 e2 fe ff ff    call 1050 &lt;open@plt&gt;                            // call at 0x1169, target 0x1050.
 
-Step 1: Understand the call instruction format.                                <span class="cmt">// Why? To know how to calculate displacement.</span>
+Step 1: Understand the call instruction format.                                // Why? To know how to calculate displacement.
 
-e8 = opcode for "call rel32"                                                   <span class="cmt">// AXIOM: Intel manual. "rel32" means 32-bit relative.</span>
-e2 fe ff ff = displacement in little-endian                                    <span class="cmt">// These 4 bytes ARE the displacement.</span>
+e8 = opcode for "call rel32"                                                   // AXIOM: Intel manual. "rel32" means 32-bit relative.
+e2 fe ff ff = displacement in little-endian                                    // These 4 bytes ARE the displacement.
 
-Step 2: Calculate what RIP will be.                                            <span class="cmt">// CRITICAL: RIP points to instruction AFTER the call.</span>
+Step 2: Calculate what RIP will be.                                            // CRITICAL: RIP points to instruction AFTER the call.
 
-call instruction at 0x1169.                                                    <span class="cmt">// AXIOM: observed.</span>
-call instruction is 5 bytes.                                                   <span class="cmt">// AXIOM: e8 + 4 bytes = 5.</span>
-RIP = 0x1169 + 5 = 0x116e.                                                     <span class="cmt">// CALCULATION.</span>
+call instruction at 0x1169.                                                    // AXIOM: observed.
+call instruction is 5 bytes.                                                   // AXIOM: e8 + 4 bytes = 5.
+RIP = 0x1169 + 5 = 0x116e.                                                     // CALCULATION.
 
-Step 3: Calculate required displacement.                                       <span class="cmt">// What value must the linker write?</span>
+Step 3: Calculate required displacement.                                       // What value must the linker write?
 
-Equation: target = RIP + displacement                                          <span class="cmt">// AXIOM: how relative calls work.</span>
-Therefore: displacement = target - RIP                                         <span class="cmt">// Rearrange algebra.</span>
-         = 0x1050 - 0x116e                                                     <span class="cmt">// Substitution.</span>
+Equation: target = RIP + displacement                                          // AXIOM: how relative calls work.
+Therefore: displacement = target - RIP                                         // Rearrange algebra.
+         = 0x1050 - 0x116e                                                     // Substitution.
 
-0x1050 in decimal:                                                             <span class="cmt">// Convert.</span>
-  1*4096 + 0*256 + 5*16 + 0*1 = 4096 + 80 = <span class="ptr">4176</span>                               <span class="cmt">// CALCULATION.</span>
+0x1050 in decimal:                                                             // Convert.
+  1*4096 + 0*256 + 5*16 + 0*1 = 4096 + 80 = 4176                               // CALCULATION.
 
-0x116e in decimal:                                                             <span class="cmt">// Convert.</span>
-  1*4096 + 1*256 + 6*16 + 14*1 = 4096 + 256 + 96 + 14 = <span class="ptr">4462</span>                    <span class="cmt">// CALCULATION.</span>
+0x116e in decimal:                                                             // Convert.
+  1*4096 + 1*256 + 6*16 + 14*1 = 4096 + 256 + 96 + 14 = 4462                    // CALCULATION.
 
-4176 - 4462 = <span class="ptr">-286</span>                                                              <span class="cmt">// CALCULATION: negative! This is expected.</span>
+4176 - 4462 = -286                                                              // CALCULATION: negative! This is expected.
 
-Step 4: Convert -286 to two's complement (32-bit).                             <span class="cmt">// Why? Because x86 uses 2's complement for signed numbers.</span>
+Step 4: Convert -286 to two's complement (32-bit).                             // Why? Because x86 uses 2's complement for signed numbers.
 
-286 in binary:                                                                 <span class="cmt">// First convert positive value.</span>
-  286 = 256 + 16 + 8 + 4 + 2 = 2^8 + 2^4 + 2^3 + 2^2 + 2^1                     <span class="cmt">// CALCULATION: decompose.</span>
-  = 0000 0000 0000 0000 0000 0001 0001 1110                                    <span class="cmt">// RESULT: 32-bit binary.</span>
+286 in binary:                                                                 // First convert positive value.
+  286 = 256 + 16 + 8 + 4 + 2 = 2^8 + 2^4 + 2^3 + 2^2 + 2^1                     // CALCULATION: decompose.
+  = 0000 0000 0000 0000 0000 0001 0001 1110                                    // RESULT: 32-bit binary.
 
-Invert all bits:                                                               <span class="cmt">// Step 1 of 2's complement.</span>
-  = 1111 1111 1111 1111 1111 1110 1110 0001                                    <span class="cmt">// CALCULATION: flip 0<->1.</span>
+Invert all bits:                                                               // Step 1 of 2's complement.
+  = 1111 1111 1111 1111 1111 1110 1110 0001                                    // CALCULATION: flip 0<->1.
 
-Add 1:                                                                         <span class="cmt">// Step 2 of 2's complement.</span>
-  = 1111 1111 1111 1111 1111 1110 1110 0010                                    <span class="cmt">// CALCULATION: binary addition.</span>
+Add 1:                                                                         // Step 2 of 2's complement.
+  = 1111 1111 1111 1111 1111 1110 1110 0010                                    // CALCULATION: binary addition.
 
-Convert to hex:                                                                <span class="cmt">// Group into nibbles (4 bits each).</span>
-  1111 = f, 1111 = f, 1111 = f, 1111 = f                                       <span class="cmt">// First 16 bits = ffff.</span>
-  1111 = f, 1110 = e, 1110 = e, 0010 = 2                                       <span class="cmt">// Last 16 bits = fee2.</span>
-  = <span class="ptr">0xfffffee2</span>                                                                 <span class="cmt">// RESULT: -286 in 32-bit 2's complement.</span>
+Convert to hex:                                                                // Group into nibbles (4 bits each).
+  1111 = f, 1111 = f, 1111 = f, 1111 = f                                       // First 16 bits = ffff.
+  1111 = f, 1110 = e, 1110 = e, 0010 = 2                                       // Last 16 bits = fee2.
+  = 0xfffffee2                                                                 // RESULT: -286 in 32-bit 2's complement.
 
-Step 5: Convert to little-endian.                                              <span class="cmt">// Why? x86 stores multi-byte values low-byte-first.</span>
+Step 5: Convert to little-endian.                                              // Why? x86 stores multi-byte values low-byte-first.
 
-0xfffffee2 as bytes: ff ff fe e2                                               <span class="cmt">// Big-endian (human order).</span>
-Reverse: e2 fe ff ff                                                           <span class="cmt">// Little-endian (machine order).</span>
+0xfffffee2 as bytes: ff ff fe e2                                               // Big-endian (human order).
+Reverse: e2 fe ff ff                                                           // Little-endian (machine order).
 
-Step 6: VERIFY.                                                                <span class="cmt">// Does our calculation match the binary?</span>
+Step 6: VERIFY.                                                                // Does our calculation match the binary?
 
-<span class="cmd">$ xxd -s 0x116a -l 4 minimal_open</span>                                              <span class="cmt">// Command: dump 4 bytes starting at displacement field.</span>
+$ xxd -s 0x116a -l 4 minimal_open                                              // Command: dump 4 bytes starting at displacement field.
 
-Output should be: e2 fe ff ff                                                  <span class="cmt">// Compare to our calculation.</span>
-Match? ___                                                                     <span class="cmt">// Circle: YES/NO.</span>
+Output should be: e2 fe ff ff                                                  // Compare to our calculation.
+Match? ___                                                                     // Circle: YES/NO.
 
 ========================================================================================================================
 PART B: WHAT IS PLT? (MISSING SECTION - MUST DEFINE BEFORE USING)
 ========================================================================================================================
 
-Before we used "open@plt" we never defined what PLT is.                        <span class="cmt">// NEW THING ALERT: We introduced PLT without definition.</span>
+Before we used "open@plt" we never defined what PLT is.                        // NEW THING ALERT: We introduced PLT without definition.
 
-PLT = Procedure Linkage Table.                                                 <span class="cmt">// Definition: A table of small code stubs.</span>
-Purpose: Redirect function calls to actual addresses.                          <span class="cmt">// Why? Because actual addresses are unknown until runtime.</span>
-Location: In the .plt and .plt.sec sections.                                   <span class="cmt">// Where did this come from? ELF specification.</span>
-Entry Size: 16 bytes per function.                                             <span class="cmt">// Why 16? Architecture decision. Each stub is 16 bytes.</span>
+PLT = Procedure Linkage Table.                                                 // Definition: A table of small code stubs.
+Purpose: Redirect function calls to actual addresses.                          // Why? Because actual addresses are unknown until runtime.
+Location: In the .plt and .plt.sec sections.                                   // Where did this come from? ELF specification.
+Entry Size: 16 bytes per function.                                             // Why 16? Architecture decision. Each stub is 16 bytes.
 
-Relationship to GOT:                                                           <span class="cmt">// How do they connect?</span>
-  PLT entry N jumps to address stored in GOT entry N.                          <span class="cmt">// AXIOM: This is how lazy binding works.</span>
+Relationship to GOT:                                                           // How do they connect?
+  PLT entry N jumps to address stored in GOT entry N.                          // AXIOM: This is how lazy binding works.
 
-Why two tables?                                                                <span class="cmt">// Good question.</span>
-  PLT = CODE (instructions that jump).                                         <span class="cmt">// PLT is executable.</span>
-  GOT = DATA (addresses to jump to).                                           <span class="cmt">// GOT is writable.</span>
-  Separation = security (W^X: writable XOR executable).                        <span class="cmt">// Why? To prevent code injection attacks.</span>
+Why two tables?                                                                // Good question.
+  PLT = CODE (instructions that jump).                                         // PLT is executable.
+  GOT = DATA (addresses to jump to).                                           // GOT is writable.
+  Separation = security (W^X: writable XOR executable).                        // Why? To prevent code injection attacks.
 
 ========================================================================================================================
 PART C: METAMORPHOSIS - PHASE BY PHASE
@@ -258,128 +242,128 @@ PART C: METAMORPHOSIS - PHASE BY PHASE
 C01. SOURCE CODE (Phase 0)
 ------------------------------------------------------------------------------------------------------------------------
 
-<span class="cmd">$ cat minimal_open.c</span>                                                           <span class="cmt">// Command: view source.</span>
+$ cat minimal_open.c                                                           // Command: view source.
 
-Content:                                                                       <span class="cmt">// What do we observe?</span>
-  #include &lt;fcntl.h&gt;                                                           <span class="cmt">// Header file. Provides O_RDWR. Where is it? /usr/include.</span>
-  int main() {                                                                 <span class="cmt">// Entry point. Where did "main" come from? C standard.</span>
-    int fd = open("somefile", O_RDWR);                                         <span class="cmt">// Function call. What is "open"? A TOKEN at this point.</span>
-  }                                                                            <span class="cmt">// End. Simple program.</span>
+Content:                                                                       // What do we observe?
+  #include &lt;fcntl.h&gt;                                                           // Header file. Provides O_RDWR. Where is it? /usr/include.
+  int main() {                                                                 // Entry point. Where did "main" come from? C standard.
+    int fd = open("somefile", O_RDWR);                                         // Function call. What is "open"? A TOKEN at this point.
+  }                                                                            // End. Simple program.
 
-Key observation: "open" is just text.                                          <span class="cmt">// The CPU cannot execute text. It needs addresses.</span>
+Key observation: "open" is just text.                                          // The CPU cannot execute text. It needs addresses.
 
 ------------------------------------------------------------------------------------------------------------------------
 C02. PREPROCESSOR (Phase 1)
 ------------------------------------------------------------------------------------------------------------------------
 
-What happens: cpp replaces #include and #define.                               <span class="cmt">// What are we tracking? The token "open".</span>
+What happens: cpp replaces #include and #define.                               // What are we tracking? The token "open".
 
-<span class="cmd">$ gcc -E minimal_open.c | grep -E "(open|O_RDWR)"</span>                               <span class="cmt">// Command: preprocess, search for our tokens.</span>
+$ gcc -E minimal_open.c | grep -E "(open|O_RDWR)"                               // Command: preprocess, search for our tokens.
 
-Observation 1: O_RDWR becomes a number.                                        <span class="cmt">// Was O_RDWR defined? Where? In fcntl.h.</span>
+Observation 1: O_RDWR becomes a number.                                        // Was O_RDWR defined? Where? In fcntl.h.
 
-<span class="cmd">$ grep -r "O_RDWR" /usr/include/asm-generic/fcntl.h</span>                            <span class="cmt">// Command: find the definition.</span>
+$ grep -r "O_RDWR" /usr/include/asm-generic/fcntl.h                            // Command: find the definition.
 
-Output: #define O_RDWR 02                                                      <span class="cmt">// AXIOM: This is the definition. 02 is OCTAL.</span>
+Output: #define O_RDWR 02                                                      // AXIOM: This is the definition. 02 is OCTAL.
 
-Octal 02 to decimal:                                                           <span class="cmt">// Why convert? To use in calculations.</span>
-  0 * 8 + 2 * 1 = <span class="ptr">2</span>                                                             <span class="cmt">// CALCULATION: base-8 to base-10.</span>
+Octal 02 to decimal:                                                           // Why convert? To use in calculations.
+  0 * 8 + 2 * 1 = 2                                                             // CALCULATION: base-8 to base-10.
 
-Observation 2: "open" is UNCHANGED.                                            <span class="cmt">// Did preprocessor resolve "open"? NO.</span>
+Observation 2: "open" is UNCHANGED.                                            // Did preprocessor resolve "open"? NO.
 
-Why not? Because open is not a macro.                                          <span class="cmt">// There is no #define open. Check it.</span>
+Why not? Because open is not a macro.                                          // There is no #define open. Check it.
 
-<span class="cmd">$ gcc -E minimal_open.c | grep "#define open"</span>                                   <span class="cmt">// Command: search for open macro.</span>
+$ gcc -E minimal_open.c | grep "#define open"                                   // Command: search for open macro.
 
-Output: (empty)                                                                <span class="cmt">// No macro. "open" passes through unchanged.</span>
+Output: (empty)                                                                // No macro. "open" passes through unchanged.
 
 ------------------------------------------------------------------------------------------------------------------------
 C03. COMPILATION (Phase 2)
 ------------------------------------------------------------------------------------------------------------------------
 
-What happens: cc1 translates C to assembly.                                    <span class="cmt">// What are we tracking? Still "open".</span>
+What happens: cc1 translates C to assembly.                                    // What are we tracking? Still "open".
 
-<span class="cmd">$ gcc -S minimal_open.c -o minimal_open.s</span>                                      <span class="cmt">// Command: compile to assembly.</span>
-<span class="cmd">$ grep open minimal_open.s</span>                                                     <span class="cmt">// Command: find "open" in assembly.</span>
+$ gcc -S minimal_open.c -o minimal_open.s                                      // Command: compile to assembly.
+$ grep open minimal_open.s                                                     // Command: find "open" in assembly.
 
-Output: call open@PLT                                                          <span class="cmt">// "open" became "open@PLT". What does @PLT mean?</span>
+Output: call open@PLT                                                          // "open" became "open@PLT". What does @PLT mean?
 
-@PLT = "resolve this through the Procedure Linkage Table"                      <span class="cmt">// AXIOM: Compiler convention for external functions.</span>
+@PLT = "resolve this through the Procedure Linkage Table"                      // AXIOM: Compiler convention for external functions.
 
-Why @PLT? Because compiler knows open is EXTERNAL.                             <span class="cmt">// How does it know? Because there's no definition in this file.</span>
+Why @PLT? Because compiler knows open is EXTERNAL.                             // How does it know? Because there's no definition in this file.
 
 ------------------------------------------------------------------------------------------------------------------------
 C04. ASSEMBLY (Phase 3)
 ------------------------------------------------------------------------------------------------------------------------
 
-What happens: as translates assembly to object code.                           <span class="cmt">// What are we tracking? The call instruction.</span>
+What happens: as translates assembly to object code.                           // What are we tracking? The call instruction.
 
-<span class="cmd">$ gcc -c minimal_open.c -o minimal_open.o</span>                                      <span class="cmt">// Command: assemble to object file.</span>
-<span class="cmd">$ objdump -d minimal_open.o | grep call</span>                                        <span class="cmt">// Command: disassemble, find call.</span>
+$ gcc -c minimal_open.c -o minimal_open.o                                      // Command: assemble to object file.
+$ objdump -d minimal_open.o | grep call                                        // Command: disassemble, find call.
 
-Output: 20: e8 00 00 00 00    call 25 &lt;main+0x25&gt;                               <span class="cmt">// Displacement is 00 00 00 00. WHY ZEROS?</span>
+Output: 20: e8 00 00 00 00    call 25 &lt;main+0x25&gt;                               // Displacement is 00 00 00 00. WHY ZEROS?
 
-Because assembler does not know where open will be.                            <span class="cmt">// It's external. Address unknown.</span>
-Assembler writes PLACEHOLDER (zeros).                                          <span class="cmt">// The linker will fill this in.</span>
+Because assembler does not know where open will be.                            // It's external. Address unknown.
+Assembler writes PLACEHOLDER (zeros).                                          // The linker will fill this in.
 
-But how will linker know what to fill?                                         <span class="cmt">// Good question.</span>
+But how will linker know what to fill?                                         // Good question.
 
-Assembler creates RELOCATION ENTRY:                                            <span class="cmt">// A note for the linker.</span>
+Assembler creates RELOCATION ENTRY:                                            // A note for the linker.
 
-<span class="cmd">$ readelf -r minimal_open.o | grep open</span>                                        <span class="cmt">// Command: read relocation table.</span>
+$ readelf -r minimal_open.o | grep open                                        // Command: read relocation table.
 
-Output: 0x21 R_X86_64_PLT32 open - 4                                           <span class="cmt">// AXIOM: This is the relocation record.</span>
+Output: 0x21 R_X86_64_PLT32 open - 4                                           // AXIOM: This is the relocation record.
 
-Let's decode each field:                                                       <span class="cmt">// Don't skip any field.</span>
-  0x21 = offset where patch goes.                                              <span class="cmt">// Why 0x21? Because e8 is at 0x20, displacement at 0x21.</span>
-  R_X86_64_PLT32 = relocation type.                                            <span class="cmt">// What does it mean? "32-bit PLT-relative patch".</span>
-  open = symbol name.                                                          <span class="cmt">// What to look up.</span>
-  -4 = addend.                                                                 <span class="cmt">// Why -4? See Part A03 for explanation.</span>
+Let's decode each field:                                                       // Don't skip any field.
+  0x21 = offset where patch goes.                                              // Why 0x21? Because e8 is at 0x20, displacement at 0x21.
+  R_X86_64_PLT32 = relocation type.                                            // What does it mean? "32-bit PLT-relative patch".
+  open = symbol name.                                                          // What to look up.
+  -4 = addend.                                                                 // Why -4? See Part A03 for explanation.
 
 ------------------------------------------------------------------------------------------------------------------------
 C05. LINKING (Phase 4)
 ------------------------------------------------------------------------------------------------------------------------
 
-What happens: ld combines objects, resolves symbols.                            <span class="cmt">// What are we tracking? The zeros becoming real bytes.</span>
+What happens: ld combines objects, resolves symbols.                            // What are we tracking? The zeros becoming real bytes.
 
-<span class="cmd">$ gcc minimal_open.o -o minimal_open</span>                                           <span class="cmt">// Command: link.</span>
-<span class="cmd">$ objdump -d minimal_open | grep "call.*open"</span>                                  <span class="cmt">// Command: find the call now.</span>
+$ gcc minimal_open.o -o minimal_open                                           // Command: link.
+$ objdump -d minimal_open | grep "call.*open"                                  // Command: find the call now.
 
-Output: 1169: e8 e2 fe ff ff    call 1050 &lt;open@plt&gt;                            <span class="cmt">// Zeros became e2 fe ff ff. This is our Part A03.</span>
+Output: 1169: e8 e2 fe ff ff    call 1050 &lt;open@plt&gt;                            // Zeros became e2 fe ff ff. This is our Part A03.
 
-Linker did:                                                                    <span class="cmt">// Reconstruct linker's actions.</span>
-  1. Created .plt section with stub for open.                                  <span class="cmt">// Why? To enable lazy binding.</span>
-  2. Created .got entry for open.                                              <span class="cmt">// Why? To store the runtime address.</span>
-  3. Calculated displacement to PLT: 0x1050 - 0x116e = -286.                   <span class="cmt">// We verified this in Part A03.</span>
-  4. Wrote -286 as 2's complement little-endian: e2 fe ff ff.                  <span class="cmt">// We calculated this in Part A03.</span>
+Linker did:                                                                    // Reconstruct linker's actions.
+  1. Created .plt section with stub for open.                                  // Why? To enable lazy binding.
+  2. Created .got entry for open.                                              // Why? To store the runtime address.
+  3. Calculated displacement to PLT: 0x1050 - 0x116e = -286.                   // We verified this in Part A03.
+  4. Wrote -286 as 2's complement little-endian: e2 fe ff ff.                  // We calculated this in Part A03.
 
 ------------------------------------------------------------------------------------------------------------------------
 C06. RUNTIME RESOLUTION (Phase 5)
 ------------------------------------------------------------------------------------------------------------------------
 
-What happens: Dynamic linker resolves actual address.                           <span class="cmt">// What are we tracking? GOT entry value.</span>
+What happens: Dynamic linker resolves actual address.                           // What are we tracking? GOT entry value.
 
-Initially, GOT[open] points to a stub.                                         <span class="cmt">// Why? Lazy binding - don't resolve until needed.</span>
+Initially, GOT[open] points to a stub.                                         // Why? Lazy binding - don't resolve until needed.
 
-<span class="cmd">$ xxd -s 0x2fd0 -l 8 minimal_open</span>                                              <span class="cmt">// Command: dump GOT entry (file offset = 0x3fd0 - 0x1000).</span>
+$ xxd -s 0x2fd0 -l 8 minimal_open                                              // Command: dump GOT entry (file offset = 0x3fd0 - 0x1000).
 
-Output: 30 10 00 00 00 00 00 00                                                <span class="cmt">// Little-endian. Reverse: 00 00 00 00 00 00 10 30 = 0x1030.</span>
+Output: 30 10 00 00 00 00 00 00                                                // Little-endian. Reverse: 00 00 00 00 00 00 10 30 = 0x1030.
 
-0x1030 is the PLT stub address.                                                <span class="cmt">// VERIFY: objdump shows stub at 0x1030.</span>
+0x1030 is the PLT stub address.                                                // VERIFY: objdump shows stub at 0x1030.
 
-After first call, resolver patches GOT:                                        <span class="cmt">// What happens at runtime?</span>
+After first call, resolver patches GOT:                                        // What happens at runtime?
 
-<span class="cmd">$ gdb ./minimal_open</span>                                                           <span class="cmt">// Command: debug.</span>
-(gdb) break *0x1169                                                            <span class="cmt">// Break at call.</span>
-(gdb) run                                                                      <span class="cmt">// Execute.</span>
-(gdb) x/gx 0x555555557fd0                                                      <span class="cmt">// Examine GOT (ASLR base + 0x3fd0).</span>
+$ gdb ./minimal_open                                                           // Command: debug.
+(gdb) break *0x1169                                                            // Break at call.
+(gdb) run                                                                      // Execute.
+(gdb) x/gx 0x555555557fd0                                                      // Examine GOT (ASLR base + 0x3fd0).
 
-BEFORE: 0x555555555030                                                         <span class="cmt">// Points to stub (base + 0x1030).</span>
+BEFORE: 0x555555555030                                                         // Points to stub (base + 0x1030).
 
-(gdb) stepi (repeat until past resolver)                                       <span class="cmt">// Step through.</span>
-(gdb) x/gx 0x555555557fd0                                                      <span class="cmt">// Examine again.</span>
+(gdb) stepi (repeat until past resolver)                                       // Step through.
+(gdb) x/gx 0x555555557fd0                                                      // Examine again.
 
-AFTER: 0x7ffff7d1b150                                                          <span class="cmt">// Points to libc! Resolver patched it.</span>
+AFTER: 0x7ffff7d1b150                                                          // Points to libc! Resolver patched it.
 
 ========================================================================================================================
 PART D: LIBC INTERNALS - WHAT HAPPENS INSIDE OPEN?
@@ -389,106 +373,106 @@ PART D: LIBC INTERNALS - WHAT HAPPENS INSIDE OPEN?
 D01. FINDING OPEN IN LIBC
 ------------------------------------------------------------------------------------------------------------------------
 
-We know GOT gets 0x7ffff7d1b150. But what IS at that address?                  <span class="cmt">// Let's verify it's really open.</span>
+We know GOT gets 0x7ffff7d1b150. But what IS at that address?                  // Let's verify it's really open.
 
-<span class="cmd">$ nm -D /lib/x86_64-linux-gnu/libc.so.6 | grep -w open</span>                         <span class="cmt">// Command: list dynamic symbols.</span>
+$ nm -D /lib/x86_64-linux-gnu/libc.so.6 | grep -w open                         // Command: list dynamic symbols.
 
-Output: 000000000011b150 W open@@GLIBC_2.2.5                                    <span class="cmt">// open is at offset 0x11b150 in libc.</span>
+Output: 000000000011b150 W open@@GLIBC_2.2.5                                    // open is at offset 0x11b150 in libc.
 
-libc base + offset = runtime address:                                          <span class="cmt">// Let's verify the math.</span>
-  base   = 0x7ffff7c00000                                                      <span class="cmt">// From gdb info proc mappings.</span>
-  offset = 0x11b150                                                            <span class="cmt">// From nm.</span>
-  sum    = ?                                                                   <span class="cmt">// We must calculate.</span>
+libc base + offset = runtime address:                                          // Let's verify the math.
+  base   = 0x7ffff7c00000                                                      // From gdb info proc mappings.
+  offset = 0x11b150                                                            // From nm.
+  sum    = ?                                                                   // We must calculate.
 
-0x7ffff7c00000 + 0x11b150:                                                     <span class="cmt">// This is a 48-bit addition.</span>
+0x7ffff7c00000 + 0x11b150:                                                     // This is a 48-bit addition.
 
-Easier: 0x7ffff7c00000 + 0x11b150                                              <span class="cmt">// Just add the lower bits.</span>
-      = 0x7ffff7c00000 + 0x00011b150                                           <span class="cmt">// Align.</span>
-      = 0x7ffff7d1b150                                                         <span class="cmt">// RESULT. Matches GDB!</span>
+Easier: 0x7ffff7c00000 + 0x11b150                                              // Just add the lower bits.
+      = 0x7ffff7c00000 + 0x00011b150                                           // Align.
+      = 0x7ffff7d1b150                                                         // RESULT. Matches GDB!
 
 ------------------------------------------------------------------------------------------------------------------------
 D02. OPEN IS AN ALIAS
 ------------------------------------------------------------------------------------------------------------------------
 
-Something strange in the nm output: W means WEAK symbol.                       <span class="cmt">// What does that mean?</span>
+Something strange in the nm output: W means WEAK symbol.                       // What does that mean?
 
-<span class="cmd">$ readelf -s /lib/x86_64-linux-gnu/libc.so.6 | grep 11b150</span>                     <span class="cmt">// Command: find all symbols at that address.</span>
+$ readelf -s /lib/x86_64-linux-gnu/libc.so.6 | grep 11b150                     // Command: find all symbols at that address.
 
-Output:                                                                        <span class="cmt">// Multiple symbols at SAME address!</span>
-  11b150 ... __open_nocancel                                                   <span class="cmt">// This is the REAL function.</span>
-  11b150 ... open@@GLIBC_2.2.5                                                 <span class="cmt">// This is an ALIAS (weak).</span>
-  11b150 ... __libc_open64                                                     <span class="cmt">// Another alias.</span>
+Output:                                                                        // Multiple symbols at SAME address!
+  11b150 ... __open_nocancel                                                   // This is the REAL function.
+  11b150 ... open@@GLIBC_2.2.5                                                 // This is an ALIAS (weak).
+  11b150 ... __libc_open64                                                     // Another alias.
 
-DERIVATION: open = __open_nocancel = __libc_open64.                            <span class="cmt">// They are ALL the same function.</span>
+DERIVATION: open = __open_nocancel = __libc_open64.                            // They are ALL the same function.
 
 ------------------------------------------------------------------------------------------------------------------------
 D03. REGISTER SHUFFLE (OPEN -> OPENAT)
 ------------------------------------------------------------------------------------------------------------------------
 
-You called: open(file, flags)                                                  <span class="cmt">// Two arguments.</span>
-Kernel has: openat(dirfd, file, flags, mode)                                   <span class="cmt">// Four arguments.</span>
+You called: open(file, flags)                                                  // Two arguments.
+Kernel has: openat(dirfd, file, flags, mode)                                   // Four arguments.
 
-Libc TRANSFORMS your call:                                                     <span class="cmt">// Why? Because kernel uses openat syscall.</span>
+Libc TRANSFORMS your call:                                                     // Why? Because kernel uses openat syscall.
 
-BEFORE (your call):                                                            <span class="cmt">// ABI: arguments in rdi, rsi, rdx, ...</span>
-  RDI = 0x555555556004 (pointer to "somefile")                                 <span class="cmt">// Arg 1: filename.</span>
-  RSI = 2 (O_RDWR)                                                             <span class="cmt">// Arg 2: flags.</span>
+BEFORE (your call):                                                            // ABI: arguments in rdi, rsi, rdx, ...
+  RDI = 0x555555556004 (pointer to "somefile")                                 // Arg 1: filename.
+  RSI = 2 (O_RDWR)                                                             // Arg 2: flags.
 
-AFTER (libc transforms):                                                       <span class="cmt">// Libc shuffles registers.</span>
-  RDI = 0xffffff9c (AT_FDCWD)                                                  <span class="cmt">// Arg 1: "current directory".</span>
-  RSI = 0x555555556004 (pointer to "somefile")                                 <span class="cmt">// Arg 2: filename (was RDI).</span>
-  RDX = 2 (O_RDWR)                                                             <span class="cmt">// Arg 3: flags (was RSI).</span>
-  R10 = 0 (mode, unused because no O_CREAT)                                    <span class="cmt">// Arg 4: mode.</span>
-  RAX = 257 (openat syscall number)                                            <span class="cmt">// Syscall number.</span>
+AFTER (libc transforms):                                                       // Libc shuffles registers.
+  RDI = 0xffffff9c (AT_FDCWD)                                                  // Arg 1: "current directory".
+  RSI = 0x555555556004 (pointer to "somefile")                                 // Arg 2: filename (was RDI).
+  RDX = 2 (O_RDWR)                                                             // Arg 3: flags (was RSI).
+  R10 = 0 (mode, unused because no O_CREAT)                                    // Arg 4: mode.
+  RAX = 257 (openat syscall number)                                            // Syscall number.
 
-What is AT_FDCWD?                                                              <span class="cmt">// NEW THING. Must define.</span>
+What is AT_FDCWD?                                                              // NEW THING. Must define.
 
-AT_FDCWD = -100                                                                <span class="cmt">// AXIOM: defined in fcntl.h.</span>
-Meaning: "use current working directory"                                       <span class="cmt">// Why? So openat with AT_FDCWD behaves like open.</span>
+AT_FDCWD = -100                                                                // AXIOM: defined in fcntl.h.
+Meaning: "use current working directory"                                       // Why? So openat with AT_FDCWD behaves like open.
 
--100 in 32-bit two's complement:                                               <span class="cmt">// We must derive this.</span>
-  100 decimal = 64 + 32 + 4 = 0110 0100 binary                                 <span class="cmt">// CALCULATION.</span>
-  invert:       1001 1011                                                      <span class="cmt">// CALCULATION.</span>
-  + 1:          1001 1100                                                      <span class="cmt">// CALCULATION.</span>
-  32-bit:       1111 1111 1111 1111 1111 1111 1001 1100                        <span class="cmt">// Sign extend.</span>
-  hex:          0xffffff9c                                                     <span class="cmt">// RESULT.</span>
+-100 in 32-bit two's complement:                                               // We must derive this.
+  100 decimal = 64 + 32 + 4 = 0110 0100 binary                                 // CALCULATION.
+  invert:       1001 1011                                                      // CALCULATION.
+  + 1:          1001 1100                                                      // CALCULATION.
+  32-bit:       1111 1111 1111 1111 1111 1111 1001 1100                        // Sign extend.
+  hex:          0xffffff9c                                                     // RESULT.
 
-<span class="cmd">$ python3 -c "print(hex(-100 & 0xffffffff))"</span>                                   <span class="cmt">// VERIFY.</span>
-Output: 0xffffff9c                                                             <span class="cmt">// Matches.</span>
+$ python3 -c "print(hex(-100 & 0xffffffff))"                                   // VERIFY.
+Output: 0xffffff9c                                                             // Matches.
 
 ========================================================================================================================
 PART E: FAILURE PREDICTIONS
 ========================================================================================================================
 
-For each error, we calculate the EXACT consequence.                            <span class="cmt">// Not just "it crashes". HOW does it crash?</span>
+For each error, we calculate the EXACT consequence.                            // Not just "it crashes". HOW does it crash?
 
 ------------------------------------------------------------------------------------------------------------------------
 E01. LINKER DISPLACEMENT OFF BY 1
 ------------------------------------------------------------------------------------------------------------------------
 
-Correct: e2 fe ff ff                                                           <span class="cmt">// We calculated this.</span>
-Wrong:   e3 fe ff ff                                                           <span class="cmt">// What if lowest byte is e3?</span>
+Correct: e2 fe ff ff                                                           // We calculated this.
+Wrong:   e3 fe ff ff                                                           // What if lowest byte is e3?
 
-Wrong displacement in decimal:                                                 <span class="cmt">// Calculate.</span>
-  0xfffffee3 as signed = -285                                                  <span class="cmt">// One less than correct (-286).</span>
+Wrong displacement in decimal:                                                 // Calculate.
+  0xfffffee3 as signed = -285                                                  // One less than correct (-286).
 
-Wrong target = 0x116e + (-285) = 0x116e - 285                                  <span class="cmt">// Calculate.</span>
-  0x116e = 4462                                                                <span class="cmt">// From earlier.</span>
-  4462 - 285 = 4177                                                            <span class="cmt">// CALCULATION.</span>
-  4177 in hex = 0x1051                                                         <span class="cmt">// CALCULATION.</span>
+Wrong target = 0x116e + (-285) = 0x116e - 285                                  // Calculate.
+  0x116e = 4462                                                                // From earlier.
+  4462 - 285 = 4177                                                            // CALCULATION.
+  4177 in hex = 0x1051                                                         // CALCULATION.
 
-Expected target: 0x1050                                                        <span class="cmt">// What we wanted.</span>
-Actual target:   0x1051                                                        <span class="cmt">// What CPU jumps to.</span>
+Expected target: 0x1050                                                        // What we wanted.
+Actual target:   0x1051                                                        // What CPU jumps to.
 
-What is at 0x1051?                                                             <span class="cmt">// Let's check.</span>
+What is at 0x1051?                                                             // Let's check.
 
-<span class="cmd">$ objdump -d minimal_open | grep "1051"</span>                                        <span class="cmt">// Command.</span>
+$ objdump -d minimal_open | grep "1051"                                        // Command.
 
-0x1050 = endbr64 (f3 0f 1e fa) = 4 bytes.                                      <span class="cmt">// Instruction at 0x1050.</span>
-0x1051 = middle of endbr64!                                                    <span class="cmt">// This is not a valid instruction start.</span>
+0x1050 = endbr64 (f3 0f 1e fa) = 4 bytes.                                      // Instruction at 0x1050.
+0x1051 = middle of endbr64!                                                    // This is not a valid instruction start.
 
-Result: CPU tries to decode 0f 1e fa ff as an instruction.                     <span class="cmt">// 0f 1e = NOP or something else?</span>
-Likely: Undefined behavior, crash, or wrong execution.                         <span class="cmt">// CATASTROPHIC.</span>
+Result: CPU tries to decode 0f 1e fa ff as an instruction.                     // 0f 1e = NOP or something else?
+Likely: Undefined behavior, crash, or wrong execution.                         // CATASTROPHIC.
 
 ========================================================================================================================
 FINAL CHAIN
@@ -505,8 +489,7 @@ FINAL CHAIN
                 -> patches GOT
                   -> all future calls go to libc
 
-EVERY NUMBER DERIVED. NO MAGIC.                                                <span class="cmt">// Did you follow every step?</span>
+EVERY NUMBER DERIVED. NO MAGIC.                                                // Did you follow every step?
 </pre>
 </body>
-
 </html>
