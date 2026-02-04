@@ -420,6 +420,21 @@ ONE-LINE SUMMARY: WHAT DOES getname() DO?
 getname(user_ptr) → copies string from user space to kernel buffer, returns struct filename *
 ```
 
+## AXIOM 9.1: WHY getname_flags()?
+SOURCE: fs/namei.c:216
+```c
+struct filename *
+getname(const char __user * filename)
+{
+    return getname_flags(filename, 0, NULL);
+}
+```
+Wrapper Purpose:
+- Passes `flags = 0`
+- `flags` controls `LOOKUP_EMPTY` (Line 196)
+- If `flags` is 0, empty string "" returns -ENOENT
+- `open()` calls `getname()` -> forbids empties.
+
 
 DERIVATION 9.2: Phase 2 size calculation (Line 164)
 ```
