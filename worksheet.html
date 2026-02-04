@@ -200,9 +200,20 @@ INQUIRY:
        Data sections (.got) are grouped separately.
        This is for memory protection (code = read+execute, data = read+write).
 
-MATH (Address Spacing):
-    .plt to .plt.sec:  0x1050 - 0x1020 = 0x30 = 48 bytes
-    .plt.sec to .text: 0x1060 - 0x1050 = 0x10 = 16 bytes
+MATH (Address Spacing & Patterns):
+    Pattern 1: The PLT Header Size
+    .plt start (0x1020) vs .plt.got start (0x1040).
+    Gap = 0x1040 - 0x1020 = 0x20 (32 bytes).
+    
+    Pattern 2: The PLT Entry Size (Standard)
+    .plt.sec start (0x1050) vs .text start (0x1060).
+    Gap = 0x1060 - 0x1050 = 0x10 (16 bytes).
+
+    EXERCISE:
+    If we had a second function 'close()', where would its PLT stub be?
+    Answer: 0x1050 + 0x10 = 0x1060 (Pushing .text down).
+    
+    Verify this spacing on YOUR machine! It is a rigid pattern.
 
 AXIOM: Linker creates PLT (code) and GOT (data). PLT is at lower address.
 
@@ -230,6 +241,11 @@ INQUIRY:
     Q: What is 0x2f76(%rip)?
     A: RIP-relative addressing. Add 0x2f76 to the next RIP.
 
+    Q: Why use RIP-relative?
+    A: It allows the code to be generally position-independent (within limits).
+       The *distance* between PLT (code) and GOT (data) is constant.
+       Even if kernel moves the whole program, the distance remains the same.
+
 MATH (Calculate Jump Target):
     Instruction at 0x1054, length = 6 bytes (ff 25 + 4 bytes displacement)
     Next RIP = 0x1054 + 6 = 0x105a
@@ -239,6 +255,12 @@ MATH (Calculate Jump Target):
     0x2f76 in decimal: 12150
     Sum: 4186 + 12150 = 16336
     16336 in hex: 0x3fd0
+
+    EXERCISE:
+    If the displacement was 0x2f86 instead of 0x2f76, where would it jump?
+    Target = 0x105a + 0x2f86 = 0x3fe0 (Next GOT slot!)
+    This confirms the pattern: 16 bytes code gap aligns with 8 bytes data gap?
+    (Wait for Step 08 to see!)
 
 CONCLUSION: PLT jumps to address stored at 0x3fd0.
 
@@ -278,6 +300,26 @@ MATH (Little-Endian to Value):
     Bytes: 30 10 00 00 00 00 00 00
     Read right-to-left: 00 00 00 00 00 00 10 30
     Result: 0x1030
+
+MATH (The Index Pattern):
+    GOT Base = 0x3fb8 (from readelf -S output in Step 06)
+    Reserved Slots = 3 (Always!)
+    Slot Size = 8 bytes
+    Our Address = 0x3fd0
+
+    Gap = 0x3fd0 - 0x3fb8 = 0x18 (24 decimal)
+    Index = Gap / 8 = 3.
+    
+    Why 3?
+    Index 0: Reserved
+    Index 1: Reserved
+    Index 2: Reserved
+    Index 3: First Function (open)!
+
+    EXERCISE:
+    Where would the SECOND function be located?
+    Index 4.
+    Addr = 0x3fb8 + (4 * 8) = 0x3fb8 + 32 = 0x3fb8 + 0x20 = 0x3fd8.
 
 AXIOM: GOT is DATA. It stores addresses. Initially points to resolver stub.
 
