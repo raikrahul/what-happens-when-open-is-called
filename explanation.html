@@ -1,0 +1,680 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+  <meta charset="UTF-8">
+  <title>Explanation - open() from scratch</title>
+  <style>
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+    }
+
+    body {
+      background: #0a0a12;
+      color: #e0e0e0;
+      font-family: 'Courier New', monospace;
+      font-size: 13px;
+      line-height: 1.5;
+      padding: 20px;
+    }
+
+    pre {
+      white-space: pre-wrap;
+      word-wrap: break-word;
+      margin: 0;
+    }
+
+    .calc {
+      background: #1a1a2a;
+      border-left: 3px solid #4a4a6a;
+      padding: 10px;
+      margin: 10px 0;
+    }
+
+    .verify {
+      background: #1a2a1a;
+      border-left: 3px solid #4a6a4a;
+      padding: 5px 10px;
+      margin: 5px 0;
+      font-size: 12px;
+    }
+
+    h2 {
+      color: #8888aa;
+      border-bottom: 1px solid #333;
+      padding-bottom: 5px;
+      margin: 20px 0 10px 0;
+      font-size: 14px;
+    }
+
+    .title {
+      font-size: 16px;
+      color: #aaaacc;
+      margin-bottom: 20px;
+    }
+  </style>
+</head>
+
+<body>
+  <pre>
+You know: byte=8bits, file=bytes at offsets,
+0x prefix=hex, little-endian=low byte first.
+ASCII lookup: s=0x73, o=0x6f, m=0x6d, e=0x65.
+
+<h2>01. SOURCE & PREPROCESSING</h2>
+
+Axiom 1: Source Code
+Run: cat minimal_open.c
+  ...
+  #include &lt;fcntl.h&gt;
+  ...
+  open("somefile", O_RDWR);
+
+Axiom 2: Header Definitions
+Run: grep -r "define O_RDWR" /usr/include | grep 0
+  /usr/include/asm-generic/fcntl.h:#define O_RDWR 00000002
+
+Computation (Preprocessor):
+1. Finds `#include &lt;fcntl.h&gt;`.
+2. Reads definition `O_RDWR = 02` (Octal).
+3. Replaces `O_RDWR` with `02`.
+
+Result:
+Run: gcc -E minimal_open.c | tail -1
+  int fd = open("somefile", 02);
+
+Verified: 02 (Octal) = 2 (Decimal).
+
+<h2>02. COMPILATION & RELOCATION</h2>
+
+Axiom 1: The Instruction
+Run: objdump -d minimal_open.o
+  ...
+  20:   e8 00 00 00 00    call   25 &lt;main+0x25&gt;
+
+Observation:
+  20: Opcode `e8` (1 byte).
+  21: Operand `00 00 00 00` (4 bytes).
+  25: End of instruction.
+
+Axiom 2: The Relocation
+Run: readelf -r minimal_open.o | grep 21
+  000000000021  000500000004 R_X86_64_PLT32    ... open - 4
+
+Breakdown of the Axiom:
+1. **0x21 (Offset)**:
+   Matches the start of the Operand (`20 + 1`).
+   Linker writes here.
+
+2. **R_X86_64_PLT32 (Type)**:
+   `PLT`: Target is the Procedure Linkage Table.
+   `32`: Write a 32-bit value.
+
+3. **open - 4 (Addend)**:
+   Why minus 4?
+   The CPU calculates: `Target = RIP + Displacement`.
+   `RIP` points to the **next instruction** (0x25).
+   The Patch is at `0x21`.
+   `RIP` is `Patch + 4` bytes ahead.
+
+   Algebra:
+   `Displacement = Target - RIP`
+   `Displacement = Target - (Patch + 4)`
+   `Displacement = (Target - Patch) - 4`
+
+   The `- 4` tells the Linker: "Subtract 4 bytes because RIP is 4 bytes ahead of the patch location."
+
+Conclusion:
+The Relocation Record is a **Formula** for the Linker to fill the Blank.
+
+<h2>03. LINKING: The Layout</h2>
+
+Run: readelf -S (Section Headers) minimal_open | grep -E "(plt|text|got)"
+
+  .plt     0x1020
+  .plt.got 0x1040
+  .plt.sec 0x1050
+  .text    0x1060
+  .got     0x3fb8
+
+Base Axioms (The Pattern):
+1. **.plt** (0x1020): **Slow Resolution Stubs**. (Lazy binding).
+2. **.plt.got** (0x1040): **Local GOT Stubs**. (Internal calls).
+3. **.plt.sec** (0x1050): **Fast Direct Jumps**. (External calls).
+4. **.text** (0x1060): **Your Main Code**. (Instructions).
+
+Observation (The Numbers):
+1020 + 0x20 (32 bytes) = 1040.
+1040 + 0x10 (16 bytes) = 1050.
+1050 + 0x10 (16 bytes) = 1060.
+**Pattern**: Code sections are tightly packed in **16-byte (0x10)** chunks.
+
+<h2>04. LINKING: Slot Assignment</h2>
+
+Axiom 1: The Function Index
+Run: readelf -r minimal_open | grep "rela.plt" -A2
+
+(Flag `-A2` means "Show the matching line + 2 lines **After** it".)
+
+  Relocation section '.rela.plt' at offset 0x610 contains 1 entry:
+  Offset          Info           Type           Sym. Value    Sym. Name + Addend
+  000000003fd0  000400000007 R_X86_64_JUMP_SLO 0000000000000000 open@GLIBC_2.2.5 + 0
+
+Analysis of the Numbers:
+1. **000000003fd0**: The **Target Address** in the GOT.
+   This is where the linker wants the final address written.
+   **Fact**: GOT Slot is at `0x3fd0`.
+
+2. **Index 0**: Since this is the **1st line** of data in the table, it is Relocation Index 0.
+
+Derivation (GOT Slot):
+  GOT Base = 0x3fb8 (from Section 03).
+  Target = 0x3fd0.
+  Diff = 0x3fd0 - 0x3fb8 = 0x18 (24 decimal).
+  24 bytes / 8 bytes-per-entry = 3 entries.
+
+  **Verification (The Reserved Slots):**
+  Run: `readelf -x .got minimal_open`
+    0x00003fb8 c83d0000 ... (Slot 0: Dynamic)
+    0x00003fc0 00000000 ... (Slot 1: Reserved)
+    0x00003fc8 00000000 ... (Slot 2: Reserved)
+    0x00003fd0 30100000 ... (Slot 3: `open` -> 0x1030)
+
+  **Conclusion**: Linker reserved 3 slots (0, 1, 2). This (Index 0) is Slot 3.
+  **Note**: It points to `0x1030` (The Fallback Stub).
+
+Axiom 2: The Call Target
+Run: objdump -d minimal_open | grep "open@plt"
+  1050: ... &lt;open@plt&gt;
+
+Derivation (PLT.SEC Slot):
+  PLT.SEC Base = 0x1050.
+  Target = 0x1050.
+  Diff = 0.
+  **Conclusion**: Index 0 is at offset 0.
+
+Axiom 3: The Fallback Stub
+Run: objdump -d minimal_open | grep -A2 "1030:"
+  1030: ... push $0 ...
+
+Derivation (PLT Slot):
+  PLT Base = 0x1020.
+  Stub = 0x1030.
+  Diff = 0x10 (16 bytes).
+  **Conclusion**: Header takes 16 bytes. Index 0 is immediately after.
+
+<h2>05. LINKING: The Patch Formula</h2>
+
+Run: objdump -d minimal_open | grep "call.*open"
+
+  1169: e8 e2 fe ff ff    call 1050 &lt;open@plt&gt;
+
+Question: How does `e8 00...` become `e2 fe...`?
+
+Analysis of the Numbers:
+1. **0x1169**: Address of the Call Instruction.
+2. **5 Bytes**: Opcode `e8` (1) + Operand (4).
+3. **0x116e**: The **Next RIP**.
+   (CPU: Fetch 5 bytes -> RIP is now `1169 + 5 = 116e`).
+4. **0x1050**: The **Target** (from Section 04).
+
+The Formula (PC-Relative):
+  `Displacement = Target - Next_RIP`
+  `Displacement = 0x1050 - 0x116e`
+
+Calculation (Hex Subtraction):
+  `1050` is smaller than `116e`. Result is negative.
+  Diff = `116e - 1050 = 0x11e` (286 decimal).
+  Result = `-0x11e`.
+
+Derivation (Two's Complement):
+  Positive 286 (`11e`):  `0000 0001 0001 1110` (16-bit view)
+  Invert Bits:           `1111 1110 1110 0001`
+  Add 1:                 `1111 1110 1110 0010`
+  Hex:                   `F    E    E    2`
+  Full 32-bit:           `fffffee2`
+
+Derivation (Little Endian):
+  Value: `ff ff fe e2`
+  Write LSB first:
+  Byte 1: `e2`
+  Byte 2: `fe`
+  Byte 3: `ff`
+  Byte 4: `ff`
+
+**Verified**: Linker wrote `e2 fe ff ff`.
+
+<h2>06. LINKING: The GOT Connection (The Bridge)</h2>
+
+Run: objdump -d minimal_open | grep -A2 "open@plt"
+
+  1050: ...
+  1054: ff 25 76 2f 00 00   jmp *0x2f76(%rip)
+
+Analysis of the Instruction:
+1. **ff 25** (Opcode): **JUMP INDIRECT**.
+   Meaning: "Do not jump to `Target`. Jump to the address **stored** at `Target`."
+2. **76 2f 00 00** (Operand): The Displacement.
+3. **Length**: 6 Bytes (2 Opcode + 4 Operand).
+
+Calculation (Finding the Pointer):
+  `Instruction Start = 0x1054`
+  `Next RIP = 1054 + 6 = 0x105a`
+  `Displacement = 0x2f76`
+
+  `Pointer Address = RIP + Displacement`
+  `Pointer Address = 0x105a + 0x2f76 = 0x3fd0`
+
+Verification:
+  We derived `0x3fd0` in Section 04.
+  It is **GOT Slot 3**.
+
+Why do we do it this way? (Indirection)
+  The Code (`1054`) is Read-Only. We cannot change it.
+  The GOT (`3fd0`) is Writable Data.
+  By jumping *through* the GOT, the Dynamic Linker can simple update the data at `3fd0` to redirect `open()`, without rewriting the code.
+
+<h2>07. RUNTIME: Initial State (Lazy Binding)</h2>
+
+Axiom 1: The GOT Value
+Run: gdb -batch -ex "file minimal_open" -ex "x/gx 0x3fd0" minimal_open
+
+  0x3fd0: 0x0000000000001030
+
+Analysis of the Number `0x1030`:
+1. **Identity**: We identified `0x1030` in Section 04/03 as the address of the **Fallback Stub** in `.plt`.
+2. **The Pattern (The Loop)**:
+   Call (`1050`) -> Jmp `*GOT` (`3fd0`) -> Value is `1030`.
+   `1030` is the **Next Instruction** after the jump in the PLT?
+   No, `1030` is the stub *before* it?
+   Wait, `1050` is in `.plt.sec`. `1030` is in `.plt`.
+   The code jumps from Fast Path (`1050`) back to Slow Path (`1030`).
+
+Why is it "Slow"?
+1. `0x1030` contains `push $0; jmp 1020`.
+2. `1020` calls the **Dynamic Resolver**.
+3. The Resolver has to search libraries (string lookups) to find the function.
+4. This takes thousands of cycles.
+   **Definition**: "Slow Path" = The path that runs the Resolver.
+
+Conclusion:
+The GOT is initialized to point to the **Slow Path** so the function can be resolved on the first call.
+
+<h2>08. RUNTIME: The Resolution (The Loop)</h2>
+
+Program calls `open` (0x1050).
+
+Axiom 1: The Fast Path (Jump)
+  `1050: jmp *GOT[3]` (Points to `1030`).
+
+Axiom 2: The Slow Path (Stub)
+Run: objdump -d minimal_open | grep -A2 "1030:"
+  1030: ... endbr64       (Valid Jump Target)
+  1034: ... push $0x0     (Push Index 0)
+  1039: ... jmp 1020      (Go to Manager)
+
+Axiom 3: The Manager (PLT Header)
+Run: objdump -d minimal_open | grep -A2 "<.plt>:"
+  1020: ... push GOT[1]   (Push Link Map ID - 0x3fc0)
+  1026: ... jmp *GOT[2]   (Jump to Resolver - 0x3fc8)
+
+<div class="calc">
+THE LOOP FIGURE
+
+      Start
+        |
+        v
+ [Code: call 1050]
+        |
+        v  (Fast Path)
+ [0x1050: jmp *3fd0] ---+
+                        | (Initially 1030)
+ +----------------------+
+ |
+ v (Slow Path)
+ [0x1030: push 0]       (Arg 2: Index)
+ [0x1039: jmp 1020]
+        |
+        v (Header)
+ [0x1020: push GOT[1]]  (Arg 1: LinkID)
+ [0x1026: jmp *GOT[2]] -----------------> [RESOLVER]
+</div>
+
+Why do we do this?
+The Resolver is a function: `resolve(link_map, index)`.
+1. **Index 0**: Pushed at `1030`. Tells Resolver *which* function to find.
+2. **Link Map**: Pushed at `1020`. Tells Resolver *which* library context to use.
+3. **Jump**: Handover to the dynamic loader (`ld-linux`) to do the work.
+
+Resolver Logic:
+1. Uses `Link Map` to find SymTab.
+2. Uses `Index 0` to find String "open".
+3. Maps "open" to Libc Address.
+4. Writes Libc Address into `GOT[3]` (`0x3fd0`).
+5. Returns control to `open`.
+
+<h2>09. RUNTIME: The Grand Calculation (ASLR)</h2>
+
+Why do we need a calculation?
+Because of **ASLR** (Address Space Layout Randomization).
+Security demands that Libc loads at a random address every time.
+
+Axiom 1: The Static Offset
+Run: readelf -s /lib/x86_64-linux-gnu/libc.so.6 | grep " open@"
+  1763: 000000000011b150 ... open@@GLIBC_2.2.5
+
+Analysis: Inside the file, `open` is at offset `0x11b150`.
+
+Axiom 2: The Dynamic Base
+Run: cat /proc/self/maps (Simulated Output)
+  7ffff7c00000-7ffff7d90000 ... libc.so.6
+
+Analysis: In this run, Libc starts at `0x7ffff7c00000`.
+
+The "Crafty" Calculation:
+The Resolver combines the **Random Base** with the **Fixed Offset**.
+
+<div class="calc">
+   Memory Layout (Runtime)
+   -----------------------
+   [Base Address]  0x7ffff7c00000  (Random)
+       +
+   [Fixed Offset]  0x00000011b150  (Static)
+       =
+   [Real Address]  0x7ffff7d1b150
+</div>
+
+The Patch:
+The Resolver writes `0x7ffff7d1b150` into the GOT (`0x3fd0`).
+
+**Proof**:
+Next time the code jumps to `*0x3fd0`, it goes straight to `0x7ffff7d1b150`.
+The math is complete.
+
+<h2>10. THE COMPLETE METAMORPHOSIS (The Meat)</h2>
+
+We have now derived every step. Here is the full transformation of `open()`:
+
+<div class="calc">
+STAGE 1: LINKER ASSIGNS INDICES (Derived in Step 04)
+
+**Index 0 of what?**
+Index 0 of the **Relocation Table** (`.rela.plt`).
+(It is the 1st item in the list).
+
+**Math (GOT Assignment):**
+Base `0x3fb8` + Reserved `24` + (Index `0` * 8) = `0x3fd0`.
+
+**Math (Stub Assignment):**
+Base `0x1020` + Header `16` + (Index `0` * 16) = `0x1030`.
+
+**Result**: Linker writes `0x1030` (Stub) into `0x3fd0` (GOT).
+</div>
+
+<div class="calc">
+STAGE 2: LINKER PATCHES CALL (Derived in Step 05)
+
+**Math (PC-Relative):**
+Target `0x1050` - (IP `0x1169` + Length `5`)
+= `1050` - `116e`
+= `-286` (Decimal)
+
+**Math (Bits):**
+286 = `00...0100011110`
+Inv = `11...1011100001`
+Add 1 = `11...1011100010` (Hex `e2`)
+
+**Result**: `00 00` -> `e2 fe ff ff`.
+</div>
+
+<div class="calc">
+STAGE 3: RESOLVER PATCHES GOT (Derived in Step 09)
+
+**Math (Resolution):**
+Random Base (`7ffff7c00000`) + Offset (`11b150`)
+= `7ffff7d1b150`.
+
+**Result**: Resolver overwrites `0x3fd0`.
+Old Value: `0x1030` (Stub).
+New Value: `0x7ffff7d1b150` (Libc).
+</div>
+
+<div class="calc">
+FINAL STATE
+
+1. Code calls `1050`.
+2. `1050` jumps to `*3fd0`.
+3. `3fd0` now holds `7ffff7d1b150`.
+4. CPU lands in Libc.
+</div>
+
+<h2>11. INSIDE LIBC: The open() to openat() Transformation</h2>
+
+We landed at 0x7ffff7d1b150. But what happens INSIDE libc?
+
+Axiom 1: The Entry Point
+Run: gdb -batch -ex "x/5i 0x7ffff7d1b150" minimal_open
+  0x7ffff7d1b150:  endbr64
+  0x7ffff7d1b154:  push   %rbp
+  0x7ffff7d1b155:  mov    %rsp,%rbp
+  ...
+
+Observation:
+  The first instruction is `endbr64` (NOT a normal code start).
+  What is this? Security. See Section 12.
+
+Axiom 2: Your Arguments
+Run: info registers (at entry)
+  RDI = 0x555555556004  (Pointer to "somefile")
+  RSI = 2               (O_RDWR)
+
+Question: You called open(file, flags). Kernel expects openat(dir, file, flags, mode).
+How does libc bridge this gap?
+
+Axiom 3: The Register Shuffle
+Run: gdb, step through libc until syscall
+  Instruction: mov %r12,%rsi        (File pointer moves to RSI)
+  Instruction: mov $0xffffff9c,%edi (AT_FDCWD goes to EDI)
+  Instruction: mov %ebx,%edx        (Flags move to EDX)
+  Instruction: mov $0x101,%eax      (Syscall 257 = openat)
+
+Derivation (AT_FDCWD = -100):
+  -100 in Two's Complement (32-bit):
+  100 decimal = 0x64 = 0110 0100 binary
+  Invert:       1001 1011
+  Add 1:        1001 1100
+  32-bit:       0xffffff9c
+
+Verification:
+Run: python3 -c "print(hex(-100 & 0xffffffff))"
+  0xffffff9c
+
+Conclusion:
+  libc transforms: open(file, flags) -> openat(-100, file, flags, 0)
+  The kernel only sees openat. "open" is a libc wrapper.
+
+<h2>12. SECURITY: Stack Canary & Branch Protection</h2>
+
+Axiom 1: The Canary
+Run: gdb, step into __libc_open64
+  Instruction: mov %fs:0x28,%rax
+
+What is %fs:0x28?
+  %fs = Thread Local Storage segment register.
+  0x28 = Offset 40 bytes into TLS.
+  Value = A RANDOM NUMBER generated at program start.
+
+  Instruction: mov %rax,-0x48(%rbp)
+
+What is happening?
+  The random number is placed on the stack.
+  Before returning, libc will check: Did this value change?
+  If YES = Buffer Overflow detected = CRASH (Stack Smashing Detected).
+
+Axiom 2: The Branch Target (endbr64)
+  Instruction at function start: endbr64 (f3 0f 1e fa)
+
+What is this?
+  Intel CET (Control-flow Enforcement Technology).
+  If CPU jumped here from an INVALID source (not call/jmp), it crashes.
+  Protection against ROP (Return Oriented Programming) attacks.
+
+Derivation:
+  endbr64 = "End Branch 64-bit".
+  It marks VALID jump targets.
+  Without it, hackers could jump to middle of functions.
+
+<h2>13. FAILURE MODES: What Can Go Wrong?</h2>
+
+Axiom 1: The Finite Resources
+  File Descriptors are LIMITED.
+  Run: ulimit -n
+    1024 (default limit)
+
+Axiom 2: The Permission Model
+  Every file has: Owner (UID), Group (GID), Mode (rwx bits).
+  open() checks: Can you access this file?
+
+<div class="calc">
+FAILURE PREDICTION TABLE
+
++--------+-------+----------------------------+------------------------+
+| errno  | Value | Condition                  | Math                   |
++--------+-------+----------------------------+------------------------+
+| ENOENT |   2   | File does not exist        | file NOT IN directory  |
+| EACCES |  13   | Permission denied          | (mode AND request) = 0 |
+| EMFILE |  24   | Too many open files        | used_fds >= max_fds    |
+| EINTR  |   4   | Signal interrupted syscall | signal_pending = true  |
+| EEXIST |  17   | O_CREAT|O_EXCL and exists  | file IN directory      |
++--------+-------+----------------------------+------------------------+
+</div>
+
+Derivation (EMFILE):
+  You open 1024 files.
+  You try to open file 1025.
+  Kernel: fd_table[0..1023] all full.
+  Result: return -1, errno = 24.
+
+Verification:
+Run: strace ./minimal_open 2>&1 | grep open
+  openat(AT_FDCWD, "somefile", O_RDWR) = -1 ENOENT (No such file or directory)
+
+<h2>14. WEAK SYMBOLS: open is an Alias</h2>
+
+Axiom 1: Multiple Names, One Address
+Run: readelf -s /lib/x86_64-linux-gnu/libc.so.6 | grep 11b150
+
+  000000000011b150 ... FUNC ... __open_nocancel
+  000000000011b150 ... FUNC ... open@@GLIBC_2.2.5
+  000000000011b150 ... FUNC ... __libc_open64
+
+Observation:
+  THREE symbols at the SAME address (0x11b150).
+  They are ALIASES.
+
+Axiom 2: The W Flag
+Run: nm -D /lib/.../libc.so.6 | grep open
+  000000000011b150 W open@@GLIBC_2.2.5
+
+  W = WEAK symbol.
+  Meaning: Can be overridden by user-defined symbol.
+
+Why weak?
+  So you can write your OWN open() and libc will use yours.
+  Example: LD_PRELOAD tricks.
+
+Derivation:
+  When you call "open", resolver finds "open@@GLIBC".
+  Address is 0x11b150.
+  This is actually __open_nocancel (the real function).
+  open is just a PUBLIC NAME for the internal function.
+
+<h2>15. THE INVISIBLE LINKER: What gcc Really Does</h2>
+
+You typed: gcc minimal_open.o -o minimal_open
+You think: "This calls the linker."
+Truth: gcc calls collect2, which calls ld.
+
+Axiom 1: The Real Command
+Run: gcc -v minimal_open.o -o minimal_open 2>&1 | grep collect2
+
+  /usr/lib/gcc/.../collect2 ... 
+    /usr/lib/.../Scrt1.o      (Startup code: _start)
+    /usr/lib/.../crti.o       (Init section)
+    minimal_open.o            (YOUR code)
+    -lc                       (Libc)
+    /usr/lib/.../crtn.o       (Fini section)
+
+Observation:
+  You provided 1 file.
+  Linker combined 5+ files.
+
+Axiom 2: The Entry Point
+  Your program does NOT start at main().
+  It starts at _start (from Scrt1.o).
+
+Run: objdump -d minimal_open | grep "_start"
+  0x1060 <_start>
+
+Derivation:
+  1. Kernel loads binary, jumps to _start (0x1060).
+  2. _start sets up stack, calls __libc_start_main.
+  3. __libc_start_main initializes libc, calls YOUR main().
+  4. When main returns, __libc_start_main calls exit().
+
+This is why PLT/GOT exists BEFORE main() runs.
+The dynamic linker runs BEFORE your code.
+
+<h2>16. THE COMPLETE CHAIN (All 15 Steps)</h2>
+
+<div class="calc">
+SOURCE CODE
+  |
+  v (Preprocessor)
+O_RDWR = 02 (Octal) = 2 (Decimal)
+  |
+  v (Compiler)
+call open -> e8 00 00 00 00 (Placeholder)
+  |
+  v (Assembler)
+Relocation: 0x21, R_X86_64_PLT32, open, -4
+  |
+  v (Static Linker)
+Creates: .plt (0x1050), .got (0x3fd0)
+Patches: e8 00 00 00 00 -> e8 e2 fe ff ff
+GOT[3] = 0x1030 (Stub)
+  |
+  v (Dynamic Linker, before main)
+Loads libc at 0x7ffff7c00000
+  |
+  v (Runtime, first call)
+call 1050 -> jmp *3fd0 -> 1030 (Stub)
+Stub: push 0, jmp resolver
+Resolver: finds open at 0x7ffff7d1b150
+Patches: GOT[3fd0] = 0x7ffff7d1b150
+  |
+  v (Inside Libc)
+Registers: RDI=file, RSI=2
+Shuffle: RDI=-100, RSI=file, RDX=2, RAX=257
+Security: canary, endbr64
+  |
+  v (Syscall)
+syscall instruction -> Kernel
+  |
+  v (Kernel)
+sys_openat(-100, "somefile", 2, 0)
+  |
+  v (Return)
+File descriptor OR errno
+</div>
+
+**Q.E.D.**
+00 00 00 00 -> 0x7ffff7d1b150 -> syscall 257 -> kernel.
+Every step derived from axioms. No magic.
+
+</pre>
+</body>
+
+</html>

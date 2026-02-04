@@ -1,152 +1,117 @@
 <!DOCTYPE html>
-<html lang="en">
+<html>
+
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>What Happens When Open Is Called</title>
-    <style>
-        body {
-            background: #000;
-            color: #fff;
-            font-family: 'Courier New', monospace;
-            font-size: 16px;
-            line-height: 1.6;
-            margin: 0;
-            padding: 20px;
-        }
-        .step {
-            margin: 20px 0;
-            padding: 20px;
-            border: 2px solid #333;
-            background: #111;
-        }
-        .step-header {
-            color: #0f0;
-            font-size: 18px;
-            font-weight: bold;
-            margin-bottom: 10px;
-        }
-        .cmd {
-            color: #0f0;
-            font-weight: bold;
-            background: #000;
-            padding: 5px;
-        }
-        .addr {
-            color: #f00;
-            font-weight: bold;
-        }
-        .math {
-            color: #d2a8ff;
-            background: #000;
-            padding: 5px;
-        }
-        .result {
-            color: #0f0;
-            font-weight: bold;
-        }
-        .why {
-            color: #666;
-            font-style: italic;
-            margin-left: 20px;
-        }
-    </style>
+  <meta charset="UTF-8">
+  <title>open() from scratch - Axiomatic Derivation</title>
+  <style>
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+    }
+
+    body {
+      background: #0a0a0a;
+      overflow: hidden;
+    }
+
+    .header {
+      background: #111;
+      color: #888;
+      padding: 8px 20px;
+      font-family: 'Courier New', monospace;
+      font-size: 12px;
+      display: flex;
+      justify-content: space-between;
+      border-bottom: 1px solid #333;
+    }
+
+    .header span {
+      cursor: pointer;
+    }
+
+    .header span:hover {
+      color: #fff;
+    }
+
+    .container {
+      display: flex;
+      height: calc(100vh - 30px);
+      width: 100vw;
+      overflow-x: auto;
+    }
+
+    .panel {
+      min-width: 50vw;
+      width: 50vw;
+      height: 100%;
+      flex-shrink: 0;
+      border-right: 1px solid #333;
+      overflow: auto;
+    }
+
+    .panel:last-child {
+      border-right: none;
+    }
+
+    .panel iframe {
+      width: 100%;
+      height: 100%;
+      border: none;
+    }
+
+    .panel-label {
+      position: absolute;
+      top: 35px;
+      background: #222;
+      color: #666;
+      padding: 2px 10px;
+      font-family: 'Courier New', monospace;
+      font-size: 10px;
+      z-index: 10;
+    }
+
+    .panel-label.left {
+      left: 5px;
+    }
+
+    .panel-label.right {
+      left: calc(50vw + 5px);
+    }
+
+    /* Scroll hint */
+    .scroll-hint {
+      color: #444;
+    }
+  </style>
 </head>
+
 <body>
-    <h1 style="color: #0f0; text-align: center; margin-bottom: 30px;">WHAT HAPPENS WHEN OPEN() IS CALLED</h1>
-    <p style="text-align: center; color: #fff; margin-bottom: 30px;">AXIOMATIC INVESTIGATION: PRE-SYSCALL EXECUTION PATH</p>
-        
-    <div class="step">
-        <div class="step-header">STEP 1: STATIC COMPILATION</div>
-            <div class="cmd">1. echo 'int main() { open("somefile", O_RDWR); }' > test.c</div>
-            <div class="cmd">2. gcc -c test.c -o test.o</div>
-            <div class="cmd">3. file test.o</div>
-            <div class="cmd">4. readelf -r test.o | grep open</div>
-            <div class="why">UND = undefined. Symbol resolution deferred to link time.</div>
-        </div>
-        
-        <div class="step">
-            <div class="step-header">STEP 2: DYNAMIC LINKING</div>
-            <div class="cmd">5. gcc test.o -o test</div>
-            <div class="cmd">6. ldd test</div>
-            <div class="cmd">7. objdump -d test | grep -A5 -B5 call</div>
-            <div class="addr">0x1050</div>
-            <div class="why">Binary jumps to PLT trampoline, not directly to open().</div>
-        </div>
-        
-        <div class="step">
-            <div class="step-header">STEP 3: RUNTIME SYMBOL DISCOVERY</div>
-            <div class="cmd">8. gdb test</div>
-            <div class="cmd">9. info functions | grep open</div>
-            <div class="addr">0x7ffff7d1b150</div>
-            <div class="why">Open address varies with ASLR. Base changes each execution.</div>
-        </div>
-        
-        <div class="step">
-            <div class="step-header">STEP 4: LIBRARY SYMBOL INVESTIGATION</div>
-            <div class="cmd">10. readelf -s /lib/x86_64-linux-gnu/libc.so.6 | grep -E "FUNC.*open"</div>
-            <div class="addr">0x11b150</div>
-            <div class="why">Symbol has fixed offset within library. Address = library_base + offset.</div>
-        </div>
-        
-        <div class="step">
-            <div class="step-header">STEP 5: RUNTIME ADDRESS VERIFICATION</div>
-            <div class="cmd">11. gdb test</div>
-            <div class="cmd">12. print open</div>
-            <div class="addr">0x7ffff7d1b150</div>
-            <div class="math">0x7ffff7e00000 + 0x11b150 = 0x7ffff7d1b150</div>
-            <div class="why">Verification: base + offset = final address.</div>
-        </div>
-        
-        <div class="step">
-            <div class="step-header">STEP 6: INDIRECT MEMORY ACCESS PROOF</div>
-            <div class="cmd">13. gdb test</div>
-            <div class="cmd">14. x/10gx 0x555555557fd0</div>
-            <div class="addr">0x7ffff7d1b150</div>
-            <div class="why">GOT contains resolved open address. PLT jump → GOT → libc confirmed.</div>
-        </div>
-        
-        <div class="step">
-            <div class="step-header">STEP 7: FLAG PROCESSING</div>
-            <div class="cmd">15. gdb test</div>
-            <div class="cmd">16. info registers rdi rsi rdx</div>
-            <div class="math">O_RDWR = 2 = 0x02. O_CREAT = 0x40.</div>
-            <div class="math">2 & 0x40 = 0x00. Zero flag set.</div>
-            <div class="why">No mode argument needed. Fast path selected.</div>
-        </div>
-        
-        <div class="step">
-            <div class="step-header">STEP 8: SYSCALL PREPARATION</div>
-            <div class="cmd">17. gdb test</div>
-            <div class="cmd">18. mov $0xffffff9c,%edi</div>
-            <div class="addr">0xffffff9c</div>
-            <div class="math">-100 = 0x63. ~0x63 = 0x9C. +1 = 0x9D.</div>
-            <div class="why">Sign-extend: 0xFFFFFF9C = -100 (AT_FDCWD).</div>
-            <div class="cmd">19. mov $0x101,%eax</div>
-            <div class="addr">0x101</div>
-            <div class="why">RAX = 257 (__NR_openat). Confirmed with system header.</div>
-        </div>
-        
-        <div class="step">
-            <div class="step-header">STEP 9: FINAL VERIFICATION</div>
-            <div class="cmd">20. info registers rax rdi rsi rdx</div>
-            <div class="result">RAX=257 ✓ RDI=-100 ✓ RSI=filename ✓ RDX=2 ✓</div>
-            <div class="why">All registers ready for openat() syscall.</div>
-        </div>
-        
-        <div class="step">
-            <div class="step-header">STEP 10: MEMORY LAYOUT</div>
-            <div class="cmd">21. cat /proc/self/maps | grep test</div>
-            <div class="math">.text r-xp, .data rw-p (writable GOT), .bss rw-p</div>
-            <div class="why">PLT in executable segment, GOT in data segment.</div>
-        </div>
-        
-        <div style="text-align: center; margin-top: 40px; color: #666; font-style: italic;">
-            <strong>COMPLETE AXIOMATIC INVESTIGATION</strong><br>
-            From compilation through syscall preparation<br>
-            Every address mathematically derived<br>
-            All transformations observed and verified<br>
-            Pre-syscall execution path fully documented
-        </div>
+  <div class="header">
+    <span>EXPLANATION (Left)</span>
+    <span class="scroll-hint">Scroll left/right to navigate | Each panel scrolls independently</span>
+    <span>WORKSHEET (Right)</span>
+  </div>
+  <div class="container">
+    <div class="panel">
+      <iframe src="explanation.html"></iframe>
+    </div>
+    <div class="panel">
+      <iframe src="worksheet.html"></iframe>
+    </div>
+  </div>
+
+  <script>
+    // Allow horizontal scroll on container with mouse wheel
+    const container = document.querySelector('.container');
+    container.addEventListener('wheel', (e) => {
+      if (e.deltaY !== 0 && e.shiftKey) {
+        e.preventDefault();
+        container.scrollLeft += e.deltaY;
+      }
+    });
+  </script>
 </body>
+
 </html>

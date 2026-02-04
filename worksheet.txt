@@ -1,0 +1,405 @@
+WORKSHEET: WHAT HAPPENS WHEN open() IS CALLED
+FILL ALL BLANKS WITH PEN ON PAPER
+DO NOT SKIP ANY CALCULATION
+
+================================================================================
+SECTION 00: AXIOM CHECK
+================================================================================
+
+A. Hex digit A = ___ decimal
+B. Hex digit F = ___ decimal
+C. 0x10 = 1*16 + 0 = ___ decimal
+D. 0xFF = 15*16 + 15 = ___ decimal
+
+================================================================================
+SECTION 01: FILE BYTES
+================================================================================
+
+A. '#' in ASCII hex = 0x___
+   VERIFY: Look up ASCII table, hash sign = ___
+
+B. minimal_open.c size = ___ bytes
+   VERIFY: ls -l minimal_open.c
+
+C. First 3 bytes of minimal_open.c = 0x___ 0x___ 0x___
+   VERIFY: xxd -l 3 minimal_open.c
+
+================================================================================
+SECTION 02: gcc SUB-PROGRAMS
+================================================================================
+
+A. gcc runs ___ programs internally (how many?)
+
+B. Program 1 name: ___
+   Input: .c file
+   Output: .___ file
+
+C. Program 2 name: ___
+   Input: .___ file
+   Output: .___ file
+
+D. Program 3 name: ___
+   Input: .___ files
+   Output: ___ (final)
+
+E. collect2 is wrapper around ___ (linker)
+
+================================================================================
+SECTION 03: OBJECT FILE ANALYSIS
+================================================================================
+
+A. minimal_open.o size = ___ bytes
+   VERIFY: ls -l minimal_open.o
+
+B. First call instruction at offset 0x___ within main
+   VERIFY: objdump -d minimal_open.o
+
+C. Bytes at that offset: ___ ___ ___ ___ ___
+   Note: __ is opcode, __ __ __ __ is displacement
+
+D. Displacement value = __ __ __ __ = 0x________ = ___ decimal
+
+E. Why zeros? Because _________________________________
+
+================================================================================
+SECTION 04: RELOCATION ENTRY
+================================================================================
+
+A. Relocation offset = 0x___
+   VERIFY: readelf -r minimal_open.o | grep open
+
+B. Why 0x21 and not 0x20?
+   Opcode at 0x20 = 0x___ (1 byte)
+   Displacement starts at 0x20 + ___ = 0x___
+
+C. Relocation type = R_X86_64_______
+
+D. Symbol name = ___
+
+E. Addend = ___ (what value?)
+
+================================================================================
+SECTION 05: SYMBOL TABLE
+================================================================================
+
+A. nm minimal_open.o output:
+   ___ main (what letter before main?)
+   ___ open (what letter before open?)
+
+B. T means ___
+C. U means ___
+
+D. main offset = 0x___ (what value?)
+E. open offset = ___ (what or none?)
+
+================================================================================
+SECTION 06: LINKER OUTPUT SECTIONS
+================================================================================
+
+VERIFY: readelf -S minimal_open | grep -E "(plt|text|got|rodata)"
+
+A. .plt     virtual address = 0x____
+B. .plt.sec virtual address = 0x____
+C. .text    virtual address = 0x____
+D. .rodata  virtual address = 0x____
+E. .got     virtual address = 0x____
+
+================================================================================
+SECTION 07: MAIN ADDRESS CALCULATION
+================================================================================
+
+A. .text starts at 0x____
+B. main offset within .text = 0x____
+   (main is not at start because startup code comes first)
+
+C. main virtual address = 0x____ + 0x____ = 0x____
+   
+   SHOW ADDITION:
+       0x____
+     + 0x____
+     --------
+       0x____
+
+D. VERIFY: objdump -d minimal_open | grep "<main>"
+   Output shows: 0x____ <main>
+
+================================================================================
+SECTION 08: CALL INSTRUCTION LOCATION
+================================================================================
+
+A. main at 0x____
+B. First call offset within main = 0x___ (from objdump -d minimal_open.o)
+C. First call virtual address = 0x____ + 0x___ = 0x____
+
+   SHOW ADDITION:
+       0x____
+     + 0x____
+     --------
+       0x____
+
+D. VERIFY: objdump -d minimal_open | grep "call.*open"
+   Output shows: 0x____: e8 __ __ __ __
+
+================================================================================
+SECTION 09: DISPLACEMENT CALCULATION
+================================================================================
+
+GIVEN:
+   call_address = 0x1169
+   target = 0x1050 (open@plt)
+
+STEP 1: address_after_call
+   call_address = 0x1169
+   call_length = ___ bytes
+   address_after_call = 0x1169 + ___ = 0x____
+
+   SHOW ADDITION:
+   0x1169 in decimal:
+      1*4096 = ____
+      1*256  = ____
+      6*16   = ____
+      9*1    = ____
+      TOTAL  = ____
+
+   ____ + 5 = ____
+
+   ____ in hex:
+      ____/16 = ___ remainder ___ 
+      ___/16  = ___ remainder ___
+      ___/16  = ___ remainder ___
+      ___/16  = ___ remainder ___
+   
+   Reading remainders: 0x____
+
+STEP 2: displacement
+   displacement = target - address_after_call
+   displacement = 0x1050 - 0x____
+
+   0x1050 in decimal:
+      1*4096 = ____
+      0*256  = ____
+      5*16   = ____
+      0*1    = ____
+      TOTAL  = ____
+
+   ____ - ____ = ____ (negative!)
+
+STEP 3: two's complement
+   Absolute value = ___ decimal
+   In binary (32 bits):
+   ________ ________ ________ ________
+
+   Invert all bits:
+   ________ ________ ________ ________
+
+   Add 1:
+   ________ ________ ________ ________
+
+   In hex: 0x________
+
+STEP 4: little-endian
+   0x________ as bytes (high to low): __ __ __ __
+   Reverse for little-endian: __ __ __ __
+
+VERIFICATION:
+   Full call instruction: e8 __ __ __ __
+   VERIFY: xxd -s 0x1169 -l 5 minimal_open
+
+================================================================================
+SECTION 10: open@plt DECODE
+================================================================================
+
+VERIFY: objdump -d minimal_open | grep -A3 "open@plt"
+
+A. open@plt starts at 0x____
+
+B. First instruction: _______ (name)
+   Bytes: ___ ___ ___ ___
+   Length: ___ bytes
+
+C. Second instruction at 0x____: jmp *0x____(%rip)
+   Bytes: ___ ___ ___ ___ ___ ___
+   Length: ___ bytes
+
+================================================================================
+SECTION 11: GOT ADDRESS CALCULATION
+================================================================================
+
+jmp instruction at 0x1054
+jmp length = ___ bytes
+displacement = 0x____
+
+STEP 1: %rip after fetch
+   %rip = 0x1054 + ___ = 0x____
+
+STEP 2: memory address
+   address = %rip + displacement
+   address = 0x____ + 0x____
+
+   0x____ in decimal: ____
+   0x____ in decimal: ____
+   ____ + ____ = ____
+
+   ____ in hex:
+      ____/16 = ___ remainder ___
+      ___/16  = ___ remainder ___
+      ___/16  = ___ remainder ___
+      ___/16  = ___ remainder ___
+   
+   Reading: 0x____
+
+VERIFICATION:
+   GOT entry address = 0x____
+   .got section starts at 0x3fb8
+   0x____ is within .got section? Y/N ___
+
+================================================================================
+SECTION 12: GOT RELOCATION
+================================================================================
+
+VERIFY: readelf -r minimal_open | grep 3fd0
+
+A. Offset = 0x____
+B. Type = R_X86_64___________
+C. Symbol = ___@GLIBC_____
+
+D. What does R_X86_64_JUMP_SLOT mean?
+   _________________________________
+
+E. Who fills this GOT entry at runtime?
+   _________________________________
+
+================================================================================
+SECTION 13: DYNAMIC LINKER
+================================================================================
+
+VERIFY: readelf -l minimal_open | grep interpreter
+
+A. Program interpreter path: ___________________________
+
+B. What happens at runtime:
+   1. Kernel loads ___________
+   2. Kernel loads ___________
+   3. Dynamic linker loads ___________
+   4. Dynamic linker sets up ___________
+   5. Dynamic linker calls ___________
+   6. Your main() runs
+
+================================================================================
+SECTION 14: LAZY BINDING SEQUENCE
+================================================================================
+
+FIRST CALL TO open():
+
+A. call 0x1050 executes
+B. jmp reads GOT[0x____]
+C. GOT contains address of ___________
+D. CPU jumps to ___________
+E. ___________ finds open() in libc
+F. ___________ patches GOT[0x____] = libc open address
+G. ___________ calls libc open()
+
+SECOND CALL TO open():
+
+H. call 0x1050 executes
+I. jmp reads GOT[0x____]
+J. GOT now contains ___________
+K. CPU jumps directly to ___________
+L. No resolver needed: Y/N ___
+
+================================================================================
+SECTION 15: LIBC WRAPPER
+================================================================================
+
+A. Does libc open() execute syscall directly? Y/N ___
+
+B. libc converts open(path, flags) to:
+   _______(___, path, flags, ___)
+
+C. AT_FDCWD = ___ decimal
+
+D. AT_FDCWD in 32-bit two's complement:
+   100 in binary (8 bits): ________
+   Pad to 32 bits: ________ ________ ________ ________
+   Invert: ________ ________ ________ ________
+   Add 1:  ________ ________ ________ ________
+   Hex: 0x________
+
+E. openat syscall number = ___
+   VERIFY: grep -r "openat" /usr/include/asm/unistd_64.h
+
+================================================================================
+SECTION 16: REGISTER STATE
+================================================================================
+
+Just before syscall instruction:
+
+A. RAX = ___ (syscall number)
+B. RDI = 0x________ (AT_FDCWD)
+C. RSI = 0x____ (pointer to "somefile")
+D. RDX = ___ (O_RDWR)
+
+================================================================================
+SECTION 17: STRING LOCATION
+================================================================================
+
+VERIFY: readelf -x .rodata minimal_open
+
+A. "somefile" starts at address 0x____
+B. Byte at 0x2004 = 0x___ = ASCII '___'
+C. Byte at 0x2005 = 0x___ = ASCII '___'
+D. Null terminator at address 0x____
+
+E. "otherfile" starts at address 0x____
+
+================================================================================
+SECTION 99: FAILURE PREDICTION
+================================================================================
+
+SCENARIO 1:
+   Correct displacement bytes: e2 fe ff ff
+   Wrong displacement bytes:   e3 fe ff ff
+   
+   Wrong displacement (little-endian) = 0x________
+   Wrong target = 0x____ + 0x________ = 0x____
+   Expected target = 0x____
+   Result: ________________________
+
+SCENARIO 2:
+   Correct GOT address: 0x3fd0
+   Wrong GOT address:   0x3fd1
+   
+   Reading from misaligned address gets: ________
+   CPU jumps to: ________
+   Result: ________________________
+
+SCENARIO 3:
+   Correct syscall number: RAX = 257
+   Wrong syscall number:   RAX = 2
+   
+   Syscall 2 on x86_64 = ________
+   Result: ________________________
+
+================================================================================
+VERIFICATION COMMANDS
+================================================================================
+
+# After completing worksheet, verify your answers:
+
+# Section 03D
+xxd -s 0x60 -l 5 minimal_open.o
+
+# Section 07C
+objdump -d minimal_open | grep "<main>"
+
+# Section 09
+python3 -c "print('displacement:', hex(0x1050 - 0x116e))"
+
+# Section 11
+python3 -c "print('GOT addr:', hex(0x105a + 0x2f76))"
+
+# Section 14
+xxd -s 0x1169 -l 5 minimal_open
+
+# Section 15D
+python3 -c "print('AT_FDCWD:', hex(-100 & 0xffffffff))"

@@ -1,0 +1,128 @@
+AXIOMATIC SOLUTION MANUAL (Complete 00-20)
+Strict Adherence to "No New Things" Rule.
+
+SECTION 00: THE CORE CHALLENGE
+------------------------------
+STAGE 1:
+Index = 0 (readelf -r)
+GOT[3] Addr = 0x3fb8 + 24 = 0x3fd0
+PLT Stub Addr = 0x1020 + 16 = 0x1030
+
+STAGE 2:
+Target = 0x1050
+Displacement = 0x1050 - 0x116e = -286
+Twos Comp = fffffee2
+
+STAGE 3:
+Real Addr = LibcBase + 0x11b150
+Resolver Writes: Real Address to 0x3fd0
+
+SECTION 01: GCC STAGES
+----------------------
+cc1 -> Preprocessor/Compiler
+as -> Assembler
+collect2 -> Linker Wrapper
+
+SECTION 02: PREPROCESSOR
+------------------------
+O_RDWR -> 02
+0x8*0 + 2*1 = 2 (0x2)
+
+SECTION 03: OBJECT FILE
+-----------------------
+0x20: e8 00 00 00 00
+e8 = Call. 00.. = Placeholder.
+AS writes zeros because symbol is undefined.
+
+SECTION 04: RELOCATION
+----------------------
+0x21 - 0x20 = 1.
+Offset = Opcode + 1.
+Addend -4 compensates for RIP (next instruction).
+
+SECTION 05: SYMBOL TABLE
+------------------------
+U = Undefined.
+T = Text (Code).
+
+SECTION 06: SECTIONS
+--------------------
+Linker creates .plt, .got.
+.o did not have them.
+
+SECTION 07: MAIN ADDRESS
+------------------------
+.text = 0x1060. Main = 0x1149.
+Diff = 0xe9 (233) bytes of startup code.
+
+SECTION 08: CALL INSTRUCTION
+----------------------------
+Both calls targets same PLT entry (0x1050).
+Relocation patches both.
+
+SECTION 09: DISPLACEMENT MATH
+-----------------------------
+(See Section 00 for calc)
+-286 -> fffffee2.
+
+SECTION 10: GOT FROM PLT
+------------------------
+Jmp *0x2f76(%rip)
+RIP = 1054 + 6 = 105a.
+Addr = 105a + 2f76 = 3fd0.
+Verified in .got (3fb8 <= 3fd0).
+
+SECTION 11: GOT RELOCATION
+--------------------------
+3fd0 -> R_X86_64_JUMP_SLOT -> open
+Initial value = 0x1030 (Stub).
+
+SECTION 12: DYNAMIC LINKER
+--------------------------
+/lib64/ld-linux-x86-64.so.2
+Runs BEFORE main.
+
+SECTION 13: TWO OPEN CALLS
+--------------------------
+Both e8 00 000 00 in .o
+Both e8 e2 fe ff ff in exe.
+
+SECTION 14: GOT BEFORE/AFTER
+----------------------------
+Before: 0x1030 (Points to PLT Stub)
+After: 0x7ffff7d1b150 (Points to Libc)
+Change: Resolver patched it.
+
+SECTION 15: WEAK SYMBOL
+-----------------------
+W = Weak.
+open is alias for __libc_open64.
+
+SECTION 16: LIBC BASE + OFFSET
+------------------------------
+Base (from info proc mappings) + 0x11b150 = GOT Value.
+Must match exactly.
+
+SECTION 17: STRING ADDRESS
+--------------------------
+0x2004: 73 6f 6d 65 ... (somefile)
+LEA loads 0x2004 relative to RIP.
+
+SECTION 18: AT_FDCWD
+--------------------
+-100 = ffffff9c.
+Used by openat within libc.
+
+SECTION 19: FAILURE PREDICTION
+------------------------------
+Linker Error (e3 instead of e2): Jumps to 1051 (Crash/Wrong Inst).
+GOT Error (3fd1): Reads garbage, Jumps to Garbage (0x0... or Crash).
+Syscall Error (2): Syscall 2 is 'open' (on old 32-bit?) or strictly 'open' on 64-bit?
+Wait, on x86_64, __NR_open is 2. __NR_openat is 257.
+Libc uses openat (257). If we put 2 in RAX, kernel runs open().
+Assuming arguments are compatible, it might work? Or fail if args differ.
+
+SECTION 20: GDB TRACE
+---------------------
+Trace complete.
+String, Flags, GOT, Target all derived.
