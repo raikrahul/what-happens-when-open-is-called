@@ -1,0 +1,21 @@
+O_RDONLY = 0
+O_WRONLY = 1
+O_RDWR = 2
+O_ACCMODE = 3
+MAY_WRITE = 2
+MAY_READ = 4
+MAY_RDWR = 6
+T = [4, 2, 6, 6]
+0xffffffff817c0650 (RSI=2) → fs/open.c:1392
+0xffffffff817c0430 (RDI=2) → fs/open.c:1204
+2 & 3 = 2
+T[2] = 6
+∴ acc_mode = 6
+op->acc_mode = 6 → fs/open.c:1293
+O_RDONLY (0) & 3 = 0
+T[0] = 4 (MAY_READ) ✓
+O_WRONLY (1) & 3 = 1
+T[1] = 2 (MAY_WRITE) ✓
+O_RDWR (2) & 3 = 2
+T[2] = 6 (MAY_RDWR) ✓
+NEW THINGS INTRODUCED WITHOUT DERIVATION: NONE.
