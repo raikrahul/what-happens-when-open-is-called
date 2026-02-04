@@ -778,6 +778,18 @@ RUN:  grep 257 /usr/include/asm/unistd_64.h
 OUTPUT:
     #define __NR_openat 257
 
+INQUIRY:
+    Q: WHY does libc call openat() instead of open()?
+    A: The kernel deprecated the old sys_open syscall.
+       openat() is the unified syscall (more general).
+       AT_FDCWD (-100) means "use current working directory".
+       This makes openat(-100, file, flags) == old open(file, flags).
+
+    Q: What is the benefit?
+    A: openat() can also open files relative to ANY directory (not just cwd).
+       Example: openat(dirfd, "file", O_RDONLY) opens relative to dirfd.
+       This is used for security (avoid TOCTOU races).
+
 AXIOM: libc::open(file,flags) calls kernel::openat(-100, file, flags, 0).
 
 
