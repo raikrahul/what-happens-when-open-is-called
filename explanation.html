@@ -21,10 +21,25 @@
       word-wrap: break-word;
       margin: 0;
     }
+
+    @media print {
+
+      button,
+      div[style*="text-align: right"] {
+        display: none !important;
+      }
+
+      body {
+        padding: 0;
+      }
+    }
   </style>
 </head>
 
 <body>
+  <div style="text-align: right; padding-bottom: 20px;">
+    <button onclick="window.print()" style="padding: 5px 10px; cursor: pointer;">Print Page</button>
+  </div>
   <pre>
 DEFINITIONS FROM MACHINE
 ------------------------
