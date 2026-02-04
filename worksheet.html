@@ -394,20 +394,210 @@ AXIOM: Runtime address = ASLR_base + fixed_offset.
 
 
 ================================================================================
-STEP 12: INSIDE LIBC - open() TO openat()
+STEP 12: WEAK SYMBOLS - open IS AN ALIAS
 ================================================================================
 
-DO:   Disassemble the libc open function.
-RUN:  gdb -batch -ex "disas open" ./minimal_open | head -20
+DO:   Find all symbols at the same address as open.
+RUN:  readelf -s /lib/x86_64-linux-gnu/libc.so.6 | grep 11b150
 
-OBSERVE (key instructions):
-    mov    $0xffffff9c,%edi    ; AT_FDCWD = -100
-    mov    $0x101,%eax         ; syscall 257 = openat
-    syscall
+OUTPUT:
+    000000000011b150 ... FUNC ... __open_nocancel
+    000000000011b150 ... FUNC ... open@@GLIBC_2.2.5
+    000000000011b150 ... FUNC ... __libc_open64
+
+OBSERVE:
+    THREE symbols at the SAME address (0x11b150).
+    They are ALIASES.
+
+DO:   Check if open is a weak symbol.
+RUN:  nm -D /lib/x86_64-linux-gnu/libc.so.6 | grep " open@"
+
+OUTPUT:
+    000000000011b150 W open@@GLIBC_2.2.5
+
+OBSERVE:
+    W = WEAK symbol.
+    Meaning: Can be overridden by user-defined symbol.
 
 INQUIRY:
-    Q: You called open(file, flags). But kernel receives openat(dir, file, flags, mode)?
-    A: YES! libc transforms open() to openat() internally.
+    Q: Why weak?
+    A: So you can write your OWN open() and libc will use yours.
+       Example: LD_PRELOAD tricks for debugging or interception.
+
+AXIOM: open = __open_nocancel = __libc_open64 (same address, different names).
+
+
+================================================================================
+STEP 13: LIBC ENTRY - endbr64 SECURITY
+================================================================================
+
+DO:   Disassemble the first instruction of open.
+RUN:  gdb -batch -ex "x/1i 0x7ffff7d1b150" ./minimal_open
+
+OUTPUT:
+    0x7ffff7d1b150:  endbr64
+
+OBSERVE:
+    First instruction is NOT push rbp.
+    It is endbr64 (f3 0f 1e fa).
+
+INQUIRY:
+    Q: What is endbr64?
+    A: Intel CET (Control-flow Enforcement Technology).
+       "End Branch 64-bit" - marks VALID jump targets.
+
+    Q: Why is this here?
+    A: If malicious code jumps to middle of a function, CPU will crash.
+       This protects against ROP (Return Oriented Programming) attacks.
+
+AXIOM: endbr64 marks the start of a valid function entry point.
+
+
+================================================================================
+STEP 14: FUNCTION PROLOGUE - STACK SETUP
+================================================================================
+
+DO:   View the next few instructions.
+RUN:  gdb -batch -ex "x/10i 0x7ffff7d1b150" ./minimal_open
+
+OUTPUT:
+    endbr64
+    push   %rbp           ; Save caller's base pointer
+    mov    %rsp,%rbp      ; Set up new frame
+    push   %r12           ; Save callee-saved registers
+    push   %rbx
+    sub    $0x60,%rsp     ; Reserve 96 bytes on stack
+
+OBSERVE:
+    Standard function prologue.
+    Reserves 0x60 = 96 bytes for local variables.
+
+MATH (Stack Frame Size):
+    0x60 in hex
+    = 6*16 + 0*1
+    = 96 bytes
+
+INQUIRY:
+    Q: Why save r12 and rbx?
+    A: Callee-saved registers. Function must restore them before returning.
+
+AXIOM: Function prologue establishes stack frame and saves registers.
+
+
+================================================================================
+STEP 15: STACK CANARY - BUFFER OVERFLOW DETECTION
+================================================================================
+
+DO:   Find the canary instruction.
+RUN:  gdb -batch -ex "x/15i 0x7ffff7d1b150" ./minimal_open | grep fs
+
+OUTPUT:
+    mov    %fs:0x28,%rax
+    mov    %rax,-0x48(%rbp)
+
+OBSERVE:
+    %fs:0x28 = Thread Local Storage, offset 0x28 (40 bytes).
+    A SECRET RANDOM NUMBER is read and stored on stack.
+
+INQUIRY:
+    Q: What is %fs?
+    A: Segment register pointing to Thread Local Storage (TLS).
+
+    Q: What is at offset 0x28?
+    A: The stack canary - a random value set at program start.
+
+    Q: Why store it on the stack?
+    A: Before returning, function checks: Did this value change?
+       If YES = Buffer Overflow detected = CRASH.
+
+MATH (Canary Location):
+    Base pointer: rbp
+    Canary stored at: rbp - 0x48
+    0x48 = 72 bytes below rbp
+
+AXIOM: Stack canary detects buffer overflows at function return.
+
+
+================================================================================
+STEP 16: THREAD SAFETY CHECK
+================================================================================
+
+DO:   Find the threading check.
+RUN:  gdb -batch -ex "x/20i 0x7ffff7d1b150" ./minimal_open | grep single
+
+OUTPUT:
+    cmpb   $0x0,0xefeae(%rip)   ; __libc_single_threaded
+
+OBSERVE:
+    Compares __libc_single_threaded variable with 0.
+
+INQUIRY:
+    Q: What is __libc_single_threaded?
+    A: A global variable in libc.
+       1 = Only one thread exists (fast path).
+       0 = Multiple threads exist (slow path with locks).
+
+    Q: Why two paths?
+    A: Fast path avoids lock overhead.
+       Slow path enables thread cancellation.
+
+AXIOM: Single-threaded programs take the fast path (no locks).
+
+
+================================================================================
+STEP 17: O_CREAT CHECK - BITWISE OPERATION
+================================================================================
+
+DO:   Find the O_CREAT check.
+RUN:  grep -r "O_CREAT" /usr/include/asm-generic/fcntl.h | head -1
+
+OUTPUT:
+    #define O_CREAT 00000100
+
+MATH (Octal to Hex):
+    Octal 100 = 1*64 + 0*8 + 0*1 = 64 decimal
+    64 decimal = 0x40 hex
+
+DO:   Find the AND instruction in libc.
+RUN:  gdb -batch -ex "x/30i 0x7ffff7d1b150" ./minimal_open | grep "and.*0x40"
+
+OUTPUT:
+    and    $0x40,%r10d
+
+OBSERVE:
+    Checks if O_CREAT bit is set in flags.
+
+MATH (Bitwise AND):
+    Your flags: O_RDWR = 2 = 0000 0010 binary
+    O_CREAT mask:      0x40 = 0100 0000 binary
+    AND result:              0000 0000 = 0
+
+    Result is 0, so O_CREAT is NOT set.
+    No third argument (mode) is needed.
+
+INQUIRY:
+    Q: Why check O_CREAT?
+    A: If set, open() needs a THIRD argument (file permissions).
+       Without O_CREAT, only 2 arguments are needed.
+
+AXIOM: O_CREAT (0x40) determines if mode argument is required.
+
+
+================================================================================
+STEP 18: REGISTER SHUFFLE - open() TO openat()
+================================================================================
+
+DO:   Find the register setup before syscall.
+RUN:  gdb -batch -ex "x/5i 0x7ffff7d1b199" ./minimal_open
+
+OUTPUT:
+    mov    $0xffffff9c,%edi    ; RDI = -100 (AT_FDCWD)
+    mov    $0x101,%eax         ; RAX = 257 (openat syscall)
+    syscall
+
+OBSERVE:
+    Your call: open(file, flags)
+    Kernel call: openat(AT_FDCWD, file, flags, mode)
 
 MATH (AT_FDCWD = -100):
     -100 in two's complement (32-bit):
@@ -415,19 +605,23 @@ MATH (AT_FDCWD = -100):
     Invert: 0xffffff9b
     Add 1:  0xffffff9c
 
+DO:   Verify AT_FDCWD.
+RUN:  grep AT_FDCWD /usr/include/linux/fcntl.h
+
+OUTPUT:
+    #define AT_FDCWD -100
+
 DO:   Verify syscall number.
 RUN:  grep 257 /usr/include/asm/unistd_64.h
 
 OUTPUT:
     #define __NR_openat 257
 
-CONFIRMED: Syscall 257 is openat.
-
-AXIOM: libc::open() calls kernel::openat(AT_FDCWD, path, flags, 0).
+AXIOM: libc::open(file,flags) calls kernel::openat(-100, file, flags, 0).
 
 
 ================================================================================
-STEP 13: FAILURE PREDICTIONS
+STEP 19: FAILURE PREDICTIONS
 ================================================================================
 
 Now you understand the chain. Predict what breaks.
@@ -453,7 +647,7 @@ MATH (errno values):
 
 
 ================================================================================
-STEP 14: THE COMPLETE CHAIN
+STEP 20: THE COMPLETE CHAIN
 ================================================================================
 
 SOURCE:     open("somefile", O_RDWR)
