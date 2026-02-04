@@ -14,41 +14,30 @@
     body {
       background: #0a0a0a;
       overflow: hidden;
+      font-family: 'Courier New', monospace;
     }
 
     .header {
       background: #111;
       color: #888;
       padding: 8px 20px;
-      font-family: 'Courier New', monospace;
       font-size: 12px;
       display: flex;
       justify-content: space-between;
       border-bottom: 1px solid #333;
     }
 
-    .header span {
-      cursor: pointer;
-    }
-
-    .header span:hover {
-      color: #fff;
-    }
-
     .container {
       display: flex;
       height: calc(100vh - 30px);
       width: 100vw;
-      overflow-x: auto;
     }
 
     .panel {
-      min-width: 50vw;
-      width: 50vw;
+      width: 50%;
       height: 100%;
-      flex-shrink: 0;
-      border-right: 1px solid #333;
       overflow: auto;
+      border-right: 1px solid #333;
     }
 
     .panel:last-child {
@@ -57,30 +46,12 @@
 
     .panel iframe {
       width: 100%;
+      min-width: 1200px;
       height: 100%;
       border: none;
+      display: block;
     }
 
-    .panel-label {
-      position: absolute;
-      top: 35px;
-      background: #222;
-      color: #666;
-      padding: 2px 10px;
-      font-family: 'Courier New', monospace;
-      font-size: 10px;
-      z-index: 10;
-    }
-
-    .panel-label.left {
-      left: 5px;
-    }
-
-    .panel-label.right {
-      left: calc(50vw + 5px);
-    }
-
-    /* Scroll hint */
     .scroll-hint {
       color: #444;
     }
@@ -90,28 +61,17 @@
 <body>
   <div class="header">
     <span>EXPLANATION (Left)</span>
-    <span class="scroll-hint">Scroll left/right to navigate | Each panel scrolls independently</span>
+    <span class="scroll-hint">Each panel scrolls independently (vertical + horizontal)</span>
     <span>WORKSHEET (Right)</span>
   </div>
   <div class="container">
     <div class="panel">
-      <iframe src="explanation.html"></iframe>
+      <iframe src="explanation.html" scrolling="yes"></iframe>
     </div>
     <div class="panel">
-      <iframe src="worksheet.html"></iframe>
+      <iframe src="worksheet.html" scrolling="yes"></iframe>
     </div>
   </div>
-
-  <script>
-    // Allow horizontal scroll on container with mouse wheel
-    const container = document.querySelector('.container');
-    container.addEventListener('wheel', (e) => {
-      if (e.deltaY !== 0 && e.shiftKey) {
-        e.preventDefault();
-        container.scrollLeft += e.deltaY;
-      }
-    });
-  </script>
 </body>
 
 </html>
