@@ -145,6 +145,12 @@ Base Axioms (The Pattern):
 3. **.plt.sec** (0x1050): **Fast Direct Jumps**. (External calls).
 4. **.text** (0x1060): **Your Main Code**. (Instructions).
 
+**NEW TERM: Lazy Binding**
+Definition: Do NOT resolve function addresses at load time.
+Instead: Resolve each function the FIRST time it is called.
+Why: Most programs never call all functions. Saves startup time.
+Opposite: Eager Binding (LD_BIND_NOW=1 resolves all at startup).
+
 Observation (The Numbers):
 1020 + 0x20 (32 bytes) = 1040.
 1040 + 0x10 (16 bytes) = 1050.
@@ -183,6 +189,14 @@ Derivation (GOT Slot):
     0x00003fd0 30100000 ... (Slot 3: `open` -> 0x1030)
 
   **Conclusion**: Linker reserved 3 slots (0, 1, 2). This (Index 0) is Slot 3.
+
+  **NEW TERM: Reserved Slots (WHY 3?)**
+  ELF ABI specification (System V ABI) mandates:
+    GOT[0] = Address of _DYNAMIC section (linker metadata)
+    GOT[1] = Address of link_map structure (library list)
+    GOT[2] = Address of _dl_runtime_resolve (resolver function)
+  These are used by PLT header (0x1020) to call the resolver.
+
   **Note**: It points to `0x1030` (The Fallback Stub).
 
 Axiom 2: The Call Target
@@ -348,6 +362,17 @@ The Resolver is a function: `resolve(link_map, index)`.
 2. **Link Map**: Pushed at `1020`. Tells Resolver *which* library context to use.
 3. **Jump**: Handover to the dynamic loader (`ld-linux`) to do the work.
 
+**NEW TERM: Link Map**
+Definition: A linked list of all loaded shared libraries.
+Each node contains: library name, load address, symbol table pointer.
+Created by: The dynamic linker (ld-linux.so) at program startup.
+Stored at: GOT[1].
+
+**NEW TERM: SymTab (Symbol Table)**
+Definition: Array of symbol entries in each library.
+Each entry contains: symbol name offset, address, size, type.
+Used by: Resolver to look up function names.
+
 Resolver Logic:
 1. Uses `Link Map` to find SymTab.
 2. Uses `Index 0` to find String "open".
@@ -360,6 +385,13 @@ Resolver Logic:
 Why do we need a calculation?
 Because of **ASLR** (Address Space Layout Randomization).
 Security demands that Libc loads at a random address every time.
+
+**NEW TERM: ASLR**
+Definition: The kernel randomizes where libraries load in memory.
+Each program run = Different base addresses.
+Purpose: Hackers cannot predict where code is located.
+Without ASLR: Same addresses every run = Easy to exploit.
+Math: Final Address = Random Base + Fixed Offset.
 
 Axiom 1: The Static Offset
 Run: readelf -s /lib/x86_64-linux-gnu/libc.so.6 | grep " open@"
@@ -494,6 +526,58 @@ Run: python3 -c "print(hex(-100 & 0xffffffff))"
 Conclusion:
   libc transforms: open(file, flags) -> openat(-100, file, flags, 0)
   The kernel only sees openat. "open" is a libc wrapper.
+
+<h2>11b. INSIDE LIBC: O_CREAT Check</h2>
+
+Before the syscall, libc checks: Did you pass O_CREAT flag?
+
+Axiom 1: O_CREAT Value
+Run: grep -r "O_CREAT" /usr/include/asm-generic/fcntl.h | head -1
+  #define O_CREAT 00000100
+
+Derivation (Octal to Hex):
+  Octal 100 = 1*64 + 0*8 + 0*1 = 64 decimal
+  64 decimal = 0x40 hex
+
+Axiom 2: The Bitwise Check
+Run: gdb, step through libc
+  Instruction: and $0x40,%r10d
+
+Math (Bitwise AND):
+  Your flags: O_RDWR = 2 = 0000 0010 binary
+  O_CREAT mask:      0x40 = 0100 0000 binary
+  AND result:              0000 0000 = 0
+
+Conclusion:
+  Result is 0, so O_CREAT is NOT set.
+  libc does NOT read a 3rd argument (mode).
+  If O_CREAT was set, libc would read mode from RDX.
+
+<h2>11c. INSIDE LIBC: Thread Safety Check</h2>
+
+libc also checks: Is this a multi-threaded program?
+
+Axiom 1: The Global Variable
+Run: nm /lib/.../libc.so.6 | grep single_threaded
+  __libc_single_threaded
+
+libc maintains a variable:
+  1 = Only one thread exists (fast path).
+  0 = Multiple threads exist (slow path).
+
+Axiom 2: The Check
+Run: gdb, step through libc
+  Instruction: cmpb $0x0,0xefeae(%rip)
+
+Derivation:
+  0xefeae(%rip) = address of __libc_single_threaded
+  Compare with 0.
+  If single_threaded != 0 (true): Take fast path (no locks).
+  If single_threaded == 0 (false): Take slow path (with locks).
+
+Why two paths?
+  Fast path: No locking overhead.
+  Slow path: Supports pthread_cancel() for thread cancellation.
 
 <h2>12. SECURITY: Stack Canary & Branch Protection</h2>
 
