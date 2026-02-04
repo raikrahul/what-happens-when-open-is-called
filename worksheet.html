@@ -435,6 +435,13 @@ STEP 11: RUNTIME - LIBC LOADING
 DO:   Run the program under GDB and check GOT before/after.
 RUN:  gdb -batch -ex "break main" -ex "run" -ex "x/gx 0x3fd0" ./minimal_open
 
+    EXPLANATION (GDB Flags):
+    -batch: Run in non-interactive mode (script mode).
+    -ex "cmd": Execute this GDB command.
+    break main: Stop when main() starts.
+    run: Start the program.
+    x/gx 0x3fd0: eXamine memory, G (Giant/8-bytes), X (Hex).
+
 OUTPUT (before first call):
     0x3fd0: 0x0000555555555030
 
@@ -454,6 +461,16 @@ MATH (ASLR Address Calculation):
     libc base (example): 0x7ffff7c00000
     open offset in libc: 0x11b150
     open runtime addr:   0x7ffff7c00000 + 0x11b150 = 0x7ffff7d1b150
+
+    MATH (The Pattern):
+    Every single function in libc is at:
+    [Random Base Address] + [Static File Offset]
+
+    EXERCISE:
+    If libc loaded at 0x400000000000.
+    And open is at offset 0x11b150.
+    Where is open in memory?
+    Answer: 0x40000011b150.
 
 DO:   Verify the offset.
 RUN:  readelf -s /lib/x86_64-linux-gnu/libc.so.6 | grep " open@"
