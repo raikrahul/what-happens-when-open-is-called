@@ -1,0 +1,36 @@
+# Compiled binaries
+src/proofs/register_dump
+src/proofs/path_walk_simulator
+src/proofs/fd_exhaustion
+src/proofs/kernel_permission_simulation
+src/error_demos/error_demo_enoent
+src/error_demos/error_demo_eacces
+docs/lesson_details/*/lesson_demo
+
+# Object files
+*.o
+
+# Preprocessor output
+*.i
+
+# Assembly output
+*.s
+
+# Executable binaries (general)
+a.out
+*.out
+
+# Editor and IDE
+*.swp
+*.swo
+*~
+.vscode/
+.idea/
+
+# OS
+.DS_Store
+Thumbs.db
+
+# Temporary files
+*.tmp
+*.bak

@@ -1,41 +1,56 @@
-# Open() Pre-Syscall Worksheet
+# Open() Axiomatic Derivation
 
-## 📱 Live Blog
+## Live Blog
 **URL**: https://raikrahul.github.io/what-happens-when-open-is-called/
-**Design**: Black/White/Green with red memory addresses
-**Format**: Interactive worksheet - 11 steps + VMA mappings
 
-## 🐙 GitHub Wiki
-**Wiki URL**: https://github.com/raikrahul/what-happens-when-open-is-called/wiki
-**Setup**: Run `gh repo edit --enable-wiki=true` to enable
+## Repository Structure
 
-## 📦 Repository
-**Source**: https://github.com/raikrahul/what-happens-when-open-is-called
-**Branch**: `gh-pages` (deployed to GitHub Pages)
-
-## About
-This worksheet walks through the complete journey of `open()` system call from source code to kernel boundary, covering:
-
-- Static linking and relocations
-- Dynamic linking with PLT/GOT  
-- ASLR and address randomization
-- Register transformations
-- VMA memory mappings
-- Pre-syscall preparation steps
-
-## Usage
-Clone and explore the source code:
-```bash
-git clone https://github.com/raikrahul/what-happens-when-open-is-called.git
-cd what-happens-when-open-is-called
+```
+.
+├── docs/                          # Documentation
+│   ├── core_concepts/             # Linking, metamorphosis, error audits
+│   ├── kernel_tracing/            # Kernel traces, GDB analysis
+│   ├── lesson_details/            # Step-by-step axiomatic lessons
+│   │   ├── 00_failure_predictions/
+│   │   ├── 01_the_syscall_interface/
+│   │   ├── 02_the_kernel_entry/
+│   │   ├── 03_the_path_walk/
+│   │   ├── 04_the_allocation/
+│   │   └── 05_the_return/
+│   ├── plt_got/                   # PLT/GOT mathematical derivations
+│   ├── proofs_md/                 # Written proofs (markdown)
+│   └── worksheets/                # Interactive worksheets
+├── src/                           # Source code
+│   ├── error_demos/               # ENOENT, EACCES demo programs
+│   ├── minimal_open/              # Minimal open() implementations
+│   └── proofs/                    # Proof simulator source (.c)
+├── wiki-content/                  # GitHub Wiki content (pending sync)
+├── Makefile                       # Build system
+└── AXIOMATIC_CURRICULUM.md        # Curriculum overview
 ```
 
-Run the proof programs:
+## Build
+
 ```bash
-cd proofs
-./register_dump
-./path_walk_simulator /etc/passwd
-./fd_exhaustion
+make              # Build all programs
+make test         # Run all proof simulators
+make clean        # Remove compiled artifacts
+```
+
+## Proof Simulators
+
+```bash
+./src/proofs/register_dump                   # Register state dump
+./src/proofs/path_walk_simulator /etc/passwd # Path resolution
+./src/proofs/fd_exhaustion                   # File descriptor limits
+./src/proofs/kernel_permission_simulation    # Permission checks
+```
+
+## Error Demos
+
+```bash
+./src/error_demos/error_demo_enoent   # ENOENT demonstration
+./src/error_demos/error_demo_eacces   # EACCES demonstration
 ```
 
 ## License

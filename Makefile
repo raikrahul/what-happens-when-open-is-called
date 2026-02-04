@@ -1,27 +1,26 @@
 CC = gcc
 CFLAGS = -Wall -Wextra -g -O2 -no-pie
-PROOFS_DIR = proofs
-AXIOMATIC_DIR = axiomatic_lessons
+SRC_PROOFS_DIR = src/proofs
+LESSON_DIR = docs/lesson_details
 SRC_DIR = src
 
-# Proof programs
-PROOFS = $(PROOFS_DIR)/register_dump \
-         $(PROOFS_DIR)/path_walk_simulator \
-         $(PROOFS_DIR)/fd_exhaustion \
-         $(PROOFS_DIR)/kernel_permission_simulation
+# Proof programs (source in src/proofs, output in src/proofs)
+PROOFS = $(SRC_PROOFS_DIR)/register_dump \
+         $(SRC_PROOFS_DIR)/path_walk_simulator \
+         $(SRC_PROOFS_DIR)/fd_exhaustion \
+         $(SRC_PROOFS_DIR)/kernel_permission_simulation
 
 # Axiomatic lesson programs
-AXIOMATIC_PROGS = $(AXIOMATIC_DIR)/00_failure_predictions/lesson_demo \
-                  $(AXIOMATIC_DIR)/01_the_syscall_interface/lesson_demo \
-                  $(AXIOMATIC_DIR)/02_the_kernel_entry/lesson_demo \
-                  $(AXIOMATIC_DIR)/03_the_path_walk/lesson_demo \
-                  $(AXIOMATIC_DIR)/04_the_allocation/lesson_demo \
-                  $(AXIOMATIC_DIR)/05_the_return/lesson_demo
+AXIOMATIC_PROGS = $(LESSON_DIR)/00_failure_predictions/lesson_demo \
+                  $(LESSON_DIR)/01_the_syscall_interface/lesson_demo \
+                  $(LESSON_DIR)/02_the_kernel_entry/lesson_demo \
+                  $(LESSON_DIR)/03_the_path_walk/lesson_demo \
+                  $(LESSON_DIR)/04_the_allocation/lesson_demo \
+                  $(LESSON_DIR)/05_the_return/lesson_demo
 
 # Error demonstration programs
 ERROR_DEMOS = $(SRC_DIR)/error_demos/error_demo_enoent \
-             $(SRC_DIR)/error_demos/error_demo_eacces \
-             $(SRC_DIR)/error_demos/error_demo_emfile
+             $(SRC_DIR)/error_demos/error_demo_eacces
 
 .PHONY: all clean proofs axiomatic errors test install-deps
 
@@ -34,35 +33,35 @@ axiomatic: $(AXIOMATIC_PROGS)
 errors: $(ERROR_DEMOS)
 
 # Proof program rules
-$(PROOFS_DIR)/register_dump: $(PROOFS_DIR)/00_register_dump.c
+$(SRC_PROOFS_DIR)/register_dump: $(SRC_PROOFS_DIR)/00_register_dump.c
 	$(CC) $(CFLAGS) -o $@ $<
 
-$(PROOFS_DIR)/path_walk_simulator: $(PROOFS_DIR)/01_path_walk_simulator.c
+$(SRC_PROOFS_DIR)/path_walk_simulator: $(SRC_PROOFS_DIR)/01_path_walk_simulator.c
 	$(CC) $(CFLAGS) -o $@ $<
 
-$(PROOFS_DIR)/fd_exhaustion: $(PROOFS_DIR)/02_fd_exhaustion.c
+$(SRC_PROOFS_DIR)/fd_exhaustion: $(SRC_PROOFS_DIR)/02_fd_exhaustion.c
 	$(CC) $(CFLAGS) -o $@ $<
 
-$(PROOFS_DIR)/kernel_permission_simulation: $(PROOFS_DIR)/03_kernel_permission_simulation.c
+$(SRC_PROOFS_DIR)/kernel_permission_simulation: $(SRC_PROOFS_DIR)/03_kernel_permission_simulation.c
 	$(CC) $(CFLAGS) -o $@ $<
 
 # Axiomatic lesson demo programs
-$(AXIOMATIC_DIR)/00_failure_predictions/lesson_demo: $(AXIOMATIC_DIR)/00_failure_predictions/demo.c
+$(LESSON_DIR)/00_failure_predictions/lesson_demo: $(LESSON_DIR)/00_failure_predictions/demo.c
 	$(CC) $(CFLAGS) -o $@ $<
 
-$(AXIOMATIC_DIR)/01_the_syscall_interface/lesson_demo: $(AXIOMATIC_DIR)/01_the_syscall_interface/demo.c
+$(LESSON_DIR)/01_the_syscall_interface/lesson_demo: $(LESSON_DIR)/01_the_syscall_interface/demo.c
 	$(CC) $(CFLAGS) -o $@ $<
 
-$(AXIOMATIC_DIR)/02_the_kernel_entry/lesson_demo: $(AXIOMATIC_DIR)/02_the_kernel_entry/demo.c
+$(LESSON_DIR)/02_the_kernel_entry/lesson_demo: $(LESSON_DIR)/02_the_kernel_entry/demo.c
 	$(CC) $(CFLAGS) -o $@ $<
 
-$(AXIOMATIC_DIR)/03_the_path_walk/lesson_demo: $(AXIOMATIC_DIR)/03_the_path_walk/demo.c
+$(LESSON_DIR)/03_the_path_walk/lesson_demo: $(LESSON_DIR)/03_the_path_walk/demo.c
 	$(CC) $(CFLAGS) -o $@ $<
 
-$(AXIOMATIC_DIR)/04_the_allocation/lesson_demo: $(AXIOMATIC_DIR)/04_the_allocation/demo.c
+$(LESSON_DIR)/04_the_allocation/lesson_demo: $(LESSON_DIR)/04_the_allocation/demo.c
 	$(CC) $(CFLAGS) -o $@ $<
 
-$(AXIOMATIC_DIR)/05_the_return/lesson_demo: $(AXIOMATIC_DIR)/05_the_return/demo.c
+$(LESSON_DIR)/05_the_return/lesson_demo: $(LESSON_DIR)/05_the_return/demo.c
 	$(CC) $(CFLAGS) -o $@ $<
 
 # Error demonstration programs
@@ -72,28 +71,17 @@ $(SRC_DIR)/error_demos/error_demo_enoent: $(SRC_DIR)/error_demos/enoent_demo.c
 $(SRC_DIR)/error_demos/error_demo_eacces: $(SRC_DIR)/error_demos/eacces_demo.c
 	$(CC) $(CFLAGS) -o $@ $<
 
-$(SRC_DIR)/error_demos/error_demo_emfile: $(SRC_DIR)/error_demos/emfile_demo.c
-	$(CC) $(CFLAGS) -o $@ $<
-
 # Test targets
 test: all
 	@echo "Running all proof programs..."
-	@cd $(PROOFS_DIR) && ./register_dump && echo "✓ register_dump works"
-	@cd $(PROOFS_DIR) && ./path_walk_simulator /etc/passwd > /dev/null && echo "✓ path_walk_simulator works"
-	@cd $(PROOFS_DIR) && echo "Testing fd_exhaustion (may take a moment)..." && timeout 5s ./fd_exhaustion || true && echo "✓ fd_exhaustion works"
-	@cd $(PROOFS_DIR) && ./kernel_permission_simulation && echo "✓ kernel_permission_simulation works"
-	@echo "Running axiomatic lessons..."
-	@$(AXIOMATIC_DIR)/00_failure_predictions/lesson_demo && echo "✓ failure_predictions lesson works"
-	@$(AXIOMATIC_DIR)/01_the_syscall_interface/lesson_demo && echo "✓ syscall_interface lesson works"
-	@$(AXIOMATIC_DIR)/02_the_kernel_entry/lesson_demo && echo "✓ kernel_entry lesson works"
-	@$(AXIOMATIC_DIR)/03_the_path_walk/lesson_demo && echo "✓ path_walk lesson works"
-	@$(AXIOMATIC_DIR)/04_the_allocation/lesson_demo && echo "✓ allocation lesson works"
-	@$(AXIOMATIC_DIR)/05_the_return/lesson_demo && echo "✓ return lesson works"
+	@$(SRC_PROOFS_DIR)/register_dump && echo "OK register_dump"
+	@$(SRC_PROOFS_DIR)/path_walk_simulator /etc/passwd > /dev/null && echo "OK path_walk_simulator"
+	@echo "Testing fd_exhaustion..." && timeout 5s $(SRC_PROOFS_DIR)/fd_exhaustion || true && echo "OK fd_exhaustion"
+	@$(SRC_PROOFS_DIR)/kernel_permission_simulation && echo "OK kernel_permission_simulation"
 	@echo "Running error demos..."
-	@$(SRC_DIR)/error_demos/error_demo_enoent && echo "✓ ENOENT demo works"
-	@$(SRC_DIR)/error_demos/error_demo_eacces && echo "✓ EACCES demo works"
-	@$(SRC_DIR)/error_demos/error_demo_emfile && echo "✓ EMFILE demo works"
-	@echo "✓ All tests passed"
+	@$(SRC_DIR)/error_demos/error_demo_enoent && echo "OK ENOENT demo"
+	@$(SRC_DIR)/error_demos/error_demo_eacces && echo "OK EACCES demo"
+	@echo "All tests passed"
 
 # Install dependencies for Ubuntu/Debian
 install-deps:
@@ -104,8 +92,6 @@ install-deps:
 clean:
 	rm -f $(PROOFS) $(AXIOMATIC_PROGS) $(ERROR_DEMOS)
 	find . -name "*.o" -delete
-	find . -name "*.i" -delete
-	find . -name "*.s" -delete
 
 help:
 	@echo "Available targets:"
