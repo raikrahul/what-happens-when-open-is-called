@@ -78,9 +78,8 @@ static int entry_handler(struct kprobe *p, struct pt_regs *regs) {
    * regs->dx holds Arg3
    */
 
-  // int dfd = (int)regs->di; // Unused
-  struct filename *pathname = (struct filename *)regs->si;
-  struct open_flags *op = (struct open_flags *)regs->dx;
+  // struct filename *pathname = ???;
+  // struct open_flags *op = ???;
 
   /*
    * ═══════════════════════════════════════════════════════════════════════
@@ -93,18 +92,6 @@ static int entry_handler(struct kprobe *p, struct pt_regs *regs) {
    * 3. Use pr_info() to print them with %px.
    */
 
-  if ((unsigned long)pathname > 0xffff000000000000) {
-    pr_info("pathname is a kernel pointer: %px\n", pathname);
-  } else {
-    pr_info("pathname is a userspace pointer: %px (UNEXPECTED)\n", pathname);
-  }
-
-  if ((unsigned long)op > 0xffff000000000000) {
-    pr_info("op is a kernel pointer: %px\n", op);
-  } else {
-    pr_info("op is a userspace pointer: %px (UNEXPECTED)\n", op);
-  }
-
   /*
    * ═══════════════════════════════════════════════════════════════════════
    * TODO #3: DEREFERENCE AND PRINT
@@ -115,11 +102,6 @@ static int entry_handler(struct kprobe *p, struct pt_regs *regs) {
    * 2. Print ope->open_flag (expect 0x8002 for O_RDWR | O_LARGEFILE).
    * 3. Print op->acc_mode (expect 0x6 for MAY_READ | MAY_WRITE).
    */
-
-  pr_info("pathname->name ptr: %px\n", pathname->name);
-  pr_info("pathname->name: %s\n", pathname->name);
-  pr_info("op->open_flag: 0x%x\n", op->open_flag);
-  pr_info("op->acc_mode: 0x%x\n", op->acc_mode);
 
   return 0;
 }
@@ -143,44 +125,32 @@ static int ret_handler(struct kretprobe_instance *ri, struct pt_regs *regs) {
    * Else, print pointer address.
    */
 
-  struct file *ret_file = (struct file *)regs->ax;
-  if (IS_ERR(ret_file)) {
-    pr_info("ret_file is an error: %ld\n", PTR_ERR(ret_file));
-  } else {
-    pr_info("ret_file is a pointer: %px\n", ret_file);
+  // struct file *ret_file = ???
 
-    /*
-     * ═══════════════════════════════════════════════════════════════════
-     * TODO #5: PRINT STRUCT FILE FIELDS (Bonus)
-     * ═══════════════════════════════════════════════════════════════════
-     * We have a valid 'struct file *'. Let's see what's inside!
-     *
-     * 1. Print ret_file->f_pos  (offset)
-     * 2. Print ret_file->f_flags (flags)
-     * 3. Print ret_file->f_mode  (mode)
-     * 4. Print atomic_long_read(&ret_file->f_count) (refcount)
-     */
+  /*
+   * ═══════════════════════════════════════════════════════════════════
+   * TODO #5: PRINT STRUCT FILE FIELDS (Bonus)
+   * ═══════════════════════════════════════════════════════════════════
+   * We have a valid 'struct file *'. Let's see what's inside!
+   *
+   * 1. Print ret_file->f_pos  (offset)
+   * 2. Print ret_file->f_flags (flags)
+   * 3. Print ret_file->f_mode  (mode)
+   * 4. Print atomic_long_read(&ret_file->f_count) (refcount)
+   *    WAIT! Does f_count exist on your kernel? Check vmlinux via gdb!
+   *    Use 'file_count(ret_file)' macro if needed.
+   */
 
-    pr_info("ret_file->f_pos: %lld\n", ret_file->f_pos);
-    pr_info("ret_file->f_flags: 0x%x\n", ret_file->f_flags);
-    pr_info("ret_file->f_mode: 0x%x\n", ret_file->f_mode);
-    pr_info("ret_file->f_count: %ld\n", (long)file_count(ret_file));
-
-    /*
-     * ═══════════════════════════════════════════════════════════════════
-     * TODO #6: VERIFY FILENAME MATCH
-     * ═══════════════════════════════════════════════════════════════════
-     * AXIOM: do_filp_open finds the file corresponding to 'pathname'.
-     *
-     * 1. Print ret_file->f_path.dentry->d_name.name address (%px)
-     * 2. Print ret_file->f_path.dentry->d_name.name string (%s)
-     * 3. Compare with what we saw in entry_handler.
-     */
-    pr_info("ret_file->f_path.dentry->d_name.name ptr: %px\n",
-            ret_file->f_path.dentry->d_name.name);
-    pr_info("ret_file->f_path.dentry->d_name.name: %s\n",
-            ret_file->f_path.dentry->d_name.name);
-  }
+  /*
+   * ═══════════════════════════════════════════════════════════════════
+   * TODO #6: VERIFY FILENAME MATCH
+   * ═══════════════════════════════════════════════════════════════════
+   * AXIOM: do_filp_open finds the file corresponding to 'pathname'.
+   *
+   * 1. Print ret_file->f_path.dentry->d_name.name address (%px)
+   * 2. Print ret_file->f_path.dentry->d_name.name string (%s)
+   * 3. Compare with what we saw in entry_handler.
+   */
 
   return 0;
 }
