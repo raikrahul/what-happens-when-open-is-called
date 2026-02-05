@@ -1,0 +1,126 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+    <meta charset="UTF-8">
+    <title>Stage 2: Kernel Tracing - ARG2 Filename</title>
+    <style>
+        body {
+            background: #ffffff;
+            color: #000000;
+            font-family: 'Courier New', monospace;
+            font-size: 13px;
+            line-height: 1.7;
+            padding: 40px;
+            max-width: 800px;
+            margin: 0 auto;
+        }
+
+        pre {
+            white-space: pre-wrap;
+            word-wrap: break-word;
+            margin: 0;
+        }
+
+        @media print {
+
+            button,
+            div[style*="text-align: right"] {
+                display: none !important;
+            }
+
+            body {
+                padding: 0;
+            }
+        }
+    </style>
+</head>
+
+<body>
+    <div style="text-align: right; padding-bottom: 20px;">
+        <button onclick="window.print()" style="padding: 5px 10px; cursor: pointer;">Print Page</button>
+    </div>
+    <pre>
+================================================================================
+STAGE 2 - ARG2: THE FILENAME
+================================================================================
+
+AXIOMS:
+--------
+Kernel:      6.14.0-37-generic
+Probe:       getname()
+Input:       User pointer (RDI) = 0x__________________
+Output:      struct filename * (RAX) = 0x__________________
+
+STRUCTURE (from check_offsets.ko):
+----------------------------------
+sizeof(struct filename) = 32 bytes
+
++0x00  name     (8 bytes)  = 0x__________________
++0x08  uptr     (8 bytes)  = 0x__________________
++0x10  refcnt   (4 bytes)  = ____
++0x18  aname    (8 bytes)  = 0x__________________
+
+
+================================================================================
+STEP 01: LOAD THE DRIVER
+================================================================================
+
+DO:   cd drivers/arg2_filename && make && sudo insmod trace_filename.ko
+RUN:  _________________________________________________________________
+
+OBSERVE:
+    dmesg | tail -1
+    [    ] Drill: Module loaded.
+
+
+================================================================================
+STEP 02: TRIGGER THE SYSCALL
+================================================================================
+
+DO:   ./minimal_open
+RUN:  _________________________________________________________________
+
+OBSERVE:
+    dmesg | tail -5
+    [    ] #2. getname. SUCCESS.
+    [    ]     User Ptr (RDI)         = 0x__________________
+    [    ]     Struct Filename (RAX)  = 0x__________________
+    [    ]     fn->name (Offset +0)   = 0x__________________
+    [    ]     String Content         = '________'
+
+
+================================================================================
+STEP 03: UNLOAD THE DRIVER
+================================================================================
+
+DO:   sudo rmmod trace_filename
+RUN:  _________________________________________________________________
+
+
+================================================================================
+MATH: ADDRESS CALCULATION
+================================================================================
+
+User Ptr:     0x__________________ (48-bit user space, < 0x8000_0000_0000)
+Kernel Ptr:   0x__________________ (kernel space, > 0xffff_0000_0000_0000)
+
+Delta = Kernel - User = 0x__________________
+
+This delta represents the memory barrier between user and kernel space.
+
+
+================================================================================
+CONCLUSION
+================================================================================
+
+[ ] Verified: User pointer was copied to kernel slab.
+[ ] Verified: fn->uptr matches original RDI.
+[ ] Verified: fn->name points to kernel string buffer.
+[ ] String content matches source code literal.
+
+
+  </pre>
+</body>
+
+</html>

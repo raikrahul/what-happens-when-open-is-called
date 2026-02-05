@@ -1,0 +1,409 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="UTF-8">
+    <title>Stage 2 Return: Axiomatic Explanation</title>
+    <style>
+        body {
+            background: #ffffff;
+            color: #000000;
+            font-family: 'Courier New', monospace;
+            font-size: 13px;
+            line-height: 1.7;
+            padding: 40px;
+            max-width: 900px;
+            margin: 0 auto;
+        }
+        pre {
+            white-space: pre-wrap;
+            word-wrap: break-word;
+            margin: 0;
+        }
+    </style>
+</head>
+<body>
+<pre>
+================================================================================
+LINE 001: WE START WITH NOTHING
+================================================================================
+
+This document begins with zero assumptions.
+You know: counting, basic coding, some math.
+Everything else will be built step by step.
+
+================================================================================
+LINE 002: WHAT IS A COMPUTER?
+================================================================================
+
+AXIOM: A computer is a machine that stores numbers in locations.
+
+Each location has:
+- An ADDRESS (where it is)
+- A VALUE (what is stored there)
+
+Example:
+  Address 1000 contains value 42
+  Address 1001 contains value 55
+
+Notation: MEM[1000] = 42 means "at address 1000, the value is 42"
+
+================================================================================
+LINE 003: WHAT IS A POINTER?
+================================================================================
+
+DEFINITION: A pointer is a variable that holds an address.
+
+Example:
+  p = 1000
+  This means p points to address 1000
+  
+DERIVATION:
+  If p = 1000, then:
+  - p is the pointer (holds address 1000)
+  - *p means "value at address 1000"
+  - If MEM[1000] = 42, then *p = 42
+
+================================================================================
+LINE 004: WHAT IS MEMORY?
+================================================================================
+
+AXIOM: Computer memory is a sequence of bytes.
+
+Each byte:
+- Has an address
+- Can store a number from 0 to 255
+
+DERIVATION:
+  1 byte = 8 bits
+  Each bit can be 0 or 1
+  2^8 = 256 possible values
+  Therefore: 0 to 255
+
+================================================================================
+LINE 005: HOW BIG IS A NUMBER?
+================================================================================
+
+DEFINITIONS (built from counting):
+
+1 byte  = 8 bits  = 2^8  = 256 values (0 to 255)
+2 bytes = 16 bits = 2^16 = 65,536 values (0 to 65,535)
+4 bytes = 32 bits = 2^32 = 4,294,967,296 values
+8 bytes = 64 bits = 2^64 = 18,446,744,073,709,551,616 values
+
+NOTATION:
+  We write hex numbers with prefix "0x"
+  0x00 = 0
+  0xFF = 255
+  0x100 = 256
+
+================================================================================
+LINE 006: WHAT IS AN INTEGER?
+================================================================================
+
+DEFINITION: An integer is a whole number (no fractions).
+
+In computers, integers have fixed size.
+
+DERIVATION:
+  If we use 4 bytes (32 bits) for an integer:
+  - Maximum positive: 2,147,483,647
+  - Minimum negative: -2,147,483,648
+
+NOTATION:
+  int x = 42; means "x is an integer with value 42"
+
+================================================================================
+LINE 007: WHAT IS A SYSTEM CALL?
+================================================================================
+
+AXIOM: A system call is when a program asks the operating system to do something.
+
+DERIVATION from basic concepts:
+  1. A program runs in "user space" (restricted)
+  2. The OS runs in "kernel space" (privileged)
+  3. To cross from user to kernel, we need a special instruction
+  4. This instruction is called a "system call"
+
+EXAMPLE:
+  User program: "I want to open a file"
+  System call: "Hey OS, please open this file for me"
+  OS: "OK, I'll do it"
+
+================================================================================
+LINE 008: WHAT DOES OPEN DO?
+================================================================================
+
+DEFINITION: open() is a system call that asks the OS to access a file.
+
+INPUT to open():
+  1. A filename (string of characters)
+  2. Flags (what mode: read, write, etc.)
+
+OUTPUT from open():
+  1. A number called "file descriptor" (or an error)
+
+DERIVATION:
+  Why a number? Because the OS needs to track which file you opened.
+  Numbers are easier to track than strings.
+
+================================================================================
+LINE 009: WHAT IS A FILE DESCRIPTOR?
+================================================================================
+
+DEFINITION: A file descriptor is an integer that identifies an open file.
+
+DERIVATION from counting:
+  - Standard input (keyboard): fd = 0
+  - Standard output (screen): fd = 1
+  - Standard error: fd = 2
+  - First opened file: fd = 3
+  - Second opened file: fd = 4
+  And so on...
+
+AXIOM: The OS keeps a table of open files for each process.
+  Index 0: stdin
+  Index 1: stdout
+  Index 2: stderr
+  Index 3: your file
+
+================================================================================
+LINE 010: WHERE IS THE TABLE STORED?
+================================================================================
+
+DEFINITION: Each running program has a "process" structure.
+
+DERIVATION:
+  1. The OS needs to remember which files each program opened
+  2. It stores this in a structure called "task_struct"
+  3. Inside task_struct is "files_struct"
+  4. Inside files_struct is "fdtable"
+  5. Inside fdtable is an array "fd[]"
+
+HIERARCHY:
+  task_struct (the process)
+    └── files_struct (file information)
+          └── fdtable (the table)
+                └── fd[] (array of file pointers)
+
+NOTATION:
+  current->files->fdt->fd[3] means:
+  - current: the current process
+  - files: its files_struct
+  - fdt: its fdtable
+  - fd[3]: the 4th entry (index 3) in the array
+
+================================================================================
+LINE 011: WHAT IS A STRUCT?
+================================================================================
+
+DEFINITION: A struct is a collection of variables grouped together.
+
+EXAMPLE:
+  struct Point {
+    int x;
+    int y;
+  };
+
+DERIVATION:
+  - Point takes 8 bytes (4 for x + 4 for y)
+  - If address of Point is 1000:
+    - x is at 1000
+    - y is at 1004
+
+NOTATION:
+  +0x00 means offset 0 bytes from start
+  +0x04 means offset 4 bytes from start
+
+================================================================================
+LINE 012: WHAT IS FD_INSTALL?
+================================================================================
+
+DEFINITION: fd_install is a kernel function that puts a file into the fd table.
+
+FUNCTION SIGNATURE (what it takes):
+  void fd_install(int fd, struct file *file)
+
+DERIVATION:
+  - First parameter: fd (which slot in the table)
+  - Second parameter: file (pointer to the file structure)
+  - Return: nothing (void)
+
+WHAT IT DOES:
+  current->files->fdt->fd[fd] = file
+
+================================================================================
+LINE 013: WHAT ARE REGISTERS?
+================================================================================
+
+DEFINITION: Registers are small, fast storage locations inside the CPU.
+
+AXIOM: The x86_64 CPU has several registers.
+
+NOTATION for system calls on x86_64:
+  RDI = first argument
+  RSI = second argument
+  RDX = third argument
+  RCX = fourth argument
+  R8 = fifth argument
+  R9 = sixth argument
+
+DERIVATION for fd_install(fd, file):
+  - RDI = fd (first argument)
+  - RSI = file (second argument)
+
+================================================================================
+LINE 014: WHAT IS RDI?
+================================================================================
+
+DEFINITION: RDI is a 64-bit register (8 bytes).
+
+DERIVATION:
+  "R" means Register
+  "DI" means Destination Index (historical name)
+  In system calls: RDI holds the first argument
+
+EXAMPLE:
+  If fd_install(3, 0xffff888100abc000) is called:
+  - RDI = 3 (the fd number)
+  - RSI = 0xffff888100abc000 (the file pointer)
+
+================================================================================
+LINE 015: WHAT IS RSI?
+================================================================================
+
+DEFINITION: RSI is a 64-bit register (8 bytes).
+
+DERIVATION:
+  "R" means Register
+  "SI" means Source Index (historical name)
+  In system calls: RSI holds the second argument
+
+EXAMPLE (continued from LINE 014):
+  - RSI = 0xffff888100abc000
+  - This is a pointer to a struct file
+  - The pointer is an address in kernel memory
+
+================================================================================
+LINE 016: WHAT IS A KERNEL POINTER?
+================================================================================
+
+DEFINITION: A kernel pointer is an address in kernel memory space.
+
+AXIOM for x86_64 Linux:
+  - User space addresses: 0x0000000000000000 to 0x00007FFFFFFFFFFF
+  - Kernel space addresses: 0xFFFF800000000000 to 0xFFFFFFFFFFFFFFFF
+
+DERIVATION:
+  64-bit addresses have 16 hex digits
+  First digit (or first 4 bits) determines the space:
+  - 0x0000... to 0x7FFF... = user
+  - 0x8000... to 0xFFFF... = kernel (simplified)
+
+EXAMPLE:
+  0xffff888100abc000 is a kernel pointer (starts with 0xffff)
+
+================================================================================
+LINE 017: WHAT IS TRACING?
+================================================================================
+
+DEFINITION: Tracing is watching what a function does when it runs.
+
+DERIVATION:
+  1. We want to see fd_install being called
+  2. We attach a "probe" to the function
+  3. When the function runs, our probe runs first
+  4. Our probe reads the registers
+  5. Our probe prints the values
+
+METHOD: kprobe (kernel probe)
+  - We tell the kernel: "When fd_install runs, run my code first"
+  - My code = entry_handler
+  - In entry_handler, we read regs->di and regs->si
+
+================================================================================
+LINE 018: READING THE REGISTERS
+================================================================================
+
+DERIVATION from LINE 013 and LINE 017:
+  In the entry_handler, we receive a pointer to the registers.
+  
+  CODE:
+    int fd = (int)regs->di;
+    struct file *file = (struct file *)regs->si;
+
+EXPLANATION:
+  - regs->di gives us the value in RDI register
+  - regs->si gives us the value in RSI register
+  - We cast them to the correct types
+
+================================================================================
+LINE 019: WHAT IS CASTING?
+================================================================================
+
+DEFINITION: Casting is telling the compiler to treat a value as a different type.
+
+EXAMPLE:
+  (int)regs->di
+  - regs->di is 64 bits
+  - We only want the lower 32 bits (int is 4 bytes)
+  - Casting extracts those 32 bits
+
+DERIVATION:
+  A register holds 64 bits (8 bytes)
+  An int needs 32 bits (4 bytes)
+  So we take only the lower half
+
+================================================================================
+LINE 020: THE COMPLETE PICTURE
+================================================================================
+
+DERIVATION combining all previous lines:
+
+STEP 1: User calls open("somefile", O_RDWR)
+        This becomes a system call
+
+STEP 2: Kernel processes the request
+        Eventually reaches fd_install
+
+STEP 3: fd_install is called with:
+        - RDI = 3 (the file descriptor number)
+        - RSI = 0xffff... (pointer to struct file)
+
+STEP 4: Our kprobe runs
+        - Reads regs->di → gets 3
+        - Reads regs->si → gets 0xffff...
+        - Prints these values
+
+STEP 5: fd_install executes
+        - current->files->fdt->fd[3] = file
+        - Now fd 3 points to the file
+
+STEP 6: User gets back fd = 3
+        Can use read(3) and write(3)
+
+================================================================================
+LINE 021: VERIFICATION
+================================================================================
+
+We can verify the fd table binding by reading it back:
+
+AXIOM: After fd_install, current->files->fdt->fd[3] == file
+
+DERIVATION:
+  If our probe shows:
+  - fd = 3
+  - file = 0xffff888100234000
+  
+  Then the table entry at index 3 should contain:
+  0xffff888100234000
+
+This completes the axiomatic explanation.
+Every concept was derived from previous lines.
+No new concepts were introduced without definition.
+
+================================================================================
+END OF AXIOMATIC EXPLANATION
+================================================================================
+</pre>
+</body>
+</html>

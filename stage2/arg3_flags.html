@@ -1,0 +1,130 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+    <meta charset="UTF-8">
+    <title>Stage 2: Kernel Tracing - ARG3 Flags</title>
+    <style>
+        body {
+            background: #ffffff;
+            color: #000000;
+            font-family: 'Courier New', monospace;
+            font-size: 13px;
+            line-height: 1.7;
+            padding: 40px;
+            max-width: 800px;
+            margin: 0 auto;
+        }
+
+        pre {
+            white-space: pre-wrap;
+            word-wrap: break-word;
+            margin: 0;
+        }
+
+        @media print {
+
+            button,
+            div[style*="text-align: right"] {
+                display: none !important;
+            }
+
+            body {
+                padding: 0;
+            }
+        }
+    </style>
+</head>
+
+<body>
+    <div style="text-align: right; padding-bottom: 20px;">
+        <button onclick="window.print()" style="padding: 5px 10px; cursor: pointer;">Print Page</button>
+    </div>
+    <pre>
+================================================================================
+STAGE 2 - ARG3: THE FLAGS
+================================================================================
+
+AXIOMS:
+--------
+Kernel:      6.14.0-37-generic
+Probe:       do_filp_open()
+Input:       User flags = O_RDWR = 0x2
+Output:      struct open_flags * (RDX) = 0x__________________
+
+STRUCTURE (from check_offsets.ko):
+----------------------------------
+sizeof(struct open_flags) = 20 bytes
+
++0x00  open_flag  (4 bytes)  = 0x________  (Expected: 0x8002 = O_RDWR | O_LARGEFILE)
++0x04  mode       (2 bytes)  = 0x____
++0x08  acc_mode   (4 bytes)  = 0x________  (Expected: 0x6 = MAY_READ | MAY_WRITE)
++0x0C  intent     (4 bytes)  = 0x________
++0x10  lookup_flags (4 bytes) = 0x________
+
+
+================================================================================
+STEP 01: LOAD THE DRIVER
+================================================================================
+
+DO:   cd drivers/arg3_flags && make && sudo insmod trace_flags.ko
+RUN:  _________________________________________________________________
+
+OBSERVE:
+    dmesg | tail -1
+    [    ] Drill: Module loaded.
+
+
+================================================================================
+STEP 02: TRIGGER THE SYSCALL
+================================================================================
+
+DO:   ./minimal_open
+RUN:  _________________________________________________________________
+
+OBSERVE:
+    dmesg | tail -3
+    [    ] #3. do_filp_open. op_ptr=0x__________________
+    [    ]     open_flag=0x________
+    [    ]     acc_mode=0x________
+
+
+================================================================================
+STEP 03: UNLOAD THE DRIVER
+================================================================================
+
+DO:   sudo rmmod trace_flags
+RUN:  _________________________________________________________________
+
+
+================================================================================
+MATH: FLAG TRANSFORMATION
+================================================================================
+
+User Input:   O_RDWR = 0x2 = 0b0000_0000_0000_0010
+
+Kernel Transform:
+    open_flag = O_RDWR | O_LARGEFILE = 0x2 | 0x8000 = 0x________
+    
+    ACC_MODE(flags) calculation:
+        flags & O_ACCMODE = 0x2 & 0x3 = 0x2
+        0x2 >> 1 = 0x1
+        0x1 + 1 = 0x2
+        Result: MAY_WRITE = 0x2? No, it's MAY_READ|MAY_WRITE = 0x6
+        
+    (Fill in actual derivation after observing)
+
+
+================================================================================
+CONCLUSION
+================================================================================
+
+[ ] Verified: O_RDWR (0x2) transformed to open_flag (0x____).
+[ ] Verified: acc_mode shows read+write permission bits.
+[ ] Verified: O_LARGEFILE added by kernel automatically.
+
+
+  </pre>
+</body>
+
+</html>

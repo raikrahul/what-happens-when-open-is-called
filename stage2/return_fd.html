@@ -1,0 +1,126 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+    <meta charset="UTF-8">
+    <title>Stage 2: Kernel Tracing - RETURN FD</title>
+    <style>
+        body {
+            background: #ffffff;
+            color: #000000;
+            font-family: 'Courier New', monospace;
+            font-size: 13px;
+            line-height: 1.7;
+            padding: 40px;
+            max-width: 800px;
+            margin: 0 auto;
+        }
+
+        pre {
+            white-space: pre-wrap;
+            word-wrap: break-word;
+            margin: 0;
+        }
+
+        @media print {
+
+            button,
+            div[style*="text-align: right"] {
+                display: none !important;
+            }
+
+            body {
+                padding: 0;
+            }
+        }
+    </style>
+</head>
+
+<body>
+    <div style="text-align: right; padding-bottom: 20px;">
+        <button onclick="window.print()" style="padding: 5px 10px; cursor: pointer;">Print Page</button>
+    </div>
+    <pre>
+================================================================================
+STAGE 2 - RETURN: THE FILE DESCRIPTOR
+================================================================================
+
+AXIOMS:
+--------
+Kernel:      6.14.0-37-generic
+Probe:       fd_install()
+Input:       fd (RDI) = ____
+             file * (RSI) = 0x__________________
+Output:      None (void function)
+
+STRUCTURE (from check_offsets.ko):
+----------------------------------
+sizeof(struct file) = 184 bytes
+
++0x00  (unknown)   
++0x10  f_op       (8 bytes)  = 0x__________________  (Points to file_operations)
++0x28  f_inode    (8 bytes)  = 0x__________________  (Points to inode)
+
+
+================================================================================
+STEP 01: LOAD THE DRIVER
+================================================================================
+
+DO:   cd drivers/return_fd && make && sudo insmod trace_fd.ko
+RUN:  _________________________________________________________________
+
+OBSERVE:
+    dmesg | tail -1
+    [    ] Drill: Module loaded.
+
+
+================================================================================
+STEP 02: TRIGGER THE SYSCALL
+================================================================================
+
+DO:   ./minimal_open
+RUN:  _________________________________________________________________
+
+OBSERVE:
+    dmesg | tail -3
+    [    ] #1. fd_install. fd=____. file=0x__________________
+    [    ]     task=minimal_open. pid=________
+
+
+================================================================================
+STEP 03: UNLOAD THE DRIVER
+================================================================================
+
+DO:   sudo rmmod trace_fd
+RUN:  _________________________________________________________________
+
+
+================================================================================
+MATH: FD TABLE BINDING
+================================================================================
+
+Binding operation:
+    current->files->fdt->fd[____] = 0x__________________
+
+Address calculation:
+    current = 0x__________________  (task_struct for minimal_open)
+    current->files = 0x__________________  (files_struct)
+    current->files->fdt = 0x__________________  (fdtable)
+    current->files->fdt->fd = 0x__________________  (array base)
+    current->files->fdt->fd[3] = base + (3 * 8) = 0x__________________
+
+
+================================================================================
+CONCLUSION
+================================================================================
+
+[ ] Verified: fd = 3 (first available after stdin/stdout/stderr).
+[ ] Verified: file pointer is valid kernel address.
+[ ] Verified: fd_install binds the fd to the file struct.
+[ ] After this call, user can use fd=3 to read/write.
+
+
+  </pre>
+</body>
+
+</html>
