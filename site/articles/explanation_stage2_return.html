@@ -742,7 +742,121 @@ Derivation:
 What We Failed To Observe And Why
 
 1. We did not observe a __d_add line for l_e.txt in the post-eviction rebuild phase. The post-eviction lookup is visible on the RCU path and returns a new pointer, but an explicit insert line for l_e.txt was not printed in this run. This is why Claim A9 is phrased as a post-eviction lookup, not an explicit insert for l_e.txt.
-2. We did not observe any d_drop entry lines for these names. The d_delete lines are present, so deletion is proven, but d_drop did not fire for these paths in this run.</pre>
+2. We did not observe any d_drop entry lines for these names. The d_delete lines are present, so deletion is proven, but d_drop did not fire for these paths in this run.
+
+Wide-Screen Trace Appendix
+
+Full Trace A (matrix_open, latest run)
+
+#1. Call. do_filp_open entry. Values: name pointer 0xffff8bd543616020, name string /tmp/t_e.txt. Data: user-space open("/tmp/t_e.txt") reached kernel. Work: begin lookup for basename t_e.txt. Errors: none. Caller line: not recorded. Current line: not recorded. Resume: will return to caller with file pointer.
+#2. Call. __d_lookup_rcu entry. Values: hash 2802308728, length 3, name tmp/t_e.txt. Data: RCU path checks tmp/t_e.txt prefix. Work: prefix lookup. Errors: none. Caller line: not recorded. Current line: not recorded. Resume: returns to lookup path.
+#3. Call. __d_lookup_rcu entry. Values: hash 1830572521, length 7, name t_e.txt. Data: RCU path checks basename. Work: fast path lookup. Errors: none. Caller line: not recorded. Current line: not recorded. Resume: returns to lookup path.
+#4. Call. d_lookup entry. Values: hash 1830572521, length 7, name t_e.txt. Data: exact lookup key. Work: slow path lookup. Errors: none. Caller line: not recorded. Current line: not recorded. Resume: returns with hit/miss.
+#5. Return. d_lookup return. Values: NULL. Data: cache miss. Work: miss triggers allocation. Errors: none. Caller line: not recorded. Current line: not recorded. Resume: control continues to allocate dentry.
+#6. Call. __d_alloc entry. Values: name pointer 0xffff8bd543616025. Data: points to basename start in /tmp/t_e.txt. Work: allocate dentry name storage and copy. Errors: none. Caller line: not recorded. Current line: not recorded. Resume: returns new dentry pointer.
+#7. Return. __d_alloc return. Values: name pointer 0xffff8bd5451dd878. Data: newly allocated dentry name storage for t_e.txt. Work: allocate completed. Errors: none. Caller line: not recorded. Current line: not recorded. Resume: control continues to insert into dcache.
+#8. Call. __d_add entry. Values: name pointer 0xffff8bd5451dd878, name t_e.txt. Data: inserting new dentry. Work: insert into dcache hash. Errors: none. Caller line: not recorded. Current line: not recorded. Resume: returns to open path.
+#9. Return. do_filp_open. Values: name pointer 0xffff8bd5451dd878, name t_e.txt. Data: returned file points to newly allocated name storage. Work: open completes. Errors: none. Caller line: not recorded. Current line: not recorded. Resume: returns to user space.
+#10. Call. do_filp_open entry. Values: name pointer 0xffff8bd543616020, name /tmp/t_m.txt. Data: user-space open of missing file. Work: begin lookup for basename t_m.txt. Errors: none. Caller line: not recorded. Current line: not recorded. Resume: will return with error or file.
+#11. Call. __d_lookup_rcu entry. Values: hash 2802308728, length 3, name tmp/t_m.txt. Data: RCU prefix lookup. Work: prefix lookup. Errors: none. Caller line: not recorded. Current line: not recorded. Resume: returns to lookup path.
+#12. Call. __d_lookup_rcu entry. Values: hash 2543581516, length 7, name t_m.txt. Data: RCU basename lookup. Work: fast path lookup. Errors: none. Caller line: not recorded. Current line: not recorded. Resume: returns to lookup path.
+#13. Call. d_lookup entry. Values: hash 2543581516, length 7, name t_m.txt. Data: exact lookup key. Work: slow path lookup. Errors: none. Caller line: not recorded. Current line: not recorded. Resume: returns with hit/miss.
+#14. Return. d_lookup return. Values: NULL. Data: cache miss. Work: miss triggers allocation. Errors: none. Caller line: not recorded. Current line: not recorded. Resume: control continues to allocate dentry.
+#15. Call. __d_alloc entry. Values: name pointer 0xffff8bd543616025. Data: points to basename start in /tmp/t_m.txt. Work: allocate dentry name storage and copy. Errors: none. Caller line: not recorded. Current line: not recorded. Resume: returns new dentry pointer.
+#16. Return. __d_alloc return. Values: name pointer 0xffff8bd5451dd7b8. Data: newly allocated dentry name storage for t_m.txt. Work: allocation completed. Errors: none. Caller line: not recorded. Current line: not recorded. Resume: control continues to insert.
+#17. Call. __d_add entry. Values: name pointer 0xffff8bd5451dd7b8, name t_m.txt. Data: inserting negative dentry. Work: insert into dcache hash. Errors: none. Caller line: not recorded. Current line: not recorded. Resume: returns to open path.
+#18. Call. do_filp_open entry. Values: name pointer 0xffff8bd543616020, name l_m.txt. Data: user-space open of missing file. Work: begin lookup for basename l_m.txt. Errors: none. Caller line: not recorded. Current line: not recorded. Resume: will return with error or file.
+#19. Call. __d_lookup_rcu entry. Values: hash 1675155717, length 7, name l_m.txt. Data: RCU lookup. Work: fast path lookup. Errors: none. Caller line: not recorded. Current line: not recorded. Resume: returns to lookup path.
+#20. Call. d_lookup entry. Values: hash 1675155717, length 7, name l_m.txt. Data: exact lookup key. Work: slow path lookup. Errors: none. Caller line: not recorded. Current line: not recorded. Resume: returns with hit/miss.
+#21. Return. d_lookup return. Values: NULL. Data: cache miss. Work: miss triggers allocation. Errors: none. Caller line: not recorded. Current line: not recorded. Resume: control continues to allocate dentry.
+#22. Call. __d_alloc entry. Values: name pointer 0xffff8bd543616020. Data: points to basename start in l_m.txt. Work: allocate dentry name storage and copy. Errors: none. Caller line: not recorded. Current line: not recorded. Resume: returns new dentry pointer.
+#23. Return. __d_alloc return. Values: name pointer 0xffff8bd5451dd6f8. Data: newly allocated dentry name storage for l_m.txt. Work: allocation completed. Errors: none. Caller line: not recorded. Current line: not recorded. Resume: control continues to insert.
+#24. Call. __d_add entry. Values: name pointer 0xffff8bd5451dd6f8, name l_m.txt. Data: inserting negative dentry. Work: insert into dcache hash. Errors: none. Caller line: not recorded. Current line: not recorded. Resume: returns to open path.
+#25. Call. do_filp_open entry. Values: name pointer 0xffff8bd543616020, name /mnt/loopfs/a.txt. Data: user-space open on loopback ext2. Work: begin lookup for basename a.txt. Errors: none. Caller line: not recorded. Current line: not recorded. Resume: will return with file pointer.
+#26. Call. __d_lookup_rcu entry. Values: hash 4289119505, length 3, name mnt/loopfs/a.txt. Data: RCU prefix lookup. Work: prefix lookup. Errors: none. Caller line: not recorded. Current line: not recorded. Resume: returns to lookup path.
+#27. Call. __d_lookup_rcu entry. Values: hash 1683324524, length 6, name loopfs/a.txt. Data: RCU intermediate prefix lookup. Work: prefix lookup. Errors: none. Caller line: not recorded. Current line: not recorded. Resume: returns to lookup path.
+#28. Call. __d_lookup_rcu entry. Values: hash 3711754354, length 5, name a.txt. Data: RCU basename lookup. Work: fast path lookup. Errors: none. Caller line: not recorded. Current line: not recorded. Resume: returns to lookup path.
+#29. Call. d_lookup entry. Values: hash 3711754354, length 5, name a.txt. Data: exact lookup key. Work: slow path lookup. Errors: none. Caller line: not recorded. Current line: not recorded. Resume: returns with hit/miss.
+#30. Return. d_lookup return. Values: NULL. Data: cache miss. Work: miss triggers allocation. Errors: none. Caller line: not recorded. Current line: not recorded. Resume: control continues to allocate dentry.
+#31. Call. __d_alloc entry. Values: name pointer 0xffff8bd54361602c. Data: points to basename start in /mnt/loopfs/a.txt. Work: allocate dentry name storage and copy. Errors: none. Caller line: not recorded. Current line: not recorded. Resume: returns new dentry pointer.
+#32. Return. __d_alloc return. Values: name pointer 0xffff8bd5451ddcf8. Data: newly allocated dentry name storage for a.txt. Work: allocation completed. Errors: none. Caller line: not recorded. Current line: not recorded. Resume: control continues to insert.
+#33. Call. __d_add entry. Values: name pointer 0xffff8bd5451ddcf8, name a.txt. Data: inserting new dentry. Work: insert into dcache hash. Errors: none. Caller line: not recorded. Current line: not recorded. Resume: returns to open path.
+#34. Return. do_filp_open. Values: name pointer 0xffff8bd5451ddcf8, name a.txt. Data: returned file points to newly allocated name storage. Work: open completes. Errors: none. Caller line: not recorded. Current line: not recorded. Resume: returns to user space.
+#35. Call. do_filp_open entry. Values: name pointer 0xffff8bd543616020, name l_e.txt. Data: user-space open of existing file. Work: lookup for l_e.txt. Errors: none. Caller line: not recorded. Current line: not recorded. Resume: will return with file pointer.
+#36. Call. __d_lookup_rcu entry. Values: hash 399720033, length 7, name l_e.txt. Data: RCU lookup. Work: fast path lookup. Errors: none. Caller line: not recorded. Current line: not recorded. Resume: returns to lookup path.
+#37. Return. d_lookup return. Values: pointer 0xffff8bd54422d0f8, name l_e.txt. Data: cache hit. Work: reuse cached dentry. Errors: none. Caller line: not recorded. Current line: not recorded. Resume: control returns to open path.
+#38. Return. do_filp_open. Values: name pointer 0xffff8bd54422d0f8, name l_e.txt. Data: open returns cached dentry name storage. Work: open completes. Errors: none. Caller line: not recorded. Current line: not recorded. Resume: returns to user space.
+#39. Call. d_delete entry. Values: pointer 0xffff8bd54422d0f8, name l_e.txt. Data: unlink removal. Work: delete dentry from hash. Errors: none. Caller line: not recorded. Current line: not recorded. Resume: returns to unlink path.
+#40. Call. d_delete entry. Values: pointer 0xffff8bd5451dd878, name t_e.txt. Data: unlink removal. Work: delete dentry from hash. Errors: none. Caller line: not recorded. Current line: not recorded. Resume: returns to unlink path.
+#41. Call. do_filp_open entry. Values: name pointer 0xffff8bd543616020, name /proc/sys/vm/drop_caches. Data: control write to drop caches. Work: open drop_caches for eviction. Errors: none. Caller line: not recorded. Current line: not recorded. Resume: returns to user space.
+#42. Return. do_filp_open. Values: name pointer 0xffff8bd6fce05db8, name drop_caches. Data: control file opened. Work: enables eviction. Errors: none. Caller line: not recorded. Current line: not recorded. Resume: returns to user space.
+#43. Call. __dentry_kill entry. Values: pointer 0xffff8bd54422d0f8, name l_e.txt. Data: eviction of cached dentry. Work: reclaim dentry. Errors: none. Caller line: not recorded. Current line: not recorded. Resume: returns to shrinker.
+#44. Call. __dentry_kill entry. Values: pointer 0xffff8bd5451dd878, name t_e.txt. Data: eviction of cached dentry. Work: reclaim dentry. Errors: none. Caller line: not recorded. Current line: not recorded. Resume: returns to shrinker.
+#45. Call. do_filp_open entry. Values: name pointer 0xffff8bd543616020, name l_e.txt. Data: post-eviction open. Work: lookup after eviction. Errors: none. Caller line: not recorded. Current line: not recorded. Resume: returns with file pointer.
+#46. Call. __d_lookup_rcu entry. Values: hash 399720033, length 7, name l_e.txt. Data: RCU lookup after eviction. Work: fast path lookup. Errors: none. Caller line: not recorded. Current line: not recorded. Resume: returns to open path.
+#47. Return. do_filp_open. Values: name pointer 0xffff8bd562b4f878, name l_e.txt. Data: post-eviction return pointer differs from pre-eviction pointer 0xffff8bd54422d0f8. Work: open completes. Errors: none. Caller line: not recorded. Current line: not recorded. Resume: returns to user space.
+#48. Call. do_filp_open entry. Values: name pointer 0xffff8bd543616020, name /tmp/t_e.txt. Data: post-eviction open. Work: lookup after eviction. Errors: none. Caller line: not recorded. Current line: not recorded. Resume: returns with file pointer.
+#49. Call. d_lookup entry. Values: hash 1830572521, length 7, name t_e.txt. Data: lookup key. Work: slow path lookup. Errors: none. Caller line: not recorded. Current line: not recorded. Resume: returns with hit/miss.
+#50. Return. d_lookup return. Values: NULL. Data: miss post-eviction. Work: triggers rebuild. Errors: none. Caller line: not recorded. Current line: not recorded. Resume: control continues to allocate.
+#51. Call. __d_alloc entry. Values: name pointer 0xffff8bd543616025. Data: basename pointer. Work: allocate new name storage. Errors: none. Caller line: not recorded. Current line: not recorded. Resume: returns new dentry pointer.
+#52. Return. __d_alloc return. Values: name pointer 0xffff8bd5451ddb78. Data: new name storage for t_e.txt. Work: allocation completed. Errors: none. Caller line: not recorded. Current line: not recorded. Resume: control continues to insert.
+#53. Call. __d_add entry. Values: name pointer 0xffff8bd5451ddb78, name t_e.txt. Data: insert new dentry. Work: insert into dcache. Errors: none. Caller line: not recorded. Current line: not recorded. Resume: returns to open path.
+#54. Return. do_filp_open. Values: name pointer 0xffff8bd5451ddb78, name t_e.txt. Data: rebuilt pointer differs from pre-eviction pointer 0xffff8bd5451dd878. Work: open completes. Errors: none. Caller line: not recorded. Current line: not recorded. Resume: returns to user space.
+
+Wide-Screen Diagrams (Trace View)
+
+Diagram 1 — t_e.txt miss → alloc → insert → return
+```text
+open("/tmp/t_e.txt")
+  -&gt; do_filp_open entry 0xffff8bd543616020
+  -&gt; d_lookup hash 1830572521 len 7 "t_e.txt" -&gt; NULL
+  -&gt; __d_alloc entry 0xffff8bd543616025
+  -&gt; __d_alloc return 0xffff8bd5451dd878
+  -&gt; __d_add entry 0xffff8bd5451dd878
+  -&gt; do_filp_open return 0xffff8bd5451dd878
+```
+
+Diagram 2 — a.txt miss on loopback ext2
+```text
+open("/mnt/loopfs/a.txt")
+  -&gt; do_filp_open entry 0xffff8bd543616020
+  -&gt; d_lookup hash 3711754354 len 5 "a.txt" -&gt; NULL
+  -&gt; __d_alloc entry 0xffff8bd54361602c
+  -&gt; __d_alloc return 0xffff8bd5451ddcf8
+  -&gt; __d_add entry 0xffff8bd5451ddcf8
+  -&gt; do_filp_open return 0xffff8bd5451ddcf8
+```
+
+Diagram 3 — cache hit for l_e.txt before deletion
+```text
+open("l_e.txt")
+  -&gt; d_lookup hash 399720033 len 7 "l_e.txt" -&gt; 0xffff8bd54422d0f8
+  -&gt; do_filp_open return 0xffff8bd54422d0f8
+```
+
+Diagram 4 — unlink deletion + eviction
+```text
+unlink("l_e.txt") -&gt; d_delete 0xffff8bd54422d0f8
+unlink("/tmp/t_e.txt") -&gt; d_delete 0xffff8bd5451dd878
+drop_caches -&gt; __dentry_kill 0xffff8bd54422d0f8 (l_e.txt)
+drop_caches -&gt; __dentry_kill 0xffff8bd5451dd878 (t_e.txt)
+```
+
+Diagram 5 — rebuild after eviction (t_e.txt)
+```text
+open("/tmp/t_e.txt") after drop_caches
+  -&gt; d_lookup hash 1830572521 len 7 "t_e.txt" -&gt; NULL
+  -&gt; __d_alloc return 0xffff8bd5451ddb78
+  -&gt; __d_add entry 0xffff8bd5451ddb78
+  -&gt; do_filp_open return 0xffff8bd5451ddb78
+```
+
+Diagram 6 — post-eviction lookup for l_e.txt
+```text
+open("l_e.txt") after drop_caches
+  -&gt; __d_lookup_rcu hash 399720033 len 7 "l_e.txt"
+  -&gt; do_filp_open return 0xffff8bd562b4f878
+```</pre>
   </div>
 
 </body>
