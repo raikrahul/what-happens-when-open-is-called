@@ -156,7 +156,7 @@ do_filp_open return pointer = 0xffff8bd54eaa09f8 | t_e.txt
 
 Path reasoning (t_e.txt).
 The kernel copy of the path appears first: do_filp_open entry pointer = 0xffff8bd54c33e020 | /tmp/t_e.txt. That address is used at entry, so it is the kernel-resident string for this call and not the dentry name pointer. The printed string fixes the exact name for this call.
-Lookup uses the basename: d_lookup entry prints hash 1830572521 length 7 name t_e.txt, so the key is the basename and its length. If the full path were used, the length would be 12, not 7.
+Lookup uses the basename: d_lookup entry prints hash 1830572521 length 7 name t_e.txt. In the kernel, d_lookup takes a qstr* and uses name->hash and name->len (`/usr/src/linux-source-6.8.0/fs/dcache.c`, d_lookup/__d_lookup), so the printed length is the lookup length. The path at entry is /tmp/t_e.txt, which is 5 ("/tmp/") + 7 ("t_e.txt") = 12 bytes. The observed length is 7, so the lookup key is the basename and not the full path.
 The miss is explicit: d_lookup return: NULL. With no cached dentry for that key, lookup returns NULL and allocation follows.
 Allocation uses a shifted pointer: __d_alloc entry pointer = 0xffff8bd54c33e025. The difference from 0xffff8bd54c33e020 is 5 bytes, which matches "/tmp/". That proves the copy source is the basename start inside the same kernel string.
 New storage appears: __d_alloc return pointer = 0xffff8bd54eaa09f8. This is distinct from the string pointer, so it is newly allocated name storage.
