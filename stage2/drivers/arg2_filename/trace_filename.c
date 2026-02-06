@@ -114,7 +114,8 @@ static int entry_handler(struct kretprobe_instance *ri, struct pt_regs *regs) {
    * AXIOM: return 0 → call ret_handler after function returns
    * ═══════════════════════════════════════════════════════════════════════
    */
-  // if (strcmp(task->comm, "minimal_open") != 0) return 1;
+  if (strcmp(task->comm, "minimal_open") != 0)
+    return 1;
 
   /* ═══════════════════════════════════════════════════════════════════════
    * TODO #2: SAVE USER POINTER from RDI register (1 line)
@@ -123,7 +124,7 @@ static int entry_handler(struct kretprobe_instance *ri, struct pt_regs *regs) {
    * AXIOM: Cast needed: (const char __user *)
    * ═══════════════════════════════════════════════════════════════════════
    */
-  // data->user_ptr = ...
+  data->user_ptr = (const char __user *)regs->di;
 
   /* BOILERPLATE: Save task info for logging (Keep this for debugging) */
   get_task_comm(data->comm, task);
@@ -171,7 +172,7 @@ static int ret_handler(struct kretprobe_instance *ri, struct pt_regs *regs) {
    * AXIOM: Store in 'retval' as unsigned long first
    * ═══════════════════════════════════════════════════════════════════════
    */
-  // retval = ...
+  retval = regs->ax;
 
   /* ═══════════════════════════════════════════════════════════════════════
    * TODO #4: CAST to struct filename pointer (1 line)
@@ -179,46 +180,27 @@ static int ret_handler(struct kretprobe_instance *ri, struct pt_regs *regs) {
    * AXIOM: fn = (struct filename *)retval
    * ═══════════════════════════════════════════════════════════════════════
    */
-  // fn = ...
+  fn = (struct filename *)retval;
 
-  /* ═══════════════════════════════════════════════════════════════════════
-   * TODO #5: ERROR CHECK - if IS_ERR(fn), print error and return 0 (4 lines)
-   *
-   * AXIOM: IS_ERR(0xfffffffffffffff2) = true
-   * AXIOM: PTR_ERR(0xfffffffffffffff2) = -14 (EFAULT)
-   *
-   * Pattern:
-   * if (IS_ERR(fn)) {
-   *     pr_info("#2. getname. FAIL. user_ptr=0x%px. err=%ld\n",
-   *             data->user_ptr, PTR_ERR(fn));
-   *     return 0;
-   * }
-   * ═══════════════════════════════════════════════════════════════════════
-   */
+  if (IS_ERR(fn)) {
+    pr_info("#2. getname. FAIL. user_ptr=0x%px. err=%ld\n", data->user_ptr,
+            PTR_ERR(fn));
+    return 0;
+  }
 
-  /* ═══════════════════════════════════════════════════════════════════════
-   * TODO #6: SUCCESS PATH - Print all the data (1 pr_info with multiple lines)
-   *
-   * PRINT FORMAT:
-   * #2. getname. SUCCESS.
-   *     user_ptr (RDI saved) = 0x7ffe1234
-   *     fn (RAX)             = 0xffff888100500000
-   *     fn->name (+0x00)     = 0xffff888100500020
-   *     fn->uptr (+0x08)     = 0x7ffe1234
-   *     string               = "somefile"
-   *
-   * AXIOM: fn->name = *(char**)(fn + 0) = kernel string pointer
-   * AXIOM: fn->uptr = *(char**)(fn + 8) = original user pointer
-   * ═══════════════════════════════════════════════════════════════════════
-   */
+  pr_info("#2. getname. SUCCESS.\n"
+          "    user_ptr (RDI saved) = 0x%px\n"
+          "    fn (RAX)             = 0x%px\n"
+          "    fn->name (+0x00)     = 0x%px\n"
+          "    fn->uptr (+0x08)     = 0x%px\n"
+          "    string               = \"%s\"\n",
+          data->user_ptr, fn, fn->name, fn->uptr, fn->name);
 
-  /* ═══════════════════════════════════════════════════════════════════════
-   * TODO #7: AXIOM VERIFICATION - Check fn->uptr == data->user_ptr (3 lines)
-   *
-   * If match: pr_info("    [✓] AXIOM: fn->uptr == saved RDI\n");
-   * If no match: pr_info("    [✗] AXIOM FAIL: fn->uptr != saved RDI\n");
-   * ═══════════════════════════════════════════════════════════════════════
-   */
+  if (fn->uptr == data->user_ptr) {
+    pr_info("    [✓] AXIOM: fn->uptr == saved RDI\n");
+  } else {
+    pr_info("    [✗] AXIOM FAIL: fn->uptr != saved RDI\n");
+  }
 
   return 0;
 }
