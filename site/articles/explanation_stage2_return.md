@@ -11,8 +11,6 @@ Worksheet: https://raikrahul.github.io/what-happens-when-open-is-called/articles
 
 Programs
 
-User-space programs:
-
 minimal_open.c
 ```c
 snprintf(filename, sizeof(filename),
@@ -144,7 +142,6 @@ Run A: matrix_open (root, drop_caches enabled)
 
 t_e.txt miss, memcpy, insert.
 
-User-space program (matrix_open.c):
 ```c
 char n2[] = "/tmp/t_e.txt";
 close(creat(n2, 0644));
@@ -182,29 +179,14 @@ Compact map (t_e.txt).
 -> __d_alloc entry 0xffff8bd54c33e025 (basename) -> __d_alloc return 0xffff8bd54eaa09f8
 -> __d_add 0xffff8bd54eaa09f8 -> do_filp_open return 0xffff8bd54eaa09f8.
 
-Derivation (user-space trigger). User-space code:
-```c
-char n2[] = "/tmp/t_e.txt";
-close(creat(n2, 0644));
-drop_caches_if_root();
-sleep(1);
-
-f[1] = open(n2, O_RDONLY);
-```
-Why this creates the pointer subtraction:
-- The open string is "/tmp/t_e.txt".
-- The basename starts after the 5-byte prefix "/tmp/".
-- The basename pointer equals the original pointer plus 5.
-
+Derivation.
 Derivation (data): 0xffff8bd54c33e025 - 0xffff8bd54c33e020 = 0x5 = 5 "/tmp/" length = 5
 0xffff8bd54eaa09f8 = __d_alloc return pointer 0xffff8bd54eaa09f8 = __d_add entry pointer
 0xffff8bd54eaa09f8 = do_filp_open return pointer
 
 t_m.txt miss, insert.
 
-This isolates a missing /tmp file to record a miss and insert with a basename offset.
 
-User-space program (matrix_open.c):
 ```c
 char n3[] = "/tmp/t_m.txt";
 
@@ -235,9 +217,7 @@ Compact map (t_m.txt).
 
 l_m.txt miss, insert.
 
-This repeats the missing-file case without a prefix to show the entry pointer equals the full string start.
 
-User-space program (matrix_open.c):
 ```c
 char n4[] = "l_m.txt";
 
@@ -258,9 +238,7 @@ Pointer meanings (l_m.txt).
 
 a.txt miss, memcpy, insert (loopback ext2).
 
-This moves the same mechanism onto a different filesystem and a shorter basename.
 
-User-space program (matrix_open.c):
 ```c
 char n5[] = "/mnt/loopfs/a.txt";
 
@@ -287,9 +265,7 @@ Derivation: 0xffff8bd54c33e02c - 0xffff8bd54c33e020 = 0xC = 12 "/mnt/loopfs/" le
 
 Cache hit: l_e.txt and t_e.txt before deletion.
 
-This shows reuse: the lookup returns the same pointer observed on the earlier return.
 
-User-space program (matrix_open.c):
 ```c
 char n1[] = "l_e.txt";
 char n2[] = "/tmp/t_e.txt";
@@ -313,9 +289,7 @@ d_lookup entry: hash 1830572521 length 7 name t_e.txt d_lookup return: 0xffff8bd
 
 Cache deletion via unlink.
 
-This pins deletion to the explicit unlink calls in user space.
 
-User-space program (matrix_open.c):
 ```c
 unlink("l_e.txt");
 unlink("/tmp/t_e.txt");
@@ -331,9 +305,7 @@ Pointer meanings (deletion).
 
 Cache eviction via drop_caches.
 
-This shows eviction driven by a write to /proc/sys/vm/drop_caches.
 
-User-space program (matrix_open.c):
 ```c
 drop_caches_if_root();
 // writes "2\n" to /proc/sys/vm/drop_caches
@@ -351,9 +323,7 @@ Pointer meanings (eviction).
 
 Cache rebuild after eviction: t_e.txt.
 
-This records the pointer observed after eviction and compares it to the pre-eviction pointer.
 
-User-space program (matrix_open.c):
 ```c
 drop_caches_if_root();
 sleep(1);
@@ -380,9 +350,7 @@ Derivation: 0xffff8bd54eaa0338 != 0xffff8bd54eaa09f8
 
 Post-eviction lookup: l_e.txt.
 
-This records the RCU lookup path and the new return pointer after eviction.
 
-User-space program (matrix_open.c):
 ```c
 drop_caches_if_root();
 sleep(1);
@@ -405,9 +373,7 @@ Derivation: 0xffff8bd5450e8278 != 0xffff8bd5628ba9f8
 
 Hash keys used in Run A.
 
-This summarizes the exact keys hashed for each name observed in this run.
 
-User-space program (matrix_open.c):
 ```c
 // these names are opened in this run:
 open("l_e.txt", O_RDONLY);
@@ -429,7 +395,6 @@ This run isolates a single long filename to show the long-name allocation and lo
 
 Long filename: allocation, copy, cache hit.
 
-User-space program (minimal_open.c):
 ```c
 snprintf(filename, sizeof(filename),
          "test_file_very_long_name_to_force_external_allocation_%ld", now);
