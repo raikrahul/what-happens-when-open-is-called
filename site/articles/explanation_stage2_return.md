@@ -149,10 +149,14 @@ sleep(1);
 f[1] = open(n2, O_RDONLY);
 ```
 
-Kernel lines do_filp_open entry pointer = 0xffff8bd54c33e020 | /tmp/t_e.txt d_lookup entry: hash
-1830572521 length 7 name t_e.txt d_lookup return: NULL __d_alloc entry pointer = 0xffff8bd54c33e025
-__d_alloc return pointer = 0xffff8bd54eaa09f8 __d_add entry: 0xffff8bd54eaa09f8 | t_e.txt
-do_filp_open return pointer = 0xffff8bd54eaa09f8 | t_e.txt
+Probe output (trace_do_filp_open.c):
+[O] IN from open_entry: do_filp_open entry pointer = 0xffff8bd54c33e020 | /tmp/t_e.txt
+d_lookup entry from lookup_entry: hash 1830572521 length 7 name t_e.txt
+d_lookup return from lookup_ret: NULL
+[A] SRC from alloc_entry: __d_alloc entry pointer = 0xffff8bd54c33e025
+[A] DST from alloc_ret: __d_alloc return pointer = 0xffff8bd54eaa09f8
+__d_add entry from d_add_entry: 0xffff8bd54eaa09f8 | t_e.txt
+[O] OUT from open_ret: do_filp_open return pointer = 0xffff8bd54eaa09f8 | t_e.txt
 
 Path reasoning (t_e.txt).
 The entry line prints f->name from the do_filp_open argument (trace_do_filp_open.c: open_entry), so 0xffff8bd54c33e020 is the kernel-resident pathname buffer for this call. The string printed beside it is the buffer content for this call, not a dentry name pointer.
