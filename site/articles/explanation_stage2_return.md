@@ -182,9 +182,13 @@ char n3[] = "/tmp/t_m.txt";
 f[2] = open(n3, O_RDONLY);
 ```
 
-Kernel lines do_filp_open entry pointer = 0xffff8bd54c33e020 | /tmp/t_m.txt d_lookup entry: hash
-2543581516 length 7 name t_m.txt d_lookup return: NULL __d_alloc entry pointer = 0xffff8bd54c33e025
-__d_alloc return pointer = 0xffff8bd54eaa0e78 __d_add entry: 0xffff8bd54eaa0e78 | t_m.txt
+Probe output (trace_do_filp_open.c):
+[O] IN from open_entry: do_filp_open entry pointer = 0xffff8bd54c33e020 | /tmp/t_m.txt
+d_lookup entry from lookup_entry: hash 2543581516 length 7 name t_m.txt
+d_lookup return from lookup_ret: NULL
+[A] SRC from alloc_entry: __d_alloc entry pointer = 0xffff8bd54c33e025
+[A] DST from alloc_ret: __d_alloc return pointer = 0xffff8bd54eaa0e78
+__d_add entry from d_add_entry: 0xffff8bd54eaa0e78 | t_m.txt
 
 The entry pointer is 0xffff8bd54c33e020 and the string is /tmp/t_m.txt, so the kernel copy for this call is fixed to that address. The lookup key is the basename, shown as t_m.txt with length 7 and hash 2543581516, so the lookup uses 7 bytes and not 12. The lookup returns NULL, so the cache has no entry for that key at this time. The allocation source pointer is 0xffff8bd54c33e025, which is 0xffff8bd54c33e020 + 5; that 5 matches the length of “/tmp/”, so the copy source begins at the basename inside the same string. The allocation return pointer is 0xffff8bd54eaa0e78, which is distinct from the string pointer and therefore new storage. The insert line uses 0xffff8bd54eaa0e78, so the same new storage is placed into the dcache. The numeric link is 0xffff8bd54c33e025 − 0xffff8bd54c33e020 = 0x5 = 5.
 
@@ -198,9 +202,13 @@ char n4[] = "l_m.txt";
 f[4] = open(n4, O_RDONLY);
 ```
 
-do_filp_open entry pointer = 0xffff8bd54c33e020 | l_m.txt d_lookup entry: hash
-2166850383 length 7 name l_m.txt d_lookup return: NULL __d_alloc entry pointer = 0xffff8bd54c33e020
-__d_alloc return pointer = 0xffff8bd54eaa0278 __d_add entry: 0xffff8bd54eaa0278 | l_m.txt
+Probe output (trace_do_filp_open.c):
+[O] IN from open_entry: do_filp_open entry pointer = 0xffff8bd54c33e020 | l_m.txt
+d_lookup entry from lookup_entry: hash 2166850383 length 7 name l_m.txt
+d_lookup return from lookup_ret: NULL
+[A] SRC from alloc_entry: __d_alloc entry pointer = 0xffff8bd54c33e020
+[A] DST from alloc_ret: __d_alloc return pointer = 0xffff8bd54eaa0278
+__d_add entry from d_add_entry: 0xffff8bd54eaa0278 | l_m.txt
 
 The entry pointer 0xffff8bd54c33e020 is f->name from do_filp_open entry (trace_do_filp_open.c: open_entry). Its type is const char * inside struct filename (include/linux/fs.h). The printed string is l_m.txt, so the kernel pathname buffer begins at that address and the basename start is the same address because there is no prefix. The lookup key is l_m.txt with length 7 and hash 2166850383, and d_lookup reads qstr->len and qstr->name (include/linux/dcache.h, fs/dcache.c), so the lookup uses 7 bytes. The lookup returns NULL, so there is no cached entry for that key. The allocation source pointer is 0xffff8bd54c33e020, which equals the pathname buffer start, so qstr->name points to the basename in that buffer. The allocation return pointer is 0xffff8bd54eaa0278, which is dentry->d_name.name (struct dentry in include/linux/dcache.h) returned by __d_alloc. The insert line uses 0xffff8bd54eaa0278, so that same dentry name pointer is inserted into the dcache hash for l_m.txt.
 
@@ -211,10 +219,14 @@ char n5[] = "/mnt/loopfs/a.txt";
 f[5] = open(n5, O_RDONLY);
 ```
 
-Kernel lines do_filp_open entry pointer = 0xffff8bd54c33e020 | /mnt/loopfs/a.txt d_lookup entry:
-hash 3711754354 length 5 name a.txt d_lookup return: NULL __d_alloc entry pointer =
-0xffff8bd54c33e02c __d_alloc return pointer = 0xffff8bd54eaa04b8 __d_add entry: 0xffff8bd54eaa04b8 |
-a.txt do_filp_open return pointer = 0xffff8bd54eaa04b8 | a.txt
+Probe output (trace_do_filp_open.c):
+[O] IN from open_entry: do_filp_open entry pointer = 0xffff8bd54c33e020 | /mnt/loopfs/a.txt
+d_lookup entry from lookup_entry: hash 3711754354 length 5 name a.txt
+d_lookup return from lookup_ret: NULL
+[A] SRC from alloc_entry: __d_alloc entry pointer = 0xffff8bd54c33e02c
+[A] DST from alloc_ret: __d_alloc return pointer = 0xffff8bd54eaa04b8
+__d_add entry from d_add_entry: 0xffff8bd54eaa04b8 | a.txt
+[O] OUT from open_ret: do_filp_open return pointer = 0xffff8bd54eaa04b8 | a.txt
 
 The entry pointer is 0xffff8bd54c33e020 and the string is /mnt/loopfs/a.txt. The lookup key is a.txt with length 5 and hash 3711754354, so the basename is used. The lookup returns NULL, so the cache has no entry for that key. The allocation source pointer is 0xffff8bd54c33e02c, which is 0xffff8bd54c33e020 + 12, so the basename starts after the 12-byte prefix /mnt/loopfs/. The allocation return pointer is 0xffff8bd54eaa04b8, which is new storage. The insert line uses 0xffff8bd54eaa04b8, and the return line matches it, so the file points to that copied name storage.
 
@@ -238,7 +250,8 @@ f[1] = open(n2, O_RDONLY);
 Kernel lines d_lookup entry: hash 440978933 length 7 name l_e.txt d_lookup return:
 0xffff8bd5628ba9f8 | l_e.txt
 
-d_lookup entry: hash 1830572521 length 7 name t_e.txt d_lookup return: 0xffff8bd54eaa09f8 | t_e.txt
+d_lookup entry from lookup_entry: hash 1830572521 length 7 name t_e.txt
+d_lookup return from lookup_ret: 0xffff8bd54eaa09f8 | t_e.txt
 
 The lookup for l_e.txt returns 0xffff8bd5628ba9f8, which equals the earlier return pointer for l_e.txt, so the cached dentry is reused. The lookup for t_e.txt returns 0xffff8bd54eaa09f8, which equals the earlier return pointer for t_e.txt, so the cached dentry is reused. The reuse is established by pointer equality.
 
@@ -402,7 +415,8 @@ Proof 4. Cache hit.
 Evidence: d_lookup entry: hash 440978933 length 7 name l_e.txt d_lookup return: 0xffff8bd5628ba9f8 |
 l_e.txt
 
-d_lookup entry: hash 1830572521 length 7 name t_e.txt d_lookup return: 0xffff8bd54eaa09f8 | t_e.txt
+d_lookup entry from lookup_entry: hash 1830572521 length 7 name t_e.txt
+d_lookup return from lookup_ret: 0xffff8bd54eaa09f8 | t_e.txt
 
 d_lookup entry: hash 3341646101 length 64 name
 test_file_very_long_name_to_force_external_allocation_1770412974 d_lookup return pointer =
