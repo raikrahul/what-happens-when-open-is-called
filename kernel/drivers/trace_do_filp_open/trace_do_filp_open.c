@@ -20,6 +20,10 @@ static char *SYMBOL_ADD = "d_add";
 static char *SYMBOL_D_ADD = "__d_add";
 static char *SYMBOL_ADD_CI = "d_add_ci";
 static char *SYMBOL_REHASH = "d_rehash";
+static char *SYMBOL_DELETE = "d_delete";
+static char *SYMBOL_DROP = "d_drop";
+static char *SYMBOL_DPUT = "dput";
+static char *SYMBOL_DENTRY_KILL = "__dentry_kill";
 
 /* Robust struct filename matches kernel definition for 6.8+ */
 struct my_filename {
@@ -31,6 +35,8 @@ struct my_filename {
 
 static struct kprobe kp_open, kp_alloc, kp_lookup;
 static struct kprobe kp_add, kp_d_add, kp_add_ci, kp_rehash;
+static struct kprobe kp_delete, kp_dput, kp_dentry_kill;
+static struct kprobe kp_drop;
 static struct kretprobe rp_open, rp_alloc, rp_lookup, rp_hash;
 
 static char *target_comm = "matrix_open";
@@ -38,6 +44,25 @@ module_param(target_comm, charp, 0644);
 
 static inline int is_target(void) {
   return (strcmp(current->comm, target_comm) == 0);
+}
+
+static inline int is_name_of_interest(const char *n) {
+  if (!n)
+    return 0;
+  if (strcmp(n, "l_e.txt") == 0)
+    return 1;
+  if (strcmp(n, "t_e.txt") == 0)
+    return 1;
+  if (strcmp(n, "l_m.txt") == 0)
+    return 1;
+  if (strcmp(n, "t_m.txt") == 0)
+    return 1;
+  if (strcmp(n, "a.txt") == 0)
+    return 1;
+  if (strncmp(n, "test_file_very_long_name_to_force_external_allocation_",
+              57) == 0)
+    return 1;
+  return 0;
 }
 
 static int open_entry(struct kprobe *p, struct pt_regs *regs) {
@@ -172,12 +197,60 @@ static int rehash_entry(struct kprobe *p, struct pt_regs *regs) {
   return 0;
 }
 
+static int delete_entry(struct kprobe *p, struct pt_regs *regs) {
+  struct dentry *d = (struct dentry *)regs->di;
+  if (is_target() && d && (unsigned long)d > 0xffff000000000000) {
+    void *n = (void *)d->d_name.name;
+    if (n && (unsigned long)n > 0xffff000000000000 &&
+        is_name_of_interest((char *)n))
+      pr_info("d_delete entry: 0x%px | %s\n", n, (char *)n);
+  }
+  return 0;
+}
+
+static int drop_entry(struct kprobe *p, struct pt_regs *regs) {
+  struct dentry *d = (struct dentry *)regs->di;
+  if (is_target() && d && (unsigned long)d > 0xffff000000000000) {
+    void *n = (void *)d->d_name.name;
+    if (n && (unsigned long)n > 0xffff000000000000 &&
+        is_name_of_interest((char *)n))
+      pr_info("d_drop entry: 0x%px | %s\n", n, (char *)n);
+  }
+  return 0;
+}
+
+static int dput_entry(struct kprobe *p, struct pt_regs *regs) {
+  struct dentry *d = (struct dentry *)regs->di;
+  if (is_target() && d && (unsigned long)d > 0xffff000000000000) {
+    void *n = (void *)d->d_name.name;
+    if (n && (unsigned long)n > 0xffff000000000000 &&
+        is_name_of_interest((char *)n))
+      pr_info("dput entry: 0x%px | %s\n", n, (char *)n);
+  }
+  return 0;
+}
+
+static int dentry_kill_entry(struct kprobe *p, struct pt_regs *regs) {
+  struct dentry *d = (struct dentry *)regs->di;
+  if (is_target() && d && (unsigned long)d > 0xffff000000000000) {
+    void *n = (void *)d->d_name.name;
+    if (n && (unsigned long)n > 0xffff000000000000 &&
+        is_name_of_interest((char *)n))
+      pr_info("__dentry_kill entry: 0x%px | %s\n", n, (char *)n);
+  }
+  return 0;
+}
+
 static int __init trace_do_filp_open_init(void) {
   int r;
   int add_ok = 0;
   int d_add_ok = 0;
   int add_ci_ok = 0;
   int rehash_ok = 0;
+  int del_ok = 0;
+  int drop_ok = 0;
+  int dput_ok = 0;
+  int kill_ok = 0;
   kp_open.symbol_name = SYMBOL_OPEN;
   kp_open.pre_handler = open_entry;
   if ((r = register_kprobe(&kp_open)) < 0)
@@ -231,6 +304,26 @@ static int __init trace_do_filp_open_init(void) {
   if ((r = register_kprobe(&kp_rehash)) == 0)
     rehash_ok = 1;
 
+  kp_delete.symbol_name = SYMBOL_DELETE;
+  kp_delete.pre_handler = delete_entry;
+  if ((r = register_kprobe(&kp_delete)) == 0)
+    del_ok = 1;
+
+  kp_drop.symbol_name = SYMBOL_DROP;
+  kp_drop.pre_handler = drop_entry;
+  if ((r = register_kprobe(&kp_drop)) == 0)
+    drop_ok = 1;
+
+  kp_dput.symbol_name = SYMBOL_DPUT;
+  kp_dput.pre_handler = dput_entry;
+  if ((r = register_kprobe(&kp_dput)) == 0)
+    dput_ok = 1;
+
+  kp_dentry_kill.symbol_name = SYMBOL_DENTRY_KILL;
+  kp_dentry_kill.pre_handler = dentry_kill_entry;
+  if ((r = register_kprobe(&kp_dentry_kill)) == 0)
+    kill_ok = 1;
+
   rp_hash.kp.symbol_name = SYMBOL_HASH;
   rp_hash.handler = hash_ret;
   rp_hash.entry_handler = hash_entry;
@@ -247,6 +340,14 @@ static int __init trace_do_filp_open_init(void) {
     pr_info("optional probe not registered: %s\n", SYMBOL_ADD_CI);
   if (!rehash_ok)
     pr_info("optional probe not registered: %s\n", SYMBOL_REHASH);
+  if (!del_ok)
+    pr_info("optional probe not registered: %s\n", SYMBOL_DELETE);
+  if (!drop_ok)
+    pr_info("optional probe not registered: %s\n", SYMBOL_DROP);
+  if (!dput_ok)
+    pr_info("optional probe not registered: %s\n", SYMBOL_DPUT);
+  if (!kill_ok)
+    pr_info("optional probe not registered: %s\n", SYMBOL_DENTRY_KILL);
 
   return 0;
 e6:
@@ -266,6 +367,10 @@ e1:
 
 static void __exit trace_do_filp_open_exit(void) {
   unregister_kretprobe(&rp_hash);
+  unregister_kprobe(&kp_dentry_kill);
+  unregister_kprobe(&kp_dput);
+  unregister_kprobe(&kp_drop);
+  unregister_kprobe(&kp_delete);
   unregister_kprobe(&kp_rehash);
   unregister_kprobe(&kp_add_ci);
   unregister_kprobe(&kp_d_add);
