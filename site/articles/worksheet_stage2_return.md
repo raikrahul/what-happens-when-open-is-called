@@ -372,19 +372,19 @@ CHAIN AND TRACE SUMMARY (END)
 
 1) memcpy chain (t_e.txt, copy source -> destination)
 "/tmp/t_e.txt" @ 0xffff8bd546392020 -> __d_alloc entry 0xffff8bd546392025 -> __d_alloc return 0xffff8bd728c76338
-Meaning: qstr->name starts 5 bytes after /tmp/ and __d_alloc copies that name into dentry storage.
+qstr->name starts 5 bytes after /tmp/ and __d_alloc copies that name into dentry storage.
 2) cache build-up chain (t_e.txt, miss -> insert)
 d_lookup return NULL -> __d_add 0xffff8bd728c76338 -> do_filp_open return 0xffff8bd728c76338
-Meaning: miss creates a new dentry name pointer and inserts it; the same pointer is returned by open.
+Miss creates a new dentry name pointer and inserts it; the same pointer is returned by open.
 3) cache hit chain (t_e.txt, later lookup)
 d_lookup return 0xffff8bd728c76338 -> do_filp_open return 0xffff8bd728c76338
-Meaning: hit returns the exact cached pointer without new allocation.
+Hit returns the cached pointer without new allocation.
 4) cache miss chain (t_m.txt, missing)
 "/tmp/t_m.txt" -> d_lookup return NULL -> __d_add 0xffff8bd728c763f8
-Meaning: missing name still gets a dentry entry (negative dentry) with its own pointer.
+Missing name still gets a dentry entry (negative dentry) with its own pointer.
 5) cache delete chain (unlink)
 d_delete 0xffff8bd7e94c8578 (l_e.txt) + d_delete 0xffff8bd728c76338 (t_e.txt)
-Meaning: unlink removes the cached dentries for these pointers.
+Unlink removes the cached dentries for these pointers.
 Later phases start after this: eviction (__dentry_kill) and rebuild after eviction.
 
 t_e.txt miss -> alloc -> insert -> return
@@ -395,7 +395,7 @@ open("/tmp/t_e.txt")
   -> __d_alloc return 0xffff8bd728c76338
   -> __d_add entry 0xffff8bd728c76338
   -> do_filp_open return 0xffff8bd728c76338
-Meaning: miss path with /tmp prefix; name pointer shifts by +5, then alloc+insert returns same pointer.
+Miss path with /tmp prefix; name pointer shifts by +5, then alloc+insert returns same pointer.
 
 a.txt miss on loopback ext2
 open("/mnt/loopfs/a.txt")
@@ -405,13 +405,13 @@ open("/mnt/loopfs/a.txt")
   -> __d_alloc return 0xffff8bd728c76cf8
   -> __d_add entry 0xffff8bd728c76cf8
   -> do_filp_open return 0xffff8bd728c76cf8
-Meaning: same miss path on ext2 with /mnt/loopfs/ prefix; name pointer shifts by +12.
+Same miss path on ext2 with /mnt/loopfs/ prefix; name pointer shifts by +12.
 
 cache hit for l_e.txt before deletion
 open("l_e.txt")
   -> d_lookup hash 440978933 len 7 "l_e.txt" -> 0xffff8bd7e94c8578
   -> do_filp_open return 0xffff8bd7e94c8578
-Meaning: hit returns the cached pointer without allocation.
+Hit returns the cached pointer without allocation.
 
 unlink deletion + eviction
 unlink("l_e.txt") -> d_delete 0xffff8bd7e94c8578
@@ -421,7 +421,7 @@ drop_caches -> __dentry_kill 0xffff8bd728c76338 (t_e.txt)
 drop_caches -> __dentry_kill 0xffff8bd728c763f8 (t_m.txt)
 drop_caches -> __dentry_kill 0xffff8bd728c76938 (l_m.txt)
 drop_caches -> __dentry_kill 0xffff8bd728c76cf8 (a.txt)
-Meaning: unlink removes entries; drop_caches reclaims remaining dentries.
+Unlink removes entries; drop_caches reclaims remaining dentries.
 
 rebuild after eviction (t_e.txt)
 open("/tmp/t_e.txt") after drop_caches
@@ -429,13 +429,13 @@ open("/tmp/t_e.txt") after drop_caches
   -> __d_alloc return 0xffff8bd728c76338
   -> __d_add entry 0xffff8bd728c76338
   -> do_filp_open return 0xffff8bd728c76338
-Meaning: in this run the rebuild reuses the same pointer value.
+In this run the rebuild reuses the same pointer value.
 
 post-eviction lookup for l_e.txt
 open("l_e.txt") after drop_caches
   -> __d_lookup_rcu hash 440978933 len 7 "l_e.txt"
   -> do_filp_open return 0xffff8bd7e94c8db8
-Meaning: post-eviction return pointer differs from pre-eviction pointer.
+Post-eviction return pointer differs from pre-eviction pointer.
 
 QUIZ (ANSWER YES/NO)
 - Did your memcpy chain show __d_alloc entry and __d_alloc return with the same return pointer as __d_add?
