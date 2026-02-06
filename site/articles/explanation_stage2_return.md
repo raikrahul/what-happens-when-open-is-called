@@ -156,28 +156,17 @@ Kernel lines: do_filp_open entry pointer = 0xffff8bd54c33e020 | /tmp/t_e.txt d_l
 __d_alloc return pointer = 0xffff8bd54eaa09f8 __d_add entry: 0xffff8bd54eaa09f8 | t_e.txt
 do_filp_open return pointer = 0xffff8bd54eaa09f8 | t_e.txt
 
-Pointer meanings (t_e.txt).
-- do_filp_open entry pointer 0xffff8bd54c33e020 points to the kernel-side string "/tmp/t_e.txt" used for this open call.
-- d_lookup entry uses the basename "t_e.txt" (length 7) and hash 1830572521 as the lookup key for this path.
-- d_lookup return: NULL means no cached dentry matched that key.
-- __d_alloc entry pointer 0xffff8bd54c33e025 points to the basename start inside the same string (after "/tmp/").
-- __d_alloc return pointer 0xffff8bd54eaa09f8 points to newly allocated dentry name storage.
-- __d_add entry pointer 0xffff8bd54eaa09f8 shows that same storage inserted into the dcache hash.
-- do_filp_open return pointer 0xffff8bd54eaa09f8 shows the returned file points at that dentry name storage.
-
-Function map (t_e.txt path).
-- do_filp_open entry: entry point for VFS open; receives the kernel-side filename string. The pointer 0xffff8bd54c33e020 is set by getname() before lookup and points to "/tmp/t_e.txt".
-- d_lookup entry: dcache lookup using key (name, length, hash). The key is derived from basename "t_e.txt" with length 7 and hash 1830572521.
-- d_lookup return: NULL indicates a cache miss for that key in the parent directory.
-- __d_alloc entry: allocates a new dentry and copies the basename. The pointer 0xffff8bd54c33e025 is the basename start inside "/tmp/t_e.txt" (prefix length 5).
-- __d_alloc return: returns the new dentry; 0xffff8bd54eaa09f8 is the allocated dentry name storage.
-- __d_add entry: inserts the new dentry into the dcache; the same pointer 0xffff8bd54eaa09f8 is what gets hashed into the cache.
-- do_filp_open return: returns a struct file whose f_path.dentry->d_name.name equals 0xffff8bd54eaa09f8, tying the file to the copied name.
+Pointer meanings and path reasoning (t_e.txt).
+The kernel copy of the path appears first: do_filp_open entry pointer = 0xffff8bd54c33e020 | /tmp/t_e.txt. That address is used at entry, so it is the kernel-resident string for this call and not the dentry name pointer. The printed string fixes the exact name for this call.
+Lookup uses the basename: d_lookup entry prints hash 1830572521 length 7 name t_e.txt, so the key is the basename and its length. If the full path were used, the length would be 12, not 7.
+The miss is explicit: d_lookup return: NULL. With no cached dentry for that key, lookup returns NULL and allocation follows.
+Allocation uses a shifted pointer: __d_alloc entry pointer = 0xffff8bd54c33e025. The difference from 0xffff8bd54c33e020 is 5 bytes, which matches "/tmp/". That proves the copy source is the basename start inside the same kernel string.
+New storage appears: __d_alloc return pointer = 0xffff8bd54eaa09f8. This is distinct from the string pointer, so it is newly allocated name storage.
+Insertion is explicit: __d_add entry: 0xffff8bd54eaa09f8 | t_e.txt. The inserted pointer matches the allocation return, so the dcache now contains that name at that address.
+Return ties the file to the inserted name: do_filp_open return pointer = 0xffff8bd54eaa09f8 | t_e.txt. The return pointer equals the allocation and insertion pointer, so the file points to that copied name storage.
 
 Compact map (t_e.txt).
-"/tmp/t_e.txt" @ 0xffff8bd54c33e020 -> do_filp_open entry -> d_lookup (t_e.txt, 7, 1830572521) miss
--> __d_alloc entry 0xffff8bd54c33e025 (basename) -> __d_alloc return 0xffff8bd54eaa09f8
--> __d_add 0xffff8bd54eaa09f8 -> do_filp_open return 0xffff8bd54eaa09f8.
+"/tmp/t_e.txt" @ 0xffff8bd54c33e020 -> d_lookup (t_e.txt, 7, 1830572521) -> NULL -> __d_alloc entry 0xffff8bd54c33e025 -> __d_alloc return 0xffff8bd54eaa09f8 -> __d_add 0xffff8bd54eaa09f8 -> do_filp_open return 0xffff8bd54eaa09f8.
 
 Derivation.
 Derivation (data): 0xffff8bd54c33e025 - 0xffff8bd54c33e020 = 0x5 = 5 "/tmp/" length = 5
