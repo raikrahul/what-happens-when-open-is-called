@@ -222,17 +222,17 @@ Why these commands exist (do not skip):
 - `sudo dmesg | rg -n "..."` filters the kernel log to just the filename strings and probe labels we need.
   `rg -n` adds line numbers so you can cite the exact evidence line-by-line.
 
-Driver map (what the code is doing and why it exists):
-- File: `kernel/drivers/trace_do_filp_open/trace_do_filp_open.c`
-- `target_comm` gate: filters output to one user-space program so unrelated kernel noise is ignored.
-- `do_filp_open` entry/return: captures the kernel filename pointer at entry and the returned file’s dentry name pointer at return.
-- `__d_alloc` entry/return: captures copy source pointer and copy destination pointer for the dentry name.
-- `d_lookup` entry/return: captures the hash, length, and name key; return shows hit vs miss.
-- `__d_lookup` / `__d_lookup_rcu`: shows lookup on internal and RCU paths for the same key.
-- `__d_add`: shows the exact dentry name pointer inserted into the dcache.
-- `d_delete`: shows the exact dentry name pointer removed on unlink.
-- `__dentry_kill`: shows which dentry was reclaimed by drop_caches (eviction).
-- `full_name_hash` (kretprobe): attempts to log the hash computation itself; if it prints nothing, you still have the hash values at `d_lookup` entry.
+Driver map (research paragraph).
+The probe driver in `kernel/drivers/trace_do_filp_open/trace_do_filp_open.c` is a controlled capture
+layer that isolates one user-space process (`target_comm`) and records the exact pointer flow and
+lookup keys along the open path. Entry/return probes on `do_filp_open` report the kernel filename
+pointer on entry and the dentry name pointer carried by the returned file on exit. Entry/return
+probes on `__d_alloc` expose the copy source pointer (`qstr->name`) and the copy destination pointer
+(`dentry->d_name.name`), which anchor memcpy and insertion proofs. `d_lookup` entry/return emit the
+hash, length, and name key plus hit/miss, while `__d_lookup` and `__d_lookup_rcu` expose internal
+and RCU lookup paths for the same key. `__d_add`, `d_delete`, and `__dentry_kill` mark insertion,
+unlink removal, and eviction via `drop_caches`. The `full_name_hash` kretprobe attempts to log the
+hash computation itself; if it is silent, the hash values still appear at `d_lookup` entry.
 
 ================================================================================
 
