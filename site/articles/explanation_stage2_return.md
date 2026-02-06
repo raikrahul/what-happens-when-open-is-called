@@ -167,9 +167,9 @@ Map
 "/tmp/t_e.txt" @ 0xffff8bd54c33e020 -> d_lookup (t_e.txt, 7, 1830572521) -> NULL -> __d_alloc entry 0xffff8bd54c33e025 -> __d_alloc return 0xffff8bd54eaa09f8 -> __d_add 0xffff8bd54eaa09f8 -> do_filp_open return 0xffff8bd54eaa09f8.
 
 Derivation.
-Derivation (data): 0xffff8bd54c33e025 - 0xffff8bd54c33e020 = 0x5 = 5 "/tmp/" length = 5
-0xffff8bd54eaa09f8 = __d_alloc return pointer 0xffff8bd54eaa09f8 = __d_add entry pointer
-0xffff8bd54eaa09f8 = do_filp_open return pointer
+0xffff8bd54c33e025 - 0xffff8bd54c33e020 = 0x5 = 5
+"/tmp/" length = 5
+0xffff8bd54eaa09f8 = __d_alloc return pointer = __d_add entry pointer = do_filp_open return pointer
 
 t_m.txt miss, insert.
 ```c
