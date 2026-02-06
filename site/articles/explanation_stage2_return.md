@@ -198,7 +198,17 @@ This section preserves every pointer, address, and line from the trace while add
 
 Claim A1. Cache miss, memcpy, and insert for t_e.txt.
 
-Evidence:
+User-space code that triggers this evidence (matrix_open.c):
+```c
+char n2[] = "/tmp/t_e.txt";
+close(creat(n2, 0644));
+drop_caches_if_root();
+sleep(1);
+
+f[1] = open(n2, O_RDONLY);
+```
+
+Kernel evidence:
 do_filp_open entry pointer = 0xffff8bd5423ed020 | /tmp/t_e.txt
 d_lookup entry: hash 1830572521 length 7 name t_e.txt
 d_lookup return: NULL
