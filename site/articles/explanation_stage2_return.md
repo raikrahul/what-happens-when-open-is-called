@@ -114,7 +114,7 @@ d_delete 0xffff8bd5628ba9f8 (l_e.txt) + d_delete 0xffff8bd54eaa09f8 (t_e.txt)
 Later phases start after this: eviction (__dentry_kill) and rebuild after eviction.</code></pre>
     </td>
     <td>
-      <pre><code>Diagram 1 — t_e.txt miss → alloc → insert → return
+      <pre><code>t_e.txt miss → alloc → insert → return
 open("/tmp/t_e.txt")
   -> do_filp_open entry 0xffff8bd54c33e020
   -> d_lookup hash 1830572521 len 7 "t_e.txt" -> NULL
@@ -123,7 +123,7 @@ open("/tmp/t_e.txt")
   -> __d_add entry 0xffff8bd54eaa09f8
   -> do_filp_open return 0xffff8bd54eaa09f8
 
-Diagram 2 — a.txt miss on loopback ext2
+a.txt miss on loopback ext2
 open("/mnt/loopfs/a.txt")
   -> do_filp_open entry 0xffff8bd54c33e020
   -> d_lookup hash 3711754354 len 5 "a.txt" -> NULL
@@ -132,12 +132,12 @@ open("/mnt/loopfs/a.txt")
   -> __d_add entry 0xffff8bd54eaa04b8
   -> do_filp_open return 0xffff8bd54eaa04b8
 
-Diagram 3 — cache hit for l_e.txt before deletion
+cache hit for l_e.txt before deletion
 open("l_e.txt")
   -> d_lookup hash 440978933 len 7 "l_e.txt" -> 0xffff8bd5628ba9f8
   -> do_filp_open return 0xffff8bd5628ba9f8
 
-Diagram 4 — unlink deletion + eviction
+unlink deletion + eviction
 unlink("l_e.txt") -> d_delete 0xffff8bd5628ba9f8
 unlink("/tmp/t_e.txt") -> d_delete 0xffff8bd54eaa09f8
 drop_caches -> __dentry_kill 0xffff8bd5628ba9f8 (l_e.txt)
@@ -146,14 +146,14 @@ drop_caches -> __dentry_kill 0xffff8bd54eaa0e78 (t_m.txt)
 drop_caches -> __dentry_kill 0xffff8bd54eaa0278 (l_m.txt)
 drop_caches -> __dentry_kill 0xffff8bd54eaa04b8 (a.txt)
 
-Diagram 5 — rebuild after eviction (t_e.txt)
+rebuild after eviction (t_e.txt)
 open("/tmp/t_e.txt") after drop_caches
   -> d_lookup hash 1830572521 len 7 "t_e.txt" -> NULL
   -> __d_alloc return 0xffff8bd54eaa0338
   -> __d_add entry 0xffff8bd54eaa0338
   -> do_filp_open return 0xffff8bd54eaa0338
 
-Diagram 6 — post-eviction lookup for l_e.txt
+post-eviction lookup for l_e.txt
 open("l_e.txt") after drop_caches
   -> __d_lookup_rcu hash 440978933 len 7 "l_e.txt"
   -> do_filp_open return 0xffff8bd5450e8278</code></pre>
