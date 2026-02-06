@@ -61,45 +61,67 @@ static inline int is_target(void) {
 }
 
 // 1. do_filp_open ENTRY
+// AXIOM: x86_64 ABI -> Arg 1: RDI, Arg 2: RSI, Arg 3: RDX.
+// TARGET: do_filp_open(int dfd, struct filename *pathname, ...)
+// RSI = Address of (struct filename) object.
+// struct filename { const char *name; ... } -> name is at offset 0.
 static int open_entry(struct kprobe *p, struct pt_regs *regs) {
   if (!is_target())
     return 0;
-  struct my_filename *f = (struct my_filename *)regs->si;
-  if (f && (unsigned long)f > 0xffff000000000000)
-    pr_info("[trace_open] Input Addr: 0x%px | Val: %s\n", f->name, f->name);
+
+  // TODO [01]:
+  // 01. Extract the 'struct filename *' from the correct ABI register.
+  // 02. Print the address and the string content using pr_info.
+  // Data: RSI = %px, String = %s
+
   return 0;
 }
 
 // 1. do_filp_open RET
+// AXIOM: x86_64 ABI -> Return value resides in RAX.
+// TARGET: struct file *
+// NESTED CHAIN: file -> f_path (offset 0x38) -> dentry -> d_name (offset 0x28)
+// -> name (offset 0x08)
 static int open_ret(struct kretprobe_instance *ri, struct pt_regs *regs) {
   if (!is_target())
     return 0;
-  struct file *f = (struct file *)regs->ax;
-  if (!IS_ERR(f) && f->f_path.dentry) {
-    struct dentry *d = f->f_path.dentry;
-    pr_info("[trace_open] Result Addr: 0x%px | Val: %s\n", d->d_name.name,
-            d->d_name.name);
-  }
+
+  // TODO [02]:
+  // 01. Extract 'struct file *' from the return register.
+  // 02. Gate with IS_ERR checks.
+  // 03. Navigate the pointer chain to find the dentry name.
+  // 04. Print the Result Addr and Value.
+
   return 0;
 }
 
 // 2. __d_alloc ENTRY: Capture Memcpy Source
+// AXIOM: __d_alloc(struct super_block *sb, const struct qstr *name)
+// RSI = Address of (struct qstr) 'name' object.
+// struct qstr { unsigned int hash; unsigned int len; const char *name; }
+// name->name is at offset 0x08.
 static int alloc_entry(struct kprobe *p, struct pt_regs *regs) {
   if (!is_target())
     return 0;
-  struct qstr *q = (struct qstr *)regs->si;
-  pr_info("[trace_alloc] Copy Source: 0x%px\n", q->name);
-  /* Note: We refrain from dump_stack() to avoid kernel crashes */
+
+  // TODO [03]:
+  // 01. Extract 'struct qstr *' from RSI.
+  // 02. Print the address of the source string (q->name).
+
   return 0;
 }
 
 // 2. __d_alloc RET
+// TARGET: struct dentry *
+// dentry->d_name.name is the destination buffer.
 static int alloc_ret(struct kretprobe_instance *ri, struct pt_regs *regs) {
   if (!is_target())
     return 0;
-  struct dentry *d = (struct dentry *)regs->ax;
-  if (d && !IS_ERR(d))
-    pr_info("[trace_alloc] Copy Dest:   0x%px\n", d->d_name.name);
+
+  // TODO [04]:
+  // 01. Extract 'struct dentry *' from RAX.
+  // 02. Print the address of the destination string.
+
   return 0;
 }
 
