@@ -178,13 +178,12 @@ Run A: matrix_open (root, drop_caches enabled)
 
 Run A narrative
 
-This section preserves every pointer, address, and line from the trace while adding the logical
-structure expected of a research textbook. Each section is followed by direct evidence and a
-derivation that uses only the data printed above.
+Every pointer, address, and line from the trace is preserved. Each section is followed by direct
+evidence and a derivation that uses only the data printed above.
 
 t_e.txt miss, memcpy, insert.
 
-User-space code that triggers this evidence (matrix_open.c):</pre>
+User-space program (matrix_open.c):</pre>
 <pre><code class="language-c">char n2[] = "/tmp/t_e.txt";
 close(creat(n2, 0644));
 drop_caches_if_root();
@@ -193,12 +192,12 @@ sleep(1);
 f[1] = open(n2, O_RDONLY);</code></pre>
 <pre style="white-space: pre-wrap; word-wrap: break-word; margin: 0; font-family: monospace;">
 
-Kernel evidence: do_filp_open entry pointer = 0xffff8bd54c33e020 | /tmp/t_e.txt d_lookup entry: hash
+Kernel lines: do_filp_open entry pointer = 0xffff8bd54c33e020 | /tmp/t_e.txt d_lookup entry: hash
 1830572521 length 7 name t_e.txt d_lookup return: NULL __d_alloc entry pointer = 0xffff8bd54c33e025
 __d_alloc return pointer = 0xffff8bd54eaa09f8 __d_add entry: 0xffff8bd54eaa09f8 | t_e.txt
 do_filp_open return pointer = 0xffff8bd54eaa09f8 | t_e.txt
 
-Pointer meanings (t_e.txt):
+Pointer meanings (t_e.txt).
 - do_filp_open entry pointer 0xffff8bd54c33e020 points to the kernel-side string "/tmp/t_e.txt" used for this open call.
 - d_lookup entry uses the basename "t_e.txt" (length 7) and hash 1830572521 as the lookup key for this path.
 - d_lookup return: NULL means no cached dentry matched that key.
@@ -207,7 +206,7 @@ Pointer meanings (t_e.txt):
 - __d_add entry pointer 0xffff8bd54eaa09f8 shows that same storage inserted into the dcache hash.
 - do_filp_open return pointer 0xffff8bd54eaa09f8 shows the returned file points at that dentry name storage.
 
-Function-by-function explanation (t_e.txt path):
+Function map (t_e.txt path).
 - do_filp_open entry: entry point for VFS open; receives the kernel-side filename string. The pointer 0xffff8bd54c33e020 is set by getname() before lookup and points to "/tmp/t_e.txt".
 - d_lookup entry: dcache lookup using key (name, length, hash). The key is derived from basename "t_e.txt" with length 7 and hash 1830572521.
 - d_lookup return: NULL indicates a cache miss for that key in the parent directory.
@@ -216,12 +215,12 @@ Function-by-function explanation (t_e.txt path):
 - __d_add entry: inserts the new dentry into the dcache; the same pointer 0xffff8bd54eaa09f8 is what gets hashed into the cache.
 - do_filp_open return: returns a struct file whose f_path.dentry-&gt;d_name.name equals 0xffff8bd54eaa09f8, tying the file to the copied name.
 
-Compat explanation (t_e.txt, compact):
+Compact map (t_e.txt).
 "/tmp/t_e.txt" @ 0xffff8bd54c33e020 -&gt; do_filp_open entry -&gt; d_lookup (t_e.txt, 7, 1830572521) miss
 -&gt; __d_alloc entry 0xffff8bd54c33e025 (basename) -&gt; __d_alloc return 0xffff8bd54eaa09f8
 -&gt; __d_add 0xffff8bd54eaa09f8 -&gt; do_filp_open return 0xffff8bd54eaa09f8.
 
-Derivation (user-space trigger and why): User-space code:</pre>
+Derivation (user-space trigger). User-space code:</pre>
 <pre><code class="language-c">char n2[] = "/tmp/t_e.txt";
 close(creat(n2, 0644));
 drop_caches_if_root();
@@ -240,19 +239,19 @@ Derivation (data): 0xffff8bd54c33e025 - 0xffff8bd54c33e020 = 0x5 = 5 "/tmp/" len
 
 t_m.txt miss, insert.
 
-This claim isolates a missing /tmp file to record a miss and insert with a basename offset.
+This isolates a missing /tmp file to record a miss and insert with a basename offset.
 
-User-space code that triggers this evidence (matrix_open.c):</pre>
+User-space program (matrix_open.c):</pre>
 <pre><code class="language-c">char n3[] = "/tmp/t_m.txt";
 
 f[2] = open(n3, O_RDONLY);</code></pre>
 <pre style="white-space: pre-wrap; word-wrap: break-word; margin: 0; font-family: monospace;">
 
-Kernel evidence: do_filp_open entry pointer = 0xffff8bd54c33e020 | /tmp/t_m.txt d_lookup entry: hash
+Kernel lines: do_filp_open entry pointer = 0xffff8bd54c33e020 | /tmp/t_m.txt d_lookup entry: hash
 2543581516 length 7 name t_m.txt d_lookup return: NULL __d_alloc entry pointer = 0xffff8bd54c33e025
 __d_alloc return pointer = 0xffff8bd54eaa0e78 __d_add entry: 0xffff8bd54eaa0e78 | t_m.txt
 
-Pointer meanings (t_m.txt):
+Pointer meanings (t_m.txt).
 - do_filp_open entry pointer 0xffff8bd54c33e020 points to "/tmp/t_m.txt" in kernel memory for this open.
 - d_lookup entry hash 2543581516 and length 7 use basename "t_m.txt" as the key.
 - d_lookup return: NULL shows no cached dentry matched.
@@ -266,26 +265,25 @@ Basename explanation (t_m.txt):
 - __d_alloc entry pointer is the basename start inside the same string, so it equals the full string pointer + 5 ("/tmp/" length).
 - __d_alloc return pointer is new dentry name storage allocated by __d_alloc; __d_add inserts that same storage into the cache.
 
-Compat explanation (t_m.txt, compact):
+Compact map (t_m.txt).
 "/tmp/t_m.txt" @ 0xffff8bd54c33e020 -&gt; d_lookup (t_m.txt, 7, 2543581516) miss -&gt; __d_alloc entry
 0xffff8bd54c33e025 (basename) -&gt; __d_alloc return 0xffff8bd54eaa0e78 -&gt; __d_add 0xffff8bd54eaa0e78.
 
 l_m.txt miss, insert.
 
-This claim repeats the missing-file case without a prefix to show the entry pointer equals the full
-string start.
+This repeats the missing-file case without a prefix to show the entry pointer equals the full string start.
 
-User-space code that triggers this evidence (matrix_open.c):</pre>
+User-space program (matrix_open.c):</pre>
 <pre><code class="language-c">char n4[] = "l_m.txt";
 
 f[4] = open(n4, O_RDONLY);</code></pre>
 <pre style="white-space: pre-wrap; word-wrap: break-word; margin: 0; font-family: monospace;">
 
-Kernel evidence: do_filp_open entry pointer = 0xffff8bd54c33e020 | l_m.txt d_lookup entry: hash
+Kernel lines: do_filp_open entry pointer = 0xffff8bd54c33e020 | l_m.txt d_lookup entry: hash
 2166850383 length 7 name l_m.txt d_lookup return: NULL __d_alloc entry pointer = 0xffff8bd54c33e020
 __d_alloc return pointer = 0xffff8bd54eaa0278 __d_add entry: 0xffff8bd54eaa0278 | l_m.txt
 
-Pointer meanings (l_m.txt):
+Pointer meanings (l_m.txt).
 - do_filp_open entry pointer 0xffff8bd54c33e020 points to "l_m.txt" for this open.
 - d_lookup entry hash 2166850383 and length 7 use basename "l_m.txt" as the key.
 - d_lookup return: NULL shows no cached dentry matched.
@@ -295,20 +293,20 @@ Pointer meanings (l_m.txt):
 
 a.txt miss, memcpy, insert (loopback ext2).
 
-This claim moves the same mechanism onto a different filesystem and a shorter basename.
+This moves the same mechanism onto a different filesystem and a shorter basename.
 
-User-space code that triggers this evidence (matrix_open.c):</pre>
+User-space program (matrix_open.c):</pre>
 <pre><code class="language-c">char n5[] = "/mnt/loopfs/a.txt";
 
 f[5] = open(n5, O_RDONLY);</code></pre>
 <pre style="white-space: pre-wrap; word-wrap: break-word; margin: 0; font-family: monospace;">
 
-Kernel evidence: do_filp_open entry pointer = 0xffff8bd54c33e020 | /mnt/loopfs/a.txt d_lookup entry:
+Kernel lines: do_filp_open entry pointer = 0xffff8bd54c33e020 | /mnt/loopfs/a.txt d_lookup entry:
 hash 3711754354 length 5 name a.txt d_lookup return: NULL __d_alloc entry pointer =
 0xffff8bd54c33e02c __d_alloc return pointer = 0xffff8bd54eaa04b8 __d_add entry: 0xffff8bd54eaa04b8 |
 a.txt do_filp_open return pointer = 0xffff8bd54eaa04b8 | a.txt
 
-Pointer meanings (a.txt):
+Pointer meanings (a.txt).
 - do_filp_open entry pointer 0xffff8bd54c33e020 points to "/mnt/loopfs/a.txt" in kernel memory for this open.
 - d_lookup entry hash 3711754354 and length 5 use basename "a.txt" as the key.
 - d_lookup return: NULL shows no cached dentry matched.
@@ -323,9 +321,9 @@ Derivation: 0xffff8bd54c33e02c - 0xffff8bd54c33e020 = 0xC = 12 "/mnt/loopfs/" le
 
 Cache hit: l_e.txt and t_e.txt before deletion.
 
-This claim shows reuse: the lookup returns the same pointer observed on the earlier return.
+This shows reuse: the lookup returns the same pointer observed on the earlier return.
 
-User-space code that triggers this evidence (matrix_open.c):</pre>
+User-space program (matrix_open.c):</pre>
 <pre><code class="language-c">char n1[] = "l_e.txt";
 char n2[] = "/tmp/t_e.txt";
 
@@ -337,10 +335,10 @@ f[0] = open(n1, O_RDONLY);
 f[1] = open(n2, O_RDONLY);</code></pre>
 <pre style="white-space: pre-wrap; word-wrap: break-word; margin: 0; font-family: monospace;">
 
-Kernel evidence: d_lookup entry: hash 440978933 length 7 name l_e.txt d_lookup return:
+Kernel lines: d_lookup entry: hash 440978933 length 7 name l_e.txt d_lookup return:
 0xffff8bd5628ba9f8 | l_e.txt
 
-Pointer meanings (cache hits):
+Pointer meanings (cache hits).
 - d_lookup return pointer 0xffff8bd5628ba9f8 for l_e.txt matches the earlier return pointer for l_e.txt, so the cached dentry is reused.
 - d_lookup return pointer 0xffff8bd54eaa09f8 for t_e.txt matches the earlier return pointer for t_e.txt, so the cached dentry is reused.
 
@@ -348,45 +346,45 @@ d_lookup entry: hash 1830572521 length 7 name t_e.txt d_lookup return: 0xffff8bd
 
 Cache deletion via unlink.
 
-This claim pins deletion to the explicit unlink calls in user space.
+This pins deletion to the explicit unlink calls in user space.
 
-User-space code that triggers this evidence (matrix_open.c):</pre>
+User-space program (matrix_open.c):</pre>
 <pre><code class="language-c">unlink("l_e.txt");
 unlink("/tmp/t_e.txt");</code></pre>
 <pre style="white-space: pre-wrap; word-wrap: break-word; margin: 0; font-family: monospace;">
 
-Kernel evidence: d_delete entry: 0xffff8bd5628ba9f8 | l_e.txt d_delete entry: 0xffff8bd54eaa09f8 |
+Kernel lines: d_delete entry: 0xffff8bd5628ba9f8 | l_e.txt d_delete entry: 0xffff8bd54eaa09f8 |
 t_e.txt no d_drop entry lines observed in this run
 
-Pointer meanings (deletion):
+Pointer meanings (deletion).
 - d_delete entry pointer 0xffff8bd5628ba9f8 names the cached l_e.txt dentry that was removed by unlink.
 - d_delete entry pointer 0xffff8bd54eaa09f8 names the cached t_e.txt dentry that was removed by unlink.
 - no d_drop line means d_delete is the observed removal path for this run.
 
 Cache eviction via drop_caches.
 
-This claim shows eviction driven by a write to /proc/sys/vm/drop_caches.
+This shows eviction driven by a write to /proc/sys/vm/drop_caches.
 
-User-space code that triggers this evidence (matrix_open.c):</pre>
+User-space program (matrix_open.c):</pre>
 <pre><code class="language-c">drop_caches_if_root();
 // writes "2\n" to /proc/sys/vm/drop_caches</code></pre>
 <pre style="white-space: pre-wrap; word-wrap: break-word; margin: 0; font-family: monospace;">
 
-Kernel evidence: do_filp_open entry pointer = 0xffff8bd54c33e020 | /proc/sys/vm/drop_caches
+Kernel lines: do_filp_open entry pointer = 0xffff8bd54c33e020 | /proc/sys/vm/drop_caches
 do_filp_open return pointer = 0xffff8bd6fce05db8 | drop_caches __dentry_kill entry:
 0xffff8bd54eaa0e78 | t_m.txt __dentry_kill entry: 0xffff8bd54eaa0278 | l_m.txt __dentry_kill entry:
 0xffff8bd5628ba9f8 | l_e.txt __dentry_kill entry: 0xffff8bd54eaa09f8 | t_e.txt __dentry_kill entry:
 0xffff8bd54eaa04b8 | a.txt matrix_open (129968): drop_caches: 2
 
-Pointer meanings (eviction):
+Pointer meanings (eviction).
 - do_filp_open entry/return for /proc/sys/vm/drop_caches shows the control write that triggers eviction.
 - __dentry_kill entry pointers show eviction of l_e.txt, t_e.txt, t_m.txt, l_m.txt, and a.txt dentries reclaimed by drop_caches.
 
 Cache rebuild after eviction: t_e.txt.
 
-This claim records the pointer observed after eviction and compares it to the pre-eviction pointer.
+This records the pointer observed after eviction and compares it to the pre-eviction pointer.
 
-User-space code that triggers this evidence (matrix_open.c):</pre>
+User-space program (matrix_open.c):</pre>
 <pre><code class="language-c">drop_caches_if_root();
 sleep(1);
 
@@ -395,14 +393,14 @@ f[0] = open("l_e.txt", O_RDONLY);
 f[1] = open("/tmp/t_e.txt", O_RDONLY);</code></pre>
 <pre style="white-space: pre-wrap; word-wrap: break-word; margin: 0; font-family: monospace;">
 
-Kernel evidence: d_lookup entry: hash 1830572521 length 7 name t_e.txt __d_alloc entry pointer =
+Kernel lines: d_lookup entry: hash 1830572521 length 7 name t_e.txt __d_alloc entry pointer =
 0xffff8bd54c33e025 __d_alloc return pointer = 0xffff8bd54eaa0338 __d_add entry: 0xffff8bd54eaa0338 |
 t_e.txt do_filp_open return pointer = 0xffff8bd54eaa0338 | t_e.txt
 
 Restated pre-eviction t_e.txt pointer used for inequality: do_filp_open return pointer =
 0xffff8bd54eaa09f8 | t_e.txt
 
-Pointer meanings (rebuild t_e.txt):
+Pointer meanings (rebuild t_e.txt).
 - __d_alloc entry pointer 0xffff8bd54c33e025 points to basename "t_e.txt" in the reopened path.
 - __d_alloc return pointer 0xffff8bd54eaa0338 is the new dentry name storage after eviction.
 - __d_add entry pointer 0xffff8bd54eaa0338 inserts the rebuilt name into the cache.
@@ -412,9 +410,9 @@ Derivation: 0xffff8bd54eaa0338 != 0xffff8bd54eaa09f8
 
 Post-eviction lookup: l_e.txt.
 
-This claim records the RCU lookup path and the new return pointer after eviction.
+This records the RCU lookup path and the new return pointer after eviction.
 
-User-space code that triggers this evidence (matrix_open.c):</pre>
+User-space program (matrix_open.c):</pre>
 <pre><code class="language-c">drop_caches_if_root();
 sleep(1);
 
@@ -422,13 +420,13 @@ sleep(1);
 f[0] = open("l_e.txt", O_RDONLY);</code></pre>
 <pre style="white-space: pre-wrap; word-wrap: break-word; margin: 0; font-family: monospace;">
 
-Kernel evidence: do_filp_open entry pointer = 0xffff8bd54c33e020 | l_e.txt __d_lookup_rcu entry:
+Kernel lines: do_filp_open entry pointer = 0xffff8bd54c33e020 | l_e.txt __d_lookup_rcu entry:
 hash 440978933 length 7 name l_e.txt do_filp_open return pointer = 0xffff8bd5450e8278 | l_e.txt
 
 Restated pre-eviction l_e.txt pointer used for inequality: do_filp_open return pointer =
 0xffff8bd5628ba9f8 | l_e.txt
 
-Pointer meanings (post-eviction l_e.txt):
+Pointer meanings (post-eviction l_e.txt).
 - __d_lookup_rcu entry shows the lookup key for l_e.txt after eviction.
 - do_filp_open return pointer 0xffff8bd5450e8278 is a new name pointer (not equal to pre-eviction pointer 0xffff8bd5628ba9f8).
 
@@ -436,9 +434,9 @@ Derivation: 0xffff8bd5450e8278 != 0xffff8bd5628ba9f8
 
 Hash keys used in Run A.
 
-This claim summarizes the exact keys hashed for each name observed in this run.
+This summarizes the exact keys hashed for each name observed in this run.
 
-User-space code that triggers this evidence (matrix_open.c):</pre>
+User-space program (matrix_open.c):</pre>
 <pre><code class="language-c">// these names are opened in this run:
 open("l_e.txt", O_RDONLY);
 open("/tmp/t_e.txt", O_RDONLY);
@@ -447,10 +445,10 @@ open("/tmp/t_m.txt", O_RDONLY);
 open("/mnt/loopfs/a.txt", O_RDONLY);</code></pre>
 <pre style="white-space: pre-wrap; word-wrap: break-word; margin: 0; font-family: monospace;">
 
-Kernel evidence: l_e.txt length 7 hash 440978933 t_e.txt length 7 hash 1830572521 l_m.txt length 7
+Kernel lines: l_e.txt length 7 hash 440978933 t_e.txt length 7 hash 1830572521 l_m.txt length 7
 hash 2166850383 t_m.txt length 7 hash 2543581516 a.txt length 5 hash 3711754354
 
-Pointer meanings (hash keys):
+Pointer meanings (hash keys).
 - each d_lookup entry line is printed at lookup entry and therefore corresponds to the exact key string and length hashed for that name in this run.
 
 Run B: minimal_open (target_comm=minimal_open)
@@ -459,14 +457,14 @@ This run isolates a single long filename to show the long-name allocation and lo
 
 Long filename: allocation, copy, cache hit.
 
-User-space code that triggers this evidence (minimal_open.c):</pre>
+User-space program (minimal_open.c):</pre>
 <pre><code class="language-c">snprintf(filename, sizeof(filename),
          "test_file_very_long_name_to_force_external_allocation_%ld", now);
 int fd = open(filename, O_RDWR | O_CREAT, 0644);
 sleep(5);</code></pre>
 <pre style="white-space: pre-wrap; word-wrap: break-word; margin: 0; font-family: monospace;">
 
-Kernel evidence: do_filp_open entry pointer = 0xffff8bd553aca020 |
+Kernel lines: do_filp_open entry pointer = 0xffff8bd553aca020 |
 test_file_very_long_name_to_force_external_allocation_1770412974 d_lookup entry: hash 3341646101
 length 64 name test_file_very_long_name_to_force_external_allocation_1770412974 d_lookup return:
 NULL __d_alloc entry pointer = 0xffff8bd553aca020 __d_alloc return pointer = 0xffff8bd69ca2a978
@@ -475,7 +473,7 @@ do_filp_open return pointer = 0xffff8bd69ca2a978 |
 test_file_very_long_name_to_force_external_allocation_1770412974 d_lookup return: 0xffff8bd69ca2a978
 | test_file_very_long_name_to_force_external_allocation_1770412974
 
-Pointer meanings (long filename):
+Pointer meanings (long filename).
 - do_filp_open entry pointer 0xffff8bd553aca020 points to the kernel-resident long filename string.
 - d_lookup entry hash 3341646101 length 64 shows the lookup key used for the long name.
 - d_lookup return: NULL shows the cache miss on first lookup.
@@ -485,7 +483,7 @@ Pointer meanings (long filename):
 - do_filp_open return pointer 0xffff8bd69ca2a978 shows the returned file points to that same name storage.
 - later d_lookup return pointer 0xffff8bd69ca2a978 shows a cache hit on the same name pointer.
 
-Compat explanation (long filename, compact):
+Compact map (long filename).
 do_filp_open entry 0xffff8bd553aca020 -&gt; struct filename.name (kernel string); d_lookup key
 ("test_file_very_long_name_to_force_external_allocation_1770412974", 64, 3341646101) -&gt; miss;
 __d_alloc entry 0xffff8bd553aca020 (copy source) -&gt; __d_alloc return 0xffff8bd69ca2a978
