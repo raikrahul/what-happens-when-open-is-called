@@ -265,8 +265,10 @@ Cache deletion via unlink.</pre>
 unlink("/tmp/t_e.txt");</code></pre>
 <pre style="white-space: pre-wrap; word-wrap: break-word; margin: 0; font-family: monospace;">
 
-Probe output (trace_do_filp_open.c): d_delete entry: 0xffff8bd5628ba9f8 | l_e.txt d_delete entry: 0xffff8bd54eaa09f8 |
-t_e.txt no d_drop entry lines observed in this run
+Probe output (trace_do_filp_open.c):
+d_delete entry from d_delete_entry: 0xffff8bd5628ba9f8 | l_e.txt
+d_delete entry from d_delete_entry: 0xffff8bd54eaa09f8 | t_e.txt
+no d_drop entry lines observed in this run
 
 The delete line for l_e.txt uses 0xffff8bd5628ba9f8, which is the cached name pointer shown in the hit. The delete line for t_e.txt uses 0xffff8bd54eaa09f8, which is the cached name pointer shown in the hit. No d_drop line appears in this run, so d_delete is the observed removal path.
 
@@ -275,11 +277,15 @@ Cache eviction via drop_caches.</pre>
 // writes "2\n" to /proc/sys/vm/drop_caches</code></pre>
 <pre style="white-space: pre-wrap; word-wrap: break-word; margin: 0; font-family: monospace;">
 
-Probe output (trace_do_filp_open.c): do_filp_open entry pointer = 0xffff8bd54c33e020 | /proc/sys/vm/drop_caches
-do_filp_open return pointer = 0xffff8bd6fce05db8 | drop_caches __dentry_kill entry:
-0xffff8bd54eaa0e78 | t_m.txt __dentry_kill entry: 0xffff8bd54eaa0278 | l_m.txt __dentry_kill entry:
-0xffff8bd5628ba9f8 | l_e.txt __dentry_kill entry: 0xffff8bd54eaa09f8 | t_e.txt __dentry_kill entry:
-0xffff8bd54eaa04b8 | a.txt matrix_open (129968): drop_caches: 2
+Probe output (trace_do_filp_open.c):
+[O] IN from open_entry: do_filp_open entry pointer = 0xffff8bd54c33e020 | /proc/sys/vm/drop_caches
+[O] OUT from open_ret: do_filp_open return pointer = 0xffff8bd6fce05db8 | drop_caches
+__dentry_kill entry from dentry_kill_entry: 0xffff8bd54eaa0e78 | t_m.txt
+__dentry_kill entry from dentry_kill_entry: 0xffff8bd54eaa0278 | l_m.txt
+__dentry_kill entry from dentry_kill_entry: 0xffff8bd5628ba9f8 | l_e.txt
+__dentry_kill entry from dentry_kill_entry: 0xffff8bd54eaa09f8 | t_e.txt
+__dentry_kill entry from dentry_kill_entry: 0xffff8bd54eaa04b8 | a.txt
+matrix_open (129968): drop_caches: 2
 
 The control file open is visible at 0xffff8bd54c33e020 | /proc/sys/vm/drop_caches and returns 0xffff8bd6fce05db8 | drop_caches, so the eviction trigger is recorded. The eviction lines show __dentry_kill for 0xffff8bd54eaa0e78 (t_m.txt), 0xffff8bd54eaa0278 (l_m.txt), 0xffff8bd5628ba9f8 (l_e.txt), 0xffff8bd54eaa09f8 (t_e.txt), and 0xffff8bd54eaa04b8 (a.txt), so those cached entries are reclaimed in this run.
 
@@ -292,9 +298,12 @@ f[0] = open("l_e.txt", O_RDONLY);
 f[1] = open("/tmp/t_e.txt", O_RDONLY);</code></pre>
 <pre style="white-space: pre-wrap; word-wrap: break-word; margin: 0; font-family: monospace;">
 
-Probe output (trace_do_filp_open.c): d_lookup entry: hash 1830572521 length 7 name t_e.txt __d_alloc entry pointer =
-0xffff8bd54c33e025 __d_alloc return pointer = 0xffff8bd54eaa0338 __d_add entry: 0xffff8bd54eaa0338 |
-t_e.txt do_filp_open return pointer = 0xffff8bd54eaa0338 | t_e.txt
+Probe output (trace_do_filp_open.c):
+d_lookup entry from lookup_entry: hash 1830572521 length 7 name t_e.txt
+[A] SRC from alloc_entry: __d_alloc entry pointer = 0xffff8bd54c33e025
+[A] DST from alloc_ret: __d_alloc return pointer = 0xffff8bd54eaa0338
+__d_add entry from d_add_entry: 0xffff8bd54eaa0338 | t_e.txt
+[O] OUT from open_ret: do_filp_open return pointer = 0xffff8bd54eaa0338 | t_e.txt
 
 Restated pre-eviction t_e.txt pointer used for inequality: do_filp_open return pointer =
 0xffff8bd54eaa09f8 | t_e.txt
@@ -309,8 +318,10 @@ sleep(1);
 f[0] = open("l_e.txt", O_RDONLY);</code></pre>
 <pre style="white-space: pre-wrap; word-wrap: break-word; margin: 0; font-family: monospace;">
 
-Probe output (trace_do_filp_open.c): do_filp_open entry pointer = 0xffff8bd54c33e020 | l_e.txt __d_lookup_rcu entry:
-hash 440978933 length 7 name l_e.txt do_filp_open return pointer = 0xffff8bd5450e8278 | l_e.txt
+Probe output (trace_do_filp_open.c):
+[O] IN from open_entry: do_filp_open entry pointer = 0xffff8bd54c33e020 | l_e.txt
+__d_lookup_rcu entry from lookup_rcu_entry: hash 440978933 length 7 name l_e.txt
+[O] OUT from open_ret: do_filp_open return pointer = 0xffff8bd5450e8278 | l_e.txt
 
 Restated pre-eviction l_e.txt pointer used for inequality: do_filp_open return pointer =
 0xffff8bd5628ba9f8 | l_e.txt
@@ -326,8 +337,12 @@ open("/tmp/t_m.txt", O_RDONLY);
 open("/mnt/loopfs/a.txt", O_RDONLY);</code></pre>
 <pre style="white-space: pre-wrap; word-wrap: break-word; margin: 0; font-family: monospace;">
 
-Probe output (trace_do_filp_open.c): l_e.txt length 7 hash 440978933 t_e.txt length 7 hash 1830572521 l_m.txt length 7
-hash 2166850383 t_m.txt length 7 hash 2543581516 a.txt length 5 hash 3711754354
+Probe output (trace_do_filp_open.c):
+d_lookup entry from lookup_entry: hash 440978933 length 7 name l_e.txt
+d_lookup entry from lookup_entry: hash 1830572521 length 7 name t_e.txt
+d_lookup entry from lookup_entry: hash 2166850383 length 7 name l_m.txt
+d_lookup entry from lookup_entry: hash 2543581516 length 7 name t_m.txt
+d_lookup entry from lookup_entry: hash 3711754354 length 5 name a.txt
 
 Each hash line is printed at lookup entry with name and length, so each hash is tied to the exact key shown: l_e.txt (7, 440978933), t_e.txt (7, 1830572521), l_m.txt (7, 2166850383), t_m.txt (7, 2543581516), a.txt (5, 3711754354).
 
@@ -340,14 +355,15 @@ int fd = open(filename, O_RDWR | O_CREAT, 0644);
 sleep(5);</code></pre>
 <pre style="white-space: pre-wrap; word-wrap: break-word; margin: 0; font-family: monospace;">
 
-Probe output (trace_do_filp_open.c): do_filp_open entry pointer = 0xffff8bd553aca020 |
-test_file_very_long_name_to_force_external_allocation_1770412974 d_lookup entry: hash 3341646101
-length 64 name test_file_very_long_name_to_force_external_allocation_1770412974 d_lookup return:
-NULL __d_alloc entry pointer = 0xffff8bd553aca020 __d_alloc return pointer = 0xffff8bd69ca2a978
-__d_add entry: 0xffff8bd69ca2a978 | test_file_very_long_name_to_force_external_allocation_1770412974
-do_filp_open return pointer = 0xffff8bd69ca2a978 |
-test_file_very_long_name_to_force_external_allocation_1770412974 d_lookup return: 0xffff8bd69ca2a978
-| test_file_very_long_name_to_force_external_allocation_1770412974
+Probe output (trace_do_filp_open.c):
+[O] IN from open_entry: do_filp_open entry pointer = 0xffff8bd553aca020 | test_file_very_long_name_to_force_external_allocation_1770412974
+d_lookup entry from lookup_entry: hash 3341646101 length 64 name test_file_very_long_name_to_force_external_allocation_1770412974
+d_lookup return from lookup_ret: NULL
+[A] SRC from alloc_entry: __d_alloc entry pointer = 0xffff8bd553aca020
+[A] DST from alloc_ret: __d_alloc return pointer = 0xffff8bd69ca2a978
+__d_add entry from d_add_entry: 0xffff8bd69ca2a978 | test_file_very_long_name_to_force_external_allocation_1770412974
+[O] OUT from open_ret: do_filp_open return pointer = 0xffff8bd69ca2a978 | test_file_very_long_name_to_force_external_allocation_1770412974
+d_lookup return from lookup_ret: 0xffff8bd69ca2a978 | test_file_very_long_name_to_force_external_allocation_1770412974
 
 The entry pointer is 0xffff8bd553aca020 and the string is the full long filename, so the kernel copy is fixed to that address. The lookup key is the long filename with length 64 and hash 3341646101, so the key and length are explicit. The lookup returns NULL, so the cache has no entry for that key on first use. The allocation source pointer is 0xffff8bd553aca020, which equals the string pointer, so the copy source is the start of the long name. The allocation return pointer is 0xffff8bd69ca2a978, which is new storage. The insert line uses 0xffff8bd69ca2a978, and the return line matches it. The later d_lookup return line also returns 0xffff8bd69ca2a978, so the cache hit reuses the same pointer. The equality chain is 0xffff8bd69ca2a978 = __d_alloc return = __d_add entry = do_filp_open return = d_lookup return.
 
