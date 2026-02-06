@@ -257,6 +257,16 @@ name string + length
   d_lookup bucket
 ```
 
+Table of Contents
+
+1. Results: Run A (matrix_open) proofs A1–A10
+2. Results: Run B (minimal_open) proof B1
+3. Proof map (claims to evidence)
+4. Discussion
+5. Conclusion
+6. Full Proofs (No Data Removed)
+7. What We Failed To Observe And Why
+
 Results
 
 Run A: matrix_open (root, drop_caches enabled)
@@ -319,6 +329,8 @@ Derivation (data):
 
 Claim A2. Cache miss and insert for missing t_m.txt.
 
+This claim isolates a missing /tmp file to show negative dentry insertion with a basename offset.
+
 User-space code that triggers this evidence (matrix_open.c):
 ```c
 char n3[] = "/tmp/t_m.txt";
@@ -344,6 +356,8 @@ Pointer meanings (t_m.txt):
 
 Claim A3. Cache miss and insert for missing l_m.txt.
 
+This claim repeats the missing-file case without a prefix to show the entry pointer equals the full string start.
+
 User-space code that triggers this evidence (matrix_open.c):
 ```c
 char n4[] = "l_m.txt";
@@ -368,6 +382,8 @@ Pointer meanings (l_m.txt):
 - __d_add entry pointer 0xffff8bd5560a0c38 inserts that name storage into the dcache as a negative entry.
 
 Claim A4. Cache miss, memcpy, and insert for a.txt on loopback ext2.
+
+This claim moves the same mechanism onto a different filesystem and a shorter basename.
 
 User-space code that triggers this evidence (matrix_open.c):
 ```c
@@ -403,6 +419,8 @@ Derivation:
 
 Claim A5. Cache hit for l_e.txt and t_e.txt before deletion.
 
+This claim shows reuse: the lookup returns the same pointer observed on the earlier return.
+
 User-space code that triggers this evidence (matrix_open.c):
 ```c
 char n1[] = "l_e.txt";
@@ -429,6 +447,8 @@ d_lookup return: 0xffff8bd54e246db8 | t_e.txt
 
 Claim A6. Cache deletion via unlink.
 
+This claim pins deletion to the explicit unlink calls in user space.
+
 User-space code that triggers this evidence (matrix_open.c):
 ```c
 unlink("l_e.txt");
@@ -446,6 +466,8 @@ Pointer meanings (deletion):
 - no d_drop line means d_delete is the observed removal path for this run.
 
 Claim A7. Cache eviction via drop_caches.
+
+This claim shows eviction driven by a write to /proc/sys/vm/drop_caches.
 
 User-space code that triggers this evidence (matrix_open.c):
 ```c
@@ -465,6 +487,8 @@ Pointer meanings (eviction):
 - __dentry_kill entry pointers 0xffff8bd54e8d9878 and 0xffff8bd54e246db8 identify the exact l_e.txt and t_e.txt dentries reclaimed by eviction.
 
 Claim A8. Cache rebuild after eviction for t_e.txt.
+
+This claim proves a new dentry name pointer appears after eviction.
 
 User-space code that triggers this evidence (matrix_open.c):
 ```c
@@ -494,6 +518,8 @@ Derivation:
 
 Claim A9. Post-eviction lookup observed for l_e.txt.
 
+This claim records the RCU lookup path and the new return pointer after eviction.
+
 User-space code that triggers this evidence (matrix_open.c):
 ```c
 drop_caches_if_root();
@@ -517,6 +543,8 @@ Derivation:
 
 Claim A10. Hash keys used in Run A.
 
+This claim summarizes the exact keys hashed for each name observed in this run.
+
 User-space code that triggers this evidence (matrix_open.c):
 ```c
 // these names are opened in this run:
@@ -538,6 +566,8 @@ Pointer meanings (hash keys):
 - each d_lookup entry line is printed at lookup entry and therefore corresponds to the exact key string and length hashed for that name in this run.
 
 Run B: minimal_open (target_comm=minimal_open)
+
+This run isolates a single long filename to show the long-name allocation and lookup path in full.
 
 Claim B1. Cache miss, memcpy, insert, and later hit for the long filename.
 
