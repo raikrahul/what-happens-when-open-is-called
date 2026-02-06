@@ -3,6 +3,8 @@ layout: default
 title: "Stage 2 Return"
 ---
 
+Disclaimer: addresses and hash values are from one run; your run will differ.
+
 Prior Work
 
 Stage 1: https://raikrahul.github.io/what-happens-when-open-is-called/stage1.html
@@ -87,6 +89,7 @@ f[1] = open(n2, O_RDONLY);
 ```
 
 Probe output (trace_do_filp_open.c):
+`|` separates pointer value (left) and the string read from that pointer (right).
 open_entry: do_filp_open entry pointer = 0xffff8bd54c33e020 | /tmp/t_e.txt
 d_lookup entry from lookup_entry: hash 1830572521 length 7 name t_e.txt
 d_lookup return from lookup_ret: NULL
@@ -94,16 +97,6 @@ alloc_entry: __d_alloc entry pointer = 0xffff8bd54c33e025
 alloc_ret: __d_alloc return pointer = 0xffff8bd54eaa09f8
 __d_add entry from d_add_entry: 0xffff8bd54eaa09f8 | t_e.txt
 open_ret: do_filp_open return pointer = 0xffff8bd54eaa09f8 | t_e.txt
-
-Path reasoning (t_e.txt).
-The entry line prints f->name from the do_filp_open argument (trace_do_filp_open.c: open_entry), so 0xffff8bd54c33e020 is the kernel-resident pathname buffer for this call. The string printed beside it is the buffer content for this call, not a dentry name pointer.
-Lookup uses the basename: d_lookup entry prints hash 1830572521 length 7 name t_e.txt. In the kernel, d_lookup takes a qstr* and uses name->hash and name->len (`/usr/src/linux-source-6.8.0/fs/dcache.c`, d_lookup/__d_lookup), so the printed length is the lookup length. The path at entry is /tmp/t_e.txt, which is 5 ("/tmp/") + 7 ("t_e.txt") = 12 bytes. The observed length is 7, so the lookup key is the basename and not the full path.
-The miss is explicit: d_lookup return: NULL. With no cached dentry for that key, lookup returns NULL and allocation follows.
-Allocation uses a shifted pointer: __d_alloc entry pointer = 0xffff8bd54c33e025. The difference from 0xffff8bd54c33e020 is 5 bytes, which matches "/tmp/". That proves the copy source is the basename start inside the same kernel string.
-New storage appears: __d_alloc return pointer = 0xffff8bd54eaa09f8. This is distinct from the string pointer, so it is newly allocated name storage.
-Insertion is explicit: __d_add entry: 0xffff8bd54eaa09f8 | t_e.txt. The inserted pointer matches the allocation return, so the dcache now contains that name at that address.
-Return ties the file to the inserted name: do_filp_open return pointer = 0xffff8bd54eaa09f8 | t_e.txt. The return pointer equals the allocation and insertion pointer, so the file points to that copied name storage.
-
 Map
 "/tmp/t_e.txt" @ 0xffff8bd54c33e020 -> d_lookup (t_e.txt, 7, 1830572521) -> NULL -> __d_alloc entry 0xffff8bd54c33e025 -> __d_alloc return 0xffff8bd54eaa09f8 -> __d_add 0xffff8bd54eaa09f8 -> do_filp_open return 0xffff8bd54eaa09f8.
 
@@ -111,6 +104,17 @@ Derivation.
 0xffff8bd54c33e025 - 0xffff8bd54c33e020 = 0x5 = 5
 "/tmp/" length = 5
 0xffff8bd54eaa09f8 = __d_alloc return pointer = __d_add entry pointer = do_filp_open return pointer
+
+In the probe output lines, the part after `|` is the string read from that pointer and printed by the driver.
+
+Path reasoning (t_e.txt).
+The entry line prints f->name from the do_filp_open argument (trace_do_filp_open.c: open_entry), so 0xffff8bd54c33e020 is the kernel-resident pathname buffer for this call.
+d_lookup uses qstr->name and qstr->len (`/usr/src/linux-source-6.8.0/fs/dcache.c`, d_lookup/__d_lookup). The entry prints length 7 name t_e.txt; /tmp/t_e.txt is 12 bytes, so the lookup key is the 7‑byte basename, not the full path.
+d_lookup return: NULL, so allocation follows.
+__d_alloc entry pointer = 0xffff8bd54c33e025. This equals 0xffff8bd54c33e020 + 5; 5 is the length of "/tmp/". So qstr->name for __d_alloc points at the filename part after the "/tmp/" prefix in the same kernel buffer.
+__d_alloc return pointer = 0xffff8bd54eaa09f8, a different address than 0xffff8bd54c33e020.
+__d_add entry shows 0xffff8bd54eaa09f8 | t_e.txt, the same address as the __d_alloc return pointer.
+do_filp_open return pointer = 0xffff8bd54eaa09f8 | t_e.txt.
 
 t_m.txt miss, insert.
 ```c
@@ -126,11 +130,14 @@ d_lookup return from lookup_ret: NULL
 alloc_entry: __d_alloc entry pointer = 0xffff8bd54c33e025
 alloc_ret: __d_alloc return pointer = 0xffff8bd54eaa0e78
 __d_add entry from d_add_entry: 0xffff8bd54eaa0e78 | t_m.txt
-
-The entry pointer is 0xffff8bd54c33e020 and the string is /tmp/t_m.txt, so the kernel copy for this call is fixed to that address. The lookup key is the basename, shown as t_m.txt with length 7 and hash 2543581516, so the lookup uses 7 bytes and not 12. The lookup returns NULL, so the cache has no entry for that key at this time. The allocation source pointer is 0xffff8bd54c33e025, which is 0xffff8bd54c33e020 + 5; that 5 matches the length of “/tmp/”, so the copy source begins at the basename inside the same string. The allocation return pointer is 0xffff8bd54eaa0e78, which is distinct from the string pointer and therefore new storage. The insert line uses 0xffff8bd54eaa0e78, so the same new storage is placed into the dcache. The numeric link is 0xffff8bd54c33e025 − 0xffff8bd54c33e020 = 0x5 = 5.
-
 Map
 "/tmp/t_m.txt" @ 0xffff8bd54c33e020 -> d_lookup (t_m.txt, 7, 2543581516) -> NULL -> __d_alloc entry 0xffff8bd54c33e025 -> __d_alloc return 0xffff8bd54eaa0e78 -> __d_add 0xffff8bd54eaa0e78.
+
+Derivation.
+0xffff8bd54c33e025 - 0xffff8bd54c33e020 = 0x5 = 5
+"/tmp/" length = 5
+
+The entry pointer is 0xffff8bd54c33e020 and the string is /tmp/t_m.txt, so the kernel copy for this call is fixed to that address. The lookup key is t_m.txt with length 7 and hash 2543581516, so the lookup uses 7 bytes and not 12. The lookup returns NULL, so the cache has no entry for that key at this time. The allocation source pointer is 0xffff8bd54c33e025, which is 0xffff8bd54c33e020 + 5; that 5 matches the length of "/tmp/", so the copy source begins at the filename part after the "/tmp/" prefix in the same string. The allocation return pointer is 0xffff8bd54eaa0e78, which is distinct from 0xffff8bd54c33e020. The insert line uses 0xffff8bd54eaa0e78, so the same new address is placed into the dcache.
 
 l_m.txt miss, insert.
 ```c
@@ -147,7 +154,7 @@ alloc_entry: __d_alloc entry pointer = 0xffff8bd54c33e020
 alloc_ret: __d_alloc return pointer = 0xffff8bd54eaa0278
 __d_add entry from d_add_entry: 0xffff8bd54eaa0278 | l_m.txt
 
-The entry pointer 0xffff8bd54c33e020 is f->name from do_filp_open entry (trace_do_filp_open.c: open_entry). Its type is const char * inside struct filename (include/linux/fs.h). The printed string is l_m.txt, so the kernel pathname buffer begins at that address and the basename start is the same address because there is no prefix. The lookup key is l_m.txt with length 7 and hash 2166850383, and d_lookup reads qstr->len and qstr->name (include/linux/dcache.h, fs/dcache.c), so the lookup uses 7 bytes. The lookup returns NULL, so there is no cached entry for that key. The allocation source pointer is 0xffff8bd54c33e020, which equals the pathname buffer start, so qstr->name points to the basename in that buffer. The allocation return pointer is 0xffff8bd54eaa0278, which is dentry->d_name.name (struct dentry in include/linux/dcache.h) returned by __d_alloc. The insert line uses 0xffff8bd54eaa0278, so that same dentry name pointer is inserted into the dcache hash for l_m.txt.
+The entry pointer 0xffff8bd54c33e020 is f->name from do_filp_open entry (trace_do_filp_open.c: open_entry). Its type is const char * inside struct filename (include/linux/fs.h). The printed string is l_m.txt, so the kernel pathname buffer begins at that address and the filename part begins at the same address because there is no prefix. The lookup key is l_m.txt with length 7 and hash 2166850383, and d_lookup reads qstr->len and qstr->name (include/linux/dcache.h, fs/dcache.c), so the lookup uses 7 bytes. The lookup returns NULL, so there is no cached entry for that key. The allocation source pointer is 0xffff8bd54c33e020, which equals the pathname buffer start, so qstr->name points to the filename part in that buffer. The allocation return pointer is 0xffff8bd54eaa0278, which is dentry->d_name.name (struct dentry in include/linux/dcache.h) returned by __d_alloc. The insert line uses 0xffff8bd54eaa0278, so that same dentry name pointer is inserted into the dcache hash for l_m.txt.
 
 a.txt miss, memcpy, insert (loopback ext2).
 ```c
@@ -165,11 +172,12 @@ alloc_ret: __d_alloc return pointer = 0xffff8bd54eaa04b8
 __d_add entry from d_add_entry: 0xffff8bd54eaa04b8 | a.txt
 open_ret: do_filp_open return pointer = 0xffff8bd54eaa04b8 | a.txt
 
-The entry pointer is 0xffff8bd54c33e020 and the string is /mnt/loopfs/a.txt. The lookup key is a.txt with length 5 and hash 3711754354, so the basename is used. The lookup returns NULL, so the cache has no entry for that key. The allocation source pointer is 0xffff8bd54c33e02c, which is 0xffff8bd54c33e020 + 12, so the basename starts after the 12-byte prefix /mnt/loopfs/. The allocation return pointer is 0xffff8bd54eaa04b8, which is new storage. The insert line uses 0xffff8bd54eaa04b8, and the return line matches it, so the file points to that copied name storage.
+Derivation.
+0xffff8bd54c33e02c - 0xffff8bd54c33e020 = 0xC = 12
+"/mnt/loopfs/" length = 12
+0xffff8bd54eaa04b8 = __d_alloc return pointer = __d_add entry pointer = do_filp_open return pointer
 
-Derivation: 0xffff8bd54c33e02c - 0xffff8bd54c33e020 = 0xC = 12 "/mnt/loopfs/" length = 12
-0xffff8bd54eaa04b8 = __d_alloc return pointer 0xffff8bd54eaa04b8 = __d_add entry pointer
-0xffff8bd54eaa04b8 = do_filp_open return pointer
+The entry pointer is 0xffff8bd54c33e020 and the string is /mnt/loopfs/a.txt. The lookup key is a.txt with length 5 and hash 3711754354, so the lookup uses 5 bytes. The lookup returns NULL, so the cache has no entry for that key. The allocation source pointer is 0xffff8bd54c33e02c, which is 0xffff8bd54c33e020 + 12, so the filename part starts after the 12‑byte prefix /mnt/loopfs/. The allocation return pointer is 0xffff8bd54eaa04b8. The insert line uses 0xffff8bd54eaa04b8, and the return line matches it.
 
 Cache hit: l_e.txt and t_e.txt before deletion.
 ```c
@@ -190,7 +198,11 @@ d_lookup return from lookup_ret: 0xffff8bd5628ba9f8 | l_e.txt
 d_lookup entry from lookup_entry: hash 1830572521 length 7 name t_e.txt
 d_lookup return from lookup_ret: 0xffff8bd54eaa09f8 | t_e.txt
 
-The lookup for l_e.txt returns 0xffff8bd5628ba9f8, which equals the earlier return pointer for l_e.txt, so the cached dentry is reused. The lookup for t_e.txt returns 0xffff8bd54eaa09f8, which equals the earlier return pointer for t_e.txt, so the cached dentry is reused. The reuse is established by pointer equality.
+Derivation.
+0xffff8bd5628ba9f8 = earlier l_e.txt return pointer
+0xffff8bd54eaa09f8 = earlier t_e.txt return pointer
+
+The lookup for l_e.txt returns 0xffff8bd5628ba9f8, which equals the earlier return pointer for l_e.txt. The lookup for t_e.txt returns 0xffff8bd54eaa09f8, which equals the earlier return pointer for t_e.txt.
 
 Cache deletion via unlink.
 ```c
@@ -203,7 +215,11 @@ d_delete entry from d_delete_entry: 0xffff8bd5628ba9f8 | l_e.txt
 d_delete entry from d_delete_entry: 0xffff8bd54eaa09f8 | t_e.txt
 no d_drop entry lines observed in this run
 
-The delete line for l_e.txt uses 0xffff8bd5628ba9f8, which is the cached name pointer shown in the hit. The delete line for t_e.txt uses 0xffff8bd54eaa09f8, which is the cached name pointer shown in the hit. No d_drop line appears in this run, so d_delete is the observed removal path.
+Derivation.
+0xffff8bd5628ba9f8 = cached l_e.txt pointer from hit
+0xffff8bd54eaa09f8 = cached t_e.txt pointer from hit
+
+The delete line for l_e.txt uses 0xffff8bd5628ba9f8. The delete line for t_e.txt uses 0xffff8bd54eaa09f8. No d_drop line appears in this run.
 
 Cache eviction via drop_caches.
 ```c
@@ -221,7 +237,14 @@ __dentry_kill entry from dentry_kill_entry: 0xffff8bd54eaa09f8 | t_e.txt
 __dentry_kill entry from dentry_kill_entry: 0xffff8bd54eaa04b8 | a.txt
 matrix_open (129968): drop_caches: 2
 
-The control file open is visible at 0xffff8bd54c33e020 | /proc/sys/vm/drop_caches and returns 0xffff8bd6fce05db8 | drop_caches, so the eviction trigger is recorded. The eviction lines show __dentry_kill for 0xffff8bd54eaa0e78 (t_m.txt), 0xffff8bd54eaa0278 (l_m.txt), 0xffff8bd5628ba9f8 (l_e.txt), 0xffff8bd54eaa09f8 (t_e.txt), and 0xffff8bd54eaa04b8 (a.txt), so those cached entries are reclaimed in this run.
+Derivation.
+0xffff8bd54eaa0e78 = t_m.txt pointer
+0xffff8bd54eaa0278 = l_m.txt pointer
+0xffff8bd5628ba9f8 = l_e.txt pointer
+0xffff8bd54eaa09f8 = t_e.txt pointer
+0xffff8bd54eaa04b8 = a.txt pointer
+
+The control file open is 0xffff8bd54c33e020 | /proc/sys/vm/drop_caches and returns 0xffff8bd6fce05db8 | drop_caches. The eviction lines show __dentry_kill for the five pointers above.
 
 Cache rebuild after eviction: t_e.txt.
 ```c
@@ -243,7 +266,10 @@ open_ret: do_filp_open return pointer = 0xffff8bd54eaa0338 | t_e.txt
 Restated pre-eviction t_e.txt pointer used for inequality: do_filp_open return pointer =
 0xffff8bd54eaa09f8 | t_e.txt
 
-The post-eviction lookup for t_e.txt rebuilds a new pointer. The return pointer is 0xffff8bd54eaa0338, while the pre-eviction pointer is 0xffff8bd54eaa09f8. The inequality 0xffff8bd54eaa0338 != 0xffff8bd54eaa09f8 shows the rebuild produced a new name storage address.
+Derivation.
+0xffff8bd54eaa0338 != 0xffff8bd54eaa09f8
+
+The post-eviction lookup for t_e.txt returns 0xffff8bd54eaa0338, which differs from the pre-eviction pointer 0xffff8bd54eaa09f8.
 
 Post-eviction lookup: l_e.txt.
 ```c
@@ -262,7 +288,10 @@ open_ret: do_filp_open return pointer = 0xffff8bd5450e8278 | l_e.txt
 Restated pre-eviction l_e.txt pointer used for inequality: do_filp_open return pointer =
 0xffff8bd5628ba9f8 | l_e.txt
 
-The post-eviction lookup uses __d_lookup_rcu with hash 440978933 length 7 name l_e.txt, then returns 0xffff8bd5450e8278. The pre-eviction pointer is 0xffff8bd5628ba9f8, so 0xffff8bd5450e8278 != 0xffff8bd5628ba9f8 records a new return pointer after eviction.
+Derivation.
+0xffff8bd5450e8278 != 0xffff8bd5628ba9f8
+
+The post-eviction lookup uses __d_lookup_rcu with hash 440978933 length 7 name l_e.txt, then returns 0xffff8bd5450e8278.
 
 Hash keys used in Run A.
 ```c
@@ -302,6 +331,9 @@ alloc_ret: __d_alloc return pointer = 0xffff8bd69ca2a978
 __d_add entry from d_add_entry: 0xffff8bd69ca2a978 | test_file_very_long_name_to_force_external_allocation_1770412974
 open_ret: do_filp_open return pointer = 0xffff8bd69ca2a978 | test_file_very_long_name_to_force_external_allocation_1770412974
 d_lookup return from lookup_ret: 0xffff8bd69ca2a978 | test_file_very_long_name_to_force_external_allocation_1770412974
+
+Derivation.
+0xffff8bd69ca2a978 = __d_alloc return pointer = __d_add entry pointer = do_filp_open return pointer = d_lookup return pointer
 
 The entry pointer is 0xffff8bd553aca020 and the string is the full long filename, so the kernel copy is fixed to that address. The lookup key is the long filename with length 64 and hash 3341646101, so the key and length are explicit. The lookup returns NULL, so the cache has no entry for that key on first use. The allocation source pointer is 0xffff8bd553aca020, which equals the string pointer, so the copy source is the start of the long name. The allocation return pointer is 0xffff8bd69ca2a978, which is new storage. The insert line uses 0xffff8bd69ca2a978, and the return line matches it. The later d_lookup return line also returns 0xffff8bd69ca2a978, so the cache hit reuses the same pointer. The equality chain is 0xffff8bd69ca2a978 = __d_alloc return = __d_add entry = do_filp_open return = d_lookup return.
 
