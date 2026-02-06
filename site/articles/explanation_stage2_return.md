@@ -5,6 +5,11 @@ title: "Stage 2 Return"
 
 Disclaimer: addresses and hash values are from one run; your run will differ.
 
+This stage traces one thing: the user‑space filename string as it becomes a kernel pointer, gets
+copied, hashed, cached, deleted, and reused on return. No VMs, no heavy tracers, no filters—only
+dmesg plus kprobes/kretprobes. Every statement below is tied to a printed pointer, hash, or a
+kernel source line.
+
 Prior Work
 
 Stage 1: https://raikrahul.github.io/what-happens-when-open-is-called/stage1.html
