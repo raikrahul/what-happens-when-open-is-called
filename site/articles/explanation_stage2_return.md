@@ -122,7 +122,7 @@ d_delete 0xffff8bd5628ba9f8 (l_e.txt) + d_delete 0xffff8bd54eaa09f8 (t_e.txt)
 
 Later phases start after this: eviction (__dentry_kill) and rebuild after eviction.
 
-Wide-Screen Diagrams (Trace View)
+Diagrams
 
 Diagram 1 — t_e.txt miss → alloc → insert → return
 ```text
