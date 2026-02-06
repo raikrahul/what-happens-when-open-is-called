@@ -506,32 +506,6 @@ Run B: minimal_open (target_comm=minimal_open)
 
 This run isolates a single long filename to show the long-name allocation and lookup path in full.
 
-Claim B1. Cache miss, memcpy, insert, and later hit for the long filename.
-
-Evidence:
-do_filp_open entry pointer = 0xffff8bd54d663020
-d_lookup entry: hash 3964738412 length 64 name test_file_very_long_name_to_force_external_allocation_1770407089
-d_lookup return: NULL
-__d_alloc entry pointer = 0xffff8bd54d662020
-__d_alloc return pointer = 0xffff8bd7e9520df8
-__d_add entry pointer = 0xffff8bd7e9520df8 | test_file_very_long_name_to_force_external_allocation_1770407089
-do_filp_open return pointer = 0xffff8bd7e9520df8 | test_file_very_long_name_to_force_external_allocation_1770407089
-
-Pointer meanings (long filename):
-- do_filp_open entry pointer 0xffff8bd54d663020 points to the long filename string in kernel memory.
-- d_lookup entry shows the hash and length 64 used for the lookup key of that string.
-- d_lookup return: NULL shows a cache miss for that key.
-- __d_alloc entry pointer 0xffff8bd54d663020 equals the full string start (no prefix to skip).
-- __d_alloc return pointer 0xffff8bd7e9520df8 is the new dentry name storage for the long string.
-- __d_add entry pointer 0xffff8bd7e9520df8 inserts that name into the cache.
-- do_filp_open return pointer 0xffff8bd7e9520df8 confirms the returned file points to that name storage.
-
-cache hit after 5 seconds:
-Restated earlier return pointer:
-do_filp_open return pointer = 0xffff8bd7e9520df8 | test_file_very_long_name_to_force_external_allocation_1770407089
-
-d_lookup entry: hash 3964738412 length 64 name test_file_very_long_name_to_force_external_allocation_1770407089
-d_lookup return pointer = 0xffff8bd7e9520df8
 
 Proof map (claims to evidence)
 
