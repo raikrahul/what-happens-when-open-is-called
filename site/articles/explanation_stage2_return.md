@@ -118,49 +118,22 @@ Memcpy proof (kernel source)
 
 File: /usr/src/linux-source-6.8.0/fs/dcache.c:1660 memcpy(dname, name->name, name->len);
 
-ASCII diagram: allocation path
+ASCII diagram (horizontal, real data, t_e.txt)
 ```text
-user string
-    |
-    v
-do_filp_open entry
-    |
-    v
-__d_alloc entry (copy source)
-    |
-    v
-__d_alloc return (copy destination)
-    |
-    v
-do_filp_open return
+"/tmp/t_e.txt" @ 0xffff8bd55debc020 -> do_filp_open entry
+0xffff8bd55debc025 -> __d_alloc entry (copy source)
+0xffff8bd572708638 -> __d_alloc return (copy destination)
+0xffff8bd572708638 -> do_filp_open return
 ```
 
-ASCII diagram: cache hit path
+ASCII diagram (horizontal, real data, cache hit for t_e.txt)
 ```text
-user string
-    |
-    v
-do_filp_open entry
-    |
-    v
-d_lookup return
-    |
-    v
-do_filp_open return
+"/tmp/t_e.txt" -> do_filp_open entry -> d_lookup return 0xffff8bd572708638 -> do_filp_open return 0xffff8bd572708638
 ```
 
-ASCII diagram: hash lookup
+ASCII diagram (horizontal, real data, hash lookup for t_e.txt)
 ```text
-name string + length
-        |
-        v
-     full_name_hash
-        |
-        v
-   hash value (H)
-        |
-        v
-  d_lookup bucket
+"t_e.txt" + 7 -> d_lookup hash 1830572521 -> d_lookup bucket (hash 1830572521)
 ```
 
 Table of Contents
