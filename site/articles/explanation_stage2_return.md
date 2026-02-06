@@ -191,6 +191,11 @@ Function-by-function explanation (t_e.txt path):
 - __d_add entry: inserts the new dentry into the dcache; the same pointer 0xffff8bd572708638 is what gets hashed into the cache.
 - do_filp_open return: returns a struct file whose f_path.dentry->d_name.name equals 0xffff8bd572708638, tying the file to the copied name.
 
+Compat explanation (t_e.txt, compact):
+"/tmp/t_e.txt" @ 0xffff8bd55debc020 -> do_filp_open entry -> d_lookup (t_e.txt, 7, 1830572521) miss
+-> __d_alloc entry 0xffff8bd55debc025 (basename) -> __d_alloc return 0xffff8bd572708638
+-> __d_add 0xffff8bd572708638 -> do_filp_open return 0xffff8bd572708638.
+
 Derivation (user-space trigger and why): User-space code:
 ```c
 char n2[] = "/tmp/t_e.txt";
@@ -237,6 +242,10 @@ Basename explanation (t_m.txt):
 - The dcache lookup and name copy operate on the basename, not the full path. That is why the copy source pointer is not the full string pointer.
 - __d_alloc entry pointer is the basename start inside the same string, so it equals the full string pointer + 5 ("/tmp/" length).
 - __d_alloc return pointer is new dentry name storage allocated by __d_alloc; __d_add inserts that same storage into the cache.
+
+Compat explanation (t_m.txt, compact):
+"/tmp/t_m.txt" @ 0xffff8bd55debc020 -> d_lookup (t_m.txt, 7, 2543581516) miss -> __d_alloc entry
+0xffff8bd55debc025 (basename) -> __d_alloc return 0xffff8bd5727080f8 -> __d_add 0xffff8bd5727080f8.
 
 Claim A3. Cache miss and insert for missing l_m.txt.
 
