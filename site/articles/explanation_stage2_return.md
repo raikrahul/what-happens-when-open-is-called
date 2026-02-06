@@ -100,7 +100,6 @@ Chains and diagrams (side by side)
 | 1) memcpy chain (t_e.txt, copy source -> destination)<br>```text<br>"/tmp/t_e.txt" @ 0xffff8bd54c33e020 -> __d_alloc entry 0xffff8bd54c33e025 -> __d_alloc return 0xffff8bd54eaa09f8<br>```<br>2) cache build-up chain (t_e.txt, miss -> insert)<br>```text<br>d_lookup return NULL -> __d_add 0xffff8bd54eaa09f8 -> do_filp_open return 0xffff8bd54eaa09f8<br>```<br>3) cache hit chain (t_e.txt, later lookup)<br>```text<br>d_lookup return 0xffff8bd54eaa09f8 -> do_filp_open return 0xffff8bd54eaa09f8<br>```<br>4) cache miss chain (t_m.txt, missing)<br>```text<br>"/tmp/t_m.txt" -> d_lookup return NULL -> __d_add 0xffff8bd54eaa0e78<br>```<br>5) cache delete chain (unlink)<br>```text<br>d_delete 0xffff8bd5628ba9f8 (l_e.txt) + d_delete 0xffff8bd54eaa09f8 (t_e.txt)<br>```<br>Later phases start after this: eviction (__dentry_kill) and rebuild after eviction. | Diagram 1 — t_e.txt miss → alloc → insert → return<br>```text<br>open("/tmp/t_e.txt")<br>  -> do_filp_open entry 0xffff8bd54c33e020<br>  -> d_lookup hash 1830572521 len 7 "t_e.txt" -> NULL<br>  -> __d_alloc entry 0xffff8bd54c33e025<br>  -> __d_alloc return 0xffff8bd54eaa09f8<br>  -> __d_add entry 0xffff8bd54eaa09f8<br>  -> do_filp_open return 0xffff8bd54eaa09f8<br>```<br>Diagram 2 — a.txt miss on loopback ext2<br>```text<br>open("/mnt/loopfs/a.txt")<br>  -> do_filp_open entry 0xffff8bd54c33e020<br>  -> d_lookup hash 3711754354 len 5 "a.txt" -> NULL<br>  -> __d_alloc entry 0xffff8bd54c33e02c<br>  -> __d_alloc return 0xffff8bd54eaa04b8<br>  -> __d_add entry 0xffff8bd54eaa04b8<br>  -> do_filp_open return 0xffff8bd54eaa04b8<br>```<br>Diagram 3 — cache hit for l_e.txt before deletion<br>```text<br>open("l_e.txt")<br>  -> d_lookup hash 440978933 len 7 "l_e.txt" -> 0xffff8bd5628ba9f8<br>  -> do_filp_open return 0xffff8bd5628ba9f8<br>```<br>Diagram 4 — unlink deletion + eviction<br>```text<br>unlink("l_e.txt") -> d_delete 0xffff8bd5628ba9f8<br>unlink("/tmp/t_e.txt") -> d_delete 0xffff8bd54eaa09f8<br>drop_caches -> __dentry_kill 0xffff8bd5628ba9f8 (l_e.txt)<br>drop_caches -> __dentry_kill 0xffff8bd54eaa09f8 (t_e.txt)<br>drop_caches -> __dentry_kill 0xffff8bd54eaa0e78 (t_m.txt)<br>drop_caches -> __dentry_kill 0xffff8bd54eaa0278 (l_m.txt)<br>drop_caches -> __dentry_kill 0xffff8bd54eaa04b8 (a.txt)<br>```<br>Diagram 5 — rebuild after eviction (t_e.txt)<br>```text<br>open("/tmp/t_e.txt") after drop_caches<br>  -> d_lookup hash 1830572521 len 7 "t_e.txt" -> NULL<br>  -> __d_alloc return 0xffff8bd54eaa0338<br>  -> __d_add entry 0xffff8bd54eaa0338<br>  -> do_filp_open return 0xffff8bd54eaa0338<br>```<br>Diagram 6 — post-eviction lookup for l_e.txt<br>```text<br>open("l_e.txt") after drop_caches<br>  -> __d_lookup_rcu hash 440978933 len 7 "l_e.txt"<br>  -> do_filp_open return 0xffff8bd5450e8278<br>``` |
 
 
-
 Run A: matrix_open (root, drop_caches enabled)
 
 Run A narrative
@@ -435,7 +434,6 @@ Derivation: 0xffff8bd69ca2a978 = __d_alloc return pointer 0xffff8bd69ca2a978 = _
 0xffff8bd69ca2a978 = do_filp_open return pointer 0xffff8bd69ca2a978 = d_lookup return pointer (cache
 hit)
 
-
 Proof map
 
 Memcpy of name into dentry storage: t_e.txt, a.txt, long filename.
@@ -700,7 +698,6 @@ pointer 0xffff8bd54eaa0338, name t_e.txt. Data: rebuilt pointer differs from pre
 0xffff8bd54eaa09f8. Work: open completes. Errors: none. Caller line: not recorded. Current line: not
 recorded. Resume: returns to user space.
 
-
 Symbol availability proof (from this machine)
 
 Kernel headers and sources:
@@ -750,3 +747,5 @@ sudo dmesg | rg -n "__d_lookup_rcu entry:.*l_e.txt|\[O\] OUT: .*l_e.txt"
 149:[33036.444278] __d_lookup_rcu entry: hash 440978933 length 7 name l_e.txt
 151:[33036.444304] [O] OUT: 0xffff8bd5450e8278 | l_e.txt
 ```
+
+Explanation: the repeated __d_lookup_rcu entries show the lookup key for l_e.txt after eviction, and the [O] OUT lines show the return pointer seen by do_filp_open. The change from 0xffff8bd54e0c74b8 and 0xffff8bd5628ba9f8 to 0xffff8bd5450e8278 records a new return pointer after eviction without an __d_add line in this run.

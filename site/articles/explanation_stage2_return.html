@@ -174,7 +174,6 @@ Chains and diagrams (side by side)
 | 1) memcpy chain (t_e.txt, copy source -&gt; destination)&lt;br&gt;```text&lt;br&gt;"/tmp/t_e.txt" @ 0xffff8bd54c33e020 -&gt; __d_alloc entry 0xffff8bd54c33e025 -&gt; __d_alloc return 0xffff8bd54eaa09f8&lt;br&gt;```&lt;br&gt;2) cache build-up chain (t_e.txt, miss -&gt; insert)&lt;br&gt;```text&lt;br&gt;d_lookup return NULL -&gt; __d_add 0xffff8bd54eaa09f8 -&gt; do_filp_open return 0xffff8bd54eaa09f8&lt;br&gt;```&lt;br&gt;3) cache hit chain (t_e.txt, later lookup)&lt;br&gt;```text&lt;br&gt;d_lookup return 0xffff8bd54eaa09f8 -&gt; do_filp_open return 0xffff8bd54eaa09f8&lt;br&gt;```&lt;br&gt;4) cache miss chain (t_m.txt, missing)&lt;br&gt;```text&lt;br&gt;"/tmp/t_m.txt" -&gt; d_lookup return NULL -&gt; __d_add 0xffff8bd54eaa0e78&lt;br&gt;```&lt;br&gt;5) cache delete chain (unlink)&lt;br&gt;```text&lt;br&gt;d_delete 0xffff8bd5628ba9f8 (l_e.txt) + d_delete 0xffff8bd54eaa09f8 (t_e.txt)&lt;br&gt;```&lt;br&gt;Later phases start after this: eviction (__dentry_kill) and rebuild after eviction. | Diagram 1 — t_e.txt miss → alloc → insert → return&lt;br&gt;```text&lt;br&gt;open("/tmp/t_e.txt")&lt;br&gt;  -&gt; do_filp_open entry 0xffff8bd54c33e020&lt;br&gt;  -&gt; d_lookup hash 1830572521 len 7 "t_e.txt" -&gt; NULL&lt;br&gt;  -&gt; __d_alloc entry 0xffff8bd54c33e025&lt;br&gt;  -&gt; __d_alloc return 0xffff8bd54eaa09f8&lt;br&gt;  -&gt; __d_add entry 0xffff8bd54eaa09f8&lt;br&gt;  -&gt; do_filp_open return 0xffff8bd54eaa09f8&lt;br&gt;```&lt;br&gt;Diagram 2 — a.txt miss on loopback ext2&lt;br&gt;```text&lt;br&gt;open("/mnt/loopfs/a.txt")&lt;br&gt;  -&gt; do_filp_open entry 0xffff8bd54c33e020&lt;br&gt;  -&gt; d_lookup hash 3711754354 len 5 "a.txt" -&gt; NULL&lt;br&gt;  -&gt; __d_alloc entry 0xffff8bd54c33e02c&lt;br&gt;  -&gt; __d_alloc return 0xffff8bd54eaa04b8&lt;br&gt;  -&gt; __d_add entry 0xffff8bd54eaa04b8&lt;br&gt;  -&gt; do_filp_open return 0xffff8bd54eaa04b8&lt;br&gt;```&lt;br&gt;Diagram 3 — cache hit for l_e.txt before deletion&lt;br&gt;```text&lt;br&gt;open("l_e.txt")&lt;br&gt;  -&gt; d_lookup hash 440978933 len 7 "l_e.txt" -&gt; 0xffff8bd5628ba9f8&lt;br&gt;  -&gt; do_filp_open return 0xffff8bd5628ba9f8&lt;br&gt;```&lt;br&gt;Diagram 4 — unlink deletion + eviction&lt;br&gt;```text&lt;br&gt;unlink("l_e.txt") -&gt; d_delete 0xffff8bd5628ba9f8&lt;br&gt;unlink("/tmp/t_e.txt") -&gt; d_delete 0xffff8bd54eaa09f8&lt;br&gt;drop_caches -&gt; __dentry_kill 0xffff8bd5628ba9f8 (l_e.txt)&lt;br&gt;drop_caches -&gt; __dentry_kill 0xffff8bd54eaa09f8 (t_e.txt)&lt;br&gt;drop_caches -&gt; __dentry_kill 0xffff8bd54eaa0e78 (t_m.txt)&lt;br&gt;drop_caches -&gt; __dentry_kill 0xffff8bd54eaa0278 (l_m.txt)&lt;br&gt;drop_caches -&gt; __dentry_kill 0xffff8bd54eaa04b8 (a.txt)&lt;br&gt;```&lt;br&gt;Diagram 5 — rebuild after eviction (t_e.txt)&lt;br&gt;```text&lt;br&gt;open("/tmp/t_e.txt") after drop_caches&lt;br&gt;  -&gt; d_lookup hash 1830572521 len 7 "t_e.txt" -&gt; NULL&lt;br&gt;  -&gt; __d_alloc return 0xffff8bd54eaa0338&lt;br&gt;  -&gt; __d_add entry 0xffff8bd54eaa0338&lt;br&gt;  -&gt; do_filp_open return 0xffff8bd54eaa0338&lt;br&gt;```&lt;br&gt;Diagram 6 — post-eviction lookup for l_e.txt&lt;br&gt;```text&lt;br&gt;open("l_e.txt") after drop_caches&lt;br&gt;  -&gt; __d_lookup_rcu hash 440978933 len 7 "l_e.txt"&lt;br&gt;  -&gt; do_filp_open return 0xffff8bd5450e8278&lt;br&gt;``` |
 
 
-
 Run A: matrix_open (root, drop_caches enabled)
 
 Run A narrative
@@ -497,7 +496,6 @@ Derivation: 0xffff8bd69ca2a978 = __d_alloc return pointer 0xffff8bd69ca2a978 = _
 0xffff8bd69ca2a978 = do_filp_open return pointer 0xffff8bd69ca2a978 = d_lookup return pointer (cache
 hit)
 
-
 Proof map
 
 Memcpy of name into dentry storage: t_e.txt, a.txt, long filename.
@@ -762,7 +760,6 @@ pointer 0xffff8bd54eaa0338, name t_e.txt. Data: rebuilt pointer differs from pre
 0xffff8bd54eaa09f8. Work: open completes. Errors: none. Caller line: not recorded. Current line: not
 recorded. Resume: returns to user space.
 
-
 Symbol availability proof (from this machine)
 
 Kernel headers and sources:
@@ -809,6 +806,9 @@ Post-eviction l_e.txt lookup/return is visible even without __d_add:</pre>
 37:[33033.423931] [O] OUT: 0xffff8bd5628ba9f8 | l_e.txt
 149:[33036.444278] __d_lookup_rcu entry: hash 440978933 length 7 name l_e.txt
 151:[33036.444304] [O] OUT: 0xffff8bd5450e8278 | l_e.txt</code></pre>
+<pre style="white-space: pre-wrap; word-wrap: break-word; margin: 0; font-family: monospace;">
+
+Explanation: the repeated __d_lookup_rcu entries show the lookup key for l_e.txt after eviction, and the [O] OUT lines show the return pointer seen by do_filp_open. The change from 0xffff8bd54e0c74b8 and 0xffff8bd5628ba9f8 to 0xffff8bd5450e8278 records a new return pointer after eviction without an __d_add line in this run.</pre>
   </div>
 
 </body>
