@@ -9,6 +9,9 @@ This stage traces one thing and nothing else: the user‑space filename string a
 kernel pointer, gets copied, hashed, cached, deleted, and reused on return. No VMs, no heavy
 tracers, no filters—only dmesg plus kprobes/kretprobes. If it is not tied to a printed pointer,
 hash, or a kernel source line, it is not stated.
+Driver: https://github.com/raikrahul/what-happens-when-open-is-called/tree/main/kernel/drivers/trace_do_filp_open
+Save your work before loading the module. This is not hand‑holding; if you want a different kernel,
+use an AI tool to port the driver.
 
 Prior Work
 
