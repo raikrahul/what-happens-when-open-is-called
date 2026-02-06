@@ -217,7 +217,22 @@ __d_alloc return pointer = 0xffff8bd54e246db8
 __d_add entry: 0xffff8bd54e246db8 | t_e.txt
 do_filp_open return pointer = 0xffff8bd54e246db8 | t_e.txt
 
-Derivation:
+Derivation (user-space trigger and why):
+User-space code:
+```c
+char n2[] = "/tmp/t_e.txt";
+close(creat(n2, 0644));
+drop_caches_if_root();
+sleep(1);
+
+f[1] = open(n2, O_RDONLY);
+```
+Why this creates the pointer subtraction:
+- The open string is "/tmp/t_e.txt".
+- The basename starts after the 5-byte prefix "/tmp/".
+- The basename pointer equals the original pointer plus 5.
+
+Derivation (data):
 0xffff8bd5423ed025 - 0xffff8bd5423ed020 = 0x5 = 5
 "/tmp/" length = 5
 0xffff8bd54e246db8 = __d_alloc return pointer
