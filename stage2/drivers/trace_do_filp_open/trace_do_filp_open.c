@@ -1,48 +1,47 @@
 /*
- * TRACE: do_filp_open
- * ===================
- *
- * FUNCTION SIGNATURE (from fs/namei.c):
- * struct file *do_filp_open(int dfd, struct filename *pathname,
- *                           const struct open_flags *op)
- *
- * AXIOM 0: ARGUMENT REGISTERS (x86_64 Calling Convention)
- * RDI = Arg1 = int dfd
- * RSI = Arg2 = struct filename *pathname
- * RDX = Arg3 = const struct open_flags *op
- *
- * AXIOM 0.1: RETURN REGISTER (x86_64 Calling Convention)
- * RAX = Return Value (struct file *)
- *
- * AXIOM 1: POINTER VALIDATION
- * Kernel pointers (x86_64) > 0xffff800000000000
- * Userspace pointers (x86_64) < 0x0000800000000000
- *
- * AXIOM 2: STRUCT OPEN_FLAGS LAYOUT (Found in previous steps)
- * Size: 20 bytes
- * +0x00 open_flag (int)
- * +0x04 mode      (umode_t)
- * +0x08 acc_mode  (int)
- * +0x0C intent    (int)
- * +0x10 lookup_flags (int)
+ * TRACE DRIVER: do_filp_open & __d_alloc
+ * ======================================
+ * Purpose: Axiomatically prove the identity of the file being opened
+ * by tracing the data flow from Input (do_filp_open) -> Allocation
+ * (__d_alloc) -> Output (struct file).
  */
 
+#include <linux/dcache.h>
 #include <linux/fs.h>
 #include <linux/init.h>
 #include <linux/kernel.h>
 #include <linux/kprobes.h>
 #include <linux/module.h>
+#include <linux/path.h>
 #include <linux/ptrace.h>
-#include <linux/sched.h> // for current
+#include <linux/sched.h>
 #include <linux/string.h>
 #include <linux/types.h>
 
 MODULE_LICENSE("GPL");
-MODULE_AUTHOR("User");
-MODULE_DESCRIPTION("Trace do_filp_open arguments and return value");
+MODULE_AUTHOR("Antigravity");
+MODULE_DESCRIPTION("Axiomatic proof of filename identity via kprobes");
 
 /*
- * BOILERPLATE: Redefining struct open_flags because it is private to fs/
+ * ============================================================================
+ * HELPER STRUCTURES
+ * ============================================================================
+ */
+
+/*
+ * struct my_filename:
+ * Local definition to access 'name' pointer if struct filename is opaque.
+ * Only the first field (const char *name) is strictly required for this trace.
+ */
+struct my_filename {
+  const char *name;
+  const __user char *uptr;
+  int refcnt;
+};
+
+/*
+ * struct open_flags:
+ * Flags argument structure passed to do_filp_open.
  */
 struct open_flags {
   int open_flag;
@@ -52,141 +51,165 @@ struct open_flags {
   int lookup_flags;
 };
 
-static struct kprobe kp;
-static struct kretprobe rp;
+/*
+ * ============================================================================
+ * PROBE DEFINITIONS
+ * ============================================================================
+ */
+static struct kprobe kp_open;
+static struct kretprobe rp_open;
+static struct kprobe kp_alloc;
+static struct kretprobe rp_alloc;
 
-static int entry_handler(struct kprobe *p, struct pt_regs *regs) {
-  struct task_struct *task = current;
-  // Context filter: Only trace our specific test program
-  if (strcmp(task->comm, "minimal_open") != 0)
+#define TARGET_COMM "minimal_open"
+
+/*
+ * Helper: Filter to only trace our specific verification program.
+ */
+static inline int is_target_task(void) {
+  return (strcmp(current->comm, TARGET_COMM) == 0);
+}
+
+/*
+ * ============================================================================
+ * PROBE 1: do_filp_open
+ * Goal: Capture the INPUT pointer and string.
+ * ============================================================================
+ */
+static int open_entry_handler(struct kprobe *p, struct pt_regs *regs) {
+  if (!is_target_task())
     return 0;
 
-  /*
-   * ═══════════════════════════════════════════════════════════════════════
-   * TODO #1: EXTRACT ARGUMENTS FROM REGISTERS
-   * ═══════════════════════════════════════════════════════════════════════
-   * AXIOM: x86_64 passes first 3 integer/pointer args in RDI, RSI, RDX.
-   *
-   * 1. Define 'int dfd'.
-   * 2. Define 'struct filename *pathname'.
-   * 3. Define 'struct open_flags *op'.
-   * 4. CAST reg values to these types.
-   *
-   * DATA:
-   * regs->di holds Arg1
-   * regs->si holds Arg2
-   * regs->dx holds Arg3
-   */
+  /* AXIOM: RSI holds the 2nd argument (struct filename *) */
+  struct my_filename *pathname = (struct my_filename *)regs->si;
 
-  // struct filename *pathname = ???;
-  // struct open_flags *op = ???;
-
-  /*
-   * ═══════════════════════════════════════════════════════════════════════
-   * TODO #2: VALIDATE POINTERS
-   * ═══════════════════════════════════════════════════════════════════════
-   * AXIOM: pathname and op should be KERNEL pointers (0xffff...).
-   *
-   * 1. Check if pathname > 0xffff000000000000.
-   * 2. Check if op > 0xffff000000000000.
-   * 3. Use pr_info() to print them with %px.
-   */
-
-  /*
-   * ═══════════════════════════════════════════════════════════════════════
-   * TODO #3: DEREFERENCE AND PRINT
-   * ═══════════════════════════════════════════════════════════════════════
-   * AXIOM: We are in kernel space. We can read kernel memory directly.
-   *
-   * 1. Print the string: pathname->name (Use %s).
-   * 2. Print ope->open_flag (expect 0x8002 for O_RDWR | O_LARGEFILE).
-   * 3. Print op->acc_mode (expect 0x6 for MAY_READ | MAY_WRITE).
-   */
-
+  if (pathname && (unsigned long)pathname > 0xffff000000000000) {
+    pr_info("[trace_open] Input pathname addr: 0x%px\n", pathname->name);
+    pr_info("[trace_open] Input pathname val:  %s\n", pathname->name);
+  }
   return 0;
 }
 
-static int ret_handler(struct kretprobe_instance *ri, struct pt_regs *regs) {
-  struct task_struct *task = current;
-  if (strcmp(task->comm, "minimal_open") != 0)
+static int open_ret_handler(struct kretprobe_instance *ri,
+                            struct pt_regs *regs) {
+  if (!is_target_task())
     return 0;
 
-  /*
-   * ═══════════════════════════════════════════════════════════════════════
-   * TODO #4: EXTRACT RETURN VALUE
-   * ═══════════════════════════════════════════════════════════════════════
-   * AXIOM: x86_64 return value is in RAX.
-   *
-   * 1. Define 'struct file *ret_file'.
-   * 2. Assign from regs->ax.
-   *
-   * CHECK: IS_ERR(ret_file)?
-   * If so, print PTR_ERR(ret_file).
-   * Else, print pointer address.
-   */
+  /* AXIOM: RAX holds the return value (struct file *) */
+  struct file *ret_file = (struct file *)regs->ax;
 
-  // struct file *ret_file = ???
-
-  /*
-   * ═══════════════════════════════════════════════════════════════════
-   * TODO #5: PRINT STRUCT FILE FIELDS (Bonus)
-   * ═══════════════════════════════════════════════════════════════════
-   * We have a valid 'struct file *'. Let's see what's inside!
-   *
-   * 1. Print ret_file->f_pos  (offset)
-   * 2. Print ret_file->f_flags (flags)
-   * 3. Print ret_file->f_mode  (mode)
-   * 4. Print atomic_long_read(&ret_file->f_count) (refcount)
-   *    WAIT! Does f_count exist on your kernel? Check vmlinux via gdb!
-   *    Use 'file_count(ret_file)' macro if needed.
-   */
-
-  /*
-   * ═══════════════════════════════════════════════════════════════════
-   * TODO #6: VERIFY FILENAME MATCH
-   * ═══════════════════════════════════════════════════════════════════
-   * AXIOM: do_filp_open finds the file corresponding to 'pathname'.
-   *
-   * 1. Print ret_file->f_path.dentry->d_name.name address (%px)
-   * 2. Print ret_file->f_path.dentry->d_name.name string (%s)
-   * 3. Compare with what we saw in entry_handler.
-   */
-
+  if (!IS_ERR(ret_file) && ret_file->f_path.dentry) {
+    struct dentry *dentry = ret_file->f_path.dentry;
+    /* PROOF: Dereference final dentry to see if it matches input */
+    pr_info("[trace_open] Result dentry name:  0x%px\n", dentry->d_name.name);
+    pr_info("[trace_open] Result dentry val:   %s\n", dentry->d_name.name);
+  } else if (IS_ERR(ret_file)) {
+    pr_info("[trace_open] Failed: %ld\n", PTR_ERR(ret_file));
+  }
   return 0;
 }
 
+/*
+ * ============================================================================
+ * PROBE 2: __d_alloc
+ * Goal: Capture the MEMCPY source and destination.
+ * This proves the bytes moved physically from Input -> Output logic.
+ * ============================================================================
+ */
+static int alloc_entry_handler(struct kprobe *p, struct pt_regs *regs) {
+  if (!is_target_task())
+    return 0;
+
+  /* AXIOM: RSI holds 2nd arg (struct qstr *name), the source of copy */
+  struct qstr *name = (struct qstr *)regs->si;
+
+  if (name) {
+    pr_info("[trace_alloc] Copy Source Addr:   0x%px\n", name->name);
+    pr_info("[trace_alloc] Copy Source Val:    %s\n", name->name);
+  }
+  return 0;
+}
+
+static int alloc_ret_handler(struct kretprobe_instance *ri,
+                             struct pt_regs *regs) {
+  if (!is_target_task())
+    return 0;
+
+  /* AXIOM: RAX holds return value (struct dentry *), the destination container
+   */
+  struct dentry *dentry = (struct dentry *)regs->ax;
+
+  if (dentry && !IS_ERR(dentry)) {
+    /* PROOF: The dentry->d_name.name buffer is the destination of memcpy */
+    pr_info("[trace_alloc] Copy Dest Addr:     0x%px\n", dentry->d_name.name);
+    pr_info("[trace_alloc] Copy Dest Val:      %s\n", dentry->d_name.name);
+  }
+  return 0;
+}
+
+/*
+ * ============================================================================
+ * MODULE MANAGEMENT
+ * ============================================================================
+ */
 static int __init trace_do_filp_open_init(void) {
   int ret;
 
-  // 1. KPROBE (Entry)
-  kp.symbol_name = "do_filp_open";
-  kp.pre_handler = entry_handler;
-  ret = register_kprobe(&kp);
+  /* Register do_filp_open probes */
+  kp_open.symbol_name = "do_filp_open";
+  kp_open.pre_handler = open_entry_handler;
+  ret = register_kprobe(&kp_open);
   if (ret < 0) {
-    pr_err("register_kprobe failed, returned %d\n", ret);
+    pr_err("Failed to register kp_open: %d\n", ret);
     return ret;
   }
-  pr_info("kprobe registered for do_filp_open\n");
 
-  // 2. KRETPROBE (Return)
-  rp.kp.symbol_name = "do_filp_open";
-  rp.handler = ret_handler;
-  rp.maxactive = 20; // Allow tracing recursion up to 20 deep (standard)
-  ret = register_kretprobe(&rp);
+  rp_open.kp.symbol_name = "do_filp_open";
+  rp_open.handler = open_ret_handler;
+  rp_open.maxactive = 20;
+  ret = register_kretprobe(&rp_open);
   if (ret < 0) {
-    pr_err("register_kretprobe failed, returned %d\n", ret);
-    unregister_kprobe(&kp); // Cleanup
-    return ret;
+    pr_err("Failed to register rp_open: %d\n", ret);
+    goto err_kp_open;
   }
-  pr_info("kretprobe registered for do_filp_open\n");
 
+  /* Register __d_alloc probes */
+  kp_alloc.symbol_name = "__d_alloc";
+  kp_alloc.pre_handler = alloc_entry_handler;
+  ret = register_kprobe(&kp_alloc);
+  if (ret < 0) {
+    pr_err("Failed to register kp_alloc: %d\n", ret);
+    goto err_rp_open;
+  }
+
+  rp_alloc.kp.symbol_name = "__d_alloc";
+  rp_alloc.handler = alloc_ret_handler;
+  rp_alloc.maxactive = 20;
+  ret = register_kretprobe(&rp_alloc);
+  if (ret < 0) {
+    pr_err("Failed to register rp_alloc: %d\n", ret);
+    goto err_kp_alloc;
+  }
+
+  pr_info("Trace module loaded: monitoring do_filp_open and __d_alloc\n");
   return 0;
+
+/* Error Rollback */
+err_kp_alloc:
+  unregister_kprobe(&kp_alloc);
+err_rp_open:
+  unregister_kretprobe(&rp_open);
+err_kp_open:
+  unregister_kprobe(&kp_open);
+  return ret;
 }
 
 static void __exit trace_do_filp_open_exit(void) {
-  unregister_kretprobe(&rp);
-  unregister_kprobe(&kp);
-  pr_info("kprobe/kretprobe unregistered\n");
+  unregister_kretprobe(&rp_alloc);
+  unregister_kprobe(&kp_alloc);
+  unregister_kretprobe(&rp_open);
+  unregister_kprobe(&kp_open);
+  pr_info("Trace module unloaded\n");
 }
 
 module_init(trace_do_filp_open_init);
