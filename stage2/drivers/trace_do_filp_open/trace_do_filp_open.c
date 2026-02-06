@@ -26,6 +26,7 @@ MODULE_AUTHOR("Antigravity");
 
 static char *SYMBOL_OPEN = "do_filp_open";
 static char *SYMBOL_ALLOC = "__d_alloc";
+static char *SYMBOL_LOOKUP = "d_lookup";
 
 struct my_filename {
   const char *name;
@@ -34,7 +35,7 @@ struct my_filename {
 };
 
 static struct kprobe kp_open, kp_alloc;
-static struct kretprobe rp_open, rp_alloc;
+static struct kretprobe rp_open, rp_alloc, rp_lookup;
 
 // Module parameters for flexible targeting
 static char *target_comm = "minimal_open";
@@ -67,13 +68,9 @@ static int open_entry(struct kprobe *p, struct pt_regs *regs) {
   struct my_filename *f = (struct my_filename *)regs->si;
 
   // Safety check: Ensure pointer is in kernel space (> 0xffff000000000000)
-  // CRITICAL: f->name must also be validated before dereferencing
   if (f && (unsigned long)f > 0xffff000000000000 && f->name &&
       (unsigned long)f->name > 0xffff000000000000) {
-    // Print pointer addresses only - NEVER dereference strings in interrupt
-    // context Using %s in pr_info would cause page fault if f->name is invalid
-    pr_info("[trace_open] Input: struct filename @ 0x%px | name @ 0x%px\n", f,
-            f->name);
+    pr_info("[trace_open] Input Addr: 0x%px | Val: %s\n", f->name, f->name);
   }
 
   return 0;
@@ -84,17 +81,18 @@ static int open_ret(struct kretprobe_instance *ri, struct pt_regs *regs) {
   if (!is_target())
     return 0;
 
-  // 1. do_filp_open RET: THE GENTLEMEN'S CHAIN
   void *file_ptr = (void *)regs->ax;
   if (IS_ERR(file_ptr) || !file_ptr)
     return 0;
 
-  // CHAIN: file -> f_path(+64) -> dentry(+8) -> d_name(+32) -> name(+8)
-  void *dentry_ptr = *(void **)((unsigned long)file_ptr + 64 + 8);
-  if (dentry_ptr) {
-    void *name_ptr = *(void **)((unsigned long)dentry_ptr + 32 + 8);
+  struct file *f = (struct file *)file_ptr;
+  struct dentry *d = f->f_path.dentry;
+
+  if (d) {
+    void *name_ptr = (void *)d->d_name.name;
     if (name_ptr && (unsigned long)name_ptr > 0xffff000000000000) {
-      pr_info("[trace_open] Result Name Ptr: 0x%px\n", name_ptr);
+      pr_info("[trace_open] Result Addr: 0x%px | Val: %s\n", name_ptr,
+              (char *)name_ptr);
     }
   }
 
@@ -106,22 +104,11 @@ static int alloc_entry(struct kprobe *p, struct pt_regs *regs) {
   if (!is_target())
     return 0;
 
-  // RSI contains struct qstr * (second argument to __d_alloc)
-  // qstr->name is at offset +8 (after hash:4 + len:4)
-  void *qstr_ptr = (void *)regs->si;
-
-  // Validate qstr_ptr is in kernel space before dereferencing
-  if (!qstr_ptr || (unsigned long)qstr_ptr < 0xffff000000000000)
-    return 0;
-
-  // Extract name pointer from qstr (offset +8)
-  char **name_ptr = (char **)((unsigned long)qstr_ptr + 8);
-  char *name = *name_ptr;
-
-  // Validate name pointer before printing - safety critical in interrupt
-  // context
-  if (name && (unsigned long)name > 0xffff000000000000) {
-    pr_info("[trace_alloc] Copy Source: 0x%px\n", name);
+  struct qstr *q = (struct qstr *)regs->si;
+  if (q && (unsigned long)q > 0xffff000000000000 && q->name &&
+      (unsigned long)q->name > 0xffff000000000000) {
+    pr_info("[trace_alloc] Copy Source: 0x%px\n", q->name);
+    dump_stack();
   }
 
   return 0;
@@ -132,17 +119,30 @@ static int alloc_ret(struct kretprobe_instance *ri, struct pt_regs *regs) {
   if (!is_target())
     return 0;
 
-  // 2. __d_alloc RET: THE SETTLEMENT
-  void *dentry_ptr = (void *)regs->ax;
-  if (IS_ERR(dentry_ptr) || !dentry_ptr)
-    return 0;
-
-  // dentry -> d_name(+32) -> name(+8)
-  void *dname_ptr = *(void **)((unsigned long)dentry_ptr + 32 + 8);
-  if (dname_ptr && (unsigned long)dname_ptr > 0xffff000000000000) {
-    pr_info("[trace_alloc] Copy Dest:   0x%px\n", dname_ptr);
+  struct dentry *d = (struct dentry *)regs->ax;
+  if (d && (unsigned long)d > 0xffff000000000000) {
+    void *name_ptr = (void *)d->d_name.name;
+    if (name_ptr && (unsigned long)name_ptr > 0xffff000000000000) {
+      pr_info("[trace_alloc] Copy Dest:   0x%px\n", name_ptr);
+    }
   }
 
+  return 0;
+}
+
+// 3. d_lookup RET: THE CATCH (Cache Hit)
+static int lookup_ret(struct kretprobe_instance *ri, struct pt_regs *regs) {
+  if (!is_target())
+    return 0;
+
+  struct dentry *d = (struct dentry *)regs->ax;
+  if (d && (unsigned long)d > 0xffff000000000000) {
+    void *name_ptr = (void *)d->d_name.name;
+    if (name_ptr && (unsigned long)name_ptr > 0xffff000000000000) {
+      pr_info("[trace_lookup] Cache Hit: 0x%px | Val: %s\n", name_ptr,
+              (char *)name_ptr);
+    }
+  }
   return 0;
 }
 
@@ -171,7 +171,16 @@ static int __init trace_do_filp_open_init(void) {
   if ((ret = register_kretprobe(&rp_alloc)) < 0)
     goto err3;
 
+  rp_lookup.kp.symbol_name = SYMBOL_LOOKUP;
+  rp_lookup.handler = lookup_ret;
+  rp_lookup.maxactive = 20;
+  if ((ret = register_kretprobe(&rp_lookup)) < 0)
+    goto err4;
+
   return 0;
+
+err4:
+  unregister_kretprobe(&rp_alloc);
 
 err3:
   unregister_kprobe(&kp_alloc);
@@ -183,6 +192,7 @@ err1:
 }
 
 static void __exit trace_do_filp_open_exit(void) {
+  unregister_kretprobe(&rp_lookup);
   unregister_kretprobe(&rp_alloc);
   unregister_kprobe(&kp_alloc);
   unregister_kretprobe(&rp_open);
