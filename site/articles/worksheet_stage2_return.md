@@ -157,27 +157,18 @@ Required probes:
 - __dentry_kill entry: prints evicted dentry name pointer
 - __d_lookup and __d_lookup_rcu: internal lookup path keys
 
-Probe code locations (driver file + GitHub links):
-- `kernel/drivers/trace_do_filp_open/trace_do_filp_open.c:73` do_filp_open entry handler
-  https://github.com/raikrahul/what-happens-when-open-is-called/blob/main/kernel/drivers/trace_do_filp_open/trace_do_filp_open.c#L73
-- `kernel/drivers/trace_do_filp_open/trace_do_filp_open.c:115` d_lookup return handler
-  https://github.com/raikrahul/what-happens-when-open-is-called/blob/main/kernel/drivers/trace_do_filp_open/trace_do_filp_open.c#L115
-- `kernel/drivers/trace_do_filp_open/trace_do_filp_open.c:131` d_lookup entry handler
-  https://github.com/raikrahul/what-happens-when-open-is-called/blob/main/kernel/drivers/trace_do_filp_open/trace_do_filp_open.c#L131
-- `kernel/drivers/trace_do_filp_open/trace_do_filp_open.c:94` __d_alloc entry handler
-  https://github.com/raikrahul/what-happens-when-open-is-called/blob/main/kernel/drivers/trace_do_filp_open/trace_do_filp_open.c#L94
-- `kernel/drivers/trace_do_filp_open/trace_do_filp_open.c:104` __d_alloc return handler
-  https://github.com/raikrahul/what-happens-when-open-is-called/blob/main/kernel/drivers/trace_do_filp_open/trace_do_filp_open.c#L104
-- `kernel/drivers/trace_do_filp_open/trace_do_filp_open.c:195` __d_add entry handler
-  https://github.com/raikrahul/what-happens-when-open-is-called/blob/main/kernel/drivers/trace_do_filp_open/trace_do_filp_open.c#L195
-- `kernel/drivers/trace_do_filp_open/trace_do_filp_open.c:225` d_delete entry handler
-  https://github.com/raikrahul/what-happens-when-open-is-called/blob/main/kernel/drivers/trace_do_filp_open/trace_do_filp_open.c#L225
-- `kernel/drivers/trace_do_filp_open/trace_do_filp_open.c:258` __dentry_kill entry handler
-  https://github.com/raikrahul/what-happens-when-open-is-called/blob/main/kernel/drivers/trace_do_filp_open/trace_do_filp_open.c#L258
-- `kernel/drivers/trace_do_filp_open/trace_do_filp_open.c:141` __d_lookup entry handler
-  https://github.com/raikrahul/what-happens-when-open-is-called/blob/main/kernel/drivers/trace_do_filp_open/trace_do_filp_open.c#L141
-- `kernel/drivers/trace_do_filp_open/trace_do_filp_open.c:151` __d_lookup_rcu entry handler
-  https://github.com/raikrahul/what-happens-when-open-is-called/blob/main/kernel/drivers/trace_do_filp_open/trace_do_filp_open.c#L151
+Probe code locations (driver file, local):
+`kernel/drivers/trace_do_filp_open/trace_do_filp_open.c:73` open entry
+`kernel/drivers/trace_do_filp_open/trace_do_filp_open.c:82` open return
+`kernel/drivers/trace_do_filp_open/trace_do_filp_open.c:94` __d_alloc entry
+`kernel/drivers/trace_do_filp_open/trace_do_filp_open.c:104` __d_alloc return
+`kernel/drivers/trace_do_filp_open/trace_do_filp_open.c:115` d_lookup return
+`kernel/drivers/trace_do_filp_open/trace_do_filp_open.c:131` d_lookup entry
+`kernel/drivers/trace_do_filp_open/trace_do_filp_open.c:141` __d_lookup entry
+`kernel/drivers/trace_do_filp_open/trace_do_filp_open.c:151` __d_lookup_rcu entry
+`kernel/drivers/trace_do_filp_open/trace_do_filp_open.c:195` __d_add entry
+`kernel/drivers/trace_do_filp_open/trace_do_filp_open.c:225` d_delete entry
+`kernel/drivers/trace_do_filp_open/trace_do_filp_open.c:258` __dentry_kill entry
 
 ================================================================================
 BUILD AND RUN (ORDER MATTERS)
