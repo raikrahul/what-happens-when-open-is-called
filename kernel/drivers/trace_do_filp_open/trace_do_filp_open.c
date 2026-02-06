@@ -16,6 +16,10 @@ static char *SYMBOL_OPEN = "do_filp_open";
 static char *SYMBOL_ALLOC = "__d_alloc";
 static char *SYMBOL_LOOKUP = "d_lookup";
 static char *SYMBOL_HASH = "full_name_hash";
+static char *SYMBOL_ADD = "d_add";
+static char *SYMBOL_D_ADD = "__d_add";
+static char *SYMBOL_ADD_CI = "d_add_ci";
+static char *SYMBOL_REHASH = "d_rehash";
 
 /* Robust struct filename matches kernel definition for 6.8+ */
 struct my_filename {
@@ -26,6 +30,7 @@ struct my_filename {
 };
 
 static struct kprobe kp_open, kp_alloc, kp_lookup;
+static struct kprobe kp_add, kp_d_add, kp_add_ci, kp_rehash;
 static struct kretprobe rp_open, rp_alloc, rp_lookup, rp_hash;
 
 static char *target_comm = "matrix_open";
@@ -79,11 +84,16 @@ static int alloc_ret(struct kretprobe_instance *ri, struct pt_regs *regs) {
 
 static int lookup_ret(struct kretprobe_instance *ri, struct pt_regs *regs) {
   struct dentry *d = (struct dentry *)regs->ax;
-  if (is_target() && d && (unsigned long)d > 0xffff000000000000) {
+  if (!is_target())
+    return 0;
+  if (!d || IS_ERR(d)) {
+    pr_info("d_lookup return: NULL\n");
+    return 0;
+  }
+  if ((unsigned long)d > 0xffff000000000000) {
     void *n = (void *)d->d_name.name;
-    if (n && (unsigned long)n > 0xffff000000000000) {
-      pr_info("[L] HIT: 0x%px | %s\n", n, (char *)n);
-    }
+    if (n && (unsigned long)n > 0xffff000000000000)
+      pr_info("d_lookup return: 0x%px | %s\n", n, (char *)n);
   }
   return 0;
 }
@@ -92,7 +102,8 @@ static int lookup_entry(struct kprobe *p, struct pt_regs *regs) {
   struct qstr *q = (struct qstr *)regs->si;
   if (is_target() && q && (unsigned long)q > 0xffff000000000000 && q->name &&
       (unsigned long)q->name > 0xffff000000000000) {
-    pr_info("[L] HASH: %u %u %s\n", q->hash, q->len, q->name);
+    pr_info("d_lookup entry: hash %u length %u name %s\n", q->hash, q->len,
+            q->name);
   }
   return 0;
 }
@@ -115,13 +126,58 @@ static int hash_ret(struct kretprobe_instance *ri, struct pt_regs *regs) {
   struct hash_entry_data *d = (struct hash_entry_data *)ri->data;
   unsigned int h = (unsigned int)regs->ax;
   if (is_target() && d->name && (unsigned long)d->name > 0xffff000000000000) {
-    pr_info("[H] %u %u 0x%px %s\n", h, d->len, (void *)d->salt, d->name);
+    pr_info("full_name_hash return: %u length %u salt 0x%px name %s\n", h,
+            d->len, (void *)d->salt, d->name);
+  }
+  return 0;
+}
+
+static int add_entry(struct kprobe *p, struct pt_regs *regs) {
+  struct dentry *d = (struct dentry *)regs->di;
+  if (is_target() && d && (unsigned long)d > 0xffff000000000000) {
+    void *n = (void *)d->d_name.name;
+    if (n && (unsigned long)n > 0xffff000000000000)
+      pr_info("d_add entry: 0x%px | %s\n", n, (char *)n);
+  }
+  return 0;
+}
+
+static int d_add_entry(struct kprobe *p, struct pt_regs *regs) {
+  struct dentry *d = (struct dentry *)regs->di;
+  if (is_target() && d && (unsigned long)d > 0xffff000000000000) {
+    void *n = (void *)d->d_name.name;
+    if (n && (unsigned long)n > 0xffff000000000000)
+      pr_info("__d_add entry: 0x%px | %s\n", n, (char *)n);
+  }
+  return 0;
+}
+
+static int add_ci_entry(struct kprobe *p, struct pt_regs *regs) {
+  struct dentry *d = (struct dentry *)regs->di;
+  if (is_target() && d && (unsigned long)d > 0xffff000000000000) {
+    void *n = (void *)d->d_name.name;
+    if (n && (unsigned long)n > 0xffff000000000000)
+      pr_info("d_add_ci entry: 0x%px | %s\n", n, (char *)n);
+  }
+  return 0;
+}
+
+static int rehash_entry(struct kprobe *p, struct pt_regs *regs) {
+  struct dentry *d = (struct dentry *)regs->di;
+  if (is_target() && d && (unsigned long)d > 0xffff000000000000) {
+    void *n = (void *)d->d_name.name;
+    if (n && (unsigned long)n > 0xffff000000000000)
+      pr_info("d_rehash entry: 0x%px | %s\n", n, (char *)n);
   }
   return 0;
 }
 
 static int __init trace_do_filp_open_init(void) {
   int r;
+  int add_ok = 0;
+  int d_add_ok = 0;
+  int add_ci_ok = 0;
+  int rehash_ok = 0;
   kp_open.symbol_name = SYMBOL_OPEN;
   kp_open.pre_handler = open_entry;
   if ((r = register_kprobe(&kp_open)) < 0)
@@ -155,6 +211,26 @@ static int __init trace_do_filp_open_init(void) {
   if ((r = register_kprobe(&kp_lookup)) < 0)
     goto e5;
 
+  kp_add.symbol_name = SYMBOL_ADD;
+  kp_add.pre_handler = add_entry;
+  if ((r = register_kprobe(&kp_add)) == 0)
+    add_ok = 1;
+
+  kp_d_add.symbol_name = SYMBOL_D_ADD;
+  kp_d_add.pre_handler = d_add_entry;
+  if ((r = register_kprobe(&kp_d_add)) == 0)
+    d_add_ok = 1;
+
+  kp_add_ci.symbol_name = SYMBOL_ADD_CI;
+  kp_add_ci.pre_handler = add_ci_entry;
+  if ((r = register_kprobe(&kp_add_ci)) == 0)
+    add_ci_ok = 1;
+
+  kp_rehash.symbol_name = SYMBOL_REHASH;
+  kp_rehash.pre_handler = rehash_entry;
+  if ((r = register_kprobe(&kp_rehash)) == 0)
+    rehash_ok = 1;
+
   rp_hash.kp.symbol_name = SYMBOL_HASH;
   rp_hash.handler = hash_ret;
   rp_hash.entry_handler = hash_entry;
@@ -162,6 +238,15 @@ static int __init trace_do_filp_open_init(void) {
   rp_hash.maxactive = 20;
   if ((r = register_kretprobe(&rp_hash)) < 0)
     goto e6;
+
+  if (!add_ok)
+    pr_info("optional probe not registered: %s\n", SYMBOL_ADD);
+  if (!d_add_ok)
+    pr_info("optional probe not registered: %s\n", SYMBOL_D_ADD);
+  if (!add_ci_ok)
+    pr_info("optional probe not registered: %s\n", SYMBOL_ADD_CI);
+  if (!rehash_ok)
+    pr_info("optional probe not registered: %s\n", SYMBOL_REHASH);
 
   return 0;
 e6:
@@ -181,6 +266,10 @@ e1:
 
 static void __exit trace_do_filp_open_exit(void) {
   unregister_kretprobe(&rp_hash);
+  unregister_kprobe(&kp_rehash);
+  unregister_kprobe(&kp_add_ci);
+  unregister_kprobe(&kp_d_add);
+  unregister_kprobe(&kp_add);
   unregister_kprobe(&kp_lookup);
   unregister_kretprobe(&rp_lookup);
   unregister_kretprobe(&rp_alloc);

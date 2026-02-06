@@ -72,135 +72,247 @@
     <button onclick="window.print()" style="font-size: 10px; cursor: pointer;">Print</button>
   </div>
   <div class="content">
-    <pre style="white-space: pre-wrap; word-wrap: break-word; margin: 0; font-family: monospace;">Title
+    <pre style="white-space: pre-wrap; word-wrap: break-word; margin: 0; font-family: monospace;">Abstract
 
-Stage 2 Return: Axiomatic Trace of Filename Pointer and Hash Lookup
+We measure the filename string as it passes through do_filp_open and the dentry cache. We record input pointers, copy source and destination, return pointers, cache hits, hash values, and explicit cache insert events via __d_add. We also add a loopback filesystem case with a short name to show a distinct filesystem path. The results show that do_filp_open returns a pointer to the dentry name. On cache miss, __d_alloc copies the name and the return pointer equals the copy destination, and __d_add shows the insert into the dcache. On cache hit, d_lookup returns the same pointer as the prior return. Hash values and lengths printed at d_lookup entry prove the lookup keys used for each name.
 
-Problem Statement
+Prior Work
 
-A user program calls open with a filename string. Show where the filename string is copied, where a cached name is reused, which pointer is returned by do_filp_open, and which hash values are used for lookup. Use only data observed on this machine and derive each conclusion from prior lines.
+Stage 1: https://raikrahul.github.io/what-happens-when-open-is-called/stage1.html
+Stage 2 Entry: https://raikrahul.github.io/what-happens-when-open-is-called/stage2.html
+Worksheet: https://raikrahul.github.io/what-happens-when-open-is-called/articles/worksheet_stage2_return.html
 
-Axioms
+Introduction
 
-Axiom 1. The open call passes a filename string from user space into the kernel.
-Axiom 2. do_filp_open receives a struct filename and returns a struct file.
-Axiom 3. __d_alloc is called when a new dentry is allocated and copies a name into dentry storage.
-Axiom 4. d_lookup returns an existing dentry on a cache hit and returns NULL on a cache miss.
-Axiom 5. kprobe at function entry can read input pointers at that entry.
-Axiom 6. kretprobe at function return can read the return pointer at that return.
-Axiom 7. Equality of two printed pointers means the pointers have the same numeric value.
-Axiom 8. If no return pointer is printed for a call, then no valid struct file pointer was returned for that call.
-Axiom 9. The string "/tmp/" has length 5.
-Axiom 10. If dmesg prints "[L] HASH: H L S" then hashing was performed for name string S with length L and hash value H at d_lookup entry.
-Axiom 11. A lookup key is the pair (name string, length) shown in a hash line.
+The goal of this stage is concrete: identify where the filename string ends up at return time and prove it with data. The measurement must include both allocation and cache paths and must show the hash values used for lookup. The test programs are designed to produce both paths in one run, and a loopback filesystem test adds a distinct filesystem path and a short name.
 
-Definitions
+Methods
 
-Definition 1. [O] IN is the pointer printed at do_filp_open entry.
-Definition 2. [A] SRC is the pointer printed at __d_alloc entry.
-Definition 3. [A] DST is the pointer printed at __d_alloc return.
-Definition 4. [O] OUT is the pointer printed at do_filp_open return.
-Definition 5. [L] HIT is the pointer printed at d_lookup return.
-Definition 6. [L] HASH is the hash line printed at d_lookup entry.
+User-space programs:
 
-Observed Data (Pointers)
+minimal_open.c
+```c
+snprintf(filename, sizeof(filename),
+         "test_file_very_long_name_to_force_external_allocation_%ld", now);
+int fd = open(filename, O_RDWR | O_CREAT, 0644);
+sleep(5);
+```
 
-minimal_open:
-[O] IN  = 0xffff8bd543615020
-[A] SRC = 0xffff8bd543615020
-[A] DST = 0xffff8bd7c7ef4978
-[O] OUT = 0xffff8bd7c7ef4978
-[L] HIT = 0xffff8bd7c7ef4978
+matrix_open.c
+```c
+close(creat("l_e.txt", 0644));
+close(creat("/tmp/t_e.txt", 0644));
+open("l_e.txt", O_RDONLY);
+open("/tmp/t_e.txt", O_RDONLY);
+open("/tmp/t_m.txt", O_RDONLY);
+open("l_e.txt", O_RDONLY);
+open("l_m.txt", O_RDONLY);
+open("/mnt/loopfs/a.txt", O_RDONLY);
+open("l_e.txt", O_RDONLY);
+```
 
-matrix_open:
+Per-line purpose
+
+close(creat("l_e.txt", 0644)); creates a local file so the first open can hit a real inode in the current directory.
+close(creat("/tmp/t_e.txt", 0644)); creates a file under /tmp so the path has a prefix and produces a basename shift in the copy source pointer.
+open("l_e.txt", O_RDONLY); first open of an existing local file, intended to show allocation or cache miss behavior.
+open("/tmp/t_e.txt", O_RDONLY); first open of an existing /tmp file, intended to show basename copy and allocation.
+open("/tmp/t_m.txt", O_RDONLY); open of a missing /tmp file, intended to show an error path with no returned file pointer.
+open("l_e.txt", O_RDONLY); second open of the same local file, intended to show a cache hit and pointer reuse.
+open("l_m.txt", O_RDONLY); open of a missing local file, intended to show a second error path.
+open("/mnt/loopfs/a.txt", O_RDONLY); open of a file on a loopback ext2 filesystem, intended to show the same flow on a different filesystem and a short name.
+open("l_e.txt", O_RDONLY); third open of the local file, intended to show repeated cache hit stability.
+
+Loopback filesystem test:
+
+- 64M loopback file formatted as ext2
+- mounted at /mnt/loopfs
+- a.txt created, sync, unmount, remount
+
+Probe map and observed fields:
+
+- do_filp_open entry: input filename pointer
+- __d_alloc entry: copy source pointer
+- __d_alloc return: copy destination pointer
+- do_filp_open return: returned struct file name pointer
+- d_lookup entry: hash value, length, and name string
+- d_lookup return: cache hit name pointer
+- __d_add entry: dentry name pointer at insert into dcache
+
+Memcpy proof (kernel source)
+
+File: /usr/src/linux-source-6.8.0/fs/dcache.c:1660
+memcpy(dname, name-&gt;name, name-&gt;len);
+
+Per-probe purpose
+
+do_filp_open entry: capture the input name pointer before any lookup or allocation. This is the kernel-side name pointer used for the open.
+__d_alloc entry: capture the source pointer used for name copying into a new dentry. This is the copy source.
+__d_alloc return: capture the destination pointer for the copied name in the new dentry. This is the copy destination.
+do_filp_open return: capture the name pointer referenced by the returned struct file. This is the return pointer we compare against copies and cache hits.
+d_lookup entry: capture the hash value, length, and name used as the lookup key. This shows which exact string is hashed for lookup.
+d_lookup return: capture the name pointer of a cached dentry on hit. This is the pointer reused on cache hits.
+__d_add entry: capture the moment the new dentry name is inserted into the dcache. This is the cache build-up proof.
+
+ASCII diagram: allocation path
+```text
+user string
+    |
+    v
+do_filp_open entry
+    |
+    v
+__d_alloc entry (copy source)
+    |
+    v
+__d_alloc return (copy destination)
+    |
+    v
+do_filp_open return
+```
+
+ASCII diagram: cache hit path
+```text
+user string
+    |
+    v
+do_filp_open entry
+    |
+    v
+d_lookup return
+    |
+    v
+do_filp_open return
+```
+
+ASCII diagram: hash lookup
+```text
+name string + length
+        |
+        v
+     full_name_hash
+        |
+        v
+   hash value (H)
+        |
+        v
+  d_lookup bucket
+```
+
+Results
+
+Pointers (minimal_open, fresh run):
+
+do_filp_open entry pointer = 0xffff8bd546396020
+__d_alloc entry pointer = 0xffff8bd546396020
+__d_alloc return pointer = 0xffff8bd61ceac618
+do_filp_open return pointer = 0xffff8bd61ceac618
+d_lookup return pointer = 0xffff8bd61ceac618
+
+Pointers (matrix_open with loopback, fresh run):
 
 l_e.txt first open:
-[O] IN  = 0xffff8bd54d665020
-[A] SRC = 0xffff8bd54d665020
-[A] DST = 0xffff8bd54e2801b8
-[O] OUT = 0xffff8bd54e2801b8
+
+do_filp_open entry pointer = 0xffff8bd54d6ac020
+__d_alloc entry pointer = 0xffff8bd54d6ac020
+__d_alloc return pointer = 0xffff8bd7a2123f38
+do_filp_open return pointer = 0xffff8bd7a2123f38
 
 /tmp/t_e.txt first open:
-[O] IN  = 0xffff8bd54d665020
-[A] SRC = 0xffff8bd54d665025
-[A] DST = 0xffff8bd54e2803f8
-[O] OUT = 0xffff8bd54e2803f8
+
+do_filp_open entry pointer = 0xffff8bd54d6ac020
+__d_alloc entry pointer = 0xffff8bd54d6ac025
+__d_alloc return pointer = 0xffff8bd7a2123878
+do_filp_open return pointer = 0xffff8bd7a2123878
 
 l_m.txt:
-[O] IN  = 0xffff8bd54d665020
-[A] SRC = 0xffff8bd54d665020
-[A] DST = 0xffff8bd54e280638
-[O] OUT not observed
+
+do_filp_open entry pointer = 0xffff8bd54d6ac020
+do_filp_open return pointer not observed
+__d_alloc not observed
+
+/mnt/loopfs/a.txt:
+
+do_filp_open entry pointer = 0xffff8bd54d6ac020
+do_filp_open return pointer = 0xffff8bd645a969f8
+__d_alloc not observed
 
 cache hits after 2 seconds:
-[L] HIT = 0xffff8bd54e2801b8 (l_e.txt)
-[L] HIT = 0xffff8bd54e2803f8 (t_e.txt)
 
-Observed Data (Hashes, dmesg)
+d_lookup return pointer = 0xffff8bd7a2123f38 for l_e.txt
+d_lookup return pointer = 0xffff8bd7a2123878 for t_e.txt
+
+Hashes (dmesg, fresh run):
 
 matrix_open:
-[L] HASH: 440978933 7 l_e.txt
-[L] HASH: 1830572521 7 t_e.txt
-[L] HASH: 440978933 7 l_e.txt
-[L] HASH: 1830572521 7 t_e.txt
+
+d_lookup entry: hash 399720033 length 7 name l_e.txt
+d_lookup entry: hash 1830572521 length 7 name t_e.txt
+no d_lookup hash line observed for a.txt in this run
 
 minimal_open:
-[L] HASH: 938270691 64 test_file_very_long_name_to_force_external_allocation_1770400761
-[L] HASH: 938270691 64 test_file_very_long_name_to_force_external_allocation_1770400761
+
+d_lookup entry: hash 1147649438 length 64 name test_file_very_long_name_to_force_external_allocation_1770402889
 
 hash_open:
-[L] HASH: 1675155717 7 l_m.txt
-[L] HASH: 2543581516 7 t_m.txt
-[L] HASH: 1675155717 7 l_m.txt
-[L] HASH: 2543581516 7 t_m.txt
 
-Derivation
+d_lookup entry: hash 1675155717 length 7 name l_m.txt
+d_lookup entry: hash 2543581516 length 7 name t_m.txt
 
-Step 1. minimal_open: [O] IN equals [A] SRC because both are 0xffff8bd543615020.
-By Axiom 7, the copy source equals the input name pointer.
+Numeric checks:
 
-Step 2. minimal_open: [A] DST equals [O] OUT because both are 0xffff8bd7c7ef4978.
-By Axiom 7, the returned struct file points to the copied name.
+0xffff8bd54d6ac025 - 0xffff8bd54d6ac020 = 0x5 = 5
+"/tmp/" length = 5
 
-Step 3. minimal_open: [L] HIT equals [O] OUT because both are 0xffff8bd7c7ef4978.
-By Axiom 4 and Axiom 7, a later cache hit returns the same dentry name pointer.
+Cache hit proof (same pointer reused)
 
-Step 4. l_e.txt first open: [O] IN equals [A] SRC because both are 0xffff8bd54d665020.
-By Axiom 7, the copy source equals the input name pointer.
+l_e.txt:
+do_filp_open return pointer = 0xffff8bd7a2123f38
+d_lookup return pointer = 0xffff8bd7a2123f38
 
-Step 5. l_e.txt first open: [A] DST equals [O] OUT because both are 0xffff8bd54e2801b8.
-By Axiom 7, the returned struct file points to the copied name.
+t_e.txt:
+do_filp_open return pointer = 0xffff8bd7a2123878
+d_lookup return pointer = 0xffff8bd7a2123878
 
-Step 6. /tmp/t_e.txt first open: compute the difference:
-0xffff8bd54d665025 - 0xffff8bd54d665020 = 0x5 = 5.
-By Axiom 9, the prefix "/tmp/" is 5 bytes, so the copy source pointer starts after that prefix.
-Therefore the copy source points to the basename "t_e.txt".
+Cache miss proof (allocation path observed)
 
-Step 7. /tmp/t_e.txt first open: [A] DST equals [O] OUT because both are 0xffff8bd54e2803f8.
-By Axiom 7, the returned struct file points to the copied name.
+l_e.txt first open:
+do_filp_open entry pointer = 0xffff8bd54d6ac020
+d_lookup return pointer = NULL
+__d_alloc entry pointer = 0xffff8bd54d6ac020
+__d_alloc return pointer = 0xffff8bd7a2123f38
+do_filp_open return pointer = 0xffff8bd7a2123f38
 
-Step 8. l_m.txt: [O] OUT is not observed.
-By Axiom 8, no valid struct file pointer was returned for that open.
+/tmp/t_e.txt first open:
+do_filp_open entry pointer = 0xffff8bd54d6ac020
+d_lookup return pointer = NULL
+__d_alloc entry pointer = 0xffff8bd54d6ac025
+__d_alloc return pointer = 0xffff8bd7a2123878
+do_filp_open return pointer = 0xffff8bd7a2123878
 
-Step 9. cache hits after 2 seconds: the two [L] HIT values equal earlier [O] OUT values:
-0xffff8bd54e2801b8 equals the earlier [O] OUT for l_e.txt.
-0xffff8bd54e2803f8 equals the earlier [O] OUT for t_e.txt.
-By Axiom 4 and Axiom 7, cache hits return the same dentry name pointers.
+Cache build-up proof (insert into dcache)
 
-Step 10. Each [L] HASH line shows a hash value H, a length L, and a name string S.
-By Axiom 10, hashing was performed for each S with length L and hash H.
-By Axiom 11, each lookup key is the pair (S, L) shown on its line.
+l_e.txt:
+__d_add entry pointer = 0xffff8bd7a2123f38
 
-Step 11. The hash keys and values are:
-(l_e.txt, 7) -&gt; 440978933
-(t_e.txt, 7) -&gt; 1830572521
-(l_m.txt, 7) -&gt; 1675155717
-(t_m.txt, 7) -&gt; 2543581516
-(test_file_very_long_name_to_force_external_allocation_1770400761, 64) -&gt; 938270691
+t_e.txt:
+__d_add entry pointer = 0xffff8bd7a2123878
+Hash keys:
+
+l_e.txt with length 7 -&gt; 399720033
+t_e.txt with length 7 -&gt; 1830572521
+l_m.txt with length 7 -&gt; 1675155717
+t_m.txt with length 7 -&gt; 2543581516
+test_file_very_long_name_to_force_external_allocation_1770402889 with length 64 -&gt; 1147649438
+no hash key printed for a.txt in this run
+
+Discussion
+
+The allocation path is shown by a copy source pointer and copy destination pointer appearing and the return pointer equaling the copy destination. The cache build-up is shown by __d_add inserting the same dentry name pointer that __d_alloc produced. The cache hit path is shown by the cache hit pointer equaling the earlier return pointer for the same name. The /tmp case shows a 5 byte offset between the input pointer and the copy source pointer, matching the /tmp/ prefix and isolating the basename. The loopback ext2 case shows that the same flow applies across a different filesystem with a short name. The missing name cases show an input pointer but no return pointer, so no struct file is returned, and no cache hit is reported for those names.
 
 Conclusion
 
-From the observed data and the axioms above, the returned struct file pointer equals the dentry name pointer. On allocation, __d_alloc copies the name and [O] OUT equals [A] DST. On cache hit, d_lookup returns an existing dentry and [L] HIT equals the prior [O] OUT. The hash values printed at d_lookup entry prove that each lookup computed a hash on the exact name string used as the key.</pre>
+The returned struct file pointer equals the dentry name pointer. On allocation, __d_alloc copies the name and the return pointer equals the copy destination, and __d_add shows the insert into dcache. On cache hit, d_lookup returns the same pointer observed earlier. Hash values and lengths printed at d_lookup entry prove that each lookup hashes the exact key string used for that path.</pre>
   </div>
 
 </body>

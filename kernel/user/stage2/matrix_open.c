@@ -9,6 +9,7 @@ int main() {
   char n2[] = "/tmp/t_e.txt";
   char n3[] = "/tmp/t_m.txt";
   char n4[] = "l_m.txt";
+  char n5[] = "/mnt/loopfs/a.txt";
 
   printf("PID: %d\n", getpid());
 
@@ -26,9 +27,12 @@ int main() {
   printf("5\n");
   f[4] = open(n4, O_RDONLY);
 
-  close(f[0]);
   printf("6\n");
-  f[5] = open(n1, O_RDONLY);
+  f[5] = open(n5, O_RDONLY);
+
+  close(f[0]);
+  printf("7\n");
+  f[0] = open(n1, O_RDONLY);
 
   sleep(2);
   unlink(n1);
