@@ -617,6 +617,28 @@ What We Failed To Observe And Why
 2. We did not observe any d_drop entry lines for these names. The d_delete lines are present in the data, but d_drop did not fire for these paths in this run.
 3. We did not observe any full_name_hash return lines in this run. The full_name_hash kretprobe is registered, but the function may be inlined or bypassed in this path on this kernel build. Hash values are still recorded via d_lookup entry, __d_lookup entry, and __d_lookup_rcu entry, which report the key hash and length used.
 
+Proofs from the latest run (commands + results):
+
+```text
+sudo dmesg | rg -n "__d_add entry: .*l_e.txt"
+<no output>
+
+sudo dmesg | rg -n "d_drop entry"
+<no output>
+
+sudo dmesg | rg -n "full_name_hash return"
+<no output>
+```
+
+Post-eviction l_e.txt lookup/return is visible even without __d_add:
+```text
+sudo dmesg | rg -n "__d_lookup_rcu entry:.*l_e.txt|\[O\] OUT: .*l_e.txt"
+35:[32438.302505] __d_lookup_rcu entry: hash 440978933 length 7 name l_e.txt
+37:[32438.302532] [O] OUT: 0xffff8bd7e7bd6578 | l_e.txt
+149:[32441.321252] __d_lookup_rcu entry: hash 440978933 length 7 name l_e.txt
+151:[32441.321294] [O] OUT: 0xffff8bd5441fc3f8 | l_e.txt
+```
+
 Wide-Screen Trace Appendix
 
 Full Trace A (matrix_open, latest run)
