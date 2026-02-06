@@ -15,6 +15,8 @@ MODULE_LICENSE("GPL");
 static char *SYMBOL_OPEN = "do_filp_open";
 static char *SYMBOL_ALLOC = "__d_alloc";
 static char *SYMBOL_LOOKUP = "d_lookup";
+static char *SYMBOL_D_LOOKUP = "__d_lookup";
+static char *SYMBOL_D_LOOKUP_RCU = "__d_lookup_rcu";
 static char *SYMBOL_HASH = "full_name_hash";
 static char *SYMBOL_ADD = "d_add";
 static char *SYMBOL_D_ADD = "__d_add";
@@ -34,10 +36,13 @@ struct my_filename {
 };
 
 static struct kprobe kp_open, kp_alloc, kp_lookup;
+static struct kprobe kp_d_lookup, kp_d_lookup_rcu;
 static struct kprobe kp_add, kp_d_add, kp_add_ci, kp_rehash;
 static struct kprobe kp_delete, kp_dput, kp_dentry_kill;
 static struct kprobe kp_drop;
 static struct kretprobe rp_open, rp_alloc, rp_lookup, rp_hash;
+static int kp_d_lookup_reg;
+static int kp_d_lookup_rcu_reg;
 
 static char *target_comm = "matrix_open";
 module_param(target_comm, charp, 0644);
@@ -129,6 +134,26 @@ static int lookup_entry(struct kprobe *p, struct pt_regs *regs) {
       (unsigned long)q->name > 0xffff000000000000) {
     pr_info("d_lookup entry: hash %u length %u name %s\n", q->hash, q->len,
             q->name);
+  }
+  return 0;
+}
+
+static int d_lookup_entry(struct kprobe *p, struct pt_regs *regs) {
+  struct qstr *q = (struct qstr *)regs->si;
+  if (is_target() && q && (unsigned long)q > 0xffff000000000000 && q->name &&
+      (unsigned long)q->name > 0xffff000000000000) {
+    pr_info("__d_lookup entry: hash %u length %u name %s\n", q->hash, q->len,
+            q->name);
+  }
+  return 0;
+}
+
+static int d_lookup_rcu_entry(struct kprobe *p, struct pt_regs *regs) {
+  struct qstr *q = (struct qstr *)regs->si;
+  if (is_target() && q && (unsigned long)q > 0xffff000000000000 && q->name &&
+      (unsigned long)q->name > 0xffff000000000000) {
+    pr_info("__d_lookup_rcu entry: hash %u length %u name %s\n", q->hash,
+            q->len, q->name);
   }
   return 0;
 }
@@ -284,6 +309,16 @@ static int __init trace_do_filp_open_init(void) {
   if ((r = register_kprobe(&kp_lookup)) < 0)
     goto e5;
 
+  kp_d_lookup.symbol_name = SYMBOL_D_LOOKUP;
+  kp_d_lookup.pre_handler = d_lookup_entry;
+  if (register_kprobe(&kp_d_lookup) == 0)
+    kp_d_lookup_reg = 1;
+
+  kp_d_lookup_rcu.symbol_name = SYMBOL_D_LOOKUP_RCU;
+  kp_d_lookup_rcu.pre_handler = d_lookup_rcu_entry;
+  if (register_kprobe(&kp_d_lookup_rcu) == 0)
+    kp_d_lookup_rcu_reg = 1;
+
   kp_add.symbol_name = SYMBOL_ADD;
   kp_add.pre_handler = add_entry;
   if ((r = register_kprobe(&kp_add)) == 0)
@@ -348,6 +383,10 @@ static int __init trace_do_filp_open_init(void) {
     pr_info("optional probe not registered: %s\n", SYMBOL_DPUT);
   if (!kill_ok)
     pr_info("optional probe not registered: %s\n", SYMBOL_DENTRY_KILL);
+  if (!kp_d_lookup_reg)
+    pr_info("optional probe not registered: %s\n", SYMBOL_D_LOOKUP);
+  if (!kp_d_lookup_rcu_reg)
+    pr_info("optional probe not registered: %s\n", SYMBOL_D_LOOKUP_RCU);
 
   return 0;
 e6:
@@ -367,6 +406,10 @@ e1:
 
 static void __exit trace_do_filp_open_exit(void) {
   unregister_kretprobe(&rp_hash);
+  if (kp_d_lookup_rcu_reg)
+    unregister_kprobe(&kp_d_lookup_rcu);
+  if (kp_d_lookup_reg)
+    unregister_kprobe(&kp_d_lookup);
   unregister_kprobe(&kp_dentry_kill);
   unregister_kprobe(&kp_dput);
   unregister_kprobe(&kp_drop);
