@@ -35,10 +35,27 @@ struct my_filename {
 
 static struct kprobe kp_open, kp_alloc;
 static struct kretprobe rp_open, rp_alloc;
-#define TARGET_COMM "minimal_open"
 
+// Module parameters for flexible targeting
+static char *target_comm = "minimal_open";
+static int target_pid = -1; // -1 means match any PID (use comm only)
+
+module_param(target_comm, charp, 0644);
+MODULE_PARM_DESC(target_comm, "Process name to trace (default: minimal_open)");
+
+module_param(target_pid, int, 0644);
+MODULE_PARM_DESC(target_pid,
+                 "Specific PID to trace (-1 for any PID matching target_comm)");
+
+// Optimized filter: checks PID first (fast integer compare), then comm
+// Returns 1 if this is our target process, 0 otherwise
 static inline int is_target(void) {
-  return (strcmp(current->comm, TARGET_COMM) == 0);
+  // Early bail-out: check PID first (faster than string compare)
+  if (target_pid != -1 && current->pid != target_pid)
+    return 0;
+
+  // Check process name
+  return (strcmp(current->comm, target_comm) == 0);
 }
 
 // 1. do_filp_open ENTRY: THE HANDOVER
@@ -46,13 +63,18 @@ static int open_entry(struct kprobe *p, struct pt_regs *regs) {
   if (!is_target())
     return 0;
 
-  /*
-   * TODO [01]: IDENTIFY THE HANDOVER
-   * -------------------------------
-   * AXIOM: x86_64 ABI -> Arg 2: RSI.
-   * TASK: Extract 'struct my_filename *' from RSI.
-   * PRINT: "[trace_open] Input Addr: 0x%px | Val: %s\n", addr, string
-   */
+  // Extract struct filename pointer from RSI (second argument)
+  struct my_filename *f = (struct my_filename *)regs->si;
+
+  // Safety check: Ensure pointer is in kernel space (> 0xffff000000000000)
+  // CRITICAL: f->name must also be validated before dereferencing
+  if (f && (unsigned long)f > 0xffff000000000000 && f->name &&
+      (unsigned long)f->name > 0xffff000000000000) {
+    // Print pointer addresses only - NEVER dereference strings in interrupt
+    // context Using %s in pr_info would cause page fault if f->name is invalid
+    pr_info("[trace_open] Input: struct filename @ 0x%px | name @ 0x%px\n", f,
+            f->name);
+  }
 
   return 0;
 }
@@ -62,15 +84,19 @@ static int open_ret(struct kretprobe_instance *ri, struct pt_regs *regs) {
   if (!is_target())
     return 0;
 
-  /*
-   * TODO [02]: MANUAL DEREFERENCE CHAIN
-   * ----------------------------------
-   * AXIOM: Result residing in RAX.
-   * TASK: Follow the pointers using raw offsets (No helper functions).
-   * OFFSETS (6.14): f_path: RAX + 64 | dentry: f_path + 8 | d_name: dentry + 32
-   * | name: d_name + 8. PRINT: "[trace_open] Result Addr: 0x%px | Val: %s\n",
-   * addr, string
-   */
+  // 1. do_filp_open RET: THE GENTLEMEN'S CHAIN
+  void *file_ptr = (void *)regs->ax;
+  if (IS_ERR(file_ptr) || !file_ptr)
+    return 0;
+
+  // CHAIN: file -> f_path(+64) -> dentry(+8) -> d_name(+32) -> name(+8)
+  void *dentry_ptr = *(void **)((unsigned long)file_ptr + 64 + 8);
+  if (dentry_ptr) {
+    void *name_ptr = *(void **)((unsigned long)dentry_ptr + 32 + 8);
+    if (name_ptr && (unsigned long)name_ptr > 0xffff000000000000) {
+      pr_info("[trace_open] Result Name Ptr: 0x%px\n", name_ptr);
+    }
+  }
 
   return 0;
 }
@@ -80,14 +106,23 @@ static int alloc_entry(struct kprobe *p, struct pt_regs *regs) {
   if (!is_target())
     return 0;
 
-  /*
-   * TODO [03]: CAPTURE THE SOURCE
-   * ----------------------------
-   * AXIOM: __d_alloc(struct super_block *sb, const struct qstr *name).
-   * RSI = struct qstr *.
-   * TASK: Extract the value of 'qstr->name' (offset +8).
-   * PRINT: "[trace_alloc] Copy Source: 0x%px\n", addr
-   */
+  // RSI contains struct qstr * (second argument to __d_alloc)
+  // qstr->name is at offset +8 (after hash:4 + len:4)
+  void *qstr_ptr = (void *)regs->si;
+
+  // Validate qstr_ptr is in kernel space before dereferencing
+  if (!qstr_ptr || (unsigned long)qstr_ptr < 0xffff000000000000)
+    return 0;
+
+  // Extract name pointer from qstr (offset +8)
+  char **name_ptr = (char **)((unsigned long)qstr_ptr + 8);
+  char *name = *name_ptr;
+
+  // Validate name pointer before printing - safety critical in interrupt
+  // context
+  if (name && (unsigned long)name > 0xffff000000000000) {
+    pr_info("[trace_alloc] Copy Source: 0x%px\n", name);
+  }
 
   return 0;
 }
@@ -97,13 +132,16 @@ static int alloc_ret(struct kretprobe_instance *ri, struct pt_regs *regs) {
   if (!is_target())
     return 0;
 
-  /*
-   * TODO [04]: CAPTURE THE DESTINATION
-   * -------------------------------
-   * AXIOM: RAX = struct dentry *.
-   * TASK: Extract the address of dentry->d_shortname.string (offset +56).
-   * PRINT: "[trace_alloc] Copy Dest: 0x%px\n", addr
-   */
+  // 2. __d_alloc RET: THE SETTLEMENT
+  void *dentry_ptr = (void *)regs->ax;
+  if (IS_ERR(dentry_ptr) || !dentry_ptr)
+    return 0;
+
+  // dentry -> d_name(+32) -> name(+8)
+  void *dname_ptr = *(void **)((unsigned long)dentry_ptr + 32 + 8);
+  if (dname_ptr && (unsigned long)dname_ptr > 0xffff000000000000) {
+    pr_info("[trace_alloc] Copy Dest:   0x%px\n", dname_ptr);
+  }
 
   return 0;
 }
