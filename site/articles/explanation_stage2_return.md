@@ -101,56 +101,6 @@ Chains and diagrams (side by side)
 
 
 
-Symbol availability proof (from this machine)
-
-Kernel headers and sources:
-
-uname -r: 6.14.0-37-generic /usr/src contains linux-headers-6.14.0-37-generic /usr/src contains
-linux-source-6.8.0
-
-kptr_restrict: 1 perf_event_paranoid: 4
-
-Symbols in /proc/kallsyms:
-
-__d_add: ffffffff89beaaa0 (local symbol, type t) d_add: ffffffff89beaca0 (global symbol, type T)
-d_rehash: ffffffff89bea3e0 (global symbol, type T) d_add_ci: ffffffff89becf20 (global symbol, type
-T) full_name_hash: ffffffff89bd5010 (global symbol, type T)
-
-Why __d_add is not in available_filter_functions: available_filter_functions is the ftrace function
-list, not a full symbol list. It only includes functions that ftrace exposes (non-inlined,
-traceable, and globally visible). __d_add is present as a local symbol in kallsyms, so kprobe can
-attach to it, but ftrace does not list it.
-
-What We Failed To Observe And Why
-
-1. We did not observe a __d_add line for l_e.txt in the post-eviction rebuild phase. The post-eviction lookup is visible on the RCU path and returns a new pointer, but an explicit insert line for l_e.txt was not printed in this run. This is why the l_e.txt section is phrased as a post-eviction lookup, not an explicit insert.
-2. We did not observe any d_drop entry lines for these names. The d_delete lines are present in the data, but d_drop did not fire for these paths in this run.
-3. We did not observe any full_name_hash return lines in this run. The full_name_hash kretprobe is registered, but the function may be inlined or bypassed in this path on this kernel build. Hash values are still recorded via d_lookup entry, __d_lookup entry, and __d_lookup_rcu entry, which report the key hash and length used.
-
-Proofs from the latest run (commands + results):
-
-```text
-sudo dmesg | rg -n "__d_add entry: .*l_e.txt"
-<no output>
-
-sudo dmesg | rg -n "d_drop entry"
-<no output>
-
-sudo dmesg | rg -n "full_name_hash return"
-<no output>
-```
-
-Post-eviction l_e.txt lookup/return is visible even without __d_add:
-```text
-sudo dmesg | rg -n "__d_lookup_rcu entry:.*l_e.txt|\[O\] OUT: .*l_e.txt"
-15:[33032.402797] __d_lookup_rcu entry: hash 440978933 length 7 name l_e.txt
-17:[33032.402853] [O] OUT: 0xffff8bd54e0c74b8 | l_e.txt
-35:[33033.423905] __d_lookup_rcu entry: hash 440978933 length 7 name l_e.txt
-37:[33033.423931] [O] OUT: 0xffff8bd5628ba9f8 | l_e.txt
-149:[33036.444278] __d_lookup_rcu entry: hash 440978933 length 7 name l_e.txt
-151:[33036.444304] [O] OUT: 0xffff8bd5450e8278 | l_e.txt
-```
-
 Run A: matrix_open (root, drop_caches enabled)
 
 Run A narrative
@@ -749,3 +699,54 @@ Current line: not recorded. Resume: returns to open path. #54. Return. do_filp_o
 pointer 0xffff8bd54eaa0338, name t_e.txt. Data: rebuilt pointer differs from pre-eviction pointer
 0xffff8bd54eaa09f8. Work: open completes. Errors: none. Caller line: not recorded. Current line: not
 recorded. Resume: returns to user space.
+
+
+Symbol availability proof (from this machine)
+
+Kernel headers and sources:
+
+uname -r: 6.14.0-37-generic /usr/src contains linux-headers-6.14.0-37-generic /usr/src contains
+linux-source-6.8.0
+
+kptr_restrict: 1 perf_event_paranoid: 4
+
+Symbols in /proc/kallsyms:
+
+__d_add: ffffffff89beaaa0 (local symbol, type t) d_add: ffffffff89beaca0 (global symbol, type T)
+d_rehash: ffffffff89bea3e0 (global symbol, type T) d_add_ci: ffffffff89becf20 (global symbol, type
+T) full_name_hash: ffffffff89bd5010 (global symbol, type T)
+
+Why __d_add is not in available_filter_functions: available_filter_functions is the ftrace function
+list, not a full symbol list. It only includes functions that ftrace exposes (non-inlined,
+traceable, and globally visible). __d_add is present as a local symbol in kallsyms, so kprobe can
+attach to it, but ftrace does not list it.
+
+What We Failed To Observe And Why
+
+1. We did not observe a __d_add line for l_e.txt in the post-eviction rebuild phase. The post-eviction lookup is visible on the RCU path and returns a new pointer, but an explicit insert line for l_e.txt was not printed in this run. This is why the l_e.txt section is phrased as a post-eviction lookup, not an explicit insert.
+2. We did not observe any d_drop entry lines for these names. The d_delete lines are present in the data, but d_drop did not fire for these paths in this run.
+3. We did not observe any full_name_hash return lines in this run. The full_name_hash kretprobe is registered, but the function may be inlined or bypassed in this path on this kernel build. Hash values are still recorded via d_lookup entry, __d_lookup entry, and __d_lookup_rcu entry, which report the key hash and length used.
+
+Proofs from the latest run (commands + results):
+
+```text
+sudo dmesg | rg -n "__d_add entry: .*l_e.txt"
+<no output>
+
+sudo dmesg | rg -n "d_drop entry"
+<no output>
+
+sudo dmesg | rg -n "full_name_hash return"
+<no output>
+```
+
+Post-eviction l_e.txt lookup/return is visible even without __d_add:
+```text
+sudo dmesg | rg -n "__d_lookup_rcu entry:.*l_e.txt|\[O\] OUT: .*l_e.txt"
+15:[33032.402797] __d_lookup_rcu entry: hash 440978933 length 7 name l_e.txt
+17:[33032.402853] [O] OUT: 0xffff8bd54e0c74b8 | l_e.txt
+35:[33033.423905] __d_lookup_rcu entry: hash 440978933 length 7 name l_e.txt
+37:[33033.423931] [O] OUT: 0xffff8bd5628ba9f8 | l_e.txt
+149:[33036.444278] __d_lookup_rcu entry: hash 440978933 length 7 name l_e.txt
+151:[33036.444304] [O] OUT: 0xffff8bd5450e8278 | l_e.txt
+```
