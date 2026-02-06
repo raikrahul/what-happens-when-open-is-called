@@ -192,6 +192,10 @@ Results
 
 Run A: matrix_open (root, drop_caches enabled)
 
+Research Narrative (Run A)
+
+This section preserves every pointer, address, and line from the trace while adding the logical structure expected of a research textbook. Each claim is followed by direct evidence and a derivation that uses only the data printed above.
+
 Claim A1. Cache miss, memcpy, and insert for t_e.txt.
 
 Evidence:
@@ -351,3 +355,114 @@ Every claim above is tied to an explicit probe line and an explicit pointer equa
 Conclusion
 
 The data prove that the filename pointer flows into dentry storage via memcpy, that cache inserts happen on misses, that hits return the previously inserted pointer, that deletion removes the dentry on unlink, that eviction removes dentries on drop_caches, and that rebuild occurs after eviction for t_e.txt with a new dentry name pointer. For l_e.txt after eviction, the lookup is observed on the RCU path and returns a new pointer, but an explicit insert line is not observed in this run.
+
+Full Proofs (No Data Removed)
+
+Proof 1. memcpy of filename into dentry storage.
+
+Evidence (t_e.txt):
+[A] SRC: 0xffff8bd5423ed025
+[A] DST: 0xffff8bd54e246db8
+__d_add entry: 0xffff8bd54e246db8 | t_e.txt
+[O] OUT: 0xffff8bd54e246db8 | t_e.txt
+
+Derivation:
+0xffff8bd54e246db8 = [A] DST
+0xffff8bd54e246db8 = __d_add entry pointer
+0xffff8bd54e246db8 = [O] OUT pointer
+
+Evidence (a.txt):
+[A] SRC: 0xffff8bd5423ed02c
+[A] DST: 0xffff8bd5560a09f8
+__d_add entry: 0xffff8bd5560a09f8 | a.txt
+[O] OUT: 0xffff8bd5560a09f8 | a.txt
+
+Derivation:
+0xffff8bd5560a09f8 = [A] DST
+0xffff8bd5560a09f8 = __d_add entry pointer
+0xffff8bd5560a09f8 = [O] OUT pointer
+
+Evidence (long filename):
+[A] SRC: 0xffff8bd54d663020
+[A] DST: 0xffff8bd69f6fb618
+__d_add entry: 0xffff8bd69f6fb618 | test_file_very_long_name_to_force_external_allocation_1770404658
+[O] OUT: 0xffff8bd69f6fb618 | test_file_very_long_name_to_force_external_allocation_1770404658
+
+Derivation:
+0xffff8bd69f6fb618 = [A] DST
+0xffff8bd69f6fb618 = __d_add entry pointer
+0xffff8bd69f6fb618 = [O] OUT pointer
+
+Proof 2. Cache build-up (insert) on miss.
+
+Evidence:
+d_lookup return: NULL
+__d_add entry: 0xffff8bd54e246db8 | t_e.txt
+
+d_lookup return: NULL
+__d_add entry: 0xffff8bd5560a0ab8 | t_m.txt
+
+d_lookup return: NULL
+__d_add entry: 0xffff8bd5560a0c38 | l_m.txt
+
+d_lookup return: NULL
+__d_add entry: 0xffff8bd5560a09f8 | a.txt
+
+d_lookup return: NULL
+__d_add entry: 0xffff8bd69f6fb618 | test_file_very_long_name_to_force_external_allocation_1770404658
+
+Proof 3. Cache miss.
+
+Evidence:
+d_lookup return: NULL (t_e.txt)
+d_lookup return: NULL (t_m.txt)
+d_lookup return: NULL (l_m.txt)
+d_lookup return: NULL (a.txt)
+d_lookup return: NULL (long filename)
+
+Proof 4. Cache hit.
+
+Evidence:
+d_lookup entry: hash 399720033 length 7 name l_e.txt
+d_lookup return: 0xffff8bd54e8d9878 | l_e.txt
+
+d_lookup entry: hash 1830572521 length 7 name t_e.txt
+d_lookup return: 0xffff8bd54e246db8 | t_e.txt
+
+d_lookup entry: hash 3918709873 length 64 name test_file_very_long_name_to_force_external_allocation_1770404658
+d_lookup return pointer = 0xffff8bd69f6fb618
+
+Proof 5. Cache delete.
+
+Evidence:
+d_delete entry: 0xffff8bd54e8d9878 | l_e.txt
+d_delete entry: 0xffff8bd54e246db8 | t_e.txt
+
+Proof 6. Long filename behavior.
+
+Evidence:
+d_lookup entry: hash 3918709873 length 64 name test_file_very_long_name_to_force_external_allocation_1770404658
+d_lookup return: NULL
+[A] SRC: 0xffff8bd54d663020
+[A] DST: 0xffff8bd69f6fb618
+__d_add entry: 0xffff8bd69f6fb618 | test_file_very_long_name_to_force_external_allocation_1770404658
+[O] OUT: 0xffff8bd69f6fb618 | test_file_very_long_name_to_force_external_allocation_1770404658
+
+Proof 7. Short filename behavior.
+
+Evidence:
+d_lookup entry: hash 3711754354 length 5 name a.txt
+d_lookup return: NULL
+[A] SRC: 0xffff8bd5423ed02c
+[A] DST: 0xffff8bd5560a09f8
+__d_add entry: 0xffff8bd5560a09f8 | a.txt
+[O] OUT: 0xffff8bd5560a09f8 | a.txt
+
+Derivation:
+0xffff8bd5423ed02c - 0xffff8bd5423ed020 = 0xC = 12
+"/mnt/loopfs/" length = 12
+
+What We Failed To Observe And Why
+
+1. We did not observe a __d_add line for l_e.txt in the post-eviction rebuild phase. The post-eviction lookup is visible on the RCU path and returns a new pointer, but an explicit insert line for l_e.txt was not printed in this run. This is why Claim A9 is phrased as a post-eviction lookup, not an explicit insert for l_e.txt.
+2. We did not observe any d_drop entry lines for these names. The d_delete lines are present, so deletion is proven, but d_drop did not fire for these paths in this run.
