@@ -33,6 +33,6 @@ Verify that `do_filp_open` returns a valid `struct file *` and inspecting its re
 
 **Artifacts**:
 -   **Blog (Axiomatic Walkthrough)**: [Link to your gh-pages/stage2_return.html]
--   **Driver Source (Strict 0-Warning)**: [Link to your master/stage2/drivers/trace_do_filp_open/trace_do_filp_open.c]
+-   **Driver Source (Strict 0-Warning)**: [Link to your main/kernel/drivers/trace_do_filp_open/trace_do_filp_open.c]
 
 Zero magic. Zero assumptions. Just code and memory.

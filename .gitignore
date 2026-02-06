@@ -1,36 +1,35 @@
-# Compiled binaries
-src/proofs/register_dump
-src/proofs/path_walk_simulator
-src/proofs/fd_exhaustion
-src/proofs/kernel_permission_simulation
-src/error_demos/error_demo_enoent
-src/error_demos/error_demo_eacces
-docs/lesson_details/*/lesson_demo
-
-# Object files
+# Build outputs
 *.o
+*.ko
+*.mod
+*.mod.c
+*.cmd
+Module.symvers
+modules.order
 
-# Preprocessor output
-*.i
+# Kernel module build dirs
+.*.cmd
 
-# Assembly output
-*.s
+# Binaries (project-specific)
+/kernel/proofs/register_dump
+/kernel/proofs/path_walk_simulator
+/kernel/proofs/fd_exhaustion
+/kernel/proofs/kernel_permission_simulation
+/kernel/demos/error_demo_enoent
+/kernel/demos/error_demo_eacces
+/kernel/demos/error_demo_emfile
+/kernel/minimal_open/minimal_open
+/kernel/minimal_open/minimal_open_verbose
+/kernel/minimal_open/minimal_open.relocs
+/kernel/user/stage2/minimal_open
+/kernel/user/stage2/matrix_open
+/kernel/user/stage2/test_new
 
-# Executable binaries (general)
-a.out
-*.out
+# Temp and notes
+/notes/tmp/
 
-# Editor and IDE
+# Editor
+.vscode/
 *.swp
 *.swo
 *~
-.vscode/
-.idea/
-
-# OS
-.DS_Store
-Thumbs.db
-
-# Temporary files
-*.tmp
-*.bak

@@ -29,7 +29,7 @@
     *   "mov %fs:0x28, %rax" (Stack Canary check)
 *   **Reality Check**:
     *   **Present in current code?**: **NO.**
-    *   **Current Artifact**: `src/minimal_open/minimal_open.c` is:
+*   **Current Artifact**: `kernel/minimal_open/minimal_open.c` is:
         ```c
         int main() { int fd = open("somefile", O_RDWR); }
         ```
@@ -38,5 +38,5 @@
     *   **Reader Impact**: A reader compiling the current repository code **will fail to reproduce Steps 14, 15, and 16** of the blog.
 
 ## Recommendation
-1.  **Update Source**: Modify `src/minimal_open/minimal_open.c` to include a buffer so it reproduces the blog's stack layout.
+1.  **Update Source**: Modify `kernel/minimal_open/minimal_open.c` to include a buffer so it reproduces the blog's stack layout.
 2.  **Add Disclaimer**: Add a "System Verification" section to the blog explaining that specific instructions (`endbr64`, `push rbp`) are artifacts of the Ubuntu 24.04 / GCC 13 toolchain.

@@ -1,0 +1,42 @@
+BANNED CONCEPTS / "MBA" WORDS:
+- "THE ANALYSIS (VERIFICATION)"
+- "Linkage Verification"
+- "Address Space Verification"
+- "Conclusion:"
+- "This structure is the physical manifestation of API requirements."
+- "Scenario:"
+- "Risk:"
+- "Fix:"
+- "THE ATOMICITY (THE 'LOST UPDATE' PROOF)"
+- "Verification"
+- "A. ", "B. ", "C. " (excessive labeling)
+- "We trace the data flow to prove..." (descriptive filler)
+- "Is the pointer valid?" (rhetorical filler)
+
+USER RULES (THE PRIMATE SYSTEM):
+01. USE PURE ASCII ONLY.
+02. NO EXTRA CHARACTERS.
+03. NO LATEX SYMBOLS.
+04. ZERO WORKING MEMORY: Primate understands counting, symbols, math, arithmetic (+ - * /). NOTHING ELSE.
+05. ZERO HEADINGS.
+06. ZERO FILLER WORDS.
+07. ZERO LABELS.
+08. NO WORDS WITHOUT KNOWLEDGE VALUE.
+09. FORMAT: Input -> Computation -> Output.
+10. SYMBOLS: ✓ (True), ✗ (False), ∴ (Therefore), → (Implies/Leads to).
+11. FROM SCRATCH: Derive everything from axioms. No "news" (unexplained info).
+12. AXIOMATIC LINEAGE: 
+    - Line 1 = First Axiom.
+    - Line N uses only 1 to N-1.
+    - No forward references ("we will see later", "as mentioned below").
+13. DERIVATION: If Line N uses X, Line N-1 must have calculated/derived X.
+14. REJECTION CRITERIA: If "NEW THINGS INTRODUCED WITHOUT DERIVATION" list is not empty, file is REJECTED.
+
+
+
+If dealing with Coding the following are banned 
+
+- talking nonsense and un needed about struuct offsets which are useless 
+- talking about registers which are useless to the problem
+- talking about size of or calculating size of structs or variables or pointers which are useless for the issue
+

@@ -1,1 +1,0 @@
-./trace_filename.o

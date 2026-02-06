@@ -1,0 +1,165 @@
+---
+layout: default
+title: Worksheet: Stage 2 (Return) - Tracing struct file
+---
+================================================================================
+WORKSHEET: STAGE 2 (RETURN) - STRUCT FILE & ATOMICS
+================================================================================
+
+00. AXIOMS
+- Derive answer from tool output or source code.
+- No new information without derivation.
+- Input -> Computation -> Output.
+
+--------------------------------------------------------------------------------
+01. STRUCT FILE LAYOUT
+--------------------------------------------------------------------------------
+
+01. RUNTIME TRUTH (GDB)
+Data:  `gdb vmlinux -ex "ptype struct file"`
+
+FILL LAYOUT (Hex Offsets):
+    +0x__: f_mode   (Access Mode)
+    +0x__: f_pos    (File Offset)
+    +0x__: f_ref    (Ref Type: __________)
+    +0x__: f_path   (Path Structure)
+    +0x__: f_op     (File Operations)
+
+02. DERIVATION (EVOLUTION)
+Fact:   `f_count` (atomic_long_t) is missing in 6.14.
+∴       Replaced by ____________ for atomic reference counting.
+
+--------------------------------------------------------------------------------
+02. TARGET SOURCE VERIFICATION
+--------------------------------------------------------------------------------
+
+Fact:  `fs/namei.c` defines `struct file *do_filp_open(...)`.
+Chk:   Return Type = `struct file *`.
+∴      `kretprobe` on `do_filp_open` will capture the object.
+
+--------------------------------------------------------------------------------
+03. PROBE DEFINITION (AXIOMATIC)
+--------------------------------------------------------------------------------
+
+01. EXIT TRACING
+Axiom: kprobe = ENTRY. kretprobe = EXIT.
+Req:   Inspect Return Value (computed at exit).
+∴      Use `kretprobe`.
+
+02. REGISTER MAPPING (x86_64 ABI)
+Axiom: Integer/Pointer return values reside in `RAX`.
+Code:  `regs->ax`.
+
+03. TYPE CASTING
+Input: 64-bit integer (`unsigned long`).
+Cast:  `(struct file *)regs->ax`.
+
+--------------------------------------------------------------------------------
+04. EXECUTION TRACE
+--------------------------------------------------------------------------------
+
+01. TRACE LOGS (dmesg)
+`ret_file` address: 0xffff________________
+`f_pos`:            __________
+`f_mode`:           0x__________
+`f_ref` (val):      __________
+`f_flags`:          0x__________
+
+02. BITWISE PROOF
+Fact: O_RDWR (0x2) | O_LARGEFILE (0x8000)
+Sum:  0x__________
+Chk:  Matches `f_flags`? [ ] YES [ ] NO
+
+--------------------------------------------------------------------------------
+05. FILENAME CONSISTENCY
+--------------------------------------------------------------------------------
+
+Data:
+Entry (pathname) = "________________"
+Exit  (dentry)   = "________________"
+
+01. IDENTITY CHECK
+Chk:  Strings match exactly? [ ] YES [ ] NO
+
+02. SOURCE DERIVATION (fs/dcache.c)
+Axiom: `memcpy(dname, name->name, name->len)` moves string to dentry.
+Fact:  `name->name` = Input. `dname` = Dentry Buffer.
+∴      Dentry Name IS the input copy.
+
+03. ADDRESS VALIDITY (CPL0)
+Lim:   Kernel Space > `0xffff800000000000`.
+Path:  0x________________ [ ] Valid
+Dentry: 0x________________ [ ] Valid
+
+--------------------------------------------------------------------------------
+06. VIRTUAL ADDRESS SPACE (48-BIT)
+--------------------------------------------------------------------------------
+
+01. KERNEL VS USER
+User:   [0000000000000000 - 00007fffffffffff]
+Kernel: [ffff800000000000 - ffffffffffffffff]
+Chk:    Is `ret_file` in Kernel Space? [ ] YES [ ] NO
+
+02. ERROR POINTER MATH (ERR.H)
+Axiom: High pointers encode negative constants.
+Val:   4095 (MAX_ERRNO).
+Math:  Two's Complement of -4095.
+       4095 (Hex): 0x0FFF
+       NOT:        0xFFFF...F000
+       ADD 1:      0xFFFF...F001
+∴      Limit: 0xfffffffffffff001.
+
+03. ERROR CHECK
+Chk:   Is `ret_file` >= `0xfffffffffffff001`?
+       [ ] YES (Error Code)
+       [ ] NO  (Valid Object)
+
+--------------------------------------------------------------------------------
+07. DENTRY POINTER CHAIN
+--------------------------------------------------------------------------------
+
+Object: `struct file *f`
+
+CHAIN:
+`f` (file)
+-> `f_path` (path)
+-> `dentry` (dentry)
+-> `d_name` (qstr)
+-> `name` (string)
+
+∴ Trace code `f->f_path.dentry->d_name.name` is derived from Source.
+
+--------------------------------------------------------------------------------
+08. STRUCTURE NECESSITY (REQUIREMENT → MEMBER)
+--------------------------------------------------------------------------------
+
+| REQ | REQUIREMENT                    | DERIVED MEMBER                | TYPE        |
+|:---|:-------------------------------|:------------------------------|:------------|
+| 1  | Read (Offset tracking)         | ____________________         | loff_t      |
+| 2  | Write (Mode check)             | ____________________         | fmode_t     |
+| 3  | Fork (Ref count)               | ____________________         | file_ref_t  |
+| 4  | Metadata (Inode access)        | ____________________         | struct inode*|
+| 5  | Relative Path (openat)         | ____________________         | struct path |
+
+--------------------------------------------------------------------------------
+09. ATOMIC READ AXIOM
+--------------------------------------------------------------------------------
+
+Fact:  `atomic_long_read` usage.
+Source: `arch/x86/include/asm/atomic64_64.h` -> `__READ_ONCE((v)->counter)`
+Instr: `MOV` instruction.
+Axiom: Aligned 64-bit MOV is atomic (x86 Hardware).
+Req:   Does it use `LOCK` prefix?
+[ ] YES
+[ ] NO (Correct)
+
+∴ Writing requires `LOCK`. Reading is free.
+
+================================================================================
+ANSWERS
+================================================================================
+
+01: file_ref_t. 
+04: 0x8002.
+06: 0xfffffffffffff001.
+09: NO. Readers use MOV.

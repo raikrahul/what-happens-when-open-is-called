@@ -1,8 +1,8 @@
 CC = gcc
 CFLAGS = -Wall -Wextra -g -O2 -no-pie
-SRC_PROOFS_DIR = src/proofs
+SRC_PROOFS_DIR = kernel/proofs
 LESSON_DIR = docs/lesson_details
-SRC_DIR = src
+SRC_DIR = kernel
 
 # Proof programs (source in src/proofs, output in src/proofs)
 PROOFS = $(SRC_PROOFS_DIR)/register_dump \
@@ -19,8 +19,8 @@ AXIOMATIC_PROGS = $(LESSON_DIR)/00_failure_predictions/lesson_demo \
                   $(LESSON_DIR)/05_the_return/lesson_demo
 
 # Error demonstration programs
-ERROR_DEMOS = $(SRC_DIR)/error_demos/error_demo_enoent \
-             $(SRC_DIR)/error_demos/error_demo_eacces
+ERROR_DEMOS = $(SRC_DIR)/demos/error_demo_enoent \
+             $(SRC_DIR)/demos/error_demo_eacces
 
 .PHONY: all clean proofs axiomatic errors test install-deps
 
@@ -65,10 +65,10 @@ $(LESSON_DIR)/05_the_return/lesson_demo: $(LESSON_DIR)/05_the_return/demo.c
 	$(CC) $(CFLAGS) -o $@ $<
 
 # Error demonstration programs
-$(SRC_DIR)/error_demos/error_demo_enoent: $(SRC_DIR)/error_demos/enoent_demo.c
+$(SRC_DIR)/demos/error_demo_enoent: $(SRC_DIR)/demos/enoent_demo.c
 	$(CC) $(CFLAGS) -o $@ $<
 
-$(SRC_DIR)/error_demos/error_demo_eacces: $(SRC_DIR)/error_demos/eacces_demo.c
+$(SRC_DIR)/demos/error_demo_eacces: $(SRC_DIR)/demos/eacces_demo.c
 	$(CC) $(CFLAGS) -o $@ $<
 
 # Test targets
@@ -79,8 +79,8 @@ test: all
 	@echo "Testing fd_exhaustion..." && timeout 5s $(SRC_PROOFS_DIR)/fd_exhaustion || true && echo "OK fd_exhaustion"
 	@$(SRC_PROOFS_DIR)/kernel_permission_simulation && echo "OK kernel_permission_simulation"
 	@echo "Running error demos..."
-	@$(SRC_DIR)/error_demos/error_demo_enoent && echo "OK ENOENT demo"
-	@$(SRC_DIR)/error_demos/error_demo_eacces && echo "OK EACCES demo"
+	@$(SRC_DIR)/demos/error_demo_enoent && echo "OK ENOENT demo"
+	@$(SRC_DIR)/demos/error_demo_eacces && echo "OK EACCES demo"
 	@echo "All tests passed"
 
 # Install dependencies for Ubuntu/Debian
