@@ -469,3 +469,67 @@ d_lookup return 0xffff8bd54eaa09f8 -> do_filp_open return 0xffff8bd54eaa09f8
 5) cache delete chain (unlink)
 d_delete 0xffff8bd5628ba9f8 (l_e.txt) + d_delete 0xffff8bd54eaa09f8 (t_e.txt)
 Later phases start after this: eviction (__dentry_kill) and rebuild after eviction.
+
+CHAIN AND TRACE SUMMARY (END)
+================================================================================
+
+1) memcpy chain (t_e.txt, copy source -> destination)
+"/tmp/t_e.txt" @ 0xffff8bd54c33e020 -> __d_alloc entry 0xffff8bd54c33e025 -> __d_alloc return 0xffff8bd54eaa09f8
+2) cache build-up chain (t_e.txt, miss -> insert)
+d_lookup return NULL -> __d_add 0xffff8bd54eaa09f8 -> do_filp_open return 0xffff8bd54eaa09f8
+3) cache hit chain (t_e.txt, later lookup)
+d_lookup return 0xffff8bd54eaa09f8 -> do_filp_open return 0xffff8bd54eaa09f8
+4) cache miss chain (t_m.txt, missing)
+"/tmp/t_m.txt" -> d_lookup return NULL -> __d_add 0xffff8bd54eaa0e78
+5) cache delete chain (unlink)
+d_delete 0xffff8bd5628ba9f8 (l_e.txt) + d_delete 0xffff8bd54eaa09f8 (t_e.txt)
+Later phases start after this: eviction (__dentry_kill) and rebuild after eviction.
+
+ t_e.txt miss -> alloc -> insert -> return
+open("/tmp/t_e.txt")
+  -> do_filp_open entry 0xffff8bd54c33e020
+  -> d_lookup hash 1830572521 len 7 "t_e.txt" -> NULL
+  -> __d_alloc entry 0xffff8bd54c33e025
+  -> __d_alloc return 0xffff8bd54eaa09f8
+  -> __d_add entry 0xffff8bd54eaa09f8
+  -> do_filp_open return 0xffff8bd54eaa09f8
+
+a.txt miss on loopback ext2
+open("/mnt/loopfs/a.txt")
+  -> do_filp_open entry 0xffff8bd54c33e020
+  -> d_lookup hash 3711754354 len 5 "a.txt" -> NULL
+  -> __d_alloc entry 0xffff8bd54c33e02c
+  -> __d_alloc return 0xffff8bd54eaa04b8
+  -> __d_add entry 0xffff8bd54eaa04b8
+  -> do_filp_open return 0xffff8bd54eaa04b8
+
+cache hit for l_e.txt before deletion
+open("l_e.txt")
+  -> d_lookup hash 440978933 len 7 "l_e.txt" -> 0xffff8bd5628ba9f8
+  -> do_filp_open return 0xffff8bd5628ba9f8
+
+unlink deletion + eviction
+unlink("l_e.txt") -> d_delete 0xffff8bd5628ba9f8
+unlink("/tmp/t_e.txt") -> d_delete 0xffff8bd54eaa09f8
+drop_caches -> __dentry_kill 0xffff8bd5628ba9f8 (l_e.txt)
+drop_caches -> __dentry_kill 0xffff8bd54eaa09f8 (t_e.txt)
+drop_caches -> __dentry_kill 0xffff8bd54eaa0e78 (t_m.txt)
+drop_caches -> __dentry_kill 0xffff8bd54eaa0278 (l_m.txt)
+drop_caches -> __dentry_kill 0xffff8bd54eaa04b8 (a.txt)
+
+rebuild after eviction (t_e.txt)
+open("/tmp/t_e.txt") after drop_caches
+  -> d_lookup hash 1830572521 len 7 "t_e.txt" -> NULL
+  -> __d_alloc return 0xffff8bd54eaa0338
+  -> __d_add entry 0xffff8bd54eaa0338
+  -> do_filp_open return 0xffff8bd54eaa0338
+
+post-eviction lookup for l_e.txt
+open("l_e.txt") after drop_caches
+  -> __d_lookup_rcu hash 440978933 len 7 "l_e.txt"
+  -> do_filp_open return 0xffff8bd5450e8278
+
+QUIZ (ANSWER YES/NO)
+- Did your memcpy chain show __d_alloc entry and __d_alloc return with the same return pointer as __d_add?
+- Did your cache hit for l_e.txt return the same pointer you saw before deletion?
+- Did your post-eviction l_e.txt return pointer differ from the pre-eviction pointer?
