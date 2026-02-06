@@ -174,24 +174,23 @@ Probe code locations (driver file, local):
 BUILD AND RUN (ORDER MATTERS)
 ================================================================================
 
-1) Build the driver
+1) Build the driver (repo root)
 ```
 cd kernel/drivers/trace_do_filp_open && make clean && make
 ```
-Source: https://github.com/raikrahul/what-happens-when-open-is-called/tree/main/kernel/drivers/trace_do_filp_open
 
 2) Run minimal_open (long filename)
 ```
+cd kernel/user/stage2
 sudo dmesg -C
 sudo rmmod trace_do_filp_open
-sudo insmod trace_do_filp_open.ko target_comm=minimal_open
-cd ../../user/stage2
+sudo insmod ../../drivers/trace_do_filp_open/trace_do_filp_open.ko target_comm=minimal_open
 ./minimal_open
 sleep 5
 sudo dmesg | rg -n "test_file_very_long_name_to_force_external_allocation"
 ```
 
-2b) Prepare loopback ext2 (for the a.txt case)
+2b) Prepare loopback ext2 (a.txt)
 ```
 sudo mkdir -p /mnt/loopfs
 sudo dd if=/dev/zero of=/tmp/loopfs.img bs=1M count=64
@@ -206,10 +205,10 @@ sudo mount /tmp/loopfs.img /mnt/loopfs
 
 3) Run matrix_open (all paths)
 ```
+cd kernel/user/stage2
 sudo dmesg -C
 sudo rmmod trace_do_filp_open
-sudo insmod trace_do_filp_open.ko target_comm=matrix_open
-cd ../../user/stage2
+sudo insmod ../../drivers/trace_do_filp_open/trace_do_filp_open.ko target_comm=matrix_open
 sudo ./matrix_open
 sleep 3
 sudo dmesg | rg -n "l_e.txt|t_e.txt|t_m.txt|l_m.txt|a.txt|drop_caches|d_lookup entry|d_lookup return|__d_add entry|d_delete entry|__dentry_kill entry|__d_lookup entry|__d_lookup_rcu entry|__d_alloc"
