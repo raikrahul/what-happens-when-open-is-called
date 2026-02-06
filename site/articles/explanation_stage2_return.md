@@ -182,6 +182,15 @@ Pointer meanings (t_e.txt):
 - __d_add entry pointer 0xffff8bd572708638 shows that same storage inserted into the dcache hash.
 - do_filp_open return pointer 0xffff8bd572708638 shows the returned file points at that dentry name storage.
 
+Function-by-function explanation (t_e.txt path):
+- do_filp_open entry: entry point for VFS open; receives the kernel-side filename string. The pointer 0xffff8bd55debc020 is set by getname() before lookup and points to "/tmp/t_e.txt".
+- d_lookup entry: dcache lookup using key (name, length, hash). The key is derived from basename "t_e.txt" with length 7 and hash 1830572521.
+- d_lookup return: NULL indicates a cache miss for that key in the parent directory.
+- __d_alloc entry: allocates a new dentry and copies the basename. The pointer 0xffff8bd55debc025 is the basename start inside "/tmp/t_e.txt" (prefix length 5).
+- __d_alloc return: returns the new dentry; 0xffff8bd572708638 is the allocated dentry name storage.
+- __d_add entry: inserts the new dentry into the dcache; the same pointer 0xffff8bd572708638 is what gets hashed into the cache.
+- do_filp_open return: returns a struct file whose f_path.dentry->d_name.name equals 0xffff8bd572708638, tying the file to the copied name.
+
 Derivation (user-space trigger and why): User-space code:
 ```c
 char n2[] = "/tmp/t_e.txt";
@@ -222,6 +231,12 @@ Pointer meanings (t_m.txt):
 - __d_alloc entry pointer 0xffff8bd55debc025 points to basename start after "/tmp/".
 - __d_alloc return pointer 0xffff8bd5727080f8 is the newly allocated dentry name storage.
 - __d_add entry pointer 0xffff8bd5727080f8 inserts that name storage into the dcache as a negative entry.
+
+Basename explanation (t_m.txt):
+- A pathname is split into parent directory + basename. For "/tmp/t_m.txt", the parent is "/tmp/" and the basename is "t_m.txt".
+- The dcache lookup and name copy operate on the basename, not the full path. That is why the copy source pointer is not the full string pointer.
+- __d_alloc entry pointer is the basename start inside the same string, so it equals the full string pointer + 5 ("/tmp/" length).
+- __d_alloc return pointer is new dentry name storage allocated by __d_alloc; __d_add inserts that same storage into the cache.
 
 Claim A3. Cache miss and insert for missing l_m.txt.
 
