@@ -14,6 +14,19 @@ Push to `main`. The workflow in `.github/workflows/publish_site.yml` will:
 1. Build HTML from Markdown using `tools/build_site.sh`.
 2. Deploy `site/` to `gh-pages`.
 
+## One-Command Publish
+
+```bash
+make publish MSG="Update stage2 return"
+```
+
+This will build, commit, and push. The GitHub Action will handle deployment.
+
+## Git Hook
+
+This repo enables a local pre-commit hook that rebuilds HTML so you never
+commit out-of-date HTML.
+
 ## Notes
 
 - Published URLs remain stable because the output paths in `site/` match the existing `gh-pages` layout.

@@ -1,0 +1,7 @@
+#!/usr/bin/env bash
+set -euo pipefail
+
+# Ensure markdown is compiled to HTML before commit
+./tools/build_site.sh
+
+git add site/articles/*.html

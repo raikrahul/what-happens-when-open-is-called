@@ -102,4 +102,12 @@ help:
 	@echo "  test         - Run all tests"
 	@echo "  clean        - Remove built files"
 	@echo "  install-deps - Install build dependencies"
+	@echo "  build-site   - Build HTML from Markdown in site/articles"
+	@echo "  publish      - Build site, commit, and push (MSG='...')"
+
+build-site:
+	@./tools/build_site.sh
+
+publish:
+	@MSG="$(MSG)" ./tools/publish_all.sh
 	@echo "  help         - Show this help"

@@ -61,10 +61,7 @@ make clean        # Remove compiled artifacts
 ## Publish
 
 ```bash
-./tools/publish_site.sh
-# then: git -C .worktrees/gh-pages add -A
-# then: git -C .worktrees/gh-pages commit -m "Update site"
-# then: git -C .worktrees/gh-pages push
+make publish MSG="Update stage2 return"
 ```
 
 ## License
