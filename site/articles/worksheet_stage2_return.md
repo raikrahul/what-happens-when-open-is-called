@@ -10,30 +10,21 @@ Stage 2 Entry https://raikrahul.github.io/what-happens-when-open-is-called/stage
 Stage 2 Return (Explanation) https://raikrahul.github.io/what-happens-when-open-is-called/articles/explanation_stage2_return.html
 
 ================================================================================
-WHAT YOU ARE TRYING TO PROVE (IN ORDER)
+WHAT YOU ARE TRYING TO PROVE (ORDER)
 ================================================================================
 
-1. Record copy source and copy destination pointers for the filename.
-2. Record the first miss and the first insert for a file name.
-3. Record a later lookup that returns a previously recorded pointer.
-4. Record deletion lines for l_e.txt and t_e.txt.
-5. Record eviction lines for those names after drop_caches.
-6. Record a rebuild pointer for t_e.txt and compare it to the pre-eviction pointer.
-7. Record basename offsets and compare them to the prefix length.
-8. Record the long filename miss and later hit.
+You will capture pointer copies, first misses and inserts, later hits, and the delete/evict/rebuild
+sequence. You will also measure prefix offsets (/tmp/ and /mnt/loopfs/) and confirm the long‑name
+miss followed by a later hit.
 
 ================================================================================
-FILES YOU WILL TOUCH (AND WHY)
+FILES YOU WILL TOUCH
 ================================================================================
 
-1. kernel/drivers/trace_do_filp_open/trace_do_filp_open.c
-   Reason: probes to print real pointer values and hash keys.
-
-2. kernel/user/stage2/minimal_open.c
-   Reason: long filename path (length 64).
-
-3. kernel/user/stage2/matrix_open.c
-   Reason: cache miss, hit, delete, eviction, rebuild, basename offsets.
+kernel/drivers/trace_do_filp_open/trace_do_filp_open.c provides the probes that print pointer values
+and hash keys. kernel/user/stage2/minimal_open.c drives the long‑filename path (length 64).
+kernel/user/stage2/matrix_open.c drives the miss, hit, delete, eviction, rebuild, and prefix‑offset
+cases.
 
 ================================================================================
 USER SPACE TEST PROGRAMS (AND WHY THEY EXIST)
