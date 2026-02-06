@@ -5,10 +5,10 @@ title: "Stage 2 Return"
 
 Disclaimer: addresses and hash values are from one run; your run will differ.
 
-This stage traces one thing: the user‑space filename string as it becomes a kernel pointer, gets
-copied, hashed, cached, deleted, and reused on return. No VMs, no heavy tracers, no filters—only
-dmesg plus kprobes/kretprobes. Every statement below is tied to a printed pointer, hash, or a
-kernel source line.
+This stage traces one thing and nothing else: the user‑space filename string as it turns into a
+kernel pointer, gets copied, hashed, cached, deleted, and reused on return. No VMs, no heavy
+tracers, no filters—only dmesg plus kprobes/kretprobes. If it is not tied to a printed pointer,
+hash, or a kernel source line, it is not stated.
 
 Prior Work
 
