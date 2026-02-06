@@ -3,25 +3,11 @@ layout: default
 title: "Stage 2 Return"
 ---
 
-Scope
-
-This chapter records the filename string through do_filp_open and the dentry cache using only
-printed probe lines. It records input pointers, copy source and destination, return pointers, cache
-hits, hash values, cache insert events via __d_add, and cache removal events via d_delete and
-__dentry_kill. It also includes a loopback filesystem case with a short name and uses drop_caches
-to force eviction. Every conclusion below is tied to the recorded lines.
-
 Prior Work
 
 Stage 1: https://raikrahul.github.io/what-happens-when-open-is-called/stage1.html
 Stage 2 Entry: https://raikrahul.github.io/what-happens-when-open-is-called/stage2.html
 Worksheet: https://raikrahul.github.io/what-happens-when-open-is-called/articles/worksheet_stage2_return.html
-
-Purpose and setup
-
-Goal: identify where the filename string ends up at return time using recorded probe data. The
-measurement includes allocation and cache paths and the hash values used for lookup. The tests
-produce both paths in one run, and the loopback filesystem adds a distinct path and a short name.
 
 Programs
 
@@ -88,8 +74,6 @@ Probe map
 | __d_add entry | dentry name pointer | proves cache insert | driver __d_add probe |
 | d_delete entry | dentry name pointer | proves unlink removal | driver d_delete probe |
 | __dentry_kill entry | dentry name pointer | proves eviction via drop_caches | driver __dentry_kill probe |
-
-Memcpy proof (kernel source)
 
 File: /usr/src/linux-source-6.8.0/fs/dcache.c:1660 memcpy(dname, name->name, name->len);
 
@@ -163,11 +147,6 @@ open("l_e.txt") after drop_caches
 
 
 Run A: matrix_open (root, drop_caches enabled)
-
-Run A narrative
-
-Every pointer, address, and line from the trace is preserved. Each section is followed by direct
-evidence and a derivation that uses only the data printed above.
 
 t_e.txt miss, memcpy, insert.
 
@@ -494,8 +473,6 @@ Derivation: 0xffff8bd69ca2a978 = __d_alloc return pointer 0xffff8bd69ca2a978 = _
 0xffff8bd69ca2a978 = do_filp_open return pointer 0xffff8bd69ca2a978 = d_lookup return pointer (cache
 hit)
 
-Proof map
-
 Memcpy of name into dentry storage: t_e.txt, a.txt, long filename.
 
 Cache build-up (insert): t_e.txt, t_m.txt, l_m.txt, a.txt, post-eviction t_e.txt, long filename.
@@ -509,20 +486,6 @@ Cache deletion: l_e.txt, t_e.txt.
 Cache eviction: l_e.txt, t_e.txt, t_m.txt, l_m.txt, a.txt.
 
 Cache rebuild: t_e.txt.
-
-Discussion
-
-Each statement above is tied to a probe line and a pointer equality or inequality. The RCU lookup
-path is recorded via __d_lookup_rcu for l_e.txt after eviction. Rebuild with explicit __d_add is
-recorded for t_e.txt; l_e.txt is shown with post-eviction lookup and a new return pointer. Hash
-values are shown at d_lookup entry (and at __d_lookup/__d_lookup_rcu) and define the lookup key
-used in each case.
-
-Conclusion
-
-The data lines below are used to derive the copy/insert/lookup/delete/evict/rebuild relationships
-stated in the claims. For l_e.txt after eviction, the lookup is observed on the RCU path and returns
-a new pointer, but an explicit insert line is not observed in this run.
 
 Full Proofs (No Data Removed)
 
