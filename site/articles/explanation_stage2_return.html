@@ -399,23 +399,25 @@ Derivation.
 
 The entry pointer is 0xffff8bd553aca020 and the string is the full long filename, so the kernel copy is fixed to that address. The lookup key is the long filename with length 64 and hash 3341646101, so the key and length are explicit. The lookup returns NULL, so the cache has no entry for that key on first use. The allocation source pointer is 0xffff8bd553aca020, which equals the string pointer, so the copy source is the start of the long name. The allocation return pointer is 0xffff8bd69ca2a978, which is new storage. The insert line uses 0xffff8bd69ca2a978, and the return line matches it. The later d_lookup return line also returns 0xffff8bd69ca2a978, so the cache hit reuses the same pointer. The equality chain is 0xffff8bd69ca2a978 = __d_alloc return = __d_add entry = do_filp_open return = d_lookup return.
 
-Memcpy of name into dentry storage: t_e.txt, a.txt, long filename.
+Summary
 
-Cache build-up (insert): t_e.txt, t_m.txt, l_m.txt, a.txt, post-eviction t_e.txt, long filename.
+Memcpy: t_e.txt, a.txt, long filename.
+
+Cache build-up: t_e.txt, t_m.txt, l_m.txt, a.txt, post-eviction t_e.txt, long filename.
 
 Cache hit: l_e.txt, t_e.txt, long filename.
 
 Cache miss: t_e.txt, t_m.txt, l_m.txt, a.txt, long filename.
 
-Cache deletion: l_e.txt, t_e.txt.
+Cache delete: l_e.txt, t_e.txt.
 
 Cache eviction: l_e.txt, t_e.txt, t_m.txt, l_m.txt, a.txt.
 
 Cache rebuild: t_e.txt.
 
-Full Proofs (No Data Removed)
+Proofs
 
-Proof 1. memcpy of filename into dentry storage.
+Proof 1: memcpy of filename into dentry storage.
 
 Evidence (t_e.txt): __d_alloc entry pointer = 0xffff8bd54c33e025 __d_alloc return pointer =
 0xffff8bd54eaa09f8 __d_add entry: 0xffff8bd54eaa09f8 | t_e.txt do_filp_open return pointer =
@@ -439,7 +441,7 @@ test_file_very_long_name_to_force_external_allocation_1770412974 do_filp_open re
 Derivation: 0xffff8bd69ca2a978 = __d_alloc return pointer 0xffff8bd69ca2a978 = __d_add entry pointer
 0xffff8bd69ca2a978 = do_filp_open return pointer
 
-Proof 2. Cache build-up (insert) on miss.
+Proof 2: cache build-up on miss.
 
 Evidence: d_lookup return: NULL __d_add entry: 0xffff8bd54eaa09f8 | t_e.txt
 
@@ -452,12 +454,12 @@ d_lookup return: NULL __d_add entry: 0xffff8bd54eaa04b8 | a.txt
 d_lookup return: NULL __d_add entry: 0xffff8bd69ca2a978 |
 test_file_very_long_name_to_force_external_allocation_1770412974
 
-Proof 3. Cache miss.
+Proof 3: cache miss.
 
 Evidence: d_lookup return: NULL (t_e.txt) d_lookup return: NULL (t_m.txt) d_lookup return: NULL
 (l_m.txt) d_lookup return: NULL (a.txt) d_lookup return: NULL (long filename)
 
-Proof 4. Cache hit.
+Proof 4: cache hit.
 
 Evidence: d_lookup entry: hash 440978933 length 7 name l_e.txt d_lookup return: 0xffff8bd5628ba9f8 |
 l_e.txt
@@ -469,24 +471,24 @@ d_lookup entry: hash 3341646101 length 64 name
 test_file_very_long_name_to_force_external_allocation_1770412974 d_lookup return pointer =
 0xffff8bd69ca2a978
 
-Proof 5. Cache delete.
+Proof 5: cache delete.
 
 Evidence: d_delete entry: 0xffff8bd5628ba9f8 | l_e.txt d_delete entry: 0xffff8bd54eaa09f8 | t_e.txt
 
-Proof 5b. Cache eviction (drop_caches).
+Proof 5b: cache eviction (drop_caches).
 
 Evidence: do_filp_open entry pointer = 0xffff8bd54c33e020 | /proc/sys/vm/drop_caches do_filp_open
 return pointer = 0xffff8bd6fce05db8 | drop_caches __dentry_kill entry: 0xffff8bd5628ba9f8 | l_e.txt
 __dentry_kill entry: 0xffff8bd54eaa09f8 | t_e.txt __dentry_kill entry: 0xffff8bd54eaa0e78 | t_m.txt
 __dentry_kill entry: 0xffff8bd54eaa0278 | l_m.txt __dentry_kill entry: 0xffff8bd54eaa04b8 | a.txt
 
-Proof 5c. Cache rebuild after eviction (t_e.txt).
+Proof 5c: cache rebuild after eviction (t_e.txt).
 
 Evidence: d_lookup entry: hash 1830572521 length 7 name t_e.txt d_lookup return: NULL __d_alloc
 entry pointer = 0xffff8bd54c33e025 __d_alloc return pointer = 0xffff8bd54eaa0338 __d_add entry:
 0xffff8bd54eaa0338 | t_e.txt do_filp_open return pointer = 0xffff8bd54eaa0338 | t_e.txt
 
-Proof 6. Long filename behavior.
+Proof 6: long filename behavior.
 
 Evidence: d_lookup entry: hash 3341646101 length 64 name
 test_file_very_long_name_to_force_external_allocation_1770412974 d_lookup return: NULL __d_alloc
@@ -495,7 +497,7 @@ entry pointer = 0xffff8bd553aca020 __d_alloc return pointer = 0xffff8bd69ca2a978
 return pointer = 0xffff8bd69ca2a978 |
 test_file_very_long_name_to_force_external_allocation_1770412974
 
-Proof 7. Short filename behavior.
+Proof 7: short filename behavior.
 
 Evidence: d_lookup entry: hash 3711754354 length 5 name a.txt d_lookup return: NULL __d_alloc entry
 pointer = 0xffff8bd54c33e02c __d_alloc return pointer = 0xffff8bd54eaa04b8 __d_add entry:
