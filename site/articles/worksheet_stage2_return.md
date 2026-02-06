@@ -367,37 +367,6 @@ Record plan
 
 ================================================================================
 
-`/usr/src/linux-source-6.8.0/fs/open.c` and `/usr/src/linux-source-6.8.0/fs/dcache.c`.
-`nl -ba /usr/src/linux-source-6.8.0/fs/open.c | sed -n '1388,1436p'` and `rg -n "d_lookup\\(|__d_alloc\\(|__d_add\\(|d_delete\\(|__dentry_kill" /usr/src/linux-source-6.8.0/fs/dcache.c`.
-
-Axioms
-- open/openat → do_filp_open.
-- d_lookup uses (name, len, hash). NULL return = miss.
-- __d_alloc allocates and copies name. __d_add inserts into dcache.
-- do_filp_open return pointer = f->f_path.dentry->d_name.name (probe reads it).
-- d_delete = unlink removal. __dentry_kill = drop_caches eviction.
-- /tmp/ length 5. /mnt/loopfs/ length 12.
-
-Verification (run these; paste output beside each line)
-`nl -ba /usr/src/linux-source-6.8.0/fs/open.c | sed -n '1388,1436p'`
-`nl -ba /usr/src/linux-source-6.8.0/fs/dcache.c | sed -n '2245,2265p'`
-`rg -n "memcpy\\(dname, name->name, name->len\\)" /usr/src/linux-source-6.8.0/fs/dcache.c`
-`rg -n "__d_add\\(|d_delete\\(|__dentry_kill" /usr/src/linux-source-6.8.0/fs/dcache.c`
-`nl -ba kernel/drivers/trace_do_filp_open/trace_do_filp_open.c | sed -n '82,90p'`
-`python3 - <<'PY'\nprint(len('/tmp/'))\nprint(len('/mnt/loopfs/'))\nPY`
-
-Record plan
-- /tmp/t_e.txt: miss + alloc + add + return; offset +5.
-- /tmp/t_m.txt: miss + alloc + add.
-- l_m.txt: alloc entry equals full string pointer.
-- /mnt/loopfs/a.txt: miss + alloc + add + return; offset +12.
-- l_e.txt and /tmp/t_e.txt: hits vs earlier return pointers.
-- unlink l_e.txt and /tmp/t_e.txt: d_delete.
-- drop_caches: __dentry_kill.
-- reopen /tmp/t_e.txt: rebuild pointer vs pre-eviction.
-- reopen l_e.txt: post-eviction pointer vs pre-eviction.
-- memcpy line: find `memcpy(dname, name->name, name->len)` in fs/dcache.c.
-
 CHAIN AND TRACE SUMMARY (END)
 ================================================================================
 
