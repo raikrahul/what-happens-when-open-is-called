@@ -1,21 +1,15 @@
 # Publishing
 
-This repo keeps site source in `site/` and publishes the built output to the `gh-pages` branch.
+This repo keeps site source in `site/`. A GitHub Action publishes it to `gh-pages` on every push to `main`.
 
 ## One-time setup
 
-1. Ensure `gh-pages` exists on the remote.
-2. Set `main` as the default branch.
+1. Set `main` as the default branch.
+2. In GitHub Pages settings, set Source = `gh-pages`.
 
 ## Publish
 
-```bash
-./tools/publish_site.sh
-# then:
-# git -C .worktrees/gh-pages add -A
-# git -C .worktrees/gh-pages commit -m "Update site"
-# git -C .worktrees/gh-pages push
-```
+Push to `main`. The workflow in `.github/workflows/publish_site.yml` will deploy `site/` to `gh-pages`.
 
 ## Notes
 
