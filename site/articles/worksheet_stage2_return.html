@@ -267,6 +267,67 @@ sudo dmesg | rg -n "l_e.txt|t_e.txt|t_m.txt|l_m.txt|a.txt|drop_caches|d_lookup e
 ```
 
 ================================================================================
+
+================================================================================
+AXIOMATIC EXPLANATION (READ BEFORE FILLING THE RECORDS)
+================================================================================
+
+Axioms (base facts used for every step):
+- A1. open(path) causes the kernel to run do_filp_open with a kernel-resident filename string.
+- A2. d_lookup searches the dcache using the lookup key (name, length, hash).
+- A3. If d_lookup returns NULL, the lookup missed the cache.
+- A4. On a miss, __d_alloc allocates a dentry and copies the name into dentry-&gt;d_name.name.
+- A5. __d_add inserts the dentry into the dcache.
+- A6. do_filp_open returns a struct file that points to f-&gt;f_path.dentry-&gt;d_name.name.
+- A7. d_delete removes a dentry on unlink.
+- A8. __dentry_kill reclaims a dentry on drop_caches.
+- A9. Pointer equality means same address. Pointer inequality means different address.
+- A10. /tmp/ length is 5. /mnt/loopfs/ length is 12.
+
+Why each worksheet section exists and what you should see:
+
+FILE A (t_e.txt, first open after drop_caches)
+- You open /tmp/t_e.txt immediately after drop_caches to force a cache miss.
+- Expected: do_filp_open entry for /tmp/t_e.txt, d_lookup miss, __d_alloc entry/return, __d_add, do_filp_open return.
+- Offset check proves basename pointer = entry pointer + 5 (A10).
+
+FILE B (t_m.txt, missing)
+- You open /tmp/t_m.txt to force a miss on a name that does not exist.
+- Expected: d_lookup return NULL, __d_alloc return, __d_add for t_m.txt (negative dentry).
+
+FILE C (l_m.txt, missing)
+- You open l_m.txt without a prefix to show no basename shift.
+- Expected: __d_alloc entry pointer equals the full string pointer (no /tmp/ offset).
+
+FILE D (a.txt, loopback ext2)
+- You open /mnt/loopfs/a.txt to prove the same mechanism on a different filesystem and short name.
+- Expected: d_lookup miss, __d_alloc entry pointer = entry pointer + 12 (A10), __d_add, do_filp_open return.
+
+CACHE HIT (before deletion)
+- You open l_e.txt and t_e.txt again after they were inserted.
+- Expected: d_lookup returns pointers equal to earlier do_filp_open return pointers (A9).
+
+DELETION (unlink)
+- You call unlink for l_e.txt and /tmp/t_e.txt.
+- Expected: d_delete entry lines for those names (A7).
+
+EVICTION (drop_caches)
+- You write to /proc/sys/vm/drop_caches.
+- Expected: __dentry_kill lines for those names (A8).
+
+REBUILD (after eviction, t_e.txt)
+- You open /tmp/t_e.txt after eviction.
+- Expected: d_lookup return NULL, new __d_alloc return pointer, __d_add, do_filp_open return.
+- Inequality check: rebuilt pointer != pre-eviction pointer (A9).
+
+POST-EVICTION LOOKUP (l_e.txt)
+- You open l_e.txt after eviction.
+- Expected: __d_lookup_rcu entry for l_e.txt and a new do_filp_open return pointer (A9).
+
+FIND THE COPY (kernel source)
+- You locate memcpy(dname, name-&gt;name, name-&gt;len) in fs/dcache.c.
+- This is the exact copy step that makes __d_alloc return pointer equal to the dentry name pointer (A4).
+
 WHAT TO RECORD (FILL THIS IN)
 ================================================================================
 
