@@ -151,6 +151,22 @@ File: /usr/src/linux-source-6.8.0/fs/dcache.c:1660 memcpy(dname, name-&gt;name, 
 
 Run A: matrix_open (root, drop_caches enabled)
 
+l_m.txt miss, insert.</pre>
+<pre><code class="language-c">char n4[] = "l_m.txt";
+
+f[4] = open(n4, O_RDONLY);</code></pre>
+<pre style="white-space: pre-wrap; word-wrap: break-word; margin: 0; font-family: monospace;">
+
+Probe output (trace_do_filp_open.c):
+open_entry: do_filp_open entry pointer = 0xffff8bd54c33e020 | l_m.txt
+d_lookup entry from lookup_entry: hash 2166850383 length 7 name l_m.txt
+d_lookup return from lookup_ret: NULL
+alloc_entry: __d_alloc entry pointer = 0xffff8bd54c33e020
+alloc_ret: __d_alloc return pointer = 0xffff8bd54eaa0278
+__d_add entry from d_add_entry: 0xffff8bd54eaa0278 | l_m.txt
+
+The entry pointer 0xffff8bd54c33e020 is f-&gt;name from do_filp_open entry (trace_do_filp_open.c: open_entry). Its type is const char * inside struct filename (include/linux/fs.h). The printed string is l_m.txt, so the kernel pathname buffer begins at that address and the filename part begins at the same address because there is no prefix. The lookup key is l_m.txt with length 7 and hash 2166850383, and d_lookup reads qstr-&gt;len and qstr-&gt;name (include/linux/dcache.h, fs/dcache.c), so the lookup uses 7 bytes. The lookup returns NULL, so there is no cached entry for that key. The allocation source pointer is 0xffff8bd54c33e020, which equals the pathname buffer start, so qstr-&gt;name points to the filename part in that buffer. The allocation return pointer is 0xffff8bd54eaa0278, which is dentry-&gt;d_name.name (struct dentry in include/linux/dcache.h) returned by __d_alloc. The insert line uses 0xffff8bd54eaa0278, so that same dentry name pointer is inserted into the dcache hash for l_m.txt.
+
 t_e.txt miss, memcpy, insert.</pre>
 <pre><code class="language-c">char n2[] = "/tmp/t_e.txt";
 close(creat(n2, 0644));
@@ -209,22 +225,6 @@ Derivation.
 "/tmp/" length = 5
 
 The entry pointer is 0xffff8bd54c33e020 and the string is /tmp/t_m.txt, so the kernel copy for this call is fixed to that address. The lookup key is t_m.txt with length 7 and hash 2543581516, so the lookup uses 7 bytes and not 12. The lookup returns NULL, so the cache has no entry for that key at this time. The allocation source pointer is 0xffff8bd54c33e025, which is 0xffff8bd54c33e020 + 5; that 5 matches the length of "/tmp/", so the copy source begins at the filename part after the "/tmp/" prefix in the same string. The allocation return pointer is 0xffff8bd54eaa0e78, which is distinct from 0xffff8bd54c33e020. The insert line uses 0xffff8bd54eaa0e78, so the same new address is placed into the dcache.
-
-l_m.txt miss, insert.</pre>
-<pre><code class="language-c">char n4[] = "l_m.txt";
-
-f[4] = open(n4, O_RDONLY);</code></pre>
-<pre style="white-space: pre-wrap; word-wrap: break-word; margin: 0; font-family: monospace;">
-
-Probe output (trace_do_filp_open.c):
-open_entry: do_filp_open entry pointer = 0xffff8bd54c33e020 | l_m.txt
-d_lookup entry from lookup_entry: hash 2166850383 length 7 name l_m.txt
-d_lookup return from lookup_ret: NULL
-alloc_entry: __d_alloc entry pointer = 0xffff8bd54c33e020
-alloc_ret: __d_alloc return pointer = 0xffff8bd54eaa0278
-__d_add entry from d_add_entry: 0xffff8bd54eaa0278 | l_m.txt
-
-The entry pointer 0xffff8bd54c33e020 is f-&gt;name from do_filp_open entry (trace_do_filp_open.c: open_entry). Its type is const char * inside struct filename (include/linux/fs.h). The printed string is l_m.txt, so the kernel pathname buffer begins at that address and the filename part begins at the same address because there is no prefix. The lookup key is l_m.txt with length 7 and hash 2166850383, and d_lookup reads qstr-&gt;len and qstr-&gt;name (include/linux/dcache.h, fs/dcache.c), so the lookup uses 7 bytes. The lookup returns NULL, so there is no cached entry for that key. The allocation source pointer is 0xffff8bd54c33e020, which equals the pathname buffer start, so qstr-&gt;name points to the filename part in that buffer. The allocation return pointer is 0xffff8bd54eaa0278, which is dentry-&gt;d_name.name (struct dentry in include/linux/dcache.h) returned by __d_alloc. The insert line uses 0xffff8bd54eaa0278, so that same dentry name pointer is inserted into the dcache hash for l_m.txt.
 
 a.txt miss, memcpy, insert (loopback ext2).</pre>
 <pre><code class="language-c">char n5[] = "/mnt/loopfs/a.txt";
