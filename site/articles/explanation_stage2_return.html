@@ -139,31 +139,9 @@ open("/tmp/t_e.txt", O_RDONLY);</code></pre>
 <pre style="white-space: pre-wrap; word-wrap: break-word; margin: 0; font-family: monospace;"> 
 
 Per-line purpose
-
-close(creat("l_e.txt", 0644)); creates a local file so the first open can hit a real inode in the
-current directory. close(creat("/tmp/t_e.txt", 0644)); creates a file under /tmp so the path has a
-prefix and produces a basename shift in the copy source pointer. creat(...) is implemented via
-open(...), so these lines also generate do_filp_open traces before drop_caches.
-drop_caches_if_root(); evicts dentry cache entries so the next opens show cache misses and inserts.
-sleep(1); allows eviction to complete before the first opens. open("l_e.txt", O_RDONLY); first open
-of an existing local file, intended to show allocation or cache miss behavior. open("/tmp/t_e.txt",
-O_RDONLY); first open of an existing /tmp file, intended to show basename copy and allocation.
-open("/tmp/t_m.txt", O_RDONLY); open of a missing /tmp file, intended to show an error path with no
-returned file pointer. open("l_e.txt", O_RDONLY); second open of the same local file, intended to
-show a cache hit and pointer reuse. open("l_m.txt", O_RDONLY); open of a missing local file,
-intended to show a second error path. open("/mnt/loopfs/a.txt", O_RDONLY); open of a file on a
-loopback ext2 filesystem, intended to show the same flow on a different filesystem and a short name.
-open("l_e.txt", O_RDONLY); third open of the local file, intended to show repeated cache hit
-stability. sleep(2); allows cache hit probes to run before deletion. close_all(); releases file
-descriptors so dentries can be deleted or evicted. unlink("l_e.txt"); deletes the local file name,
-intended to show d_delete for that dentry. unlink("/tmp/t_e.txt"); deletes the /tmp file name,
-intended to show d_delete for that dentry. close(creat("l_e.txt", 0644)); recreates the local file
-name for rebuild tests. close(creat("/tmp/t_e.txt", 0644)); recreates the /tmp file name for rebuild
-tests. open("l_e.txt", O_RDONLY); reopen after deletion to observe reuse or rebuild.
-open("/tmp/t_e.txt", O_RDONLY); reopen after deletion to observe reuse or rebuild.
-drop_caches_if_root(); triggers eviction so that rebuild behavior can be observed. sleep(1); allows
-eviction to complete. open("l_e.txt", O_RDONLY); reopen after eviction to observe rebuild.
-open("/tmp/t_e.txt", O_RDONLY); reopen after eviction to observe rebuild.
+See inline `//` comments in `kernel/user/stage2/matrix_open.c` for the per-line purpose. Each open,
+unlink, and drop_caches call is annotated directly next to the code line so this block is not
+needed here.
 
 Loopback filesystem test:
 
