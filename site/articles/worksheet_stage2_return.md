@@ -19,13 +19,14 @@ PROGRAM 1: minimal_open.c
 int main() {
     char filename[128];
     time_t now = time(NULL);
-    
+
     // Forces external allocation (name > inline dentry buffer)
     snprintf(filename, sizeof(filename),
              "test_file_very_long_name_to_force_external_allocation_%ld", now);
-    
+
     int fd = open(filename, O_RDWR | O_CREAT, 0644);
-    printf("fd=%d\n", fd);
+    printf("fd=%d
+", fd);
     sleep(5);  // Delay lets us observe a later cache hit.
     close(fd);
     unlink(filename);
@@ -33,7 +34,7 @@ int main() {
 }
 ```
 
-Key insight: A long name forces external allocation in the dentry name path.
+Key insight: a long name forces external allocation in the dentry name path.
 
 PROGRAM 2: matrix_open.c
 ```c
@@ -42,110 +43,121 @@ PROGRAM 2: matrix_open.c
 #include <sys/stat.h>
 #include <unistd.h>
 
+static void close_if_open(int *fd) {
+    if (*fd >= 0) {
+        close(*fd);
+        *fd = -1;
+    }
+}
+
+static void drop_caches_if_root(void) {
+    int fd;
+    if (geteuid() != 0)
+        return;
+    sync();
+    fd = open("/proc/sys/vm/drop_caches", O_WRONLY);
+    if (fd >= 0) {
+        ssize_t w = write(fd, "2
+", 2);
+        (void)w;
+        close(fd);
+    }
+}
+
 int main() {
-    // Setup: create test files
-    close(creat("l_e.txt", 0644));        // exists locally
-    close(creat("/tmp/t_e.txt", 0644));   // exists in /tmp
-    
-    // Test scenarios:
-    open("l_e.txt", O_RDONLY);           // 1: cached file
-    open("/tmp/t_e.txt", O_RDONLY);      // 2: new file (first open)
-    open("/tmp/t_m.txt", O_RDONLY);      // 3: missing file (ENOENT)
-    open("l_e.txt", O_RDONLY);           // 4: second open (cache hit)
-    open("l_m.txt", O_RDONLY);           // 5: missing file
-    open("l_e.txt", O_RDONLY);           // 6: third open (cache hit)
-    
+    int f[6];
+    char n1[] = "l_e.txt";
+    char n2[] = "/tmp/t_e.txt";
+    char n3[] = "/tmp/t_m.txt";
+    char n4[] = "l_m.txt";
+    char n5[] = "/mnt/loopfs/a.txt";
+
+    for (int i = 0; i < 6; i++)
+        f[i] = -1;
+
+    close(creat(n1, 0644));
+    close(creat(n2, 0644));
+    drop_caches_if_root();
+    sleep(1);
+
+    f[0] = open(n1, O_RDONLY);
+    f[1] = open(n2, O_RDONLY);
+    f[2] = open(n3, O_RDONLY);
+    f[3] = open(n1, O_RDONLY);
+    f[4] = open(n4, O_RDONLY);
+    f[5] = open(n5, O_RDONLY);
+
+    close_if_open(&f[0]);
+    f[0] = open(n1, O_RDONLY);
+
     sleep(2);
-    unlink("l_e.txt");
-    unlink("/tmp/t_e.txt");
+    close_if_open(&f[0]);
+    close_if_open(&f[1]);
+    close_if_open(&f[2]);
+    close_if_open(&f[3]);
+    close_if_open(&f[4]);
+    close_if_open(&f[5]);
+
+    unlink(n1);
+    unlink(n2);
+    close(creat(n1, 0644));
+    close(creat(n2, 0644));
+    f[0] = open(n1, O_RDONLY);
+    f[1] = open(n2, O_RDONLY);
+
+    close_if_open(&f[0]);
+    close_if_open(&f[1]);
+
+    drop_caches_if_root();
+    sleep(1);
+    f[0] = open(n1, O_RDONLY);
+    f[1] = open(n2, O_RDONLY);
+    close_if_open(&f[0]);
+    close_if_open(&f[1]);
+
     return 0;
 }
 ```
 
-Tests: cache hit, allocation path, ENOENT, basename vs full path.
+Tests: cache miss, allocation path, negative dentries, cache hit, deletion, eviction, rebuild, basename offset, loopback short name.
 
 ================================================================================
 WHAT WE'RE TRACING (POINTERS, NOT FEELINGS)
 ================================================================================
 
-Goal: find where the name is copied and when it is reused.
+Goal: find where the name is copied, where it is reused, where it is deleted, and where it is evicted.
 
-Minimal facts (self contained):
+Minimal facts:
 - getname copies the user string into kernel memory
 - do_filp_open uses struct filename and its name pointer
 - __d_alloc copies qstr->name into dentry->d_name.name
 - d_lookup returns an existing dentry on cache hit
-- do_filp_open returns a struct file that points at the dentry name
+- __d_add inserts a new dentry into the dcache
+- d_delete removes a dentry on unlink
+- __dentry_kill reclaims a dentry on drop_caches
 
-5 trace points capture name pointers:
-
-[O] IN  - do_filp_open entry  : struct filename * -> capture name
-[A] SRC - __d_alloc entry     : struct qstr *     -> capture name
-[A] DST - __d_alloc return    : struct dentry *   -> capture d_name.name
-[O] OUT - do_filp_open return : struct file *     -> capture f_path.dentry->d_name.name
-[L] HIT - d_lookup return     : struct dentry *   -> capture d_name.name
+Trace points (no bracket labels):
+- do_filp_open entry: input filename pointer and string
+- d_lookup entry: hash, length, name
+- d_lookup return: NULL or dentry name pointer
+- __d_alloc entry: copy source pointer
+- __d_alloc return: copy destination pointer
+- __d_add entry: inserted dentry name pointer
+- d_delete entry: deleted dentry name pointer
+- __dentry_kill entry: evicted dentry name pointer
+- __d_lookup and __d_lookup_rcu: internal lookup path keys
 
 Two chains:
-[O] IN -> [A] SRC -> [A] DST -> [O] OUT  (allocation path)
-[O] IN -> [L] HIT -> [O] OUT            (cache path)
-
-Why two paths: d_lookup checks cache before __d_alloc creates a new dentry.
-d_lookup returns NULL  -> allocation happens
-d_lookup returns dentry -> cache hit, skip allocation
+- Allocation path: do_filp_open entry -> d_lookup miss -> __d_alloc -> __d_add -> do_filp_open return
+- Cache path: do_filp_open entry -> d_lookup hit -> do_filp_open return
 
 ================================================================================
 DRIVER NOTE (DO THIS OR YOU WILL SEE NOTHING)
 ================================================================================
 
 The driver filters by process name:
-- Default target is `matrix_open`.
-- For `minimal_open`, you must load with: `target_comm=minimal_open`
-
-If you forget this, your logs will be empty for that program and you will
-diagnose a phantom bug.
-
-================================================================================
-CODE TO WRITE
-================================================================================
-
-File: kernel/drivers/trace_do_filp_open/trace_do_filp_open.c
-
-Probe 1: Capture where filename was copied TO
-```c
-static int alloc_ret(struct kretprobe_instance *ri, struct pt_regs *regs) {
-    struct dentry *d = (struct dentry *)regs->ax;  // RAX = return value
-    if (d && !IS_ERR(d)) {  // Kernel uses negative pointers as error codes
-        pr_info("[A] DST: 0x%px\n", d->d_name.name);
-    }
-    return 0;
-}
-```
-
-Probe 2: Capture filename in returned struct file
-```c
-static int open_ret(struct kretprobe_instance *ri, struct pt_regs *regs) {
-    struct file *f = (struct file *)regs->ax;
-    if (f && !IS_ERR(f) && f->f_path.dentry) {
-        pr_info("[O] OUT: 0x%px | %s\n", 
-                f->f_path.dentry->d_name.name,
-                (char *)f->f_path.dentry->d_name.name);
-    }
-    return 0;
-}
-```
-
-Probe 3: Capture cache hits
-```c
-static int lookup_ret(struct kretprobe_instance *ri, struct pt_regs *regs) {
-    struct dentry *d = (struct dentry *)regs->ax;
-    if (d && !IS_ERR(d)) {
-        pr_info("[L] HIT: 0x%px | %s\n",
-                d->d_name.name,
-                (char *)d->d_name.name);
-    }
-    return 0;
-}
-```
+- Default target is matrix_open.
+- For minimal_open, you must load with: target_comm=minimal_open
 
 ================================================================================
 BUILD AND RUN
@@ -159,161 +171,147 @@ sudo insmod trace_do_filp_open.ko target_comm=minimal_open
 sudo rmmod trace_do_filp_open
 sudo insmod trace_do_filp_open.ko target_comm=matrix_open
 
-Test 1 - Long filename (forces external allocation):
-cd kernel/user/stage2
+Log filter (use this for all runs):
+sudo dmesg | rg -n "l_e.txt|t_e.txt|t_m.txt|l_m.txt|a.txt|drop_caches|d_lookup entry|d_lookup return|__d_add entry|d_delete entry|__dentry_kill entry|__d_lookup entry|__d_lookup_rcu entry|__d_alloc"
+
+================================================================================
+TEST 1: LONG FILENAME (minimal_open)
+================================================================================
+
 sudo dmesg -C
 ./minimal_open
 sleep 5
-sudo dmesg | grep -E "\[O\] IN|\[A\] SRC|\[A\] DST|\[O\] OUT|\[L\] HIT"
+sudo dmesg | rg -n "test_file_very_long_name_to_force_external_allocation"
 
-Input -> Computation -> Output:
-User long name -> __d_alloc copies name -> [A] DST == [O] OUT, later [L] HIT
+Record:
+- do_filp_open entry pointer = 0x________ | test_file_very_long_name_to_force_external_allocation_XXXX
+- d_lookup entry: hash ________ length 64 name test_file_very_long_name_to_force_external_allocation_XXXX
+- d_lookup return: NULL
+- __d_alloc entry pointer = 0x________
+- __d_alloc return pointer = 0x________
+- __d_add entry pointer = 0x________ | test_file_very_long_name_to_force_external_allocation_XXXX
+- do_filp_open return pointer = 0x________ | test_file_very_long_name_to_force_external_allocation_XXXX
+- cache hit later: d_lookup return pointer = 0x________ | test_file_very_long_name_to_force_external_allocation_XXXX
 
-Record (ignore libc/ld.so loader noise):
-[O] IN  = 0x_____________________
-[A] SRC = 0x_____________________
-[A] DST = 0x_____________________
-[O] OUT = 0x_____________________
-[L] HIT = 0x_____________________ (appears after 5 sec delay)
+Checks:
+- __d_alloc return == __d_add entry == do_filp_open return
+- cache hit pointer equals earlier return pointer
 
-Check (allocation path):
-[O] IN == [A] SRC ? [ ] YES [ ] NO  (Copy source is original filename)
-[A] DST == [O] OUT ? [ ] YES [ ] NO  (Returned file points to copy)
-[L] HIT == [O] OUT ? [ ] YES [ ] NO  (Cache hit gives same address)
+================================================================================
+TEST 2: MATRIX (matrix_open)
+================================================================================
 
-Test 2 - Matrix of scenarios:
 sudo dmesg -C
-./matrix_open
+sudo ./matrix_open
 sleep 3
-sudo dmesg | grep -E "\[O\] IN|\[A\] SRC|\[A\] DST|\[O\] OUT|\[L\] HIT"
+sudo dmesg | rg -n "l_e.txt|t_e.txt|t_m.txt|l_m.txt|a.txt|drop_caches|d_lookup entry|d_lookup return|__d_add entry|d_delete entry|__dentry_kill entry|__d_alloc"
 
-Input -> Computation -> Output:
-Existing file -> d_lookup hit -> [L] HIT == [O] OUT
-New file -> __d_alloc -> [A] DST == [O] OUT
-Missing file -> no struct file -> no [O] OUT
+FILE A (t_e.txt, first open after drop_caches):
+- do_filp_open entry pointer = 0x________ | /tmp/t_e.txt
+- d_lookup entry hash ________ len 7 name t_e.txt
+- d_lookup return: NULL
+- __d_alloc entry pointer = 0x________
+- __d_alloc return pointer = 0x________
+- __d_add entry pointer = 0x________ | t_e.txt
+- do_filp_open return pointer = 0x________ | t_e.txt
+- offset check: (entry pointer + 5) == __d_alloc entry pointer
 
-FILE 1 (l_e.txt, exists - cache hit):
-[O] IN  = 0x_____
-[L] HIT = 0x_____
-[O] OUT = 0x_____
-[A] SRC captured? [ ] YES [ ] NO  - NO means cache hit (no allocation)
+FILE B (t_m.txt, missing):
+- do_filp_open entry pointer = 0x________ | /tmp/t_m.txt
+- d_lookup return: NULL
+- __d_alloc return pointer = 0x________
+- __d_add entry pointer = 0x________ | t_m.txt
 
-FILE 2 (/tmp/t_e.txt, new - allocation):
-[O] IN  = 0x_____
-[A] SRC = 0x_____
-[A] DST = 0x_____
-[O] OUT = 0x_____
-[L] HIT captured? [ ] YES [ ] NO  - NO means not in cache
-[O] IN - [A] SRC = _____ bytes  - Why 5? strlen("/tmp/")
+FILE C (l_m.txt, missing):
+- do_filp_open entry pointer = 0x________ | l_m.txt
+- d_lookup return: NULL
+- __d_alloc return pointer = 0x________
+- __d_add entry pointer = 0x________ | l_m.txt
 
-FILE 3 (/tmp/t_m.txt, missing - ENOENT):
-[O] IN captured? [ ] YES [ ] NO
-[O] OUT captured? [ ] YES [ ] NO  - NO means error, no struct file returned
+FILE D (a.txt, loopback ext2):
+- do_filp_open entry pointer = 0x________ | /mnt/loopfs/a.txt
+- d_lookup return: NULL
+- __d_alloc entry pointer = 0x________
+- __d_alloc return pointer = 0x________
+- __d_add entry pointer = 0x________ | a.txt
+- do_filp_open return pointer = 0x________ | a.txt
+- offset check: (entry pointer + 12) == __d_alloc entry pointer
 
-FILE 4 (l_m.txt, missing - ENOENT):
-Same as FILE 3
+CACHE HIT (before deletion):
+- d_lookup return pointer = 0x________ | l_e.txt
+- d_lookup return pointer = 0x________ | t_e.txt
 
-FILE 5 (second opens - cache hits):
-[L] HIT = 0x_____ (l_e.txt)
-[L] HIT = 0x_____ (t_e.txt)
-Match previous [O] OUT? [ ] YES [ ] NO  - Cache preserves addresses
+DELETION (unlink):
+- d_delete entry = 0x________ | l_e.txt
+- d_delete entry = 0x________ | t_e.txt
+
+EVICTION (drop_caches):
+- do_filp_open entry/return for /proc/sys/vm/drop_caches
+- __dentry_kill entry = 0x________ | l_e.txt
+- __dentry_kill entry = 0x________ | t_e.txt
+
+REBUILD (after eviction, t_e.txt):
+- d_lookup return: NULL
+- __d_alloc return pointer = 0x________
+- __d_add entry pointer = 0x________ | t_e.txt
+- do_filp_open return pointer = 0x________ | t_e.txt
+- inequality check: rebuild pointer != pre-eviction pointer
+
+POST-EVICTION LOOKUP (l_e.txt):
+- __d_lookup_rcu entry: hash ________ length 7 name l_e.txt
+- do_filp_open return pointer = 0x________ | l_e.txt
+- inequality check: post-eviction pointer != pre-eviction pointer
 
 ================================================================================
 FIND THE COPY
 ================================================================================
 
-Where does the actual copying happen?
 grep -n "memcpy.*name->name" /usr/src/linux-headers-$(uname -r)/fs/dcache.c
 Line: _____
 
 Code:
 memcpy(dname, name->name, name->len);
 
-1st arg: destination buffer (dname = [A] DST)
-2nd arg: source pointer (name->name = [A] SRC)
-3rd arg: length in bytes (name->len)
-
-Why copy? User buffer is temporary. Kernel needs permanent copy that survives
-as long as the file is open. The dentry owns this copy.
-
-================================================================================
-WHY THIS MATTERS
-================================================================================
-
-The dentry cache (dcache) is why opening a file the second time is fast:
-
-First open:
-  User: open("/etc/passwd")
-  Kernel: Walk path then d_lookup (miss) then __d_alloc then memcpy then cache entry
-  Time: ~milliseconds
-
-Second open:
-  User: open("/etc/passwd")  
-  Kernel: d_lookup (hit) then return cached dentry
-  Time: ~microseconds
-
-The filename lives in the dentry. The struct file just points to it.
-This sharing is why the kernel can handle thousands of open files efficiently.
-
 ================================================================================
 FAILURE MODES
 ================================================================================
 
-1. Garbage address (0x6c69665f74736574 = "lif_tset")
-   Reading string data as a pointer.
-   Use d->d_name.name, not a raw field.
+1. No output
+   Process name filter mismatch.
+   Check target_comm parameter.
 
-2. Crash on error path
-   Dereferencing an error pointer (negative value).
+2. No d_lookup lines
+   Probes not registered.
+   Ensure kp_lookup, kp_d_lookup, kp_d_lookup_rcu are registered.
+
+3. Crash on error path
+   Dereferencing error pointer.
    Check IS_ERR(f) before deref.
 
-3. Kernel panic
+4. Kernel panic
    NULL pointer dereference.
-   Check pointer before deref.
-
-4. Wrong addresses captured
-   Wrong function argument captured.
-   Use the second argument for filename or qstr.
+   Check pointers before deref.
 
 5. Module load fails
    Kernel version mismatch.
    make clean && make
 
-6. No output
-   Process name filter mismatch.
-   Check target_comm parameter.
-
-7. No [L] HIT
-   d_lookup probe not registered.
-   Ensure lookup_ret registered.
-
-8. Address mismatch
-   Multiple path components, wrong dentry.
-   Check which dentry returned.
-
-9. Compile error
-   Missing kernel headers.
+6. Missing kernel headers
    Install linux-headers-$(uname -r)
-
-10. Random crashes
-    Kprobe race condition.
-    Expected, kprobes are for debugging only.
 
 ================================================================================
 UNDERSTANDING CHECKLIST
 ================================================================================
 
-[ ] 3 probe functions written
 [ ] Driver compiles and loads
-[ ] minimal_open shows 5 addresses
-[ ] All 3 proofs pass
-[ ] matrix_open shows cache hit (no alloc for existing file)
-[ ] matrix_open shows allocation (full chain for new file)
-[ ] ENOENT returns no [O] OUT
-[ ] Offset calculation explains /tmp/ prefix skip
+[ ] minimal_open shows long filename miss + add + return
+[ ] long filename later shows cache hit
+[ ] matrix_open shows t_e.txt miss + add + return
+[ ] /tmp offset check is 5
+[ ] loopfs offset check is 12
+[ ] matrix_open shows cache hit before deletion
+[ ] matrix_open shows deletion via d_delete
+[ ] matrix_open shows eviction via __dentry_kill
+[ ] matrix_open shows rebuild for t_e.txt after eviction
+[ ] matrix_open shows post-eviction lookup for l_e.txt
 [ ] memcpy located in kernel source
-[ ] Understand why kernel copies (user buffer temporary)
-[ ] Understand cache benefit (second open faster)
-[ ] All 10 failures reviewed
-
-All checked. Filename survival shown.
