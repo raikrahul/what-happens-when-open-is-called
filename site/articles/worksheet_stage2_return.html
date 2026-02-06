@@ -316,6 +316,14 @@ Axioms
 - d_delete = unlink removal. __dentry_kill = drop_caches eviction.
 - /tmp/ length 5. /mnt/loopfs/ length 12.
 
+Verification (run these; paste output beside each line)
+`nl -ba /usr/src/linux-source-6.8.0/fs/open.c | sed -n '1388,1436p'`
+`nl -ba /usr/src/linux-source-6.8.0/fs/dcache.c | sed -n '2245,2265p'`
+`rg -n "memcpy\\(dname, name-&gt;name, name-&gt;len\\)" /usr/src/linux-source-6.8.0/fs/dcache.c`
+`rg -n "__d_add\\(|d_delete\\(|__dentry_kill" /usr/src/linux-source-6.8.0/fs/dcache.c`
+`nl -ba kernel/drivers/trace_do_filp_open/trace_do_filp_open.c | sed -n '82,90p'`
+`python3 - &lt;&lt;'PY'\nprint(len('/tmp/'))\nprint(len('/mnt/loopfs/'))\nPY`
+
 Record plan
 - /tmp/t_e.txt: miss + alloc + add + return; offset +5.
 - /tmp/t_m.txt: miss + alloc + add.
