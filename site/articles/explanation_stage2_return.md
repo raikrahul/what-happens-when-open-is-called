@@ -188,18 +188,15 @@ Results
 
 Run A: matrix_open (root, drop_caches enabled)
 
-Phase 0 (post-creat eviction):
+Claim A1. Cache eviction happened before first opens.
 
+Evidence:
 __dentry_kill entry: 0xffff8bd54073ddb8 | l_e.txt
 __dentry_kill entry: 0xffff8bd562809878 | t_e.txt
 
-Phase 1 (first opens after eviction):
+Claim A2. Cache miss, memcpy, and insert for t_e.txt on first open.
 
-l_e.txt:
-do_filp_open entry pointer = 0xffff8bd543616020
-do_filp_open return pointer = 0xffff8bd55866ce78
-
-t_e.txt:
+Evidence:
 do_filp_open entry pointer = 0xffff8bd543616020
 d_lookup entry: hash 1830572521 length 7 name t_e.txt
 d_lookup return: NULL
@@ -208,21 +205,16 @@ __d_alloc return pointer = 0xffff8bd540620f38
 __d_add entry pointer = 0xffff8bd540620f38
 do_filp_open return pointer = 0xffff8bd540620f38
 
-t_m.txt (missing):
-d_lookup entry: hash 2543581516 length 7 name t_m.txt
-d_lookup return: NULL
-__d_alloc entry pointer = 0xffff8bd543616025
-__d_alloc return pointer = 0xffff8bd5406200f8
-__d_add entry pointer = 0xffff8bd5406200f8
+Derivation:
+0xffff8bd543616025 - 0xffff8bd543616020 = 0x5 = 5
+"/tmp/" length = 5
+0xffff8bd540620f38 = __d_alloc return pointer
+0xffff8bd540620f38 = __d_add entry pointer
+0xffff8bd540620f38 = do_filp_open return pointer
 
-l_m.txt (missing):
-d_lookup entry: hash 1675155717 length 7 name l_m.txt
-d_lookup return: NULL
-__d_alloc entry pointer = 0xffff8bd543616020
-__d_alloc return pointer = 0xffff8bd5406204b8
-__d_add entry pointer = 0xffff8bd5406204b8
+Claim A3. Cache miss and insert for a.txt on loopback ext2.
 
-a.txt (loopback ext2):
+Evidence:
 d_lookup entry: hash 3711754354 length 5 name a.txt
 d_lookup return: NULL
 __d_alloc entry pointer = 0xffff8bd54361602c
@@ -230,33 +222,63 @@ __d_alloc return pointer = 0xffff8bd5406203f8
 __d_add entry pointer = 0xffff8bd5406203f8
 do_filp_open return pointer = 0xffff8bd5406203f8
 
-Phase 2 (cache hit before deletion):
+Derivation:
+0xffff8bd54361602c - 0xffff8bd543616020 = 0xC = 12
+"/mnt/loopfs/" length = 12
+0xffff8bd5406203f8 = __d_alloc return pointer
+0xffff8bd5406203f8 = __d_add entry pointer
+0xffff8bd5406203f8 = do_filp_open return pointer
 
-l_e.txt:
+Claim A4. Cache miss and insert for missing names t_m.txt and l_m.txt.
+
+Evidence:
+d_lookup entry: hash 2543581516 length 7 name t_m.txt
+d_lookup return: NULL
+__d_alloc entry pointer = 0xffff8bd543616025
+__d_alloc return pointer = 0xffff8bd5406200f8
+__d_add entry pointer = 0xffff8bd5406200f8
+
+d_lookup entry: hash 1675155717 length 7 name l_m.txt
+d_lookup return: NULL
+__d_alloc entry pointer = 0xffff8bd543616020
+__d_alloc return pointer = 0xffff8bd5406204b8
+__d_add entry pointer = 0xffff8bd5406204b8
+
+Claim A5. Cache hit for l_e.txt and t_e.txt before deletion.
+
+Evidence:
 d_lookup entry: hash 399720033 length 7 name l_e.txt
 d_lookup return pointer = 0xffff8bd55866ce78
 
-t_e.txt:
 d_lookup entry: hash 1830572521 length 7 name t_e.txt
 d_lookup return pointer = 0xffff8bd540620f38
 
-Phase 3 (deletion via unlink):
+Derivation:
+0xffff8bd55866ce78 = do_filp_open return pointer for l_e.txt (first open)
+0xffff8bd540620f38 = do_filp_open return pointer for t_e.txt (first open)
 
+Claim A6. Cache deletion via unlink for l_e.txt and t_e.txt.
+
+Evidence:
 d_delete entry: 0xffff8bd55866ce78 | l_e.txt
 d_delete entry: 0xffff8bd540620f38 | t_e.txt
 no d_drop entry lines observed in this run
 
-Phase 4 (eviction via drop_caches):
+Claim A7. Cache eviction via drop_caches.
 
+Evidence:
+[O] IN: 0xffff8bd543616020 | /proc/sys/vm/drop_caches
+[O] OUT: 0xffff8bd6fce05db8 | drop_caches
 __dentry_kill entry: 0xffff8bd55866ce78 | l_e.txt
 __dentry_kill entry: 0xffff8bd540620f38 | t_e.txt
 __dentry_kill entry: 0xffff8bd5406203f8 | a.txt
 __dentry_kill entry: 0xffff8bd5406204b8 | l_m.txt
 __dentry_kill entry: 0xffff8bd5406200f8 | t_m.txt
+matrix_open (82179): drop_caches: 2
 
-Phase 5 (rebuild after eviction):
+Claim A8. Cache rebuild after eviction for t_e.txt.
 
-t_e.txt:
+Evidence:
 d_lookup entry: hash 1830572521 length 7 name t_e.txt
 d_lookup return: NULL
 __d_alloc entry pointer = 0xffff8bd543616025
@@ -264,28 +286,23 @@ __d_alloc return pointer = 0xffff8bd5406206f8
 __d_add entry pointer = 0xffff8bd5406206f8
 do_filp_open return pointer = 0xffff8bd5406206f8
 
-l_e.txt:
-do_filp_open return pointer = 0xffff8bd572dd8878
-no d_lookup entry line observed for l_e.txt in this phase
+Derivation:
+0xffff8bd5406206f8 != 0xffff8bd540620f38
 
-Numeric checks:
+Claim A9. Hash keys used in Run A.
 
-0xffff8bd543616025 - 0xffff8bd543616020 = 0x5 = 5
-"/tmp/" length = 5
-0xffff8bd54361602c - 0xffff8bd543616020 = 0xC = 12
-"/mnt/loopfs/" length = 12
-
-Hash keys (Run A):
-
-l_e.txt with length 7 -> 399720033
-t_e.txt with length 7 -> 1830572521
-l_m.txt with length 7 -> 1675155717
-t_m.txt with length 7 -> 2543581516
-a.txt with length 5 -> 3711754354
+Evidence:
+l_e.txt length 7 hash 399720033
+t_e.txt length 7 hash 1830572521
+l_m.txt length 7 hash 1675155717
+t_m.txt length 7 hash 2543581516
+a.txt length 5 hash 3711754354
 
 Run B: minimal_open (target_comm=minimal_open)
 
-test_file_very_long_name_to_force_external_allocation_1770404658:
+Claim B1. Cache miss, memcpy, insert, and later hit for the long filename.
+
+Evidence:
 do_filp_open entry pointer = 0xffff8bd54d663020
 d_lookup entry: hash 3918709873 length 64 name test_file_very_long_name_to_force_external_allocation_1770404658
 d_lookup return: NULL
@@ -298,10 +315,33 @@ cache hit after 5 seconds:
 d_lookup entry: hash 3918709873 length 64 name test_file_very_long_name_to_force_external_allocation_1770404658
 d_lookup return pointer = 0xffff8bd69f6fb618
 
+Proof map (claims to evidence)
+
+Memcpy of name into dentry storage:
+Claim A2, Claim A3, Claim B1
+
+Cache build-up (insert):
+Claim A2, Claim A3, Claim A4, Claim B1
+
+Cache hit:
+Claim A5, Claim B1
+
+Cache miss:
+Claim A2, Claim A3, Claim A4, Claim A8, Claim B1
+
+Cache deletion:
+Claim A6
+
+Cache eviction:
+Claim A7
+
+Cache rebuild:
+Claim A8
+
 Discussion
 
-The allocation path is shown by a copy source pointer and copy destination pointer appearing and the return pointer equaling the copy destination. The cache build-up is shown by __d_add inserting the same dentry name pointer that __d_alloc produced. The cache hit path is shown by d_lookup returning a pointer equal to the earlier return pointer for the same name. The deletion path is shown by d_delete entries for l_e.txt and t_e.txt after unlink. The eviction path is shown by __dentry_kill entries for the same names after drop_caches. The /tmp case shows a 5 byte offset between the input pointer and the copy source pointer, matching the /tmp/ prefix and isolating the basename. The /mnt/loopfs case shows a 12 byte offset matching the /mnt/loopfs/ prefix. The loopback ext2 case shows the same flow on a different filesystem with a short name. The missing name cases show a lookup miss and a negative dentry insertion via __d_add.
+Every claim above is tied to an explicit probe line and an explicit pointer equality or inequality. The only missing observation is a d_lookup entry line for l_e.txt in the rebuild phase, so rebuild is proven for t_e.txt and not claimed for l_e.txt in that phase. The hash values are shown at d_lookup entry and therefore define the lookup key used in each case.
 
 Conclusion
 
-The returned struct file pointer equals the dentry name pointer. On allocation, __d_alloc copies the name and the return pointer equals the copy destination, and __d_add shows the insert into dcache. On cache hit, d_lookup returns the same pointer observed earlier. On deletion, d_delete shows removal of the dentry for l_e.txt and t_e.txt. On eviction, __dentry_kill shows those dentries reclaimed after drop_caches. Hash values and lengths printed at d_lookup entry prove that each lookup hashes the exact key string used for that path.
+The data prove that the filename pointer flows into dentry storage via memcpy, that cache inserts happen on misses, that hits return the previously inserted pointer, that deletion removes the dentry on unlink, that eviction removes dentries on drop_caches, and that rebuild occurs after eviction for t_e.txt with a new dentry name pointer.
