@@ -40,6 +40,14 @@ def parse_front_matter(content):
 
 def markdown_to_html(content):
     """Convert markdown to HTML with fenced code blocks"""
+    # Preserve raw HTML tables
+    raw_blocks = []
+    def stash_raw(match):
+        raw_blocks.append(match.group(0))
+        return f"@@RAW{len(raw_blocks)-1}@@"
+
+    content = re.sub(r'(?s)<table>.*?</table>', stash_raw, content)
+
     # Escape HTML entities
     content = content.replace('&', '&amp;')
     content = content.replace('<', '&lt;')
@@ -54,11 +62,18 @@ def markdown_to_html(content):
         if i + 2 < len(parts):
             normal = parts[i]
             if normal:
-                html_parts.append(
-                    '<pre style="white-space: pre-wrap; word-wrap: break-word; margin: 0; font-family: monospace;">'
-                    + normal +
-                    '</pre>'
-                )
+                # Split normal text on raw HTML placeholders
+                chunks = re.split(r'(@@RAW\\d+@@)', normal)
+                for chunk in chunks:
+                    if re.fullmatch(r'@@RAW\\d+@@', chunk or ''):
+                        idx = int(chunk.replace('@@RAW', '').replace('@@', ''))
+                        html_parts.append(raw_blocks[idx])
+                    elif chunk:
+                        html_parts.append(
+                            '<pre style="white-space: pre-wrap; word-wrap: break-word; margin: 0; font-family: monospace;">'
+                            + chunk +
+                            '</pre>'
+                        )
             lang = parts[i + 1].strip()
             code = parts[i + 2]
             class_attr = f' class="language-{lang}"' if lang else ''
@@ -67,14 +82,24 @@ def markdown_to_html(content):
         else:
             normal = parts[i]
             if normal:
-                html_parts.append(
-                    '<pre style="white-space: pre-wrap; word-wrap: break-word; margin: 0; font-family: monospace;">'
-                    + normal +
-                    '</pre>'
-                )
+                chunks = re.split(r'(@@RAW\\d+@@)', normal)
+                for chunk in chunks:
+                    if re.fullmatch(r'@@RAW\\d+@@', chunk or ''):
+                        idx = int(chunk.replace('@@RAW', '').replace('@@', ''))
+                        html_parts.append(raw_blocks[idx])
+                    elif chunk:
+                        html_parts.append(
+                            '<pre style="white-space: pre-wrap; word-wrap: break-word; margin: 0; font-family: monospace;">'
+                            + chunk +
+                            '</pre>'
+                        )
             i += 1
 
-    return '\n'.join(html_parts)
+    html = '\n'.join(html_parts)
+    # Final pass: replace any remaining raw placeholders
+    for i, raw in enumerate(raw_blocks):
+        html = html.replace(f"@@RAW{i}@@", raw)
+    return html
 
 def process_file(md_file):
     """Process a markdown file"""
