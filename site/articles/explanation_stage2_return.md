@@ -137,11 +137,9 @@ open("l_e.txt") after drop_caches
   </tr>
 </table>
 
-
 Run A: matrix_open (root, drop_caches enabled)
 
 t_e.txt miss, memcpy, insert.
-
 ```c
 char n2[] = "/tmp/t_e.txt";
 close(creat(n2, 0644));
@@ -174,7 +172,6 @@ Derivation (data): 0xffff8bd54c33e025 - 0xffff8bd54c33e020 = 0x5 = 5 "/tmp/" len
 0xffff8bd54eaa09f8 = do_filp_open return pointer
 
 t_m.txt miss, insert.
-
 ```c
 char n3[] = "/tmp/t_m.txt";
 
@@ -191,8 +188,6 @@ Compact map (t_m.txt).
 "/tmp/t_m.txt" @ 0xffff8bd54c33e020 -> d_lookup (t_m.txt, 7, 2543581516) -> NULL -> __d_alloc entry 0xffff8bd54c33e025 -> __d_alloc return 0xffff8bd54eaa0e78 -> __d_add 0xffff8bd54eaa0e78.
 
 l_m.txt miss, insert.
-
-
 ```c
 char n4[] = "l_m.txt";
 
@@ -203,17 +198,9 @@ Kernel lines: do_filp_open entry pointer = 0xffff8bd54c33e020 | l_m.txt d_lookup
 2166850383 length 7 name l_m.txt d_lookup return: NULL __d_alloc entry pointer = 0xffff8bd54c33e020
 __d_alloc return pointer = 0xffff8bd54eaa0278 __d_add entry: 0xffff8bd54eaa0278 | l_m.txt
 
-Pointer meanings (l_m.txt).
-- do_filp_open entry pointer 0xffff8bd54c33e020 points to "l_m.txt" for this open.
-- d_lookup entry hash 2166850383 and length 7 use basename "l_m.txt" as the key.
-- d_lookup return: NULL shows no cached dentry matched.
-- __d_alloc entry pointer 0xffff8bd54c33e020 equals the string start (no prefix).
-- __d_alloc return pointer 0xffff8bd54eaa0278 is the newly allocated dentry name storage.
-- __d_add entry pointer 0xffff8bd54eaa0278 inserts that name storage into the dcache as a negative entry.
+The entry pointer is 0xffff8bd54c33e020 and the string is l_m.txt, so the kernel copy and the basename start are the same address. The lookup key is l_m.txt with length 7 and hash 2166850383, so the lookup uses 7 bytes. The lookup returns NULL, so there is no cached entry for that key. The allocation source pointer is again 0xffff8bd54c33e020, confirming no prefix shift. The allocation return pointer is 0xffff8bd54eaa0278, which is new storage. The insert line uses 0xffff8bd54eaa0278, so that same storage becomes the cached name entry.
 
 a.txt miss, memcpy, insert (loopback ext2).
-
-
 ```c
 char n5[] = "/mnt/loopfs/a.txt";
 
@@ -225,22 +212,13 @@ hash 3711754354 length 5 name a.txt d_lookup return: NULL __d_alloc entry pointe
 0xffff8bd54c33e02c __d_alloc return pointer = 0xffff8bd54eaa04b8 __d_add entry: 0xffff8bd54eaa04b8 |
 a.txt do_filp_open return pointer = 0xffff8bd54eaa04b8 | a.txt
 
-Pointer meanings (a.txt).
-- do_filp_open entry pointer 0xffff8bd54c33e020 points to "/mnt/loopfs/a.txt" in kernel memory for this open.
-- d_lookup entry hash 3711754354 and length 5 use basename "a.txt" as the key.
-- d_lookup return: NULL shows no cached dentry matched.
-- __d_alloc entry pointer 0xffff8bd54c33e02c points to basename start after "/mnt/loopfs/".
-- __d_alloc return pointer 0xffff8bd54eaa04b8 is the newly allocated dentry name storage.
-- __d_add entry pointer 0xffff8bd54eaa04b8 inserts that name storage into the dcache.
-- do_filp_open return pointer 0xffff8bd54eaa04b8 shows the returned file points at that dentry name storage.
+The entry pointer is 0xffff8bd54c33e020 and the string is /mnt/loopfs/a.txt. The lookup key is a.txt with length 5 and hash 3711754354, so the basename is used. The lookup returns NULL, so the cache has no entry for that key. The allocation source pointer is 0xffff8bd54c33e02c, which is 0xffff8bd54c33e020 + 12, so the basename starts after the 12-byte prefix /mnt/loopfs/. The allocation return pointer is 0xffff8bd54eaa04b8, which is new storage. The insert line uses 0xffff8bd54eaa04b8, and the return line matches it, so the file points to that copied name storage.
 
 Derivation: 0xffff8bd54c33e02c - 0xffff8bd54c33e020 = 0xC = 12 "/mnt/loopfs/" length = 12
 0xffff8bd54eaa04b8 = __d_alloc return pointer 0xffff8bd54eaa04b8 = __d_add entry pointer
 0xffff8bd54eaa04b8 = do_filp_open return pointer
 
 Cache hit: l_e.txt and t_e.txt before deletion.
-
-
 ```c
 char n1[] = "l_e.txt";
 char n2[] = "/tmp/t_e.txt";
@@ -256,15 +234,11 @@ f[1] = open(n2, O_RDONLY);
 Kernel lines: d_lookup entry: hash 440978933 length 7 name l_e.txt d_lookup return:
 0xffff8bd5628ba9f8 | l_e.txt
 
-Pointer meanings (cache hits).
-- d_lookup return pointer 0xffff8bd5628ba9f8 for l_e.txt matches the earlier return pointer for l_e.txt, so the cached dentry is reused.
-- d_lookup return pointer 0xffff8bd54eaa09f8 for t_e.txt matches the earlier return pointer for t_e.txt, so the cached dentry is reused.
-
 d_lookup entry: hash 1830572521 length 7 name t_e.txt d_lookup return: 0xffff8bd54eaa09f8 | t_e.txt
 
+The lookup for l_e.txt returns 0xffff8bd5628ba9f8, which equals the earlier return pointer for l_e.txt, so the cached dentry is reused. The lookup for t_e.txt returns 0xffff8bd54eaa09f8, which equals the earlier return pointer for t_e.txt, so the cached dentry is reused. The reuse is established by pointer equality.
+
 Cache deletion via unlink.
-
-
 ```c
 unlink("l_e.txt");
 unlink("/tmp/t_e.txt");
@@ -273,14 +247,9 @@ unlink("/tmp/t_e.txt");
 Kernel lines: d_delete entry: 0xffff8bd5628ba9f8 | l_e.txt d_delete entry: 0xffff8bd54eaa09f8 |
 t_e.txt no d_drop entry lines observed in this run
 
-Pointer meanings (deletion).
-- d_delete entry pointer 0xffff8bd5628ba9f8 names the cached l_e.txt dentry that was removed by unlink.
-- d_delete entry pointer 0xffff8bd54eaa09f8 names the cached t_e.txt dentry that was removed by unlink.
-- no d_drop line means d_delete is the observed removal path for this run.
+The delete line for l_e.txt uses 0xffff8bd5628ba9f8, which is the cached name pointer shown in the hit. The delete line for t_e.txt uses 0xffff8bd54eaa09f8, which is the cached name pointer shown in the hit. No d_drop line appears in this run, so d_delete is the observed removal path.
 
 Cache eviction via drop_caches.
-
-
 ```c
 drop_caches_if_root();
 // writes "2\n" to /proc/sys/vm/drop_caches
@@ -292,13 +261,9 @@ do_filp_open return pointer = 0xffff8bd6fce05db8 | drop_caches __dentry_kill ent
 0xffff8bd5628ba9f8 | l_e.txt __dentry_kill entry: 0xffff8bd54eaa09f8 | t_e.txt __dentry_kill entry:
 0xffff8bd54eaa04b8 | a.txt matrix_open (129968): drop_caches: 2
 
-Pointer meanings (eviction).
-- do_filp_open entry/return for /proc/sys/vm/drop_caches shows the control write that triggers eviction.
-- __dentry_kill entry pointers show eviction of l_e.txt, t_e.txt, t_m.txt, l_m.txt, and a.txt dentries reclaimed by drop_caches.
+The control file open is visible at 0xffff8bd54c33e020 | /proc/sys/vm/drop_caches and returns 0xffff8bd6fce05db8 | drop_caches, so the eviction trigger is recorded. The eviction lines show __dentry_kill for 0xffff8bd54eaa0e78 (t_m.txt), 0xffff8bd54eaa0278 (l_m.txt), 0xffff8bd5628ba9f8 (l_e.txt), 0xffff8bd54eaa09f8 (t_e.txt), and 0xffff8bd54eaa04b8 (a.txt), so those cached entries are reclaimed in this run.
 
 Cache rebuild after eviction: t_e.txt.
-
-
 ```c
 drop_caches_if_root();
 sleep(1);
@@ -315,17 +280,9 @@ t_e.txt do_filp_open return pointer = 0xffff8bd54eaa0338 | t_e.txt
 Restated pre-eviction t_e.txt pointer used for inequality: do_filp_open return pointer =
 0xffff8bd54eaa09f8 | t_e.txt
 
-Pointer meanings (rebuild t_e.txt).
-- __d_alloc entry pointer 0xffff8bd54c33e025 points to basename "t_e.txt" in the reopened path.
-- __d_alloc return pointer 0xffff8bd54eaa0338 is the new dentry name storage after eviction.
-- __d_add entry pointer 0xffff8bd54eaa0338 inserts the rebuilt name into the cache.
-- do_filp_open return pointer 0xffff8bd54eaa0338 confirms the returned file points at the rebuilt name storage.
-
-Derivation: 0xffff8bd54eaa0338 != 0xffff8bd54eaa09f8
+The post-eviction lookup for t_e.txt rebuilds a new pointer. The return pointer is 0xffff8bd54eaa0338, while the pre-eviction pointer is 0xffff8bd54eaa09f8. The inequality 0xffff8bd54eaa0338 != 0xffff8bd54eaa09f8 shows the rebuild produced a new name storage address.
 
 Post-eviction lookup: l_e.txt.
-
-
 ```c
 drop_caches_if_root();
 sleep(1);
@@ -340,15 +297,9 @@ hash 440978933 length 7 name l_e.txt do_filp_open return pointer = 0xffff8bd5450
 Restated pre-eviction l_e.txt pointer used for inequality: do_filp_open return pointer =
 0xffff8bd5628ba9f8 | l_e.txt
 
-Pointer meanings (post-eviction l_e.txt).
-- __d_lookup_rcu entry shows the lookup key for l_e.txt after eviction.
-- do_filp_open return pointer 0xffff8bd5450e8278 is a new name pointer (not equal to pre-eviction pointer 0xffff8bd5628ba9f8).
-
-Derivation: 0xffff8bd5450e8278 != 0xffff8bd5628ba9f8
+The post-eviction lookup uses __d_lookup_rcu with hash 440978933 length 7 name l_e.txt, then returns 0xffff8bd5450e8278. The pre-eviction pointer is 0xffff8bd5628ba9f8, so 0xffff8bd5450e8278 != 0xffff8bd5628ba9f8 records a new return pointer after eviction.
 
 Hash keys used in Run A.
-
-
 ```c
 // these names are opened in this run:
 open("l_e.txt", O_RDONLY);
@@ -361,15 +312,11 @@ open("/mnt/loopfs/a.txt", O_RDONLY);
 Kernel lines: l_e.txt length 7 hash 440978933 t_e.txt length 7 hash 1830572521 l_m.txt length 7
 hash 2166850383 t_m.txt length 7 hash 2543581516 a.txt length 5 hash 3711754354
 
-Pointer meanings (hash keys).
-- each d_lookup entry line is printed at lookup entry and therefore corresponds to the exact key string and length hashed for that name in this run.
+Each hash line is printed at lookup entry with name and length, so each hash is tied to the exact key shown: l_e.txt (7, 440978933), t_e.txt (7, 1830572521), l_m.txt (7, 2166850383), t_m.txt (7, 2543581516), a.txt (5, 3711754354).
 
 Run B: minimal_open (target_comm=minimal_open)
 
-This run isolates a single long filename to show the long-name allocation and lookup path in full.
-
 Long filename: allocation, copy, cache hit.
-
 ```c
 snprintf(filename, sizeof(filename),
          "test_file_very_long_name_to_force_external_allocation_%ld", now);
@@ -386,26 +333,7 @@ do_filp_open return pointer = 0xffff8bd69ca2a978 |
 test_file_very_long_name_to_force_external_allocation_1770412974 d_lookup return: 0xffff8bd69ca2a978
 | test_file_very_long_name_to_force_external_allocation_1770412974
 
-Pointer meanings (long filename).
-- do_filp_open entry pointer 0xffff8bd553aca020 points to the kernel-resident long filename string.
-- d_lookup entry hash 3341646101 length 64 shows the lookup key used for the long name.
-- d_lookup return: NULL shows the cache miss on first lookup.
-- __d_alloc entry pointer 0xffff8bd553aca020 shows the copy source equals the long name pointer.
-- __d_alloc return pointer 0xffff8bd69ca2a978 is the dentry name storage allocated for the long name.
-- __d_add entry pointer 0xffff8bd69ca2a978 shows the insert of that long name into the dcache.
-- do_filp_open return pointer 0xffff8bd69ca2a978 shows the returned file points to that same name storage.
-- later d_lookup return pointer 0xffff8bd69ca2a978 shows a cache hit on the same name pointer.
-
-Compact map (long filename).
-do_filp_open entry 0xffff8bd553aca020 -> struct filename.name (kernel string); d_lookup key
-("test_file_very_long_name_to_force_external_allocation_1770412974", 64, 3341646101) -> miss;
-__d_alloc entry 0xffff8bd553aca020 (copy source) -> __d_alloc return 0xffff8bd69ca2a978
-(`dentry->d_name.name`, copy destination) -> __d_add inserts 0xffff8bd69ca2a978 -> do_filp_open
-return points to 0xffff8bd69ca2a978 -> later d_lookup return 0xffff8bd69ca2a978 (cache hit).
-
-Derivation: 0xffff8bd69ca2a978 = __d_alloc return pointer 0xffff8bd69ca2a978 = __d_add entry pointer
-0xffff8bd69ca2a978 = do_filp_open return pointer 0xffff8bd69ca2a978 = d_lookup return pointer (cache
-hit)
+The entry pointer is 0xffff8bd553aca020 and the string is the full long filename, so the kernel copy is fixed to that address. The lookup key is the long filename with length 64 and hash 3341646101, so the key and length are explicit. The lookup returns NULL, so the cache has no entry for that key on first use. The allocation source pointer is 0xffff8bd553aca020, which equals the string pointer, so the copy source is the start of the long name. The allocation return pointer is 0xffff8bd69ca2a978, which is new storage. The insert line uses 0xffff8bd69ca2a978, and the return line matches it. The later d_lookup return line also returns 0xffff8bd69ca2a978, so the cache hit reuses the same pointer. The equality chain is 0xffff8bd69ca2a978 = __d_alloc return = __d_add entry = do_filp_open return = d_lookup return.
 
 Memcpy of name into dentry storage: t_e.txt, a.txt, long filename.
 
@@ -682,7 +610,6 @@ What We Failed To Observe And Why
 3. We did not observe any full_name_hash return lines in this run. The full_name_hash kretprobe is registered, but the function may be inlined or bypassed in this path on this kernel build. Hash values are still recorded via d_lookup entry, __d_lookup entry, and __d_lookup_rcu entry, which report the key hash and length used.
 
 Proofs from the latest run (commands + results):
-
 ```text
 sudo dmesg | rg -n "__d_add entry: .*l_e.txt"
 <no output>
