@@ -235,8 +235,8 @@ hash computation itself; if it is silent, the hash values still appear at `d_loo
 
 ================================================================================
 
-Sources: `/usr/src/linux-source-6.8.0/fs/open.c` and `/usr/src/linux-source-6.8.0/fs/dcache.c`.
-Commands: `nl -ba /usr/src/linux-source-6.8.0/fs/open.c | sed -n '1388,1436p'` and `rg -n "d_lookup\\(|__d_alloc\\(|__d_add\\(|d_delete\\(|__dentry_kill" /usr/src/linux-source-6.8.0/fs/dcache.c`.
+`/usr/src/linux-source-6.8.0/fs/open.c` and `/usr/src/linux-source-6.8.0/fs/dcache.c`.
+`nl -ba /usr/src/linux-source-6.8.0/fs/open.c | sed -n '1388,1436p'` and `rg -n "d_lookup\\(|__d_alloc\\(|__d_add\\(|d_delete\\(|__dentry_kill" /usr/src/linux-source-6.8.0/fs/dcache.c`.
 
 Axioms
 - open/openat → do_filp_open.
