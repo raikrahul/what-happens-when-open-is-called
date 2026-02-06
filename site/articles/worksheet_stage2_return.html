@@ -303,6 +303,42 @@ and RCU lookup paths for the same key. `__d_add`, `d_delete`, and `__dentry_kill
 unlink removal, and eviction via `drop_caches`. The `full_name_hash` kretprobe attempts to log the
 hash computation itself; if it is silent, the hash values still appear at `d_lookup` entry.
 
+
+
+================================================================================
+
+`/usr/src/linux-source-6.8.0/fs/open.c` and `/usr/src/linux-source-6.8.0/fs/dcache.c`.
+`nl -ba /usr/src/linux-source-6.8.0/fs/open.c | sed -n '1388,1436p'` and `rg -n "d_lookup\\(|__d_alloc\\(|__d_add\\(|d_delete\\(|__dentry_kill" /usr/src/linux-source-6.8.0/fs/dcache.c`.
+
+Axioms
+- open/openat → do_filp_open.
+- d_lookup uses (name, len, hash). NULL return = miss.
+- __d_alloc allocates and copies name. __d_add inserts into dcache.
+- do_filp_open return pointer = f-&gt;f_path.dentry-&gt;d_name.name (probe reads it).
+- d_delete = unlink removal. __dentry_kill = drop_caches eviction.
+- /tmp/ length 5. /mnt/loopfs/ length 12.
+
+Verification (run these; paste output beside each line)
+`nl -ba /usr/src/linux-source-6.8.0/fs/open.c | sed -n '1388,1436p'`
+`nl -ba /usr/src/linux-source-6.8.0/fs/dcache.c | sed -n '2245,2265p'`
+`rg -n "memcpy\\(dname, name-&gt;name, name-&gt;len\\)" /usr/src/linux-source-6.8.0/fs/dcache.c`
+`rg -n "__d_add\\(|d_delete\\(|__dentry_kill" /usr/src/linux-source-6.8.0/fs/dcache.c`
+`nl -ba kernel/drivers/trace_do_filp_open/trace_do_filp_open.c | sed -n '82,90p'`
+`python3 - &lt;&lt;'PY'\nprint(len('/tmp/'))\nprint(len('/mnt/loopfs/'))\nPY`
+
+Record plan
+- /tmp/t_e.txt: miss + alloc + add + return; offset +5.
+- /tmp/t_m.txt: miss + alloc + add.
+- l_m.txt: alloc entry equals full string pointer.
+- /mnt/loopfs/a.txt: miss + alloc + add + return; offset +12.
+- l_e.txt and /tmp/t_e.txt: hits vs earlier return pointers.
+- unlink l_e.txt and /tmp/t_e.txt: d_delete.
+- drop_caches: __dentry_kill.
+- reopen /tmp/t_e.txt: rebuild pointer vs pre-eviction.
+- reopen l_e.txt: post-eviction pointer vs pre-eviction.
+- memcpy line: find `memcpy(dname, name-&gt;name, name-&gt;len)` in fs/dcache.c.
+
+
 ================================================================================
 
 `/usr/src/linux-source-6.8.0/fs/open.c` and `/usr/src/linux-source-6.8.0/fs/dcache.c`.
@@ -341,6 +377,8 @@ WHAT TO RECORD (FILL THIS IN)
 
 TEST 1: LONG FILENAME (minimal_open)
 
+Why: isolate long-name allocation and later hit using a single name string.
+
 Record:
 - do_filp_open entry pointer = 0x________ | test_file_very_long_name_to_force_external_allocation_XXXX
 - d_lookup entry: hash ________ length 64 name test_file_very_long_name_to_force_external_allocation_XXXX
@@ -368,6 +406,7 @@ Make a diagram (required):
 TEST 2: MATRIX (matrix_open)
 
 FILE A (t_e.txt, first open after drop_caches):
+Why: clean miss path with a /tmp prefix and offset +5.
 - do_filp_open entry pointer = 0x________ | /tmp/t_e.txt
 - d_lookup entry hash ________ len 7 name t_e.txt
 - d_lookup return: NULL
@@ -378,18 +417,21 @@ FILE A (t_e.txt, first open after drop_caches):
 - offset check: (entry pointer + 5) == __d_alloc entry pointer
 
 FILE B (t_m.txt, missing):
+Why: miss+insert for a missing /tmp name.
 - do_filp_open entry pointer = 0x________ | /tmp/t_m.txt
 - d_lookup return: NULL
 - __d_alloc return pointer = 0x________
 - __d_add entry pointer = 0x________ | t_m.txt
 
 FILE C (l_m.txt, missing):
+Why: miss+insert with no prefix (alloc entry equals string pointer).
 - do_filp_open entry pointer = 0x________ | l_m.txt
 - d_lookup return: NULL
 - __d_alloc return pointer = 0x________
 - __d_add entry pointer = 0x________ | l_m.txt
 
 FILE D (a.txt, loopback ext2):
+Why: same flow on ext2 with short name and /mnt/loopfs/ offset +12.
 - do_filp_open entry pointer = 0x________ | /mnt/loopfs/a.txt
 - d_lookup return: NULL
 - __d_alloc entry pointer = 0x________
@@ -399,19 +441,23 @@ FILE D (a.txt, loopback ext2):
 - offset check: (entry pointer + 12) == __d_alloc entry pointer
 
 CACHE HIT (before deletion):
+Why: show pointer reuse on hit.
 - d_lookup return pointer = 0x________ | l_e.txt
 - d_lookup return pointer = 0x________ | t_e.txt
 
 DELETION (unlink):
+Why: show d_delete removal for the same pointers.
 - d_delete entry = 0x________ | l_e.txt
 - d_delete entry = 0x________ | t_e.txt
 
 EVICTION (drop_caches):
+Why: show __dentry_kill for cached names.
 - do_filp_open entry/return for /proc/sys/vm/drop_caches
 - __dentry_kill entry = 0x________ | l_e.txt
 - __dentry_kill entry = 0x________ | t_e.txt
 
 REBUILD (after eviction, t_e.txt):
+Why: show new or reused pointer after eviction.
 - d_lookup return: NULL
 - __d_alloc return pointer = 0x________
 - __d_add entry pointer = 0x________ | t_e.txt
@@ -419,6 +465,7 @@ REBUILD (after eviction, t_e.txt):
 - inequality check: rebuild pointer != pre-eviction pointer
 
 POST-EVICTION LOOKUP (l_e.txt):
+Why: compare post-eviction pointer to pre-eviction pointer.
 - __d_lookup_rcu entry: hash ________ length 7 name l_e.txt
 - do_filp_open return pointer = 0x________ | l_e.txt
 - inequality check: post-eviction pointer != pre-eviction pointer
