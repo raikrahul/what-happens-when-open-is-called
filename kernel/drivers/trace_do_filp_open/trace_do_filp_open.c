@@ -15,6 +15,7 @@ MODULE_LICENSE("GPL");
 static char *SYMBOL_OPEN = "do_filp_open";
 static char *SYMBOL_ALLOC = "__d_alloc";
 static char *SYMBOL_LOOKUP = "d_lookup";
+static char *SYMBOL_HASH = "full_name_hash";
 
 /* Robust struct filename matches kernel definition for 6.8+ */
 struct my_filename {
@@ -24,8 +25,8 @@ struct my_filename {
   struct qstr name_attr;
 };
 
-static struct kprobe kp_open, kp_alloc;
-static struct kretprobe rp_open, rp_alloc, rp_lookup;
+static struct kprobe kp_open, kp_alloc, kp_lookup;
+static struct kretprobe rp_open, rp_alloc, rp_lookup, rp_hash;
 
 static char *target_comm = "matrix_open";
 module_param(target_comm, charp, 0644);
@@ -87,6 +88,38 @@ static int lookup_ret(struct kretprobe_instance *ri, struct pt_regs *regs) {
   return 0;
 }
 
+static int lookup_entry(struct kprobe *p, struct pt_regs *regs) {
+  struct qstr *q = (struct qstr *)regs->si;
+  if (is_target() && q && (unsigned long)q > 0xffff000000000000 && q->name &&
+      (unsigned long)q->name > 0xffff000000000000) {
+    pr_info("[L] HASH: %u %u %s\n", q->hash, q->len, q->name);
+  }
+  return 0;
+}
+
+struct hash_entry_data {
+  const char *name;
+  unsigned int len;
+  unsigned long salt;
+};
+
+static int hash_entry(struct kretprobe_instance *ri, struct pt_regs *regs) {
+  struct hash_entry_data *d = (struct hash_entry_data *)ri->data;
+  d->salt = (unsigned long)regs->di;
+  d->name = (const char *)regs->si;
+  d->len = (unsigned int)regs->dx;
+  return 0;
+}
+
+static int hash_ret(struct kretprobe_instance *ri, struct pt_regs *regs) {
+  struct hash_entry_data *d = (struct hash_entry_data *)ri->data;
+  unsigned int h = (unsigned int)regs->ax;
+  if (is_target() && d->name && (unsigned long)d->name > 0xffff000000000000) {
+    pr_info("[H] %u %u 0x%px %s\n", h, d->len, (void *)d->salt, d->name);
+  }
+  return 0;
+}
+
 static int __init trace_do_filp_open_init(void) {
   int r;
   kp_open.symbol_name = SYMBOL_OPEN;
@@ -117,7 +150,24 @@ static int __init trace_do_filp_open_init(void) {
   if ((r = register_kretprobe(&rp_lookup)) < 0)
     goto e4;
 
+  kp_lookup.symbol_name = SYMBOL_LOOKUP;
+  kp_lookup.pre_handler = lookup_entry;
+  if ((r = register_kprobe(&kp_lookup)) < 0)
+    goto e5;
+
+  rp_hash.kp.symbol_name = SYMBOL_HASH;
+  rp_hash.handler = hash_ret;
+  rp_hash.entry_handler = hash_entry;
+  rp_hash.data_size = sizeof(struct hash_entry_data);
+  rp_hash.maxactive = 20;
+  if ((r = register_kretprobe(&rp_hash)) < 0)
+    goto e6;
+
   return 0;
+e6:
+  unregister_kprobe(&kp_lookup);
+e5:
+  unregister_kretprobe(&rp_lookup);
 e4:
   unregister_kretprobe(&rp_alloc);
 e3:
@@ -130,6 +180,8 @@ e1:
 }
 
 static void __exit trace_do_filp_open_exit(void) {
+  unregister_kretprobe(&rp_hash);
+  unregister_kprobe(&kp_lookup);
   unregister_kretprobe(&rp_lookup);
   unregister_kretprobe(&rp_alloc);
   unregister_kprobe(&kp_alloc);
