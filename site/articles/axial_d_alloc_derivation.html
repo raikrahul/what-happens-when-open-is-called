@@ -20,6 +20,10 @@
       white-space: pre-wrap;
       word-wrap: break-word;
     }
+    pre code {
+      display: block;
+      white-space: pre;
+    }
 
     h1,
     h2,
@@ -97,16 +101,15 @@
 
 **CONST**: `DNAME_INLINE_LEN` = 32
 
-**ALGORITHM**:
-```c
-if (name-&gt;len &lt; DNAME_INLINE_LEN) {
+**ALGORITHM**:</pre>
+<pre><code class="language-c">if (name-&gt;len &lt; DNAME_INLINE_LEN) {
     // CASE A: SMALL NAME
     dentry-&gt;d_name.name = dentry-&gt;d_iname; // +56
 } else {
     // CASE B: LARGE NAME
     dentry-&gt;d_name.name = kmalloc(name-&gt;len + 1, ...);
-}
-```
+}</code></pre>
+<pre style="white-space: pre-wrap; word-wrap: break-word; margin: 0; font-family: monospace;">
 
 **NUMERICAL PROOF**:
 - **Test Input**: "test_file_1770" (14 chars).
@@ -117,10 +120,9 @@ if (name-&gt;len &lt; DNAME_INLINE_LEN) {
 03. THE SETTLEMENT MEMCPY
 --------------------------------------------------------------------------------
 
-**SOURCE**: `fs/dcache.c`
-```c
-memcpy(dname, name-&gt;name, name-&gt;len);
-```
+**SOURCE**: `fs/dcache.c`</pre>
+<pre><code class="language-c">memcpy(dname, name-&gt;name, name-&gt;len);</code></pre>
+<pre style="white-space: pre-wrap; word-wrap: break-word; margin: 0; font-family: monospace;">
 
 **X86_64 TRACE CONVERGENCE**:
 01. **Input Ptr** (`RDI` in `getname`): `0x7ffe...` (User Address)

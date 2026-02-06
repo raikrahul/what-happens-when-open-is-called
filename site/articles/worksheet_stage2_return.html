@@ -20,6 +20,10 @@
       white-space: pre-wrap;
       word-wrap: break-word;
     }
+    pre code {
+      display: block;
+      white-space: pre;
+    }
 
     h1,
     h2,
@@ -110,9 +114,8 @@ USER SPACE TEST PROGRAMS (AND WHY THEY EXIST)
 
 Location (repo): https://github.com/raikrahul/what-happens-when-open-is-called/tree/main/kernel/user/stage2
 
-PROGRAM 1: minimal_open.c
-```c
-#include &lt;fcntl.h&gt;
+PROGRAM 1: minimal_open.c</pre>
+<pre><code class="language-c">#include &lt;fcntl.h&gt;
 #include &lt;stdio.h&gt;
 #include &lt;time.h&gt;
 #include &lt;unistd.h&gt;
@@ -132,12 +135,11 @@ int main() {
     close(fd);
     unlink(filename);
     return 0;
-}
-```
+}</code></pre>
+<pre style="white-space: pre-wrap; word-wrap: break-word; margin: 0; font-family: monospace;">
 
-PROGRAM 2: matrix_open.c
-```c
-#include &lt;fcntl.h&gt;
+PROGRAM 2: matrix_open.c</pre>
+<pre><code class="language-c">#include &lt;fcntl.h&gt;
 #include &lt;stdio.h&gt;
 #include &lt;sys/stat.h&gt;
 #include &lt;unistd.h&gt;
@@ -215,8 +217,8 @@ int main() {
     close_if_open(&amp;f[1]);
 
     return 0;
-}
-```
+}</code></pre>
+<pre style="white-space: pre-wrap; word-wrap: break-word; margin: 0; font-family: monospace;">
 
 ================================================================================
 KERNEL PROBES YOU MUST HAVE (WHY EACH EXISTS)
@@ -261,26 +263,23 @@ Probe code locations (driver file + GitHub links):
 BUILD AND RUN (ORDER MATTERS)
 ================================================================================
 
-1) Build the driver
-```
-cd kernel/drivers/trace_do_filp_open &amp;&amp; make clean &amp;&amp; make
-```
+1) Build the driver</pre>
+<pre><code>cd kernel/drivers/trace_do_filp_open &amp;&amp; make clean &amp;&amp; make</code></pre>
+<pre style="white-space: pre-wrap; word-wrap: break-word; margin: 0; font-family: monospace;">
 Source: https://github.com/raikrahul/what-happens-when-open-is-called/tree/main/kernel/drivers/trace_do_filp_open
 
-2) Run minimal_open (long filename)
-```
-sudo dmesg -C
+2) Run minimal_open (long filename)</pre>
+<pre><code>sudo dmesg -C
 sudo rmmod trace_do_filp_open
 sudo insmod trace_do_filp_open.ko target_comm=minimal_open
 cd ../../user/stage2
 ./minimal_open
 sleep 5
-sudo dmesg | rg -n "test_file_very_long_name_to_force_external_allocation"
-```
+sudo dmesg | rg -n "test_file_very_long_name_to_force_external_allocation"</code></pre>
+<pre style="white-space: pre-wrap; word-wrap: break-word; margin: 0; font-family: monospace;">
 
-2b) Prepare loopback ext2 (for the a.txt case)
-```
-sudo mkdir -p /mnt/loopfs
+2b) Prepare loopback ext2 (for the a.txt case)</pre>
+<pre><code>sudo mkdir -p /mnt/loopfs
 sudo dd if=/dev/zero of=/tmp/loopfs.img bs=1M count=64
 sudo losetup -fP /tmp/loopfs.img
 sudo mkfs.ext2 -F /tmp/loopfs.img
@@ -288,19 +287,18 @@ sudo mount /tmp/loopfs.img /mnt/loopfs
 sudo sh -c 'echo x &gt; /mnt/loopfs/a.txt'
 sync
 sudo umount /mnt/loopfs
-sudo mount /tmp/loopfs.img /mnt/loopfs
-```
+sudo mount /tmp/loopfs.img /mnt/loopfs</code></pre>
+<pre style="white-space: pre-wrap; word-wrap: break-word; margin: 0; font-family: monospace;">
 
-3) Run matrix_open (all paths)
-```
-sudo dmesg -C
+3) Run matrix_open (all paths)</pre>
+<pre><code>sudo dmesg -C
 sudo rmmod trace_do_filp_open
 sudo insmod trace_do_filp_open.ko target_comm=matrix_open
 cd ../../user/stage2
 sudo ./matrix_open
 sleep 3
-sudo dmesg | rg -n "l_e.txt|t_e.txt|t_m.txt|l_m.txt|a.txt|drop_caches|d_lookup entry|d_lookup return|__d_add entry|d_delete entry|__dentry_kill entry|__d_lookup entry|__d_lookup_rcu entry|__d_alloc"
-```
+sudo dmesg | rg -n "l_e.txt|t_e.txt|t_m.txt|l_m.txt|a.txt|drop_caches|d_lookup entry|d_lookup return|__d_add entry|d_delete entry|__dentry_kill entry|__d_lookup entry|__d_lookup_rcu entry|__d_alloc"</code></pre>
+<pre style="white-space: pre-wrap; word-wrap: break-word; margin: 0; font-family: monospace;">
 
 Why these commands exist (do not skip):
 - `sudo dmesg -C` clears the kernel ring buffer so the next lines are only from this run.

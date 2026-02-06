@@ -20,6 +20,10 @@
       white-space: pre-wrap;
       word-wrap: break-word;
     }
+    pre code {
+      display: block;
+      white-space: pre;
+    }
 
     h1,
     h2,
@@ -98,17 +102,15 @@ Methods
 
 User-space programs:
 
-minimal_open.c
-```c
-snprintf(filename, sizeof(filename),
+minimal_open.c</pre>
+<pre><code class="language-c">snprintf(filename, sizeof(filename),
          "test_file_very_long_name_to_force_external_allocation_%ld", now);
 int fd = open(filename, O_RDWR | O_CREAT, 0644);
-sleep(5);
-```
+sleep(5);</code></pre>
+<pre style="white-space: pre-wrap; word-wrap: break-word; margin: 0; font-family: monospace;">
 
-matrix_open.c
-```c
-close(creat("l_e.txt", 0644));
+matrix_open.c</pre>
+<pre><code class="language-c">close(creat("l_e.txt", 0644));
 close(creat("/tmp/t_e.txt", 0644));
 drop_caches_if_root();
 sleep(1);
@@ -130,8 +132,8 @@ open("/tmp/t_e.txt", O_RDONLY);
 drop_caches_if_root();
 sleep(1);
 open("l_e.txt", O_RDONLY);
-open("/tmp/t_e.txt", O_RDONLY);
-``` 
+open("/tmp/t_e.txt", O_RDONLY);</code></pre>
+<pre style="white-space: pre-wrap; word-wrap: break-word; margin: 0; font-family: monospace;"> 
 
 Per-line purpose
 
@@ -187,23 +189,20 @@ Memcpy proof (kernel source)
 
 File: /usr/src/linux-source-6.8.0/fs/dcache.c:1660 memcpy(dname, name-&gt;name, name-&gt;len);
 
-ASCII diagram (horizontal, real data, t_e.txt)
-```text
-"/tmp/t_e.txt" @ 0xffff8bd55debc020 -&gt; do_filp_open entry
+ASCII diagram (horizontal, real data, t_e.txt)</pre>
+<pre><code class="language-text">"/tmp/t_e.txt" @ 0xffff8bd55debc020 -&gt; do_filp_open entry
 0xffff8bd55debc025 -&gt; __d_alloc entry (copy source)
 0xffff8bd572708638 -&gt; __d_alloc return (copy destination)
-0xffff8bd572708638 -&gt; do_filp_open return
-```
+0xffff8bd572708638 -&gt; do_filp_open return</code></pre>
+<pre style="white-space: pre-wrap; word-wrap: break-word; margin: 0; font-family: monospace;">
 
-ASCII diagram (horizontal, real data, cache hit for t_e.txt)
-```text
-"/tmp/t_e.txt" -&gt; do_filp_open entry -&gt; d_lookup return 0xffff8bd572708638 -&gt; do_filp_open return 0xffff8bd572708638
-```
+ASCII diagram (horizontal, real data, cache hit for t_e.txt)</pre>
+<pre><code class="language-text">"/tmp/t_e.txt" -&gt; do_filp_open entry -&gt; d_lookup return 0xffff8bd572708638 -&gt; do_filp_open return 0xffff8bd572708638</code></pre>
+<pre style="white-space: pre-wrap; word-wrap: break-word; margin: 0; font-family: monospace;">
 
-ASCII diagram (horizontal, real data, hash lookup for t_e.txt)
-```text
-"t_e.txt" + 7 -&gt; d_lookup hash 1830572521 -&gt; d_lookup bucket (hash 1830572521)
-```
+ASCII diagram (horizontal, real data, hash lookup for t_e.txt)</pre>
+<pre><code class="language-text">"t_e.txt" + 7 -&gt; d_lookup hash 1830572521 -&gt; d_lookup bucket (hash 1830572521)</code></pre>
+<pre style="white-space: pre-wrap; word-wrap: break-word; margin: 0; font-family: monospace;">
 
 Table of Contents
 
@@ -227,15 +226,14 @@ derivation that uses only the data printed above.
 
 Claim A1. Cache miss, memcpy, and insert for t_e.txt.
 
-User-space code that triggers this evidence (matrix_open.c):
-```c
-char n2[] = "/tmp/t_e.txt";
+User-space code that triggers this evidence (matrix_open.c):</pre>
+<pre><code class="language-c">char n2[] = "/tmp/t_e.txt";
 close(creat(n2, 0644));
 drop_caches_if_root();
 sleep(1);
 
-f[1] = open(n2, O_RDONLY);
-```
+f[1] = open(n2, O_RDONLY);</code></pre>
+<pre style="white-space: pre-wrap; word-wrap: break-word; margin: 0; font-family: monospace;">
 
 Kernel evidence: do_filp_open entry pointer = 0xffff8bd55debc020 | /tmp/t_e.txt d_lookup entry: hash
 1830572521 length 7 name t_e.txt d_lookup return: NULL __d_alloc entry pointer = 0xffff8bd55debc025
@@ -265,15 +263,14 @@ Compat explanation (t_e.txt, compact):
 -&gt; __d_alloc entry 0xffff8bd55debc025 (basename) -&gt; __d_alloc return 0xffff8bd572708638
 -&gt; __d_add 0xffff8bd572708638 -&gt; do_filp_open return 0xffff8bd572708638.
 
-Derivation (user-space trigger and why): User-space code:
-```c
-char n2[] = "/tmp/t_e.txt";
+Derivation (user-space trigger and why): User-space code:</pre>
+<pre><code class="language-c">char n2[] = "/tmp/t_e.txt";
 close(creat(n2, 0644));
 drop_caches_if_root();
 sleep(1);
 
-f[1] = open(n2, O_RDONLY);
-```
+f[1] = open(n2, O_RDONLY);</code></pre>
+<pre style="white-space: pre-wrap; word-wrap: break-word; margin: 0; font-family: monospace;">
 Why this creates the pointer subtraction:
 - The open string is "/tmp/t_e.txt".
 - The basename starts after the 5-byte prefix "/tmp/".
@@ -287,12 +284,11 @@ Claim A2. Cache miss and insert for missing t_m.txt.
 
 This claim isolates a missing /tmp file to record a miss and insert with a basename offset.
 
-User-space code that triggers this evidence (matrix_open.c):
-```c
-char n3[] = "/tmp/t_m.txt";
+User-space code that triggers this evidence (matrix_open.c):</pre>
+<pre><code class="language-c">char n3[] = "/tmp/t_m.txt";
 
-f[2] = open(n3, O_RDONLY);
-```
+f[2] = open(n3, O_RDONLY);</code></pre>
+<pre style="white-space: pre-wrap; word-wrap: break-word; margin: 0; font-family: monospace;">
 
 Kernel evidence: do_filp_open entry pointer = 0xffff8bd55debc020 | /tmp/t_m.txt d_lookup entry: hash
 2543581516 length 7 name t_m.txt d_lookup return: NULL __d_alloc entry pointer = 0xffff8bd55debc025
@@ -321,12 +317,11 @@ Claim A3. Cache miss and insert for missing l_m.txt.
 This claim repeats the missing-file case without a prefix to show the entry pointer equals the full
 string start.
 
-User-space code that triggers this evidence (matrix_open.c):
-```c
-char n4[] = "l_m.txt";
+User-space code that triggers this evidence (matrix_open.c):</pre>
+<pre><code class="language-c">char n4[] = "l_m.txt";
 
-f[4] = open(n4, O_RDONLY);
-```
+f[4] = open(n4, O_RDONLY);</code></pre>
+<pre style="white-space: pre-wrap; word-wrap: break-word; margin: 0; font-family: monospace;">
 
 Kernel evidence: do_filp_open entry pointer = 0xffff8bd55debc020 | l_m.txt d_lookup entry: hash
 2166850383 length 7 name l_m.txt d_lookup return: NULL __d_alloc entry pointer = 0xffff8bd55debc020
@@ -344,12 +339,11 @@ Claim A4. Cache miss, memcpy, and insert for a.txt on loopback ext2.
 
 This claim moves the same mechanism onto a different filesystem and a shorter basename.
 
-User-space code that triggers this evidence (matrix_open.c):
-```c
-char n5[] = "/mnt/loopfs/a.txt";
+User-space code that triggers this evidence (matrix_open.c):</pre>
+<pre><code class="language-c">char n5[] = "/mnt/loopfs/a.txt";
 
-f[5] = open(n5, O_RDONLY);
-```
+f[5] = open(n5, O_RDONLY);</code></pre>
+<pre style="white-space: pre-wrap; word-wrap: break-word; margin: 0; font-family: monospace;">
 
 Kernel evidence: do_filp_open entry pointer = 0xffff8bd55debc020 | /mnt/loopfs/a.txt d_lookup entry:
 hash 3711754354 length 5 name a.txt d_lookup return: NULL __d_alloc entry pointer =
@@ -373,9 +367,8 @@ Claim A5. Cache hit for l_e.txt and t_e.txt before deletion.
 
 This claim shows reuse: the lookup returns the same pointer observed on the earlier return.
 
-User-space code that triggers this evidence (matrix_open.c):
-```c
-char n1[] = "l_e.txt";
+User-space code that triggers this evidence (matrix_open.c):</pre>
+<pre><code class="language-c">char n1[] = "l_e.txt";
 char n2[] = "/tmp/t_e.txt";
 
 // first opens happen earlier
@@ -383,8 +376,8 @@ f[3] = open(n1, O_RDONLY);
 
 // later opens hit cache
 f[0] = open(n1, O_RDONLY);
-f[1] = open(n2, O_RDONLY);
-```
+f[1] = open(n2, O_RDONLY);</code></pre>
+<pre style="white-space: pre-wrap; word-wrap: break-word; margin: 0; font-family: monospace;">
 
 Kernel evidence: d_lookup entry: hash 440978933 length 7 name l_e.txt d_lookup return:
 0xffff8bd55868a0f8 | l_e.txt
@@ -399,11 +392,10 @@ Claim A6. Cache deletion via unlink.
 
 This claim pins deletion to the explicit unlink calls in user space.
 
-User-space code that triggers this evidence (matrix_open.c):
-```c
-unlink("l_e.txt");
-unlink("/tmp/t_e.txt");
-```
+User-space code that triggers this evidence (matrix_open.c):</pre>
+<pre><code class="language-c">unlink("l_e.txt");
+unlink("/tmp/t_e.txt");</code></pre>
+<pre style="white-space: pre-wrap; word-wrap: break-word; margin: 0; font-family: monospace;">
 
 Kernel evidence: d_delete entry: 0xffff8bd55868a0f8 | l_e.txt d_delete entry: 0xffff8bd572708638 |
 t_e.txt no d_drop entry lines observed in this run
@@ -417,11 +409,10 @@ Claim A7. Cache eviction via drop_caches.
 
 This claim shows eviction driven by a write to /proc/sys/vm/drop_caches.
 
-User-space code that triggers this evidence (matrix_open.c):
-```c
-drop_caches_if_root();
-// writes "2\n" to /proc/sys/vm/drop_caches
-```
+User-space code that triggers this evidence (matrix_open.c):</pre>
+<pre><code class="language-c">drop_caches_if_root();
+// writes "2\n" to /proc/sys/vm/drop_caches</code></pre>
+<pre style="white-space: pre-wrap; word-wrap: break-word; margin: 0; font-family: monospace;">
 
 Kernel evidence: do_filp_open entry pointer = 0xffff8bd543611020 | /proc/sys/vm/drop_caches
 do_filp_open return pointer = 0xffff8bd6fce05db8 | drop_caches __dentry_kill entry:
@@ -437,15 +428,14 @@ Claim A8. Cache rebuild after eviction for t_e.txt.
 
 This claim records the pointer observed after eviction and compares it to the pre-eviction pointer.
 
-User-space code that triggers this evidence (matrix_open.c):
-```c
-drop_caches_if_root();
+User-space code that triggers this evidence (matrix_open.c):</pre>
+<pre><code class="language-c">drop_caches_if_root();
 sleep(1);
 
 // reopen after eviction
 f[0] = open("l_e.txt", O_RDONLY);
-f[1] = open("/tmp/t_e.txt", O_RDONLY);
-```
+f[1] = open("/tmp/t_e.txt", O_RDONLY);</code></pre>
+<pre style="white-space: pre-wrap; word-wrap: break-word; margin: 0; font-family: monospace;">
 
 Kernel evidence: d_lookup entry: hash 1830572521 length 7 name t_e.txt __d_alloc entry pointer =
 0xffff8bd543611025 __d_alloc return pointer = 0xffff8bd54429b9f8 __d_add entry: 0xffff8bd54429b9f8 |
@@ -466,14 +456,13 @@ Claim A9. Post-eviction lookup observed for l_e.txt.
 
 This claim records the RCU lookup path and the new return pointer after eviction.
 
-User-space code that triggers this evidence (matrix_open.c):
-```c
-drop_caches_if_root();
+User-space code that triggers this evidence (matrix_open.c):</pre>
+<pre><code class="language-c">drop_caches_if_root();
 sleep(1);
 
 // reopen after eviction
-f[0] = open("l_e.txt", O_RDONLY);
-```
+f[0] = open("l_e.txt", O_RDONLY);</code></pre>
+<pre style="white-space: pre-wrap; word-wrap: break-word; margin: 0; font-family: monospace;">
 
 Kernel evidence: do_filp_open entry pointer = 0xffff8bd543611020 | l_e.txt __d_lookup_rcu entry:
 hash 440978933 length 7 name l_e.txt do_filp_open return pointer = 0xffff8bd549b4e1b8 | l_e.txt
@@ -491,15 +480,14 @@ Claim A10. Hash keys used in Run A.
 
 This claim summarizes the exact keys hashed for each name observed in this run.
 
-User-space code that triggers this evidence (matrix_open.c):
-```c
-// these names are opened in this run:
+User-space code that triggers this evidence (matrix_open.c):</pre>
+<pre><code class="language-c">// these names are opened in this run:
 open("l_e.txt", O_RDONLY);
 open("/tmp/t_e.txt", O_RDONLY);
 open("l_m.txt", O_RDONLY);
 open("/tmp/t_m.txt", O_RDONLY);
-open("/mnt/loopfs/a.txt", O_RDONLY);
-```
+open("/mnt/loopfs/a.txt", O_RDONLY);</code></pre>
+<pre style="white-space: pre-wrap; word-wrap: break-word; margin: 0; font-family: monospace;">
 
 Kernel evidence: l_e.txt length 7 hash 440978933 t_e.txt length 7 hash 1830572521 l_m.txt length 7
 hash 2166850383 t_m.txt length 7 hash 2543581516 a.txt length 5 hash 3711754354
@@ -513,13 +501,12 @@ This run isolates a single long filename to show the long-name allocation and lo
 
 Claim B1. Long filename allocation, copy, and cache hit.
 
-User-space code that triggers this evidence (minimal_open.c):
-```c
-snprintf(filename, sizeof(filename),
+User-space code that triggers this evidence (minimal_open.c):</pre>
+<pre><code class="language-c">snprintf(filename, sizeof(filename),
          "test_file_very_long_name_to_force_external_allocation_%ld", now);
 int fd = open(filename, O_RDWR | O_CREAT, 0644);
-sleep(5);
-```
+sleep(5);</code></pre>
+<pre style="white-space: pre-wrap; word-wrap: break-word; margin: 0; font-family: monospace;">
 
 Kernel evidence: do_filp_open entry pointer = 0xffff8bd55337c020 |
 test_file_very_long_name_to_force_external_allocation_1770408898 d_lookup entry: hash 3778081590
@@ -844,61 +831,54 @@ recorded. Resume: returns to user space.
 
 Wide-Screen Diagrams (Trace View)
 
-Diagram 1 — t_e.txt miss → alloc → insert → return
-```text
-open("/tmp/t_e.txt")
+Diagram 1 — t_e.txt miss → alloc → insert → return</pre>
+<pre><code class="language-text">open("/tmp/t_e.txt")
   -&gt; do_filp_open entry 0xffff8bd55debc020
   -&gt; d_lookup hash 1830572521 len 7 "t_e.txt" -&gt; NULL
   -&gt; __d_alloc entry 0xffff8bd55debc025
   -&gt; __d_alloc return 0xffff8bd572708638
   -&gt; __d_add entry 0xffff8bd572708638
-  -&gt; do_filp_open return 0xffff8bd572708638
-```
+  -&gt; do_filp_open return 0xffff8bd572708638</code></pre>
+<pre style="white-space: pre-wrap; word-wrap: break-word; margin: 0; font-family: monospace;">
 
-Diagram 2 — a.txt miss on loopback ext2
-```text
-open("/mnt/loopfs/a.txt")
+Diagram 2 — a.txt miss on loopback ext2</pre>
+<pre><code class="language-text">open("/mnt/loopfs/a.txt")
   -&gt; do_filp_open entry 0xffff8bd55debc020
   -&gt; d_lookup hash 3711754354 len 5 "a.txt" -&gt; NULL
   -&gt; __d_alloc entry 0xffff8bd55debc02c
   -&gt; __d_alloc return 0xffff8bd572708b78
   -&gt; __d_add entry 0xffff8bd572708b78
-  -&gt; do_filp_open return 0xffff8bd572708b78
-```
+  -&gt; do_filp_open return 0xffff8bd572708b78</code></pre>
+<pre style="white-space: pre-wrap; word-wrap: break-word; margin: 0; font-family: monospace;">
 
-Diagram 3 — cache hit for l_e.txt before deletion
-```text
-open("l_e.txt")
+Diagram 3 — cache hit for l_e.txt before deletion</pre>
+<pre><code class="language-text">open("l_e.txt")
   -&gt; d_lookup hash 440978933 len 7 "l_e.txt" -&gt; 0xffff8bd55868a0f8
-  -&gt; do_filp_open return 0xffff8bd55868a0f8
-```
+  -&gt; do_filp_open return 0xffff8bd55868a0f8</code></pre>
+<pre style="white-space: pre-wrap; word-wrap: break-word; margin: 0; font-family: monospace;">
 
-Diagram 4 — unlink deletion + eviction
-```text
-unlink("l_e.txt") -&gt; d_delete 0xffff8bd55868a0f8
+Diagram 4 — unlink deletion + eviction</pre>
+<pre><code class="language-text">unlink("l_e.txt") -&gt; d_delete 0xffff8bd55868a0f8
 unlink("/tmp/t_e.txt") -&gt; d_delete 0xffff8bd572708638
 drop_caches -&gt; __dentry_kill 0xffff8bd55868a0f8 (l_e.txt)
 drop_caches -&gt; __dentry_kill 0xffff8bd572708638 (t_e.txt)
 drop_caches -&gt; __dentry_kill 0xffff8bd5727080f8 (t_m.txt)
 drop_caches -&gt; __dentry_kill 0xffff8bd572708878 (l_m.txt)
-drop_caches -&gt; __dentry_kill 0xffff8bd572708b78 (a.txt)
-```
+drop_caches -&gt; __dentry_kill 0xffff8bd572708b78 (a.txt)</code></pre>
+<pre style="white-space: pre-wrap; word-wrap: break-word; margin: 0; font-family: monospace;">
 
-Diagram 5 — rebuild after eviction (t_e.txt)
-```text
-open("/tmp/t_e.txt") after drop_caches
+Diagram 5 — rebuild after eviction (t_e.txt)</pre>
+<pre><code class="language-text">open("/tmp/t_e.txt") after drop_caches
   -&gt; d_lookup hash 1830572521 len 7 "t_e.txt" -&gt; NULL
   -&gt; __d_alloc return 0xffff8bd54429b9f8
   -&gt; __d_add entry 0xffff8bd54429b9f8
-  -&gt; do_filp_open return 0xffff8bd54429b9f8
-```
+  -&gt; do_filp_open return 0xffff8bd54429b9f8</code></pre>
+<pre style="white-space: pre-wrap; word-wrap: break-word; margin: 0; font-family: monospace;">
 
-Diagram 6 — post-eviction lookup for l_e.txt
-```text
-open("l_e.txt") after drop_caches
+Diagram 6 — post-eviction lookup for l_e.txt</pre>
+<pre><code class="language-text">open("l_e.txt") after drop_caches
   -&gt; __d_lookup_rcu hash 440978933 len 7 "l_e.txt"
-  -&gt; do_filp_open return 0xffff8bd549b4e1b8
-```</pre>
+  -&gt; do_filp_open return 0xffff8bd549b4e1b8</code></pre>
   </div>
 
 </body>

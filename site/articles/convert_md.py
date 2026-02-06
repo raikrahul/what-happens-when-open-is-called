@@ -39,14 +39,42 @@ def parse_front_matter(content):
     return {}, content
 
 def markdown_to_html(content):
-    """Convert markdown to HTML - preserve preformatted text structure"""
+    """Convert markdown to HTML with fenced code blocks"""
     # Escape HTML entities
     content = content.replace('&', '&amp;')
     content = content.replace('<', '&lt;')
     content = content.replace('>', '&gt;')
-    
-    # Wrap entire content in pre to preserve formatting
-    return f'<pre style="white-space: pre-wrap; word-wrap: break-word; margin: 0; font-family: monospace;">{content}</pre>'
+
+    # Split into fenced code blocks and normal text
+    parts = re.split(r'(?:^|\n)```([^\n]*)\n([\s\S]*?)\n```', content)
+
+    html_parts = []
+    i = 0
+    while i < len(parts):
+        if i + 2 < len(parts):
+            normal = parts[i]
+            if normal:
+                html_parts.append(
+                    '<pre style="white-space: pre-wrap; word-wrap: break-word; margin: 0; font-family: monospace;">'
+                    + normal +
+                    '</pre>'
+                )
+            lang = parts[i + 1].strip()
+            code = parts[i + 2]
+            class_attr = f' class="language-{lang}"' if lang else ''
+            html_parts.append(f'<pre><code{class_attr}>{code}</code></pre>')
+            i += 3
+        else:
+            normal = parts[i]
+            if normal:
+                html_parts.append(
+                    '<pre style="white-space: pre-wrap; word-wrap: break-word; margin: 0; font-family: monospace;">'
+                    + normal +
+                    '</pre>'
+                )
+            i += 1
+
+    return '\n'.join(html_parts)
 
 def process_file(md_file):
     """Process a markdown file"""
