@@ -27,6 +27,7 @@ modules.order
 
 # Temp and notes
 /notes/tmp/
+.worktrees/
 
 # Editor
 .vscode/
