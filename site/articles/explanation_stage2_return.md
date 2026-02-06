@@ -175,7 +175,6 @@ Derivation (data): 0xffff8bd54c33e025 - 0xffff8bd54c33e020 = 0x5 = 5 "/tmp/" len
 
 t_m.txt miss, insert.
 
-
 ```c
 char n3[] = "/tmp/t_m.txt";
 
@@ -186,23 +185,10 @@ Kernel lines: do_filp_open entry pointer = 0xffff8bd54c33e020 | /tmp/t_m.txt d_l
 2543581516 length 7 name t_m.txt d_lookup return: NULL __d_alloc entry pointer = 0xffff8bd54c33e025
 __d_alloc return pointer = 0xffff8bd54eaa0e78 __d_add entry: 0xffff8bd54eaa0e78 | t_m.txt
 
-Pointer meanings (t_m.txt).
-- do_filp_open entry pointer 0xffff8bd54c33e020 points to "/tmp/t_m.txt" in kernel memory for this open.
-- d_lookup entry hash 2543581516 and length 7 use basename "t_m.txt" as the key.
-- d_lookup return: NULL shows no cached dentry matched.
-- __d_alloc entry pointer 0xffff8bd54c33e025 points to basename start after "/tmp/".
-- __d_alloc return pointer 0xffff8bd54eaa0e78 is the newly allocated dentry name storage.
-- __d_add entry pointer 0xffff8bd54eaa0e78 inserts that name storage into the dcache as a negative entry.
-
-Basename explanation (t_m.txt):
-- A pathname is split into parent directory + basename. For "/tmp/t_m.txt", the parent is "/tmp/" and the basename is "t_m.txt".
-- The dcache lookup and name copy operate on the basename, not the full path. That is why the copy source pointer is not the full string pointer.
-- __d_alloc entry pointer is the basename start inside the same string, so it equals the full string pointer + 5 ("/tmp/" length).
-- __d_alloc return pointer is new dentry name storage allocated by __d_alloc; __d_add inserts that same storage into the cache.
+The entry pointer is 0xffff8bd54c33e020 and the string is /tmp/t_m.txt, so the kernel copy for this call is fixed to that address. The lookup key is the basename, shown as t_m.txt with length 7 and hash 2543581516, so the lookup uses 7 bytes and not 12. The lookup returns NULL, so the cache has no entry for that key at this time. The allocation source pointer is 0xffff8bd54c33e025, which is 0xffff8bd54c33e020 + 5; that 5 matches the length of “/tmp/”, so the copy source begins at the basename inside the same string. The allocation return pointer is 0xffff8bd54eaa0e78, which is distinct from the string pointer and therefore new storage. The insert line uses 0xffff8bd54eaa0e78, so the same new storage is placed into the dcache. The numeric link is 0xffff8bd54c33e025 − 0xffff8bd54c33e020 = 0x5 = 5.
 
 Compact map (t_m.txt).
-"/tmp/t_m.txt" @ 0xffff8bd54c33e020 -> d_lookup (t_m.txt, 7, 2543581516) miss -> __d_alloc entry
-0xffff8bd54c33e025 (basename) -> __d_alloc return 0xffff8bd54eaa0e78 -> __d_add 0xffff8bd54eaa0e78.
+"/tmp/t_m.txt" @ 0xffff8bd54c33e020 -> d_lookup (t_m.txt, 7, 2543581516) -> NULL -> __d_alloc entry 0xffff8bd54c33e025 -> __d_alloc return 0xffff8bd54eaa0e78 -> __d_add 0xffff8bd54eaa0e78.
 
 l_m.txt miss, insert.
 
