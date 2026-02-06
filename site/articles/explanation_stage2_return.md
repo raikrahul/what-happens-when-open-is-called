@@ -75,22 +75,22 @@ Loopback filesystem test:
 - mounted at /mnt/loopfs
 - a.txt created, sync, unmount, remount
 
-Probe map (side-by-side)
+Probe map (clearer, with reason and proof anchor)
 
-| Probe | Observed field | Purpose |
-| --- | --- | --- |
-| do_filp_open entry | input filename pointer + string | capture kernel-side name at entry |
-| __d_alloc entry | copy source pointer | capture name copy source |
-| __d_alloc return | copy destination pointer | capture name copy destination |
-| do_filp_open return | returned file name pointer | compare return pointer to copies and hits |
-| d_lookup entry | hash, length, name | record lookup key |
-| d_lookup return | dentry name pointer or NULL | detect hit vs miss |
-| __d_lookup entry | hash, length, name | internal lookup path key |
-| __d_lookup_rcu entry | hash, length, name | RCU lookup path key |
-| full_name_hash return | hash, length, salt, name | record hash computation (not observed in this run) |
-| __d_add entry | dentry name pointer | record cache insert |
-| d_delete entry | dentry name pointer | record unlink removal |
-| __dentry_kill entry | dentry name pointer | record eviction via drop_caches |
+| Probe | Observed field | Why it matters | Proof anchor |
+| --- | --- | --- | --- |
+| do_filp_open entry | input filename pointer + string | establishes kernel-side name before lookup | driver open entry probe |
+| __d_alloc entry | copy source pointer | shows which basename string is copied | driver alloc entry probe |
+| __d_alloc return | copy destination pointer | identifies new dentry name storage | driver alloc return probe |
+| do_filp_open return | returned file name pointer | ties file to dentry name storage | driver open return probe |
+| d_lookup entry | hash, length, name | defines lookup key used for cache search | driver lookup entry probe |
+| d_lookup return | dentry name pointer or NULL | proves hit or miss | driver lookup return probe |
+| __d_lookup entry | hash, length, name | internal lookup path key | driver __d_lookup probe |
+| __d_lookup_rcu entry | hash, length, name | RCU fast-path lookup key | driver __d_lookup_rcu probe |
+| full_name_hash return | hash, length, salt, name | records hash computation (if observed) | driver hash ret probe |
+| __d_add entry | dentry name pointer | proves cache insert | driver __d_add probe |
+| d_delete entry | dentry name pointer | proves unlink removal | driver d_delete probe |
+| __dentry_kill entry | dentry name pointer | proves eviction via drop_caches | driver __dentry_kill probe |
 
 Memcpy proof (kernel source)
 
