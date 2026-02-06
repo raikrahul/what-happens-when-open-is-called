@@ -462,6 +462,13 @@ Pointer meanings (long filename):
 - do_filp_open return pointer 0xffff8bd7b1f07cd8 shows the returned file points to that same name storage.
 - later d_lookup return pointer 0xffff8bd7b1f07cd8 shows a cache hit on the same name pointer.
 
+Compat explanation (long filename, compact):
+do_filp_open entry 0xffff8bd55337c020 -> struct filename.name (kernel string); d_lookup key
+("test_file_very_long_name_to_force_external_allocation_1770408898", 64, 3778081590) -> miss;
+__d_alloc entry 0xffff8bd55337c020 (copy source) -> __d_alloc return 0xffff8bd7b1f07cd8
+(`dentry->d_name.name`, copy destination) -> __d_add inserts 0xffff8bd7b1f07cd8 -> do_filp_open
+return points to 0xffff8bd7b1f07cd8 -> later d_lookup return 0xffff8bd7b1f07cd8 (cache hit).
+
 Derivation: 0xffff8bd7b1f07cd8 = __d_alloc return pointer 0xffff8bd7b1f07cd8 = __d_add entry pointer
 0xffff8bd7b1f07cd8 = do_filp_open return pointer 0xffff8bd7b1f07cd8 = d_lookup return pointer (cache
 hit)
