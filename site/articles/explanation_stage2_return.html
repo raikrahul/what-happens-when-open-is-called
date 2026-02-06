@@ -170,20 +170,29 @@ Memcpy proof (kernel source)
 
 File: /usr/src/linux-source-6.8.0/fs/dcache.c:1660 memcpy(dname, name-&gt;name, name-&gt;len);
 
-ASCII diagram (horizontal, real data, t_e.txt)</pre>
-<pre><code class="language-text">"/tmp/t_e.txt" @ 0xffff8bd55debc020 -&gt; do_filp_open entry
-0xffff8bd55debc025 -&gt; __d_alloc entry (copy source)
-0xffff8bd572708638 -&gt; __d_alloc return (copy destination)
-0xffff8bd572708638 -&gt; do_filp_open return</code></pre>
+Chains (real data, in order)
+
+1) memcpy chain (t_e.txt, copy source -&gt; destination)</pre>
+<pre><code class="language-text">"/tmp/t_e.txt" @ 0xffff8bd55debc020 -&gt; __d_alloc entry 0xffff8bd55debc025 -&gt; __d_alloc return 0xffff8bd572708638</code></pre>
 <pre style="white-space: pre-wrap; word-wrap: break-word; margin: 0; font-family: monospace;">
 
-ASCII diagram (horizontal, real data, cache hit for t_e.txt)</pre>
-<pre><code class="language-text">"/tmp/t_e.txt" -&gt; do_filp_open entry -&gt; d_lookup return 0xffff8bd572708638 -&gt; do_filp_open return 0xffff8bd572708638</code></pre>
+2) cache build-up chain (t_e.txt, miss -&gt; insert)</pre>
+<pre><code class="language-text">d_lookup return NULL -&gt; __d_add 0xffff8bd572708638 -&gt; do_filp_open return 0xffff8bd572708638</code></pre>
 <pre style="white-space: pre-wrap; word-wrap: break-word; margin: 0; font-family: monospace;">
 
-ASCII diagram (horizontal, real data, hash lookup for t_e.txt)</pre>
-<pre><code class="language-text">"t_e.txt" + 7 -&gt; d_lookup hash 1830572521 -&gt; d_lookup bucket (hash 1830572521)</code></pre>
+3) cache hit chain (t_e.txt, later lookup)</pre>
+<pre><code class="language-text">d_lookup return 0xffff8bd572708638 -&gt; do_filp_open return 0xffff8bd572708638</code></pre>
 <pre style="white-space: pre-wrap; word-wrap: break-word; margin: 0; font-family: monospace;">
+
+4) cache miss chain (t_m.txt, missing)</pre>
+<pre><code class="language-text">"/tmp/t_m.txt" -&gt; d_lookup return NULL -&gt; __d_add 0xffff8bd5727080f8</code></pre>
+<pre style="white-space: pre-wrap; word-wrap: break-word; margin: 0; font-family: monospace;">
+
+5) cache delete chain (unlink)</pre>
+<pre><code class="language-text">d_delete 0xffff8bd55868a0f8 (l_e.txt) + d_delete 0xffff8bd572708638 (t_e.txt)</code></pre>
+<pre style="white-space: pre-wrap; word-wrap: break-word; margin: 0; font-family: monospace;">
+
+Later phases start after this: eviction (__dentry_kill) and rebuild after eviction.
 
 Table of Contents
 

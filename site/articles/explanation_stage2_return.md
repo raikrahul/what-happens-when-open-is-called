@@ -96,23 +96,34 @@ Memcpy proof (kernel source)
 
 File: /usr/src/linux-source-6.8.0/fs/dcache.c:1660 memcpy(dname, name->name, name->len);
 
-ASCII diagram (horizontal, real data, t_e.txt)
+Chains (real data, in order)
+
+1) memcpy chain (t_e.txt, copy source -> destination)
 ```text
-"/tmp/t_e.txt" @ 0xffff8bd55debc020 -> do_filp_open entry
-0xffff8bd55debc025 -> __d_alloc entry (copy source)
-0xffff8bd572708638 -> __d_alloc return (copy destination)
-0xffff8bd572708638 -> do_filp_open return
+"/tmp/t_e.txt" @ 0xffff8bd55debc020 -> __d_alloc entry 0xffff8bd55debc025 -> __d_alloc return 0xffff8bd572708638
 ```
 
-ASCII diagram (horizontal, real data, cache hit for t_e.txt)
+2) cache build-up chain (t_e.txt, miss -> insert)
 ```text
-"/tmp/t_e.txt" -> do_filp_open entry -> d_lookup return 0xffff8bd572708638 -> do_filp_open return 0xffff8bd572708638
+d_lookup return NULL -> __d_add 0xffff8bd572708638 -> do_filp_open return 0xffff8bd572708638
 ```
 
-ASCII diagram (horizontal, real data, hash lookup for t_e.txt)
+3) cache hit chain (t_e.txt, later lookup)
 ```text
-"t_e.txt" + 7 -> d_lookup hash 1830572521 -> d_lookup bucket (hash 1830572521)
+d_lookup return 0xffff8bd572708638 -> do_filp_open return 0xffff8bd572708638
 ```
+
+4) cache miss chain (t_m.txt, missing)
+```text
+"/tmp/t_m.txt" -> d_lookup return NULL -> __d_add 0xffff8bd5727080f8
+```
+
+5) cache delete chain (unlink)
+```text
+d_delete 0xffff8bd55868a0f8 (l_e.txt) + d_delete 0xffff8bd572708638 (t_e.txt)
+```
+
+Later phases start after this: eviction (__dentry_kill) and rebuild after eviction.
 
 Table of Contents
 
