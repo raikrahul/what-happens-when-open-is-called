@@ -310,7 +310,14 @@ Derivation (data):
 
 Claim A2. Cache miss and insert for missing t_m.txt.
 
-Evidence:
+User-space code that triggers this evidence (matrix_open.c):
+```c
+char n3[] = "/tmp/t_m.txt";
+
+f[2] = open(n3, O_RDONLY);
+```
+
+Kernel evidence:
 do_filp_open entry pointer = 0xffff8bd5423ed020 | /tmp/t_m.txt
 d_lookup entry: hash 2543581516 length 7 name t_m.txt
 d_lookup return: NULL
@@ -320,7 +327,14 @@ __d_add entry: 0xffff8bd5560a0ab8 | t_m.txt
 
 Claim A3. Cache miss and insert for missing l_m.txt.
 
-Evidence:
+User-space code that triggers this evidence (matrix_open.c):
+```c
+char n4[] = "l_m.txt";
+
+f[4] = open(n4, O_RDONLY);
+```
+
+Kernel evidence:
 do_filp_open entry pointer = 0xffff8bd5423ed020 | l_m.txt
 d_lookup entry: hash 1675155717 length 7 name l_m.txt
 d_lookup return: NULL
@@ -330,7 +344,14 @@ __d_add entry: 0xffff8bd5560a0c38 | l_m.txt
 
 Claim A4. Cache miss, memcpy, and insert for a.txt on loopback ext2.
 
-Evidence:
+User-space code that triggers this evidence (matrix_open.c):
+```c
+char n5[] = "/mnt/loopfs/a.txt";
+
+f[5] = open(n5, O_RDONLY);
+```
+
+Kernel evidence:
 do_filp_open entry pointer = 0xffff8bd5423ed020 | /mnt/loopfs/a.txt
 d_lookup entry: hash 3711754354 length 5 name a.txt
 d_lookup return: NULL
@@ -348,7 +369,20 @@ Derivation:
 
 Claim A5. Cache hit for l_e.txt and t_e.txt before deletion.
 
-Evidence:
+User-space code that triggers this evidence (matrix_open.c):
+```c
+char n1[] = "l_e.txt";
+char n2[] = "/tmp/t_e.txt";
+
+// first opens happen earlier
+f[3] = open(n1, O_RDONLY);
+
+// later opens hit cache
+f[0] = open(n1, O_RDONLY);
+f[1] = open(n2, O_RDONLY);
+```
+
+Kernel evidence:
 d_lookup entry: hash 399720033 length 7 name l_e.txt
 d_lookup return: 0xffff8bd54e8d9878 | l_e.txt
 
@@ -357,14 +391,26 @@ d_lookup return: 0xffff8bd54e246db8 | t_e.txt
 
 Claim A6. Cache deletion via unlink.
 
-Evidence:
+User-space code that triggers this evidence (matrix_open.c):
+```c
+unlink("l_e.txt");
+unlink("/tmp/t_e.txt");
+```
+
+Kernel evidence:
 d_delete entry: 0xffff8bd54e8d9878 | l_e.txt
 d_delete entry: 0xffff8bd54e246db8 | t_e.txt
 no d_drop entry lines observed in this run
 
 Claim A7. Cache eviction via drop_caches.
 
-Evidence:
+User-space code that triggers this evidence (matrix_open.c):
+```c
+drop_caches_if_root();
+// writes "2\n" to /proc/sys/vm/drop_caches
+```
+
+Kernel evidence:
 do_filp_open entry pointer = 0xffff8bd54d6aa020 | /proc/sys/vm/drop_caches
 do_filp_open return pointer = 0xffff8bd6fce05db8 | drop_caches
 __dentry_kill entry: 0xffff8bd54e8d9878 | l_e.txt
@@ -373,7 +419,17 @@ matrix_open (86584): drop_caches: 2
 
 Claim A8. Cache rebuild after eviction for t_e.txt.
 
-Evidence:
+User-space code that triggers this evidence (matrix_open.c):
+```c
+drop_caches_if_root();
+sleep(1);
+
+// reopen after eviction
+f[0] = open("l_e.txt", O_RDONLY);
+f[1] = open("/tmp/t_e.txt", O_RDONLY);
+```
+
+Kernel evidence:
 d_lookup entry: hash 1830572521 length 7 name t_e.txt
 __d_alloc entry pointer = 0xffff8bd54d6aa025
 __d_alloc return pointer = 0xffff8bd572e4aab8
@@ -385,7 +441,16 @@ Derivation:
 
 Claim A9. Post-eviction lookup observed for l_e.txt.
 
-Evidence:
+User-space code that triggers this evidence (matrix_open.c):
+```c
+drop_caches_if_root();
+sleep(1);
+
+// reopen after eviction
+f[0] = open("l_e.txt", O_RDONLY);
+```
+
+Kernel evidence:
 do_filp_open entry pointer = 0xffff8bd54d6aa020 | l_e.txt
 __d_lookup_rcu entry: hash 399720033 length 7 name l_e.txt
 do_filp_open return pointer = 0xffff8bd5406080f8 | l_e.txt
@@ -395,7 +460,17 @@ Derivation:
 
 Claim A10. Hash keys used in Run A.
 
-Evidence:
+User-space code that triggers this evidence (matrix_open.c):
+```c
+// these names are opened in this run:
+open("l_e.txt", O_RDONLY);
+open("/tmp/t_e.txt", O_RDONLY);
+open("l_m.txt", O_RDONLY);
+open("/tmp/t_m.txt", O_RDONLY);
+open("/mnt/loopfs/a.txt", O_RDONLY);
+```
+
+Kernel evidence:
 l_e.txt length 7 hash 399720033
 t_e.txt length 7 hash 1830572521
 l_m.txt length 7 hash 1675155717
