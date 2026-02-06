@@ -69,10 +69,17 @@ static int open_entry(struct kprobe *p, struct pt_regs *regs) {
   if (!is_target())
     return 0;
 
-  // TODO [01]:
-  // 01. Extract the 'struct filename *' from the correct ABI register.
-  // 02. Print the address and the string content using pr_info.
-  // Data: RSI = %px, String = %s
+  /*
+   * TODO [01]: ENTRY IDENTIFICATION
+   * -------------------------------
+   * AXIOM: x86_64 ABI -> Arg 1: RDI, Arg 2: RSI.
+   * THE WHY: We catch the process at the handover point.
+   * THE SURPRISE: RSI is NOT a 'char *'. It is a 'struct filename *'.
+   *
+   * TASK:
+   * 1. Extract 'struct my_filename *' from RSI.
+   * 2. Print: "[trace_open] Input Addr: 0x%px | Val: %s\n", f->name, f->name
+   */
 
   return 0;
 }
@@ -86,11 +93,25 @@ static int open_ret(struct kretprobe_instance *ri, struct pt_regs *regs) {
   if (!is_target())
     return 0;
 
-  // TODO [02]:
-  // 01. Extract 'struct file *' from the return register.
-  // 02. Gate with IS_ERR checks.
-  // 03. Navigate the pointer chain to find the dentry name.
-  // 04. Print the Result Addr and Value.
+  /*
+   * TODO [02]: THE GENTLEMEN'S CHAIN
+   * -------------------------------
+   * AXIOM: x86_64 ABI -> Return value resides in RAX.
+   * THE WHY: Settlement point. The string has moved to the Dentry Cache.
+   * THE SURPRISE: The original RSI address is no longer relevant for identity.
+   *
+   * TASK:
+   * 1. Extract 'struct file *' from RAX.
+   * 2. Implement the manual dereference chain:
+   *    Chain: f -> f_path.dentry -> d_name.name
+   * 3. Print: "[trace_open] Result Addr: 0x%px | Val: %s\n", name_ptr, name_ptr
+   *
+   * RAW DATA (Offsets):
+   * f_path: RAX + 0x38
+   * dentry: Read at f_path + 0x08
+   * d_name: Read at dentry + 0x28
+   * name:   Read at d_name + 0x08
+   */
 
   return 0;
 }
