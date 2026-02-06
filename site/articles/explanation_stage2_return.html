@@ -166,61 +166,26 @@ Loopback filesystem test:
 - mounted at /mnt/loopfs
 - a.txt created, sync, unmount, remount
 
-Symbol availability proof (from this machine)
+Probe map (side-by-side)
 
-Kernel headers and sources:
-
-uname -r: 6.14.0-37-generic /usr/src contains linux-headers-6.14.0-37-generic /usr/src contains
-linux-source-6.8.0
-
-kptr_restrict: 1 perf_event_paranoid: 4
-
-Symbols in /proc/kallsyms:
-
-__d_add: ffffffff89beaaa0 (local symbol, type t) d_add: ffffffff89beaca0 (global symbol, type T)
-d_rehash: ffffffff89bea3e0 (global symbol, type T) d_add_ci: ffffffff89becf20 (global symbol, type
-T) full_name_hash: ffffffff89bd5010 (global symbol, type T)
-
-Why __d_add is not in available_filter_functions: available_filter_functions is the ftrace function
-list, not a full symbol list. It only includes functions that ftrace exposes (non-inlined,
-traceable, and globally visible). __d_add is present as a local symbol in kallsyms, so kprobe can
-attach to it, but ftrace does not list it.
-
-Probe map and observed fields:
-
-- do_filp_open entry: input filename pointer
-- __d_alloc entry: copy source pointer
-- __d_alloc return: copy destination pointer
-- do_filp_open return: returned struct file name pointer
-- d_lookup entry: hash value, length, and name string
-- d_lookup return: cache hit name pointer
-- __d_lookup entry: hash value, length, and name string at internal lookup
-- __d_lookup_rcu entry: hash value, length, and name string in RCU path
-- full_name_hash return: hash value, length, salt, and name string at hash computation (not observed in this run)
-- __d_add entry: dentry name pointer at insert into dcache
-- d_delete entry: dentry name pointer at unlink removal
-- __dentry_kill entry: dentry name pointer at eviction via drop_caches
+| Probe | Observed field | Purpose |
+| --- | --- | --- |
+| do_filp_open entry | input filename pointer + string | capture kernel-side name at entry |
+| __d_alloc entry | copy source pointer | capture name copy source |
+| __d_alloc return | copy destination pointer | capture name copy destination |
+| do_filp_open return | returned file name pointer | compare return pointer to copies and hits |
+| d_lookup entry | hash, length, name | record lookup key |
+| d_lookup return | dentry name pointer or NULL | detect hit vs miss |
+| __d_lookup entry | hash, length, name | internal lookup path key |
+| __d_lookup_rcu entry | hash, length, name | RCU lookup path key |
+| full_name_hash return | hash, length, salt, name | record hash computation (not observed in this run) |
+| __d_add entry | dentry name pointer | record cache insert |
+| d_delete entry | dentry name pointer | record unlink removal |
+| __dentry_kill entry | dentry name pointer | record eviction via drop_caches |
 
 Memcpy proof (kernel source)
 
 File: /usr/src/linux-source-6.8.0/fs/dcache.c:1660 memcpy(dname, name-&gt;name, name-&gt;len);
-
-Per-probe purpose
-
-do_filp_open entry: capture the input name pointer before any lookup or allocation. This is the
-kernel-side name pointer used for the open. __d_alloc entry: capture the source pointer used for
-name copying into a new dentry. This is the copy source. __d_alloc return: capture the destination
-pointer for the copied name in the new dentry. This is the copy destination. do_filp_open return:
-capture the name pointer referenced by the returned struct file. This is the return pointer we
-compare against copies and cache hits. d_lookup entry: capture the hash value, length, and name used
-as the lookup key. This shows which exact string is hashed for lookup. d_lookup return: capture the
-name pointer of a cached dentry on hit. This is the pointer reused on cache hits. __d_lookup entry:
-capture the same hash, length, and name on the internal lookup path. This is used when the lookup
-path bypasses the external wrapper. __d_lookup_rcu entry: capture the hash, length, and name on the
-RCU fast path lookup. __d_add entry: capture the moment the new dentry name is inserted into the
-dcache. This is the cache build-up proof. d_delete entry: capture the moment the name is removed
-from the dcache hash at unlink time. This is the cache deletion proof. __dentry_kill entry: capture
-the moment the dentry is reclaimed by drop_caches. This is the eviction proof.
 
 ASCII diagram: allocation path
 ```text
@@ -701,6 +666,26 @@ pointer = 0xffff8bd55debc02c __d_alloc return pointer = 0xffff8bd572708b78 __d_a
 0xffff8bd572708b78 | a.txt do_filp_open return pointer = 0xffff8bd572708b78 | a.txt
 
 Derivation: 0xffff8bd55debc02c - 0xffff8bd55debc020 = 0xC = 12 "/mnt/loopfs/" length = 12
+
+Symbol availability proof (from this machine)
+
+Kernel headers and sources:
+
+uname -r: 6.14.0-37-generic /usr/src contains linux-headers-6.14.0-37-generic /usr/src contains
+linux-source-6.8.0
+
+kptr_restrict: 1 perf_event_paranoid: 4
+
+Symbols in /proc/kallsyms:
+
+__d_add: ffffffff89beaaa0 (local symbol, type t) d_add: ffffffff89beaca0 (global symbol, type T)
+d_rehash: ffffffff89bea3e0 (global symbol, type T) d_add_ci: ffffffff89becf20 (global symbol, type
+T) full_name_hash: ffffffff89bd5010 (global symbol, type T)
+
+Why __d_add is not in available_filter_functions: available_filter_functions is the ftrace function
+list, not a full symbol list. It only includes functions that ftrace exposes (non-inlined,
+traceable, and globally visible). __d_add is present as a local symbol in kallsyms, so kprobe can
+attach to it, but ftrace does not list it.
 
 What We Failed To Observe And Why
 
