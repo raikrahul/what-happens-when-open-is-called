@@ -72,296 +72,77 @@
     <button onclick="window.print()" style="font-size: 10px; cursor: pointer;">Print</button>
   </div>
   <div class="content">
-    <pre style="white-space: pre-wrap; word-wrap: break-word; margin: 0; font-family: monospace;">CONCLUSION: Filename identity preserved through kernel path for all existing files.
+    <pre style="white-space: pre-wrap; word-wrap: break-word; margin: 0; font-family: monospace;">Overview
 
-To prove this, we must show [O] OUT equals either [A] DST or [L] HIT.
+This stage proves where the filename string lives at return time and whether it was copied or reused from cache. We track five points and show that the returned struct file always points to the dentry name, which is either copied in __d_alloc or reused from d_lookup.
 
-[O] OUT is struct file.f_path.dentry.d_name.name captured at do_filp_open return.
+What We Trace
 
-To derive [O] OUT, we need struct file.f_path.dentry.d_name.name.
+[O] IN  do_filp_open entry      -&gt; struct filename name
+[A] SRC __d_alloc entry         -&gt; struct qstr name
+[A] DST __d_alloc return        -&gt; dentry d_name.name
+[O] OUT do_filp_open return     -&gt; file f_path.dentry.d_name.name
+[L] HIT d_lookup return         -&gt; dentry d_name.name
 
-struct file contains struct path f_path.
+Two Paths
 
-struct path contains struct dentry *dentry.
+Allocation path:
+[O] IN -&gt; [A] SRC -&gt; [A] DST -&gt; [O] OUT
 
-struct dentry contains struct qstr d_name.
+Cache hit path:
+[O] IN -&gt; [L] HIT -&gt; [O] OUT
 
-struct qstr contains const unsigned char *name.
+d_lookup checks cache first. If it returns NULL, __d_alloc runs and copies the name. If it returns a dentry, the cached dentry name is reused and no allocation happens.
 
-struct dentry.d_name.name is the filename settlement address.
+Source Of The Name
 
-d_filp_open returns struct file * in RAX.
+The user string is copied into kernel memory by getname. That kernel copy is stored in struct filename and is visible at [O] IN.
 
-Return probe captures from returned struct file *.
+How The Copy Happens
 
-[O] OUT is the address at file-&gt;f_path.dentry-&gt;d_name.name.
+__d_alloc receives a struct qstr and copies qstr.name into the new dentry name buffer. That gives:
+- [A] SRC is the source pointer
+- [A] DST is the destination pointer
 
-This address comes from either:
-- Allocation path: __d_alloc copies name to new dentry
-- Cache hit path: d_lookup finds existing dentry
+On the allocation path, [A] DST equals [O] OUT, so the returned struct file points at the copied name.
 
-Two paths exist because path_openat calls d_lookup before __d_alloc.
+How Cache Reuse Happens
 
-PATH DERIVATION - ALLOCATION:
+d_lookup returns an existing dentry when a cached entry is found. In that case:
+- [L] HIT is the cached dentry name pointer
+- [O] OUT equals [L] HIT
 
-[A] DST must equal [O] OUT in allocation path.
+So the returned struct file points at the existing cached name without a new copy.
 
-[A] DST is struct dentry.d_name.name captured at __d_alloc return.
+Error Case
 
-__d_alloc returns struct dentry * in RAX.
+If open fails, do_filp_open returns an error and no struct file is returned. You will see [O] IN but no [O] OUT for that open.
 
-struct dentry.d_name is at offset +32 from struct dentry start.
+Driver Filter
 
-struct qstr.name is at offset +8 from struct qstr start.
+The driver filters by process name. Default is matrix_open. For minimal_open, load with:
 
-[A] DST is address at dentry + 32 + 8 = dentry + 40.
+sudo insmod trace_do_filp_open.ko target_comm=minimal_open
 
-__d_alloc copies name from [A] SRC to [A] DST.
+For matrix_open, load with:
 
-[A] SRC is struct qstr.name captured at __d_alloc entry.
+sudo insmod trace_do_filp_open.ko target_comm=matrix_open
 
-__d_alloc receives struct qstr * as second argument.
+Test Expectations
 
-On x86_64, second argument is in RSI register.
+minimal_open (long name) shows allocation path:
+- [O] IN equals [A] SRC
+- [A] DST equals [O] OUT
+- later [L] HIT equals [O] OUT
 
-struct qstr.name is at offset +8 from struct qstr start.
+matrix_open shows both paths:
+- existing file uses cache hit path with [L] HIT equals [O] OUT
+- new file uses allocation path with [A] DST equals [O] OUT
+- missing file shows no [O] OUT
 
-[A] SRC is address at qstr + 8.
+Conclusion
 
-__d_alloc copies string via memcpy from [A] SRC to [A] DST.
-
-memcpy destination is [A] DST.
-
-memcpy source is [A] SRC.
-
-__d_alloc allocates dentry with kmem_cache_alloc.
-
-For names longer than 32 bytes, external allocation via kmalloc.
-
-For names 32 bytes or shorter, inline buffer at dentry + 56.
-
-PATH DERIVATION - CACHE HIT:
-
-[L] HIT must equal [O] OUT in cache hit path.
-
-[L] HIT is struct dentry.d_name.name captured at d_lookup return.
-
-d_lookup returns struct dentry * in RAX.
-
-[L] HIT is address at dentry + 40 (same calculation as [A] DST).
-
-d_lookup searches dentry cache before __d_alloc.
-
-d_lookup receives parent dentry and struct qstr.
-
-d_lookup calculates hash from struct qstr.hash at offset +0.
-
-d_lookup searches hash bucket.
-
-d_lookup returns existing dentry if found.
-
-d_lookup returns NULL if not found.
-
-[L] HIT only captured when d_lookup returns non-NULL.
-
-If [L] HIT captured, __d_alloc not called.
-
-If [L] HIT not captured, __d_alloc called.
-
-INPUT DERIVATION:
-
-[O] IN is source of filename for both paths.
-
-[O] IN is struct filename.name captured at do_filp_open entry.
-
-d_filp_open receives struct filename * as second argument.
-
-On x86_64, second argument is in RSI register.
-
-struct filename.name is at offset +0 from struct filename start.
-
-[O] IN is address at filename + 0.
-
-struct filename created by getname().
-
-getname() copies string from user space to kernel.
-
-struct filename.name points to kernel copy.
-
-STRUCTURE DEFINITIONS:
-
-struct filename {
-    const char *name;         // +0   - kernel copy
-    const __user char *uptr;  // +8
-    int refcnt;               // +16
-    struct qstr name_attr;    // +24
-};
-
-struct file {
-    file_ref_t f_ref;         // +0
-    spinlock_t f_lock;        // +8
-    fmode_t f_mode;           // +12
-    unsigned int f_flags;     // +48
-    struct path f_path;       // +72
-    ...
-};
-
-struct path {
-    struct vfsmount *mnt;     // +0
-    struct dentry *dentry;    // +8
-};
-
-struct dentry {
-    unsigned int d_flags;       // +0
-    seqcount_spinlock_t d_seq;  // +4
-    struct hlist_bl_node d_hash; // +8
-    struct dentry *d_parent;   // +24
-    struct qstr d_name;        // +32
-    struct inode *d_inode;     // +48
-    union {
-        char d_shortname[32];    // +56
-        void *d_external[2];
-    };
-};
-
-struct qstr {
-    union {
-        struct {
-            u32 hash;          // +0
-            u32 len;          // +4
-        };
-        u64 hash_len;         // +0
-    };
-    const unsigned char *name; // +8
-};
-
-PROBE DEFINITIONS:
-
-[O] IN = ((struct filename *)RSI)-&gt;name at do_filp_open entry
-
-[A] SRC = ((struct qstr *)RSI)-&gt;name at __d_alloc entry
-
-[A] DST = ((struct dentry *)RAX)-&gt;d_name.name at __d_alloc return
-
-[O] OUT = ((struct file *)RAX)-&gt;f_path.dentry-&gt;d_name.name at do_filp_open return
-
-[L] HIT = ((struct dentry *)RAX)-&gt;d_name.name at d_lookup return
-
-TEST EVIDENCE:
-
-TEST 1: minimal_open.c creates new file with 64-character name
-
-[O] IN = 0xffff8bd55debe020
-
-[A] SRC = 0xffff8bd55debe020
-
-[A] DST = 0xffff8bd5daa0a3d8
-
-[O] OUT = 0xffff8bd5daa0a3d8
-
-[L] HIT = 0xffff8bd5daa0a3d8 (5 seconds later, second open)
-
-CALCULATION:
-
-[O] IN = [A] SRC = 0xffff8bd55debe020 ✓
-
-[A] DST = [O] OUT = 0xffff8bd5daa0a3d8 ✓
-
-[L] HIT = [O] OUT = 0xffff8bd5daa0a3d8 ✓
-
-64 &gt; 32 ∴ External kmalloc allocation
-
-TEST 2: matrix_open.c - FILE 1: l_e.txt (pre-existing)
-
-[O] IN = 0xffff8bd546396020
-
-[L] HIT = 0xffff8bd5db76df38
-
-[O] OUT = 0xffff8bd5db76df38
-
-[A] SRC = NULL (not captured)
-
-[A] DST = NULL (not captured)
-
-CALCULATION:
-
-[L] HIT appeared before [O] OUT in trace
-
-No [A] SRC ∴ No __d_alloc call
-
-No [A] DST ∴ No allocation
-
-[L] HIT = [O] OUT = 0xffff8bd5db76df38 ✓
-
-Cache hit path taken
-
-TEST 2: FILE 2: /tmp/t_e.txt (new file, 7-character basename)
-
-[O] IN = 0xffff8bd546396020 (/tmp/t_e.txt)
-
-[A] SRC = 0xffff8bd546396025 (t_e.txt)
-
-[A] DST = 0xffff8bd7c7e2b278
-
-[O] OUT = 0xffff8bd7c7e2b278
-
-CALCULATION:
-
-0xffff8bd546396020 - 0xffff8bd546396025 = 5
-
-5 = strlen("/tmp/") ✓
-
-[A] SRC points to basename
-
-[A] DST = [O] OUT = 0xffff8bd7c7e2b278 ✓
-
-7 &lt;= 32 ∴ Inline buffer allocation
-
-TEST 2: FILE 3: /tmp/t_m.txt (non-existent)
-
-[O] IN = 0xffff8bd546396020
-
-[O] OUT = NULL
-
-[A] SRC = NULL
-
-[A] DST = NULL
-
-CALCULATION:
-
-Filesystem returned ENOENT
-
-No allocation for non-existent files
-
-TEST 2: FILE 4: l_m.txt (non-existent)
-
-Same as FILE 3
-
-TEST 2: FILE 5: Second opens (cache hits)
-
-[L] HIT = 0xffff8bd5db76df38 (l_e.txt)
-
-[L] HIT = 0xffff8bd7c7e2b278 (t_e.txt)
-
-CALCULATION:
-
-0xffff8bd5db76df38 = previous [O] OUT for l_e.txt ✓
-
-0xffff8bd7c7e2b278 = previous [O] OUT for t_e.txt ✓
-
-DCACHE identity preserved
-
-PROOF SUMMARY:
-
-All existing files: [O] OUT equals [A] DST or [L] HIT
-
-New files: Allocation path taken, [A] DST = [O] OUT
-
-Cached files: Cache hit path taken, [L] HIT = [O] OUT
-
-Non-existent files: No [O] OUT, filesystem returns error
-
-∴ CONCLUSION PROVEN: Filename identity preserved through kernel path</pre>
+For successful opens, the returned struct file always points to the dentry name. That name is either copied in __d_alloc or reused from d_lookup. This is why the same pointer is observed at [O] OUT on both paths.</pre>
   </div>
 
 </body>

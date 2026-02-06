@@ -6,6 +6,8 @@ on:
       - main
     paths:
       - 'site/**'
+      - 'tools/build_site.sh'
+      - 'site/articles/convert_md.py'
       - '.github/workflows/publish_site.yml'
 
 permissions:
@@ -19,6 +21,9 @@ jobs:
         uses: actions/checkout@v4
         with:
           fetch-depth: 0
+
+      - name: Build HTML from Markdown
+        run: ./tools/build_site.sh
 
       - name: Publish to gh-pages
         uses: peaceiris/actions-gh-pages@v4

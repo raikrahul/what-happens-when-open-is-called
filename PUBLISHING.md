@@ -9,7 +9,10 @@ This repo keeps site source in `site/`. A GitHub Action publishes it to `gh-page
 
 ## Publish
 
-Push to `main`. The workflow in `.github/workflows/publish_site.yml` will deploy `site/` to `gh-pages`.
+Push to `main`. The workflow in `.github/workflows/publish_site.yml` will:
+
+1. Build HTML from Markdown using `tools/build_site.sh`.
+2. Deploy `site/` to `gh-pages`.
 
 ## Notes
 

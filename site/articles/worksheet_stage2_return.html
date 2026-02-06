@@ -3,7 +3,7 @@
 
 <head>
   <meta charset="UTF-8">
-  <title>Stage 2 Return - Kernel Filename Tracing</title>
+  <title>Stage 2 Return - Kernel Filename Tracing (Copy vs Cache)</title>
   <style>
     body {
       background: #fff;
@@ -73,12 +73,12 @@
   </div>
   <div class="content">
     <pre style="white-space: pre-wrap; word-wrap: break-word; margin: 0; font-family: monospace;">================================================================================
-USER SPACE TEST PROGRAMS
+USER SPACE TEST PROGRAMS (AND WHY THEY EXIST)
 ================================================================================
 
 Location: https://github.com/raikrahul/what-happens-when-open-is-called/tree/main/kernel/user/stage2
 
-PROGRAM 1: minimal_open.c (35 lines)
+PROGRAM 1: minimal_open.c
 ```c
 #include &lt;fcntl.h&gt;
 #include &lt;stdio.h&gt;
@@ -89,22 +89,22 @@ int main() {
     char filename[128];
     time_t now = time(NULL);
     
-    // Forces external allocation (64 chars &gt; 32 byte inline buffer)
+    // Forces external allocation (name &gt; inline dentry buffer)
     snprintf(filename, sizeof(filename),
              "test_file_very_long_name_to_force_external_allocation_%ld", now);
     
     int fd = open(filename, O_RDWR | O_CREAT, 0644);
     printf("fd=%d\n", fd);
-    sleep(5);  // Why? So we can open it again and see cache hit!
+    sleep(5);  // Delay lets us observe a later cache hit.
     close(fd);
     unlink(filename);
     return 0;
 }
 ```
 
-Key insight: 64-character filename forces kmalloc() instead of inline dentry buffer.
+Key insight: A long name forces external allocation in the dentry name path.
 
-PROGRAM 2: matrix_open.c (38 lines)  
+PROGRAM 2: matrix_open.c
 ```c
 #include &lt;fcntl.h&gt;
 #include &lt;stdio.h&gt;
@@ -131,29 +131,47 @@ int main() {
 }
 ```
 
-Tests: cache hit, allocation path, error handling, basename vs full path.
+Tests: cache hit, allocation path, ENOENT, basename vs full path.
 
 ================================================================================
-WHAT WE'RE TRACING
+WHAT WE'RE TRACING (POINTERS, NOT FEELINGS)
 ================================================================================
 
-5 trace points capture filename addresses:
+Goal: find where the name is copied and when it is reused.
 
-[O] IN  - do_filp_open ENTRY  : RSI=struct filename *   → capture -&gt;name
-[A] SRC - __d_alloc ENTRY     : RSI=struct qstr *      → capture -&gt;name  
-[A] DST - __d_alloc RETURN    : RAX=struct dentry *    → capture -&gt;d_name.name
-[O] OUT - do_filp_open RETURN : RAX=struct file *      → capture -&gt;f_path.dentry-&gt;d_name.name
-[L] HIT - d_lookup RETURN     : RAX=struct dentry *    → capture -&gt;d_name.name
+Minimal facts (self contained):
+- getname copies the user string into kernel memory
+- do_filp_open uses struct filename and its name pointer
+- __d_alloc copies qstr-&gt;name into dentry-&gt;d_name.name
+- d_lookup returns an existing dentry on cache hit
+- do_filp_open returns a struct file that points at the dentry name
 
-The question: Does the filename survive from user space through the kernel?
+5 trace points capture name pointers:
 
-The proof chain:
-[O] IN → [A] SRC → [A] DST → [O] OUT  (allocation path)
-[O] IN → [L] HIT → [O] OUT            (cache path)
+[O] IN  - do_filp_open entry  : struct filename * -&gt; capture name
+[A] SRC - __d_alloc entry     : struct qstr *     -&gt; capture name
+[A] DST - __d_alloc return    : struct dentry *   -&gt; capture d_name.name
+[O] OUT - do_filp_open return : struct file *     -&gt; capture f_path.dentry-&gt;d_name.name
+[L] HIT - d_lookup return     : struct dentry *   -&gt; capture d_name.name
 
-Why two paths? d_lookup() checks cache before __d_alloc() creates new entry.
-d_lookup returns NULL → allocation happens
-d_lookup returns dentry → cache hit, skip allocation
+Two chains:
+[O] IN -&gt; [A] SRC -&gt; [A] DST -&gt; [O] OUT  (allocation path)
+[O] IN -&gt; [L] HIT -&gt; [O] OUT            (cache path)
+
+Why two paths: d_lookup checks cache before __d_alloc creates a new dentry.
+d_lookup returns NULL  -&gt; allocation happens
+d_lookup returns dentry -&gt; cache hit, skip allocation
+
+================================================================================
+DRIVER NOTE (DO THIS OR YOU WILL SEE NOTHING)
+================================================================================
+
+The driver filters by process name:
+- Default target is `matrix_open`.
+- For `minimal_open`, you must load with: `target_comm=minimal_open`
+
+If you forget this, your logs will be empty for that program and you will
+diagnose a phantom bug.
 
 ================================================================================
 CODE TO WRITE
@@ -204,7 +222,11 @@ BUILD AND RUN
 
 Build driver:
 cd kernel/drivers/trace_do_filp_open &amp;&amp; make clean &amp;&amp; make
-sudo insmod trace_do_filp_open.ko
+
+Load driver (choose target):
+sudo insmod trace_do_filp_open.ko target_comm=minimal_open
+sudo rmmod trace_do_filp_open
+sudo insmod trace_do_filp_open.ko target_comm=matrix_open
 
 Test 1 - Long filename (forces external allocation):
 cd kernel/user/stage2
@@ -213,14 +235,17 @@ sudo dmesg -C
 sleep 5
 sudo dmesg | grep -E "\[O\] IN|\[A\] SRC|\[A\] DST|\[O\] OUT|\[L\] HIT"
 
-Record:
+Input -&gt; Computation -&gt; Output:
+User long name -&gt; __d_alloc copies name -&gt; [A] DST == [O] OUT, later [L] HIT
+
+Record (ignore libc/ld.so loader noise):
 [O] IN  = 0x_____________________
 [A] SRC = 0x_____________________
 [A] DST = 0x_____________________
 [O] OUT = 0x_____________________
 [L] HIT = 0x_____________________ (appears after 5 sec delay)
 
-Verify:
+Check (allocation path):
 [O] IN == [A] SRC ? [ ] YES [ ] NO  (Copy source is original filename)
 [A] DST == [O] OUT ? [ ] YES [ ] NO  (Returned file points to copy)
 [L] HIT == [O] OUT ? [ ] YES [ ] NO  (Cache hit gives same address)
@@ -231,31 +256,36 @@ sudo dmesg -C
 sleep 3
 sudo dmesg | grep -E "\[O\] IN|\[A\] SRC|\[A\] DST|\[O\] OUT|\[L\] HIT"
 
-FILE 1 (l_e.txt, exists → cache hit):
+Input -&gt; Computation -&gt; Output:
+Existing file -&gt; d_lookup hit -&gt; [L] HIT == [O] OUT
+New file -&gt; __d_alloc -&gt; [A] DST == [O] OUT
+Missing file -&gt; no struct file -&gt; no [O] OUT
+
+FILE 1 (l_e.txt, exists - cache hit):
 [O] IN  = 0x_____
 [L] HIT = 0x_____
 [O] OUT = 0x_____
-[A] SRC captured? [ ] YES [ ] NO  ← NO means cache hit (no allocation)
+[A] SRC captured? [ ] YES [ ] NO  - NO means cache hit (no allocation)
 
-FILE 2 (/tmp/t_e.txt, new → allocation):
+FILE 2 (/tmp/t_e.txt, new - allocation):
 [O] IN  = 0x_____
 [A] SRC = 0x_____
 [A] DST = 0x_____
 [O] OUT = 0x_____
-[L] HIT captured? [ ] YES [ ] NO  ← NO means not in cache
-[O] IN - [A] SRC = _____ bytes  ← Why 5? strlen("/tmp/")
+[L] HIT captured? [ ] YES [ ] NO  - NO means not in cache
+[O] IN - [A] SRC = _____ bytes  - Why 5? strlen("/tmp/")
 
-FILE 3 (/tmp/t_m.txt, missing → ENOENT):
+FILE 3 (/tmp/t_m.txt, missing - ENOENT):
 [O] IN captured? [ ] YES [ ] NO
-[O] OUT captured? [ ] YES [ ] NO  ← NO means error, no struct file returned
+[O] OUT captured? [ ] YES [ ] NO  - NO means error, no struct file returned
 
-FILE 4 (l_m.txt, missing → ENOENT):
+FILE 4 (l_m.txt, missing - ENOENT):
 Same as FILE 3
 
-FILE 5 (second opens → cache hits):
+FILE 5 (second opens - cache hits):
 [L] HIT = 0x_____ (l_e.txt)
 [L] HIT = 0x_____ (t_e.txt)
-Match previous [O] OUT? [ ] YES [ ] NO  ← Cache preserves addresses
+Match previous [O] OUT? [ ] YES [ ] NO  - Cache preserves addresses
 
 ================================================================================
 FIND THE COPY
@@ -283,12 +313,12 @@ The dentry cache (dcache) is why opening a file the second time is fast:
 
 First open:
   User: open("/etc/passwd")
-  Kernel: Walk path → d_lookup (miss) → __d_alloc → memcpy → cache entry
+  Kernel: Walk path then d_lookup (miss) then __d_alloc then memcpy then cache entry
   Time: ~milliseconds
 
 Second open:
   User: open("/etc/passwd")  
-  Kernel: d_lookup (hit) → return cached dentry
+  Kernel: d_lookup (hit) then return cached dentry
   Time: ~microseconds
 
 The filename lives in the dentry. The struct file just points to it.
@@ -299,44 +329,44 @@ FAILURE MODES
 ================================================================================
 
 1. Garbage address (0x6c69665f74736574 = "lif_tset")
-   ∴ Reading string data as pointer
-   → Use d-&gt;d_name.name not raw offset
+   Reading string data as a pointer.
+   Use d-&gt;d_name.name, not a raw field.
 
 2. Crash on error path
-   ∴ Dereferencing error pointer (negative value)
-   → Check IS_ERR(f) before deref
+   Dereferencing an error pointer (negative value).
+   Check IS_ERR(f) before deref.
 
 3. Kernel panic
-   ∴ NULL pointer dereference
-   → Check pointer valid
+   NULL pointer dereference.
+   Check pointer before deref.
 
 4. Wrong addresses captured
-   ∴ Wrong register (RDI vs RSI for arg2)
-   → x86_64: RDI=arg1, RSI=arg2, RDX=arg3
+   Wrong function argument captured.
+   Use the second argument for filename or qstr.
 
 5. Module load fails
-   ∴ Kernel version mismatch
-   → make clean &amp;&amp; make
+   Kernel version mismatch.
+   make clean &amp;&amp; make
 
 6. No output
-   ∴ Process name filter mismatch
-   → Check target_comm parameter
+   Process name filter mismatch.
+   Check target_comm parameter.
 
 7. No [L] HIT
-   ∴ d_lookup probe not registered
-   → Ensure lookup_ret registered
+   d_lookup probe not registered.
+   Ensure lookup_ret registered.
 
 8. Address mismatch
-   ∴ Multiple path components, wrong dentry
-   → Verify which dentry returned
+   Multiple path components, wrong dentry.
+   Check which dentry returned.
 
 9. Compile error
-   ∴ Missing kernel headers
-   → Install linux-headers-$(uname -r)
+   Missing kernel headers.
+   Install linux-headers-$(uname -r)
 
 10. Random crashes
-    ∴ Kprobe race condition
-    → Expected, kprobes are for debugging only
+    Kprobe race condition.
+    Expected, kprobes are for debugging only.
 
 ================================================================================
 UNDERSTANDING CHECKLIST
@@ -355,7 +385,7 @@ UNDERSTANDING CHECKLIST
 [ ] Understand cache benefit (second open faster)
 [ ] All 10 failures reviewed
 
-All checked ∴ Filename survival proven.</pre>
+All checked. Filename survival shown.</pre>
   </div>
 
 </body>
