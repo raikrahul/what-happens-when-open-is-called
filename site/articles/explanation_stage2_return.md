@@ -199,58 +199,58 @@ This section preserves every pointer, address, and line from the trace while add
 Claim A1. Cache miss, memcpy, and insert for t_e.txt.
 
 Evidence:
-[O] IN: 0xffff8bd5423ed020 | /tmp/t_e.txt
+do_filp_open entry pointer = 0xffff8bd5423ed020 | /tmp/t_e.txt
 d_lookup entry: hash 1830572521 length 7 name t_e.txt
 d_lookup return: NULL
-[A] SRC: 0xffff8bd5423ed025
-[A] DST: 0xffff8bd54e246db8
+__d_alloc entry pointer = 0xffff8bd5423ed025
+__d_alloc return pointer = 0xffff8bd54e246db8
 __d_add entry: 0xffff8bd54e246db8 | t_e.txt
-[O] OUT: 0xffff8bd54e246db8 | t_e.txt
+do_filp_open return pointer = 0xffff8bd54e246db8 | t_e.txt
 
 Derivation:
 0xffff8bd5423ed025 - 0xffff8bd5423ed020 = 0x5 = 5
 "/tmp/" length = 5
-0xffff8bd54e246db8 = [A] DST
+0xffff8bd54e246db8 = __d_alloc return pointer
 0xffff8bd54e246db8 = __d_add entry pointer
-0xffff8bd54e246db8 = [O] OUT pointer
+0xffff8bd54e246db8 = do_filp_open return pointer
 
 Claim A2. Cache miss and insert for missing t_m.txt.
 
 Evidence:
-[O] IN: 0xffff8bd5423ed020 | /tmp/t_m.txt
+do_filp_open entry pointer = 0xffff8bd5423ed020 | /tmp/t_m.txt
 d_lookup entry: hash 2543581516 length 7 name t_m.txt
 d_lookup return: NULL
-[A] SRC: 0xffff8bd5423ed025
-[A] DST: 0xffff8bd5560a0ab8
+__d_alloc entry pointer = 0xffff8bd5423ed025
+__d_alloc return pointer = 0xffff8bd5560a0ab8
 __d_add entry: 0xffff8bd5560a0ab8 | t_m.txt
 
 Claim A3. Cache miss and insert for missing l_m.txt.
 
 Evidence:
-[O] IN: 0xffff8bd5423ed020 | l_m.txt
+do_filp_open entry pointer = 0xffff8bd5423ed020 | l_m.txt
 d_lookup entry: hash 1675155717 length 7 name l_m.txt
 d_lookup return: NULL
-[A] SRC: 0xffff8bd5423ed020
-[A] DST: 0xffff8bd5560a0c38
+__d_alloc entry pointer = 0xffff8bd5423ed020
+__d_alloc return pointer = 0xffff8bd5560a0c38
 __d_add entry: 0xffff8bd5560a0c38 | l_m.txt
 
 Claim A4. Cache miss, memcpy, and insert for a.txt on loopback ext2.
 
 Evidence:
-[O] IN: 0xffff8bd5423ed020 | /mnt/loopfs/a.txt
+do_filp_open entry pointer = 0xffff8bd5423ed020 | /mnt/loopfs/a.txt
 d_lookup entry: hash 3711754354 length 5 name a.txt
 d_lookup return: NULL
-[A] SRC: 0xffff8bd5423ed02c
-[A] DST: 0xffff8bd5560a09f8
+__d_alloc entry pointer = 0xffff8bd5423ed02c
+__d_alloc return pointer = 0xffff8bd5560a09f8
 __d_add entry: 0xffff8bd5560a09f8 | a.txt
-[O] OUT: 0xffff8bd5560a09f8 | a.txt
+do_filp_open return pointer = 0xffff8bd5560a09f8 | a.txt
 
 Derivation:
 0xffff8bd5423ed02c - 0xffff8bd5423ed020 = 0xC = 12
 "/mnt/loopfs/" length = 12
-0xffff8bd5560a09f8 = [A] DST
+0xffff8bd5560a09f8 = __d_alloc return pointer
 0xffff8bd5560a09f8 = __d_add entry pointer
-0xffff8bd5560a09f8 = [O] OUT pointer
+0xffff8bd5560a09f8 = do_filp_open return pointer
 
 Claim A5. Cache hit for l_e.txt and t_e.txt before deletion.
 
@@ -271,8 +271,8 @@ no d_drop entry lines observed in this run
 Claim A7. Cache eviction via drop_caches.
 
 Evidence:
-[O] IN: 0xffff8bd54d6aa020 | /proc/sys/vm/drop_caches
-[O] OUT: 0xffff8bd6fce05db8 | drop_caches
+do_filp_open entry pointer = 0xffff8bd54d6aa020 | /proc/sys/vm/drop_caches
+do_filp_open return pointer = 0xffff8bd6fce05db8 | drop_caches
 __dentry_kill entry: 0xffff8bd54e8d9878 | l_e.txt
 __dentry_kill entry: 0xffff8bd54e246db8 | t_e.txt
 matrix_open (86584): drop_caches: 2
@@ -281,10 +281,10 @@ Claim A8. Cache rebuild after eviction for t_e.txt.
 
 Evidence:
 d_lookup entry: hash 1830572521 length 7 name t_e.txt
-[A] SRC: 0xffff8bd54d6aa025
-[A] DST: 0xffff8bd572e4aab8
+__d_alloc entry pointer = 0xffff8bd54d6aa025
+__d_alloc return pointer = 0xffff8bd572e4aab8
 __d_add entry: 0xffff8bd572e4aab8 | t_e.txt
-[O] OUT: 0xffff8bd572e4aab8 | t_e.txt
+do_filp_open return pointer = 0xffff8bd572e4aab8 | t_e.txt
 
 Derivation:
 0xffff8bd572e4aab8 != 0xffff8bd54e246db8
@@ -292,9 +292,9 @@ Derivation:
 Claim A9. Post-eviction lookup observed for l_e.txt.
 
 Evidence:
-[O] IN: 0xffff8bd54d6aa020 | l_e.txt
+do_filp_open entry pointer = 0xffff8bd54d6aa020 | l_e.txt
 __d_lookup_rcu entry: hash 399720033 length 7 name l_e.txt
-[O] OUT: 0xffff8bd5406080f8 | l_e.txt
+do_filp_open return pointer = 0xffff8bd5406080f8 | l_e.txt
 
 Derivation:
 0xffff8bd5406080f8 != 0xffff8bd54e8d9878
@@ -361,37 +361,37 @@ Full Proofs (No Data Removed)
 Proof 1. memcpy of filename into dentry storage.
 
 Evidence (t_e.txt):
-[A] SRC: 0xffff8bd5423ed025
-[A] DST: 0xffff8bd54e246db8
+__d_alloc entry pointer = 0xffff8bd5423ed025
+__d_alloc return pointer = 0xffff8bd54e246db8
 __d_add entry: 0xffff8bd54e246db8 | t_e.txt
-[O] OUT: 0xffff8bd54e246db8 | t_e.txt
+do_filp_open return pointer = 0xffff8bd54e246db8 | t_e.txt
 
 Derivation:
-0xffff8bd54e246db8 = [A] DST
+0xffff8bd54e246db8 = __d_alloc return pointer
 0xffff8bd54e246db8 = __d_add entry pointer
-0xffff8bd54e246db8 = [O] OUT pointer
+0xffff8bd54e246db8 = do_filp_open return pointer
 
 Evidence (a.txt):
-[A] SRC: 0xffff8bd5423ed02c
-[A] DST: 0xffff8bd5560a09f8
+__d_alloc entry pointer = 0xffff8bd5423ed02c
+__d_alloc return pointer = 0xffff8bd5560a09f8
 __d_add entry: 0xffff8bd5560a09f8 | a.txt
-[O] OUT: 0xffff8bd5560a09f8 | a.txt
+do_filp_open return pointer = 0xffff8bd5560a09f8 | a.txt
 
 Derivation:
-0xffff8bd5560a09f8 = [A] DST
+0xffff8bd5560a09f8 = __d_alloc return pointer
 0xffff8bd5560a09f8 = __d_add entry pointer
-0xffff8bd5560a09f8 = [O] OUT pointer
+0xffff8bd5560a09f8 = do_filp_open return pointer
 
 Evidence (long filename):
-[A] SRC: 0xffff8bd54d663020
-[A] DST: 0xffff8bd69f6fb618
+__d_alloc entry pointer = 0xffff8bd54d663020
+__d_alloc return pointer = 0xffff8bd69f6fb618
 __d_add entry: 0xffff8bd69f6fb618 | test_file_very_long_name_to_force_external_allocation_1770404658
-[O] OUT: 0xffff8bd69f6fb618 | test_file_very_long_name_to_force_external_allocation_1770404658
+do_filp_open return pointer = 0xffff8bd69f6fb618 | test_file_very_long_name_to_force_external_allocation_1770404658
 
 Derivation:
-0xffff8bd69f6fb618 = [A] DST
+0xffff8bd69f6fb618 = __d_alloc return pointer
 0xffff8bd69f6fb618 = __d_add entry pointer
-0xffff8bd69f6fb618 = [O] OUT pointer
+0xffff8bd69f6fb618 = do_filp_open return pointer
 
 Proof 2. Cache build-up (insert) on miss.
 
@@ -443,20 +443,20 @@ Proof 6. Long filename behavior.
 Evidence:
 d_lookup entry: hash 3918709873 length 64 name test_file_very_long_name_to_force_external_allocation_1770404658
 d_lookup return: NULL
-[A] SRC: 0xffff8bd54d663020
-[A] DST: 0xffff8bd69f6fb618
+__d_alloc entry pointer = 0xffff8bd54d663020
+__d_alloc return pointer = 0xffff8bd69f6fb618
 __d_add entry: 0xffff8bd69f6fb618 | test_file_very_long_name_to_force_external_allocation_1770404658
-[O] OUT: 0xffff8bd69f6fb618 | test_file_very_long_name_to_force_external_allocation_1770404658
+do_filp_open return pointer = 0xffff8bd69f6fb618 | test_file_very_long_name_to_force_external_allocation_1770404658
 
 Proof 7. Short filename behavior.
 
 Evidence:
 d_lookup entry: hash 3711754354 length 5 name a.txt
 d_lookup return: NULL
-[A] SRC: 0xffff8bd5423ed02c
-[A] DST: 0xffff8bd5560a09f8
+__d_alloc entry pointer = 0xffff8bd5423ed02c
+__d_alloc return pointer = 0xffff8bd5560a09f8
 __d_add entry: 0xffff8bd5560a09f8 | a.txt
-[O] OUT: 0xffff8bd5560a09f8 | a.txt
+do_filp_open return pointer = 0xffff8bd5560a09f8 | a.txt
 
 Derivation:
 0xffff8bd5423ed02c - 0xffff8bd5423ed020 = 0xC = 12
