@@ -3,11 +3,43 @@ layout: default
 title: "Stage 2 Return - Kernel Filename Tracing (Copy vs Cache)"
 ---
 
+[HOME] ../index.html
+Print ../articles/worksheet_stage2_return.html
+Stage 1 https://raikrahul.github.io/what-happens-when-open-is-called/stage1.html
+Stage 2 Entry https://raikrahul.github.io/what-happens-when-open-is-called/stage2.html
+Stage 2 Return (Explanation) https://raikrahul.github.io/what-happens-when-open-is-called/articles/explanation_stage2_return.html
+
+================================================================================
+WHAT YOU ARE TRYING TO PROVE (IN ORDER)
+================================================================================
+
+1. The filename string used by open is copied into dentry name storage.
+2. On cache miss, a new dentry is allocated and inserted.
+3. On cache hit, the same dentry name pointer is reused.
+4. On unlink, the dentry is deleted (d_delete).
+5. On drop_caches, the dentry is evicted (__dentry_kill).
+6. After eviction, t_e.txt rebuilds with a new dentry name pointer.
+7. Basename offsets are exactly the prefix length (/tmp/ = 5, /mnt/loopfs/ = 12).
+8. Long filenames go through the same path with length 64 and a later cache hit.
+
+================================================================================
+FILES YOU WILL TOUCH (AND WHY)
+================================================================================
+
+1. kernel/drivers/trace_do_filp_open/trace_do_filp_open.c
+   Reason: probes to print real pointer values and hash keys.
+
+2. kernel/user/stage2/minimal_open.c
+   Reason: long filename path (length 64).
+
+3. kernel/user/stage2/matrix_open.c
+   Reason: cache miss, hit, delete, eviction, rebuild, basename offsets.
+
 ================================================================================
 USER SPACE TEST PROGRAMS (AND WHY THEY EXIST)
 ================================================================================
 
-Location: https://github.com/raikrahul/what-happens-when-open-is-called/tree/main/kernel/user/stage2
+Location (repo): https://github.com/raikrahul/what-happens-when-open-is-called/tree/main/kernel/user/stage2
 
 PROGRAM 1: minimal_open.c
 ```c
@@ -33,8 +65,6 @@ int main() {
     return 0;
 }
 ```
-
-Key insight: a long name forces external allocation in the dentry name path.
 
 PROGRAM 2: matrix_open.c
 ```c
@@ -119,69 +149,59 @@ int main() {
 }
 ```
 
-Tests: cache miss, allocation path, negative dentries, cache hit, deletion, eviction, rebuild, basename offset, loopback short name.
-
 ================================================================================
-WHAT WE'RE TRACING (POINTERS, NOT FEELINGS)
+KERNEL PROBES YOU MUST HAVE (WHY EACH EXISTS)
 ================================================================================
 
-Goal: find where the name is copied, where it is reused, where it is deleted, and where it is evicted.
+Location: kernel/drivers/trace_do_filp_open/trace_do_filp_open.c
 
-Minimal facts:
-- getname copies the user string into kernel memory
-- do_filp_open uses struct filename and its name pointer
-- __d_alloc copies qstr->name into dentry->d_name.name
-- d_lookup returns an existing dentry on cache hit
-- __d_add inserts a new dentry into the dcache
-- d_delete removes a dentry on unlink
-- __dentry_kill reclaims a dentry on drop_caches
-
-Trace points (no bracket labels):
-- do_filp_open entry: input filename pointer and string
-- d_lookup entry: hash, length, name
-- d_lookup return: NULL or dentry name pointer
-- __d_alloc entry: copy source pointer
-- __d_alloc return: copy destination pointer
-- __d_add entry: inserted dentry name pointer
-- d_delete entry: deleted dentry name pointer
-- __dentry_kill entry: evicted dentry name pointer
+Required probes:
+- do_filp_open entry: prints filename pointer and string
+- d_lookup entry: prints hash, length, name (lookup key)
+- d_lookup return: prints NULL (miss) or dentry name pointer (hit)
+- __d_alloc entry: prints copy source pointer
+- __d_alloc return: prints copy destination pointer
+- __d_add entry: prints inserted dentry name pointer
+- d_delete entry: prints deleted dentry name pointer
+- __dentry_kill entry: prints evicted dentry name pointer
 - __d_lookup and __d_lookup_rcu: internal lookup path keys
 
-Two chains:
-- Allocation path: do_filp_open entry -> d_lookup miss -> __d_alloc -> __d_add -> do_filp_open return
-- Cache path: do_filp_open entry -> d_lookup hit -> do_filp_open return
-
 ================================================================================
-DRIVER NOTE (DO THIS OR YOU WILL SEE NOTHING)
+BUILD AND RUN (ORDER MATTERS)
 ================================================================================
 
-The driver filters by process name:
-- Default target is matrix_open.
-- For minimal_open, you must load with: target_comm=minimal_open
-
-================================================================================
-BUILD AND RUN
-================================================================================
-
-Build driver:
+1) Build the driver
+```
 cd kernel/drivers/trace_do_filp_open && make clean && make
+```
 
-Load driver (choose target):
-sudo insmod trace_do_filp_open.ko target_comm=minimal_open
-sudo rmmod trace_do_filp_open
-sudo insmod trace_do_filp_open.ko target_comm=matrix_open
-
-Log filter (use this for all runs):
-sudo dmesg | rg -n "l_e.txt|t_e.txt|t_m.txt|l_m.txt|a.txt|drop_caches|d_lookup entry|d_lookup return|__d_add entry|d_delete entry|__dentry_kill entry|__d_lookup entry|__d_lookup_rcu entry|__d_alloc"
-
-================================================================================
-TEST 1: LONG FILENAME (minimal_open)
-================================================================================
-
+2) Run minimal_open (long filename)
+```
 sudo dmesg -C
+sudo rmmod trace_do_filp_open
+sudo insmod trace_do_filp_open.ko target_comm=minimal_open
+cd ../../user/stage2
 ./minimal_open
 sleep 5
 sudo dmesg | rg -n "test_file_very_long_name_to_force_external_allocation"
+```
+
+3) Run matrix_open (all paths)
+```
+sudo dmesg -C
+sudo rmmod trace_do_filp_open
+sudo insmod trace_do_filp_open.ko target_comm=matrix_open
+cd ../../user/stage2
+sudo ./matrix_open
+sleep 3
+sudo dmesg | rg -n "l_e.txt|t_e.txt|t_m.txt|l_m.txt|a.txt|drop_caches|d_lookup entry|d_lookup return|__d_add entry|d_delete entry|__dentry_kill entry|__d_lookup entry|__d_lookup_rcu entry|__d_alloc"
+```
+
+================================================================================
+WHAT TO RECORD (FILL THIS IN)
+================================================================================
+
+TEST 1: LONG FILENAME (minimal_open)
 
 Record:
 - do_filp_open entry pointer = 0x________ | test_file_very_long_name_to_force_external_allocation_XXXX
@@ -197,14 +217,15 @@ Checks:
 - __d_alloc return == __d_add entry == do_filp_open return
 - cache hit pointer equals earlier return pointer
 
-================================================================================
-TEST 2: MATRIX (matrix_open)
-================================================================================
+Make a diagram (required):
+- Draw the full pointer flow for this long filename as a single chain:
+  do_filp_open entry -> d_lookup miss -> __d_alloc entry -> __d_alloc return -> __d_add -> do_filp_open return -> d_lookup hit.
+- Use your recorded addresses in the diagram, not placeholders.
+- Base the copy step on kernel source: /usr/src/linux-headers-$(uname -r)/fs/dcache.c
+  Search for: memcpy(dname, name->name, name->len);
+  This is the line that explains why the __d_alloc destination pointer equals the dentry name pointer.
 
-sudo dmesg -C
-sudo ./matrix_open
-sleep 3
-sudo dmesg | rg -n "l_e.txt|t_e.txt|t_m.txt|l_m.txt|a.txt|drop_caches|d_lookup entry|d_lookup return|__d_add entry|d_delete entry|__dentry_kill entry|__d_alloc"
+TEST 2: MATRIX (matrix_open)
 
 FILE A (t_e.txt, first open after drop_caches):
 - do_filp_open entry pointer = 0x________ | /tmp/t_e.txt
