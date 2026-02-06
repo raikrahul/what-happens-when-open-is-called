@@ -132,17 +132,17 @@ Loopback filesystem test:
 
 Probe map</pre>
 <pre><code class="language-text">do_filp_open entry -&gt; input filename pointer + string -&gt; establishes kernel-side name before lookup -&gt; driver open entry probe
-__d_alloc entry -&gt; copy source pointer -&gt; shows which basename string is copied -&gt; driver alloc entry probe
-__d_alloc return -&gt; copy destination pointer -&gt; identifies new dentry name storage -&gt; driver alloc return probe
+__d_alloc entry -&gt; copy source pointer (qstr-&gt;name) -&gt; driver alloc entry probe
+__d_alloc return -&gt; copy destination pointer (dentry-&gt;d_name.name) -&gt; driver alloc return probe
 do_filp_open return -&gt; returned file name pointer -&gt; ties file to dentry name storage -&gt; driver open return probe
 d_lookup entry -&gt; hash, length, name -&gt; defines lookup key used for cache search -&gt; driver lookup entry probe
-d_lookup return -&gt; dentry name pointer or NULL -&gt; proves hit or miss -&gt; driver lookup return probe
+d_lookup return -&gt; dentry name pointer + string or NULL -&gt; driver lookup return probe
 __d_lookup entry -&gt; hash, length, name -&gt; internal lookup path key -&gt; driver __d_lookup probe
 __d_lookup_rcu entry -&gt; hash, length, name -&gt; RCU fast-path lookup key -&gt; driver __d_lookup_rcu probe
 full_name_hash return -&gt; hash, length, salt, name -&gt; records hash computation (if observed) -&gt; driver hash ret probe
-__d_add entry -&gt; dentry name pointer -&gt; proves cache insert -&gt; driver __d_add probe
-d_delete entry -&gt; dentry name pointer -&gt; proves unlink removal -&gt; driver d_delete probe
-__dentry_kill entry -&gt; dentry name pointer -&gt; proves eviction via drop_caches -&gt; driver __dentry_kill probe</code></pre>
+__d_add entry -&gt; dentry name pointer + string -&gt; driver __d_add probe
+d_delete entry -&gt; dentry name pointer + string -&gt; driver d_delete probe
+__dentry_kill entry -&gt; dentry name pointer + string -&gt; driver __dentry_kill probe</code></pre>
 <pre style="white-space: pre-wrap; word-wrap: break-word; margin: 0; font-family: monospace;">
 
 File: /usr/src/linux-source-6.8.0/fs/dcache.c:1660 memcpy(dname, name-&gt;name, name-&gt;len);
