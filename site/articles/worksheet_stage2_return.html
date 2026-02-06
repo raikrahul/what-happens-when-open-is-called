@@ -292,7 +292,6 @@ Why these commands exist (do not skip):
 - `sudo dmesg | rg -n "..."` filters the kernel log to just the filename strings and probe labels we need.
   `rg -n` adds line numbers so you can cite the exact evidence line-by-line.
 
-Driver map (research paragraph).
 The probe driver in `kernel/drivers/trace_do_filp_open/trace_do_filp_open.c` is a controlled capture
 layer that isolates one user-space process (`target_comm`) and records the exact pointer flow and
 lookup keys along the open path. Entry/return probes on `do_filp_open` report the kernel filename
