@@ -455,21 +455,6 @@ grep -n "memcpy.*name->name" /usr/src/linux-headers-$(uname -r)/fs/dcache.c Line
 
 Code: memcpy(dname, name->name, name->len);
 
-================================================================================
-TROUBLESHOOTING (CHECKS, NOT CLAIMS)
-================================================================================
-
-1. If you see no output:
-   - Confirm `target_comm` matches the process name.
-   - Confirm the module is loaded.
-
-2. If you see no d_lookup lines:
-   - Confirm the probes are registered in the driver log.
-
-3. If the module fails to load:
-   - Rebuild with `make clean && make`.
-   - Confirm kernel headers match `uname -r`.
-
 CHAIN SUMMARY (FROM RUN A)
 ================================================================================
 
