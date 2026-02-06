@@ -286,6 +286,15 @@ __d_alloc return pointer = 0xffff8bd54e246db8
 __d_add entry: 0xffff8bd54e246db8 | t_e.txt
 do_filp_open return pointer = 0xffff8bd54e246db8 | t_e.txt
 
+Pointer meanings (t_e.txt):
+- do_filp_open entry pointer 0xffff8bd5423ed020 points to the kernel-side string "/tmp/t_e.txt" used for this open call.
+- d_lookup entry uses the basename "t_e.txt" (length 7) and hash 1830572521 as the lookup key for this path.
+- d_lookup return: NULL means no cached dentry matched that key.
+- __d_alloc entry pointer 0xffff8bd5423ed025 points to the basename start inside the same string (after "/tmp/").
+- __d_alloc return pointer 0xffff8bd54e246db8 points to newly allocated dentry name storage.
+- __d_add entry pointer 0xffff8bd54e246db8 shows that same storage inserted into the dcache hash.
+- do_filp_open return pointer 0xffff8bd54e246db8 shows the returned file points at that dentry name storage.
+
 Derivation (user-space trigger and why):
 User-space code:
 ```c
@@ -325,6 +334,14 @@ __d_alloc entry pointer = 0xffff8bd5423ed025
 __d_alloc return pointer = 0xffff8bd5560a0ab8
 __d_add entry: 0xffff8bd5560a0ab8 | t_m.txt
 
+Pointer meanings (t_m.txt):
+- do_filp_open entry pointer 0xffff8bd5423ed020 points to "/tmp/t_m.txt" in kernel memory for this open.
+- d_lookup entry hash 2543581516 and length 7 use basename "t_m.txt" as the key.
+- d_lookup return: NULL shows no cached dentry matched.
+- __d_alloc entry pointer 0xffff8bd5423ed025 points to basename start after "/tmp/".
+- __d_alloc return pointer 0xffff8bd5560a0ab8 is the newly allocated dentry name storage.
+- __d_add entry pointer 0xffff8bd5560a0ab8 inserts that name storage into the dcache as a negative entry.
+
 Claim A3. Cache miss and insert for missing l_m.txt.
 
 User-space code that triggers this evidence (matrix_open.c):
@@ -341,6 +358,14 @@ d_lookup return: NULL
 __d_alloc entry pointer = 0xffff8bd5423ed020
 __d_alloc return pointer = 0xffff8bd5560a0c38
 __d_add entry: 0xffff8bd5560a0c38 | l_m.txt
+
+Pointer meanings (l_m.txt):
+- do_filp_open entry pointer 0xffff8bd5423ed020 points to "l_m.txt" for this open.
+- d_lookup entry hash 1675155717 and length 7 use basename "l_m.txt" as the key.
+- d_lookup return: NULL shows no cached dentry matched.
+- __d_alloc entry pointer 0xffff8bd5423ed020 equals the string start (no prefix).
+- __d_alloc return pointer 0xffff8bd5560a0c38 is the newly allocated dentry name storage.
+- __d_add entry pointer 0xffff8bd5560a0c38 inserts that name storage into the dcache as a negative entry.
 
 Claim A4. Cache miss, memcpy, and insert for a.txt on loopback ext2.
 
@@ -359,6 +384,15 @@ __d_alloc entry pointer = 0xffff8bd5423ed02c
 __d_alloc return pointer = 0xffff8bd5560a09f8
 __d_add entry: 0xffff8bd5560a09f8 | a.txt
 do_filp_open return pointer = 0xffff8bd5560a09f8 | a.txt
+
+Pointer meanings (a.txt):
+- do_filp_open entry pointer 0xffff8bd5423ed020 points to "/mnt/loopfs/a.txt" in kernel memory for this open.
+- d_lookup entry hash 3711754354 and length 5 use basename "a.txt" as the key.
+- d_lookup return: NULL shows no cached dentry matched.
+- __d_alloc entry pointer 0xffff8bd5423ed02c points to basename start after "/mnt/loopfs/".
+- __d_alloc return pointer 0xffff8bd5560a09f8 is the newly allocated dentry name storage.
+- __d_add entry pointer 0xffff8bd5560a09f8 inserts that name storage into the dcache.
+- do_filp_open return pointer 0xffff8bd5560a09f8 shows the returned file points at that dentry name storage.
 
 Derivation:
 0xffff8bd5423ed02c - 0xffff8bd5423ed020 = 0xC = 12
@@ -385,6 +419,10 @@ f[1] = open(n2, O_RDONLY);
 Kernel evidence:
 d_lookup entry: hash 399720033 length 7 name l_e.txt
 d_lookup return: 0xffff8bd54e8d9878 | l_e.txt
+
+Pointer meanings (cache hits):
+- d_lookup return pointer 0xffff8bd54e8d9878 for l_e.txt matches the earlier return pointer for l_e.txt, so the cached dentry is reused.
+- d_lookup return pointer 0xffff8bd54e246db8 for t_e.txt matches the earlier return pointer for t_e.txt, so the cached dentry is reused.
 
 d_lookup entry: hash 1830572521 length 7 name t_e.txt
 d_lookup return: 0xffff8bd54e246db8 | t_e.txt
