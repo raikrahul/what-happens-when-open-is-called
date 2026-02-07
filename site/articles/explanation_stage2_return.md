@@ -48,6 +48,19 @@ Negative dentry caching is also pointer equality. In tm_miss, first open creates
 
 These probes exist only to print numbers at the exact transitions: do_filp_open entry fixes the full path pointer, __d_alloc entry fixes the basename pointer, __d_alloc return fixes the new dentry name pointer, __d_add fixes the cached pointer, do_filp_open return fixes the returned pointer, and d_lookup/__d_lookup_rcu show NULL or a reused pointer for the same name key. If any one is removed, you cannot prove the equality or the subtraction chains with numbers alone.
 
+## Cases (answering the specific questions)
+Hash time: the hash is printed at d_lookup entry or __d_lookup entry, so hashing happens before the lookup result is known. In minimal_open the line “d_lookup entry: hash 736449114 length 64” appears before “d_lookup return: NULL”, so the hash exists even on a miss.
+
+Hash on missing file: tm_miss shows hash 2891139310 length 7 for t_m.txt even though the file does not exist and fd=-1, so hashing happens on missing names.
+
+After hash: the next visible step is d_lookup return or __d_lookup_rcu return. In tm_miss first open, __d_lookup_rcu return is NULL and __d_add creates 0xffff897725f170f8. In tm_miss second open, __d_lookup_rcu return is 0xffff897725f170f8 and there is no new __d_add, so the cached negative dentry is reused.
+
+After delete: delete.c shows d_lookup entry for l_e.txt and t_e.txt followed by d_delete entry with the same pointers, so hashing still occurs on lookups that end in deletion, and the delete removes that same cached pointer.
+
+Negative dentry when file later appears: not observed in this run. To answer it, run a test that opens a missing name twice (negative hit), then create the file, then open again and record whether __d_add creates a new pointer and whether the lookup returns a different pointer.
+
+Memcpy always? memcpy is inside __d_alloc. It appears only on misses where __d_alloc runs. On hits (e.g., second open in tm_miss) there is no __d_alloc line, so no memcpy is shown on hits.
+
 ## User Programs (one line each)
 ### minimal_open.c
 ```c
