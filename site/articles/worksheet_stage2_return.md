@@ -20,26 +20,23 @@ miss followed by a later hit.
 Files Used
 ================================================================================
 
-kernel/drivers/trace_do_filp_open/trace_do_filp_open.c
-https://github.com/raikrahul/what-happens-when-open-is-called/blob/main/kernel/drivers/trace_do_filp_open/trace_do_filp_open.c
-
-kernel/user/stage2/minimal_open.c
-https://github.com/raikrahul/what-happens-when-open-is-called/blob/main/kernel/user/stage2/minimal_open.c
-
-kernel/user/stage2/matrix_open.c
-https://github.com/raikrahul/what-happens-when-open-is-called/blob/main/kernel/user/stage2/matrix_open.c
+kernel/drivers/trace_do_filp_open/trace_do_filp_open.c — https://github.com/raikrahul/what-happens-when-open-is-called/blob/main/kernel/drivers/trace_do_filp_open/trace_do_filp_open.c; kernel/user/stage2/minimal_open.c — https://github.com/raikrahul/what-happens-when-open-is-called/blob/main/kernel/user/stage2/minimal_open.c; kernel/user/stage2/matrix_open.c — https://github.com/raikrahul/what-happens-when-open-is-called/blob/main/kernel/user/stage2/matrix_open.c
 
 What we trace (string → pointer flow, in order):
-do_filp_open(entry): reads struct filename->name (kernel string pointer).
-d_lookup(entry): reads qstr->name/qstr->len/qstr->hash (lookup key).
-d_lookup(return): NULL on miss, dentry->d_name.name on hit.
-__d_alloc(entry): reads qstr->name (copy source pointer).
-__d_alloc(return): returns dentry->d_name.name (copy destination pointer).
-__d_add(entry): inserts dentry->d_name.name into the dcache.
-do_filp_open(return): returns file whose f_path.dentry->d_name.name is printed.
-d_delete(entry): removes dentry name on unlink.
-__dentry_kill(entry): reclaims dentry on drop_caches.
-__d_lookup / __d_lookup_rcu: internal/RCU lookup paths for the same key.
+```text
+[do_filp_open entry]   struct filename->name
+└─[d_lookup entry]     qstr->{name,len,hash}
+  ├─[__d_lookup entry] qstr->{name,len,hash}
+  ├─[__d_lookup_rcu]   qstr->{name,len,hash}
+  └─[d_lookup return]  NULL | dentry->d_name.name
+     └─[miss path]
+       ├─[__d_alloc entry]  qstr->name
+       ├─[__d_alloc return] dentry->d_name.name
+       └─[__d_add entry]    dentry->d_name.name
+[do_filp_open return]  f->f_path.dentry->d_name.name
+[d_delete entry]       dentry->d_name.name
+[__dentry_kill entry]  dentry->d_name.name
+```
 
 ================================================================================
 User Tests

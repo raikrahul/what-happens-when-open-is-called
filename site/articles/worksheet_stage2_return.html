@@ -96,26 +96,22 @@ miss followed by a later hit.
 Files Used
 ================================================================================
 
-kernel/drivers/trace_do_filp_open/trace_do_filp_open.c
-https://github.com/raikrahul/what-happens-when-open-is-called/blob/main/kernel/drivers/trace_do_filp_open/trace_do_filp_open.c
+kernel/drivers/trace_do_filp_open/trace_do_filp_open.c — https://github.com/raikrahul/what-happens-when-open-is-called/blob/main/kernel/drivers/trace_do_filp_open/trace_do_filp_open.c; kernel/user/stage2/minimal_open.c — https://github.com/raikrahul/what-happens-when-open-is-called/blob/main/kernel/user/stage2/minimal_open.c; kernel/user/stage2/matrix_open.c — https://github.com/raikrahul/what-happens-when-open-is-called/blob/main/kernel/user/stage2/matrix_open.c
 
-kernel/user/stage2/minimal_open.c
-https://github.com/raikrahul/what-happens-when-open-is-called/blob/main/kernel/user/stage2/minimal_open.c
-
-kernel/user/stage2/matrix_open.c
-https://github.com/raikrahul/what-happens-when-open-is-called/blob/main/kernel/user/stage2/matrix_open.c
-
-What we trace (string → pointer flow, in order):
-do_filp_open(entry): reads struct filename-&gt;name (kernel string pointer).
-d_lookup(entry): reads qstr-&gt;name/qstr-&gt;len/qstr-&gt;hash (lookup key).
-d_lookup(return): NULL on miss, dentry-&gt;d_name.name on hit.
-__d_alloc(entry): reads qstr-&gt;name (copy source pointer).
-__d_alloc(return): returns dentry-&gt;d_name.name (copy destination pointer).
-__d_add(entry): inserts dentry-&gt;d_name.name into the dcache.
-do_filp_open(return): returns file whose f_path.dentry-&gt;d_name.name is printed.
-d_delete(entry): removes dentry name on unlink.
-__dentry_kill(entry): reclaims dentry on drop_caches.
-__d_lookup / __d_lookup_rcu: internal/RCU lookup paths for the same key.
+What we trace (string → pointer flow, in order):</pre>
+<pre><code class="language-text">[do_filp_open entry]   struct filename-&gt;name
+└─[d_lookup entry]     qstr-&gt;{name,len,hash}
+  ├─[__d_lookup entry] qstr-&gt;{name,len,hash}
+  ├─[__d_lookup_rcu]   qstr-&gt;{name,len,hash}
+  └─[d_lookup return]  NULL | dentry-&gt;d_name.name
+     └─[miss path]
+       ├─[__d_alloc entry]  qstr-&gt;name
+       ├─[__d_alloc return] dentry-&gt;d_name.name
+       └─[__d_add entry]    dentry-&gt;d_name.name
+[do_filp_open return]  f-&gt;f_path.dentry-&gt;d_name.name
+[d_delete entry]       dentry-&gt;d_name.name
+[__dentry_kill entry]  dentry-&gt;d_name.name</code></pre>
+<pre style="white-space: pre-wrap; word-wrap: break-word; margin: 0; font-family: monospace;">
 
 ================================================================================
 User Tests
