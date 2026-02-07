@@ -6,6 +6,7 @@ title: "Stage 2 Return"
 **Goal**
 
 addresses and hash values are from one run; your run will differ. prove only with printed pointers and hashes. /tmp/t_e.txt: do_filp_open entry pointer 0xffff8b1480ef7020, copy source pointer 0xffff8b1480ef7025, so 0xffff8b1480ef7025 − 0xffff8b1480ef7020 = 0x5 = 5, and "/tmp/" length = 5. /mnt/loopfs/a.txt: do_filp_open entry pointer 0xffff8b1481353020, copy source pointer 0xffff8b148135302c, so 0xffff8b148135302c − 0xffff8b1481353020 = 0xC = 12, and "/mnt/loopfs/" length = 12. t_e.txt after drop_caches in te_miss: copy destination pointer 0xffff8b1530b66338 = __d_add entry pointer 0xffff8b1530b66338 = do_filp_open return pointer 0xffff8b1530b66338. a.txt: copy destination pointer 0xffff8b148d558cf8 = __d_add entry pointer 0xffff8b148d558cf8 = do_filp_open return pointer 0xffff8b148d558cf8. rebuild: t_e.txt copy destination 0xffff8b1484f55338 and earlier 0xffff8b1484f55278 are not equal.
+Stage 1 traced the entry path into open and printed the first kernel-visible filename pointer. Stage 2 (entry) traced the getname/filename path and established the kernel string buffer.
 
 **Programs**
 
