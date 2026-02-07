@@ -396,48 +396,6 @@ Diagram (pstree):</pre>
 └─ __d_lookup_rcu entry (hash=____, len=7, name=l_e.txt)
    └─ do_filp_open return 0x________ | l_e.txt
 0x________ ≠ 0x________</code></pre>
-<pre style="white-space: pre-wrap; word-wrap: break-word; margin: 0; font-family: monospace;">
-</pre>
-<pre><code>struct filename { name=0x________, str="..." }
-└─ do_filp_open entry
-   └─ qstr { name=0x________, len=__, hash=__, str="..." }
-      └─ d_lookup entry
-         ├─ d_lookup return NULL
-         │  └─ __d_alloc entry
-         │     └─ dentry { d_name.name=0x________, d_name.len=__, d_name.hash=__, d_name.str="..." }
-         │        └─ __d_alloc return
-         │           └─ __d_add entry
-         │              └─ do_filp_open return pointer 0x________ | ...
-         └─ d_lookup return 0x________ | ...</code></pre>
-<pre style="white-space: pre-wrap; word-wrap: break-word; margin: 0; font-family: monospace;">
-} -&gt; __d_alloc return -&gt; __d_add entry -&gt; do_filp_open return pointer 0xffff8b14d0cc60f8 | t_e.txt
--&gt; d_lookup return pointer 0xffff8b149e488cf8 | t_e.txt on cache hit -&gt; d_delete entry
-0xffff8b149e488cf8 | t_e.txt on unlink -&gt; __dentry_kill entry 0xffff8b149e488cf8 | t_e.txt on
-drop_caches, and for the short-name case struct filename { name=0xffff8b148256b020,
-str="/mnt/loopfs/a.txt" } -&gt; qstr { name=0xffff8b148256b02c, len=5, hash=2244109168, str="a.txt" }
--&gt; __d_alloc return dentry { d_name.name=0xffff8b14d0cc8e78, d_name.len=5, d_name.hash=2244109168,
-d_name.str="a.txt" } -&gt; do_filp_open return pointer 0xffff8b14d0cc8e78 | a.txt, with the offsets
-0xffff8b148256c025−0xffff8b148256c020=5 and 0xffff8b148256b02c−0xffff8b148256b020=12.
-
-
-
-================================================================================
-
-1. /usr/src/linux-source-6.8.0/fs/open.c + /usr/src/linux-source-6.8.0/fs/dcache.c → `nl -ba /usr/src/linux-source-6.8.0/fs/open.c | sed -n '1388,1436p'` → open/openat→do_filp_open ✓ → `nl -ba /usr/src/linux-source-6.8.0/fs/dcache.c | sed -n '2245,2265p'` → d_lookup(name,len,hash), NULL=miss ✓ → `rg -n "memcpy(dname, name-&gt;name, name-&gt;len)" /usr/src/linux-source-6.8.0/fs/dcache.c` → __d_alloc copy ✓ → `rg -n "__d_add\(|d_delete\(|__dentry_kill" /usr/src/linux-source-6.8.0/fs/dcache.c` → __d_add/d_delete/__dentry_kill ✓ → `nl -ba kernel/drivers/trace_do_filp_open/trace_do_filp_open.c | sed -n '82,90p'` → do_filp_open return pointer ✓
-2. 0xffff8b148256c025−0xffff8b148256c020=0x5=5, /tmp/=5 ✓, compute?
-3. 0xffff8b148256b02c−0xffff8b148256b020=0xC=12, /mnt/loopfs/=12 ✓, compute?
-4. /tmp/t_e.txt: 0xffff8b148256c020→0xffff8b148256c025→0xffff8b14d0cc60f8→0xffff8b14d0cc60f8→0xffff8b14d0cc60f8 ✓, compute?
-5. /tmp/t_m.txt: 0xffff8b1480ef5020→0xffff8b148d58d3f8→0xffff8b148d58d3f8 ✓, compute?
-6. l_m.txt: 0xffff8b1482462020→0xffff8b14a70b6278→0xffff8b14a70b6278 ✓, compute?
-7. /mnt/loopfs/a.txt: 0xffff8b148256b020→0xffff8b148256b02c→0xffff8b14d0cc8e78→0xffff8b14d0cc8e78 ✓, compute?
-8. hit: 0xffff8b149e4886f8 + 0xffff8b149e488cf8 reused ✓, verify?
-9. delete: d_delete 0xffff8b149e4886f8 + 0xffff8b149e488cf8 ✓, verify?
-10. evict: __dentry_kill 0xffff8b149e4886f8 + 0xffff8b149e488cf8 ✓, verify?
-11. rebuild: 0xffff8b14a712db78≠0xffff8b149e488cf8 ✗, verify?
-12. post: 0xffff8b148a31f878≠0xffff8b149e4886f8 ✗, verify?
-QUIZ (ANSWER YES/NO)
-1. 0xffff8b14d0cc60f8=0xffff8b14d0cc60f8=0xffff8b14d0cc60f8 ✓? 2. 0xffff8b149e4886f8 unchanged
-before delete ✓? 3. 0xffff8b148a31f878≠0xffff8b149e4886f8 ✓?</pre>
   </div>
 
 </body>
