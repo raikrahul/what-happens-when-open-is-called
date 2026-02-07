@@ -40,7 +40,7 @@ static struct kprobe kp_d_lookup, kp_d_lookup_rcu;
 static struct kprobe kp_add, kp_d_add, kp_add_ci, kp_rehash;
 static struct kprobe kp_delete, kp_dput, kp_dentry_kill;
 static struct kprobe kp_drop;
-static struct kretprobe rp_open, rp_alloc, rp_lookup, rp_hash;
+static struct kretprobe rp_open, rp_alloc, rp_lookup, rp_lookup_rcu, rp_hash;
 static int kp_d_lookup_reg;
 static int kp_d_lookup_rcu_reg;
 
@@ -124,6 +124,22 @@ static int lookup_ret(struct kretprobe_instance *ri, struct pt_regs *regs) {
     void *n = (void *)d->d_name.name;
     if (n && (unsigned long)n > 0xffff000000000000)
       pr_info("d_lookup return: 0x%px | %s\n", n, (char *)n);
+  }
+  return 0;
+}
+
+static int lookup_rcu_ret(struct kretprobe_instance *ri, struct pt_regs *regs) {
+  struct dentry *d = (struct dentry *)regs->ax;
+  if (!is_target())
+    return 0;
+  if (!d || IS_ERR(d)) {
+    pr_info("__d_lookup_rcu return: NULL\n");
+    return 0;
+  }
+  if ((unsigned long)d > 0xffff000000000000) {
+    void *n = (void *)d->d_name.name;
+    if (n && (unsigned long)n > 0xffff000000000000)
+      pr_info("__d_lookup_rcu return: 0x%px | %s\n", n, (char *)n);
   }
   return 0;
 }
@@ -304,6 +320,14 @@ static int __init trace_do_filp_open_init(void) {
   if ((r = register_kretprobe(&rp_lookup)) < 0)
     goto e4;
 
+  rp_lookup_rcu.kp.symbol_name = SYMBOL_D_LOOKUP_RCU;
+  rp_lookup_rcu.handler = lookup_rcu_ret;
+  rp_lookup_rcu.maxactive = 20;
+  if ((r = register_kretprobe(&rp_lookup_rcu)) < 0) {
+    unregister_kretprobe(&rp_lookup);
+    goto e4;
+  }
+
   kp_lookup.symbol_name = SYMBOL_LOOKUP;
   kp_lookup.pre_handler = lookup_entry;
   if ((r = register_kprobe(&kp_lookup)) < 0)
@@ -392,6 +416,7 @@ static int __init trace_do_filp_open_init(void) {
 e6:
   unregister_kprobe(&kp_lookup);
 e5:
+  unregister_kretprobe(&rp_lookup_rcu);
   unregister_kretprobe(&rp_lookup);
 e4:
   unregister_kretprobe(&rp_alloc);
@@ -406,6 +431,7 @@ e1:
 
 static void __exit trace_do_filp_open_exit(void) {
   unregister_kretprobe(&rp_hash);
+  unregister_kretprobe(&rp_lookup_rcu);
   if (kp_d_lookup_rcu_reg)
     unregister_kprobe(&kp_d_lookup_rcu);
   if (kp_d_lookup_reg)

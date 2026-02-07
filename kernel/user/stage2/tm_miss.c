@@ -22,6 +22,16 @@ int main(void) {
     drop_caches_if_root();
     sleep(1);
 
-    (void)open(n3, O_RDONLY);
+    int fd1 = open(n3, O_RDONLY);
+    printf("tm_miss first open fd=%d\n", fd1);
+    fflush(stdout);
+    if (fd1 >= 0)
+        close(fd1);
+
+    int fd2 = open(n3, O_RDONLY);
+    printf("tm_miss second open fd=%d\n", fd2);
+    fflush(stdout);
+    if (fd2 >= 0)
+        close(fd2);
     return 0;
 }
