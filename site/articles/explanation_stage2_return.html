@@ -81,7 +81,21 @@
   <div class="content">
     <pre style="white-space: pre-wrap; word-wrap: break-word; margin: 0; font-family: monospace;">**Goal**
 
-Previous work: Stage 1 (entry path and first kernel filename pointer) &lt;a href="https://raikrahul.github.io/what-happens-when-open-is-called/stage1.html"&gt;Stage 1&lt;/a&gt;. Stage 2 (entry, getname/filename buffer) &lt;a href="https://raikrahul.github.io/what-happens-when-open-is-called/stage2.html"&gt;Stage 2&lt;/a&gt;. Worksheet for this stage &lt;a href="https://raikrahul.github.io/what-happens-when-open-is-called/articles/worksheet_stage2_return.html"&gt;Worksheet&lt;/a&gt;. This stage uses one run of printed pointers and hashes and proves only what those lines show. /tmp/t_e.txt: do_filp_open entry pointer 0xffff8b1480ef7020, copy source pointer 0xffff8b1480ef7025, so 0xffff8b1480ef7025 − 0xffff8b1480ef7020 = 0x5 = 5, and “/tmp/” length = 5. /mnt/loopfs/a.txt: do_filp_open entry pointer 0xffff8b1481353020, copy source pointer 0xffff8b148135302c, so 0xffff8b148135302c − 0xffff8b1481353020 = 0xC = 12, and “/mnt/loopfs/” length = 12. t_e.txt after drop_caches in te_miss: copy destination pointer 0xffff8b1530b66338 = __d_add entry pointer 0xffff8b1530b66338 = do_filp_open return pointer 0xffff8b1530b66338. a.txt: copy destination pointer 0xffff8b148d558cf8 = __d_add entry pointer 0xffff8b148d558cf8 = do_filp_open return pointer 0xffff8b148d558cf8. rebuild: t_e.txt copy destination 0xffff8b1484f55338 and earlier 0xffff8b1484f55278 are not equal.
+Previous work: Stage 1 (entry path and first kernel filename pointer) &lt;a
+href="https://raikrahul.github.io/what-happens-when-open-is-called/stage1.html"&gt;Stage 1&lt;/a&gt;. Stage 2
+(entry, getname/filename buffer) &lt;a href="https://raikrahul.github.io/what-happens-when-open-is-
+called/stage2.html"&gt;Stage 2&lt;/a&gt;. Worksheet for this stage &lt;a href="https://raikrahul.github.io/what-
+happens-when-open-is-called/articles/worksheet_stage2_return.html"&gt;Worksheet&lt;/a&gt;. This stage uses
+one run of printed pointers and hashes and proves only what those lines show. /tmp/t_e.txt:
+do_filp_open entry pointer 0xffff8b1480ef7020, copy source pointer 0xffff8b1480ef7025, so
+0xffff8b1480ef7025 − 0xffff8b1480ef7020 = 0x5 = 5, and “/tmp/” length = 5. /mnt/loopfs/a.txt:
+do_filp_open entry pointer 0xffff8b1481353020, copy source pointer 0xffff8b148135302c, so
+0xffff8b148135302c − 0xffff8b1481353020 = 0xC = 12, and “/mnt/loopfs/” length = 12. t_e.txt after
+drop_caches in te_miss: copy destination pointer 0xffff8b1530b66338 = __d_add entry pointer
+0xffff8b1530b66338 = do_filp_open return pointer 0xffff8b1530b66338. a.txt: copy destination pointer
+0xffff8b148d558cf8 = __d_add entry pointer 0xffff8b148d558cf8 = do_filp_open return pointer
+0xffff8b148d558cf8. rebuild: t_e.txt copy destination 0xffff8b1484f55338 and earlier
+0xffff8b1484f55278 are not equal.
 
 **Programs**
 
@@ -92,33 +106,124 @@ int fd = open(filename, O_RDWR | O_CREAT, 0644);
 sleep(5);</code></pre>
 <pre style="white-space: pre-wrap; word-wrap: break-word; margin: 0; font-family: monospace;">
 
-te_miss.c runs open("/tmp/t_e.txt") after drop_caches to force a miss and capture the 0x5 offset from "/tmp/". tm_miss.c runs open("/tmp/t_m.txt") to force a miss on a missing name with the same 0x5 offset. lm_miss.c runs open("l_m.txt") to force a miss with no prefix so copy source equals the entry pointer. a_miss.c runs open("/mnt/loopfs/a.txt") to force a miss on ext2 and capture the 0xC offset from "/mnt/loopfs/". hits.c opens l_e.txt and /tmp/t_e.txt to capture cached pointers before delete/evict. delete.c calls unlink on l_e.txt and /tmp/t_e.txt to print d_delete on the same numeric pointers. evict.c writes "2\n" to /proc/sys/vm/drop_caches to print __dentry_kill on the same numeric pointers. rebuild.c opens /tmp/t_e.txt before and after drop_caches to show two different numeric pointers for the same name. post.c opens l_e.txt before and after drop_caches to show two different numeric pointers for the same name.
+te_miss.c runs open("/tmp/t_e.txt") after drop_caches to force a miss and capture the 0x5 offset
+from "/tmp/". tm_miss.c runs open("/tmp/t_m.txt") to force a miss on a missing name with the same
+0x5 offset. lm_miss.c runs open("l_m.txt") to force a miss with no prefix so copy source equals the
+entry pointer. a_miss.c runs open("/mnt/loopfs/a.txt") to force a miss on ext2 and capture the 0xC
+offset from "/mnt/loopfs/". hits.c opens l_e.txt and /tmp/t_e.txt to capture cached pointers before
+delete/evict. delete.c calls unlink on l_e.txt and /tmp/t_e.txt to print d_delete on the same
+numeric pointers. evict.c writes "2\n" to /proc/sys/vm/drop_caches to print __dentry_kill on the
+same numeric pointers. rebuild.c opens /tmp/t_e.txt before and after drop_caches to show two
+different numeric pointers for the same name. post.c opens l_e.txt before and after drop_caches to
+show two different numeric pointers for the same name.
 
-Loopback ext2 commands and why: `dd if=/dev/zero of=/tmp/loopfs.img bs=1M count=64` creates a 64M zeroed image file. `losetup -fP /tmp/loopfs.img` attaches it as a loop device. `mkfs.ext2 -F /tmp/loopfs.img` writes an ext2 superblock and metadata. `mount /tmp/loopfs.img /mnt/loopfs` mounts it at /mnt/loopfs. `echo x &gt; /mnt/loopfs/a.txt` creates a.txt on ext2. `sync` flushes buffers. `umount /mnt/loopfs` detaches the mount. `mount /tmp/loopfs.img /mnt/loopfs` remounts to force a clean lookup path.
+Loopback ext2 commands and why: `dd if=/dev/zero of=/tmp/loopfs.img bs=1M count=64` creates a 64M
+zeroed image file. `losetup -fP /tmp/loopfs.img` attaches it as a loop device. `mkfs.ext2 -F
+/tmp/loopfs.img` writes an ext2 superblock and metadata. `mount /tmp/loopfs.img /mnt/loopfs` mounts
+it at /mnt/loopfs. `echo x &gt; /mnt/loopfs/a.txt` creates a.txt on ext2. `sync` flushes buffers.
+`umount /mnt/loopfs` detaches the mount. `mount /tmp/loopfs.img /mnt/loopfs` remounts to force a
+clean lookup path.
 
-minimal_open.c runs one long name so the same numeric address can be tracked through d_lookup miss, copy source, copy destination, __d_add, do_filp_open return, and later d_lookup hit. te_miss.c isolates /tmp/t_e.txt after drop_caches so the 0x5 offset and the inserted name pointer can be computed from one string. tm_miss.c isolates /tmp/t_m.txt so the 0x5 offset and the missing-name insert are computed without reuse from other names. lm_miss.c isolates l_m.txt so copy source equals entry pointer with no prefix. a_miss.c isolates /mnt/loopfs/a.txt on ext2 so the 0xC offset is computed from a different prefix. hits.c produces the pre‑eviction hit pointers. delete.c produces d_delete with the same numeric addresses printed by d_lookup return. evict.c produces __dentry_kill with the same numeric addresses printed by d_lookup return. rebuild.c produces two different numeric addresses for t_e.txt before and after drop_caches. post.c produces two different numeric addresses for l_e.txt before and after drop_caches.
+minimal_open.c runs one long name so the same numeric address can be tracked through d_lookup miss,
+copy source, copy destination, __d_add, do_filp_open return, and later d_lookup hit. te_miss.c
+isolates /tmp/t_e.txt after drop_caches so the 0x5 offset and the inserted name pointer can be
+computed from one string. tm_miss.c isolates /tmp/t_m.txt so the 0x5 offset and the missing-name
+insert are computed without reuse from other names. lm_miss.c isolates l_m.txt so copy source equals
+entry pointer with no prefix. a_miss.c isolates /mnt/loopfs/a.txt on ext2 so the 0xC offset is
+computed from a different prefix. hits.c produces the pre‑eviction hit pointers. delete.c produces
+d_delete with the same numeric addresses printed by d_lookup return. evict.c produces __dentry_kill
+with the same numeric addresses printed by d_lookup return. rebuild.c produces two different numeric
+addresses for t_e.txt before and after drop_caches. post.c produces two different numeric addresses
+for l_e.txt before and after drop_caches.
 
-do_filp_open entry is probed to print the kernel string pointer and the printed string for that call. d_lookup entry is probed to print hash, length, and name. d_lookup return is probed to print NULL or a name pointer. __d_alloc entry is probed to print the copy source pointer. __d_alloc return is probed to print the copy destination pointer. __d_add entry is probed to print the inserted name pointer. d_delete entry is probed to print the deleted name pointer. __dentry_kill entry is probed to print the evicted name pointer.
+do_filp_open entry is probed to print the kernel string pointer and the printed string for that
+call. d_lookup entry is probed to print hash, length, and name. d_lookup return is probed to print
+NULL or a name pointer. __d_alloc entry is probed to print the copy source pointer. __d_alloc return
+is probed to print the copy destination pointer. __d_add entry is probed to print the inserted name
+pointer. d_delete entry is probed to print the deleted name pointer. __dentry_kill entry is probed
+to print the evicted name pointer.
 
 **Data**
 
-minimal_open.c do_filp_open entry pointer 0xffff8b1480ef7020 | test_file_very_long_name_to_force_external_allocation_1770451257; d_lookup entry hash 1258787558 length 64 name test_file_very_long_name_to_force_external_allocation_1770451257; d_lookup return NULL; copy source pointer 0xffff8b1480ef7020; copy destination pointer 0xffff8b14d0cc1a98; __d_add entry 0xffff8b14d0cc1a98 | test_file_very_long_name_to_force_external_allocation_1770451257; do_filp_open return pointer 0xffff8b14d0cc1a98 | test_file_very_long_name_to_force_external_allocation_1770451257; d_lookup return 0xffff8b14d0cc1a98 | test_file_very_long_name_to_force_external_allocation_1770451257. 0xffff8b1480ef7020 is printed with the long name, so the long name bytes live at 0xffff8b1480ef7020 in this call. d_lookup return is NULL, so the name was not found at that moment. copy source pointer equals 0xffff8b1480ef7020, so the bytes copied start at the first character of the long name. copy destination pointer is 0xffff8b14d0cc1a98, and __d_add entry uses 0xffff8b14d0cc1a98, and do_filp_open return pointer is 0xffff8b14d0cc1a98, and later d_lookup return is 0xffff8b14d0cc1a98, so the same numeric address is reused across copy, insert, return, and later lookup.
+minimal_open.c do_filp_open entry pointer 0xffff8b1480ef7020 |
+test_file_very_long_name_to_force_external_allocation_1770451257; d_lookup entry hash 1258787558
+length 64 name test_file_very_long_name_to_force_external_allocation_1770451257; d_lookup return
+NULL; copy source pointer 0xffff8b1480ef7020; copy destination pointer 0xffff8b14d0cc1a98; __d_add
+entry 0xffff8b14d0cc1a98 | test_file_very_long_name_to_force_external_allocation_1770451257;
+do_filp_open return pointer 0xffff8b14d0cc1a98 |
+test_file_very_long_name_to_force_external_allocation_1770451257; d_lookup return 0xffff8b14d0cc1a98
+| test_file_very_long_name_to_force_external_allocation_1770451257. 0xffff8b1480ef7020 is printed
+with the long name, so the long name bytes live at 0xffff8b1480ef7020 in this call. d_lookup return
+is NULL, so the name was not found at that moment. copy source pointer equals 0xffff8b1480ef7020, so
+the bytes copied start at the first character of the long name. copy destination pointer is
+0xffff8b14d0cc1a98, and __d_add entry uses 0xffff8b14d0cc1a98, and do_filp_open return pointer is
+0xffff8b14d0cc1a98, and later d_lookup return is 0xffff8b14d0cc1a98, so the same numeric address is
+reused across copy, insert, return, and later lookup.
 
-te_miss.c do_filp_open entry pointer 0xffff8b1480ef7020 | /tmp/t_e.txt; d_lookup entry hash 3583106372 length 7 name t_e.txt; d_lookup return NULL; copy source pointer 0xffff8b1480ef7025; copy destination pointer 0xffff8b1530b66338; __d_add entry 0xffff8b1530b66338 | t_e.txt; do_filp_open return pointer 0xffff8b1530b66338 | t_e.txt. 0xffff8b1480ef7025 − 0xffff8b1480ef7020 = 0x5 = 5, and “/tmp/” length is 5, so the copy source 0xffff8b1480ef7025 starts at the first byte of “t_e.txt” inside “/tmp/t_e.txt”. d_lookup return is NULL, so no entry was found before the insert. copy destination pointer is 0xffff8b1530b66338, __d_add entry uses 0xffff8b1530b66338, and do_filp_open return pointer is 0xffff8b1530b66338, so the same numeric address is used for the inserted name and the returned file name pointer.
+te_miss.c do_filp_open entry pointer 0xffff8b1480ef7020 | /tmp/t_e.txt; d_lookup entry hash
+3583106372 length 7 name t_e.txt; d_lookup return NULL; copy source pointer 0xffff8b1480ef7025; copy
+destination pointer 0xffff8b1530b66338; __d_add entry 0xffff8b1530b66338 | t_e.txt; do_filp_open
+return pointer 0xffff8b1530b66338 | t_e.txt. 0xffff8b1480ef7025 − 0xffff8b1480ef7020 = 0x5 = 5, and
+“/tmp/” length is 5, so the copy source 0xffff8b1480ef7025 starts at the first byte of “t_e.txt”
+inside “/tmp/t_e.txt”. d_lookup return is NULL, so no entry was found before the insert. copy
+destination pointer is 0xffff8b1530b66338, __d_add entry uses 0xffff8b1530b66338, and do_filp_open
+return pointer is 0xffff8b1530b66338, so the same numeric address is used for the inserted name and
+the returned file name pointer.
 
-tm_miss.c do_filp_open entry pointer 0xffff8b148f406020 | /tmp/t_m.txt; d_lookup entry hash 502501587 length 7 name t_m.txt; d_lookup return NULL; copy source pointer 0xffff8b148f406025; copy destination pointer 0xffff8b1484f2ddb8; __d_add entry 0xffff8b1484f2ddb8 | t_m.txt. 0xffff8b148f406025 − 0xffff8b148f406020 = 0x5 = 5, and “/tmp/” length is 5, so the copy source 0xffff8b148f406025 starts at “t_m.txt”. d_lookup return is NULL, so no entry was found before insert. copy destination pointer 0xffff8b1484f2ddb8 equals __d_add entry pointer 0xffff8b1484f2ddb8, so the inserted name uses that numeric address.
+tm_miss.c do_filp_open entry pointer 0xffff8b148f406020 | /tmp/t_m.txt; d_lookup entry hash
+502501587 length 7 name t_m.txt; d_lookup return NULL; copy source pointer 0xffff8b148f406025; copy
+destination pointer 0xffff8b1484f2ddb8; __d_add entry 0xffff8b1484f2ddb8 | t_m.txt.
+0xffff8b148f406025 − 0xffff8b148f406020 = 0x5 = 5, and “/tmp/” length is 5, so the copy source
+0xffff8b148f406025 starts at “t_m.txt”. d_lookup return is NULL, so no entry was found before
+insert. copy destination pointer 0xffff8b1484f2ddb8 equals __d_add entry pointer 0xffff8b1484f2ddb8,
+so the inserted name uses that numeric address.
 
-lm_miss.c do_filp_open entry pointer 0xffff8b1480ef2020 | l_m.txt; d_lookup entry hash 2257632620 length 7 name l_m.txt; d_lookup return NULL; copy source pointer 0xffff8b1480ef2020; copy destination pointer 0xffff8b148d58acf8; __d_add entry 0xffff8b148d58acf8 | l_m.txt. copy source pointer equals do_filp_open entry pointer 0xffff8b1480ef2020, so the copied bytes start at the first byte of “l_m.txt”. d_lookup return is NULL, so no entry was found before insert. copy destination pointer 0xffff8b148d58acf8 equals __d_add entry pointer 0xffff8b148d58acf8, so the inserted name uses that numeric address.
+lm_miss.c do_filp_open entry pointer 0xffff8b1480ef2020 | l_m.txt; d_lookup entry hash 2257632620
+length 7 name l_m.txt; d_lookup return NULL; copy source pointer 0xffff8b1480ef2020; copy
+destination pointer 0xffff8b148d58acf8; __d_add entry 0xffff8b148d58acf8 | l_m.txt. copy source
+pointer equals do_filp_open entry pointer 0xffff8b1480ef2020, so the copied bytes start at the first
+byte of “l_m.txt”. d_lookup return is NULL, so no entry was found before insert. copy destination
+pointer 0xffff8b148d58acf8 equals __d_add entry pointer 0xffff8b148d58acf8, so the inserted name
+uses that numeric address.
 
-a_miss.c do_filp_open entry pointer 0xffff8b1481353020 | /mnt/loopfs/a.txt; d_lookup entry hash 2498248789 length 5 name a.txt; d_lookup return NULL; copy source pointer 0xffff8b148135302c; copy destination pointer 0xffff8b148d558cf8; __d_add entry 0xffff8b148d558cf8 | a.txt; do_filp_open return pointer 0xffff8b148d558cf8 | a.txt. 0xffff8b148135302c − 0xffff8b1481353020 = 0xC = 12, and “/mnt/loopfs/” length is 12, so the copy source 0xffff8b148135302c starts at the first byte of “a.txt”. d_lookup return is NULL, so no entry was found before insert. copy destination pointer 0xffff8b148d558cf8 equals __d_add entry pointer 0xffff8b148d558cf8 and equals do_filp_open return pointer 0xffff8b148d558cf8, so the inserted name and returned file name pointer are the same numeric address.
+a_miss.c do_filp_open entry pointer 0xffff8b1481353020 | /mnt/loopfs/a.txt; d_lookup entry hash
+2498248789 length 5 name a.txt; d_lookup return NULL; copy source pointer 0xffff8b148135302c; copy
+destination pointer 0xffff8b148d558cf8; __d_add entry 0xffff8b148d558cf8 | a.txt; do_filp_open
+return pointer 0xffff8b148d558cf8 | a.txt. 0xffff8b148135302c − 0xffff8b1481353020 = 0xC = 12, and
+“/mnt/loopfs/” length is 12, so the copy source 0xffff8b148135302c starts at the first byte of
+“a.txt”. d_lookup return is NULL, so no entry was found before insert. copy destination pointer
+0xffff8b148d558cf8 equals __d_add entry pointer 0xffff8b148d558cf8 and equals do_filp_open return
+pointer 0xffff8b148d558cf8, so the inserted name and returned file name pointer are the same numeric
+address.
 
-delete.c d_lookup return 0xffff8b14a710b338 | l_e.txt; d_delete entry 0xffff8b14a710b338 | l_e.txt; d_lookup return 0xffff8b14a710be78 | t_e.txt; d_delete entry 0xffff8b14a710be78 | t_e.txt. d_lookup return pointer for l_e.txt is 0xffff8b14a710b338 and d_delete entry for l_e.txt is 0xffff8b14a710b338, so the delete refers to the same numeric address. d_lookup return pointer for t_e.txt is 0xffff8b14a710be78 and d_delete entry for t_e.txt is 0xffff8b14a710be78, so the delete refers to the same numeric address.
+delete.c d_lookup return 0xffff8b14a710b338 | l_e.txt; d_delete entry 0xffff8b14a710b338 | l_e.txt;
+d_lookup return 0xffff8b14a710be78 | t_e.txt; d_delete entry 0xffff8b14a710be78 | t_e.txt. d_lookup
+return pointer for l_e.txt is 0xffff8b14a710b338 and d_delete entry for l_e.txt is
+0xffff8b14a710b338, so the delete refers to the same numeric address. d_lookup return pointer for
+t_e.txt is 0xffff8b14a710be78 and d_delete entry for t_e.txt is 0xffff8b14a710be78, so the delete
+refers to the same numeric address.
 
-evict.c d_lookup return 0xffff8b14a710b338 | l_e.txt; d_lookup return 0xffff8b14a710be78 | t_e.txt; __dentry_kill entry 0xffff8b14a710b338 | l_e.txt; __dentry_kill entry 0xffff8b14a710be78 | t_e.txt. d_lookup return pointer for l_e.txt is 0xffff8b14a710b338 and __dentry_kill entry for l_e.txt is 0xffff8b14a710b338, so eviction refers to the same numeric address. d_lookup return pointer for t_e.txt is 0xffff8b14a710be78 and __dentry_kill entry for t_e.txt is 0xffff8b14a710be78, so eviction refers to the same numeric address.
+evict.c d_lookup return 0xffff8b14a710b338 | l_e.txt; d_lookup return 0xffff8b14a710be78 | t_e.txt;
+__dentry_kill entry 0xffff8b14a710b338 | l_e.txt; __dentry_kill entry 0xffff8b14a710be78 | t_e.txt.
+d_lookup return pointer for l_e.txt is 0xffff8b14a710b338 and __dentry_kill entry for l_e.txt is
+0xffff8b14a710b338, so eviction refers to the same numeric address. d_lookup return pointer for
+t_e.txt is 0xffff8b14a710be78 and __dentry_kill entry for t_e.txt is 0xffff8b14a710be78, so eviction
+refers to the same numeric address.
 
-rebuild.c before drop_caches: __d_add entry 0xffff8b1484f55278 | t_e.txt, do_filp_open return pointer 0xffff8b1484f55278 | t_e.txt; after drop_caches: copy destination pointer 0xffff8b1484f55338, __d_add entry 0xffff8b1484f55338 | t_e.txt, do_filp_open return pointer 0xffff8b1484f55338 | t_e.txt. before drop_caches the inserted name pointer and return pointer are 0xffff8b1484f55278; after drop_caches the inserted name pointer and return pointer are 0xffff8b1484f55338; 0xffff8b1484f55338 ≠ 0xffff8b1484f55278, so the numeric address changed.
+rebuild.c before drop_caches: __d_add entry 0xffff8b1484f55278 | t_e.txt, do_filp_open return
+pointer 0xffff8b1484f55278 | t_e.txt; after drop_caches: copy destination pointer
+0xffff8b1484f55338, __d_add entry 0xffff8b1484f55338 | t_e.txt, do_filp_open return pointer
+0xffff8b1484f55338 | t_e.txt. before drop_caches the inserted name pointer and return pointer are
+0xffff8b1484f55278; after drop_caches the inserted name pointer and return pointer are
+0xffff8b1484f55338; 0xffff8b1484f55338 ≠ 0xffff8b1484f55278, so the numeric address changed.
 
-post.c before drop_caches: copy destination pointer 0xffff8b14804223f8, __d_add entry 0xffff8b14804223f8 | l_e.txt, do_filp_open return pointer 0xffff8b14804223f8 | l_e.txt; after drop_caches: copy destination pointer 0xffff8b1480422638, __d_add entry 0xffff8b1480422638 | l_e.txt, do_filp_open return pointer 0xffff8b1480422638 | l_e.txt. before drop_caches the inserted name pointer and return pointer are 0xffff8b14804223f8; after drop_caches the inserted name pointer and return pointer are 0xffff8b1480422638; 0xffff8b1480422638 ≠ 0xffff8b14804223f8, so the numeric address changed.
+post.c before drop_caches: copy destination pointer 0xffff8b14804223f8, __d_add entry
+0xffff8b14804223f8 | l_e.txt, do_filp_open return pointer 0xffff8b14804223f8 | l_e.txt; after
+drop_caches: copy destination pointer 0xffff8b1480422638, __d_add entry 0xffff8b1480422638 |
+l_e.txt, do_filp_open return pointer 0xffff8b1480422638 | l_e.txt. before drop_caches the inserted
+name pointer and return pointer are 0xffff8b14804223f8; after drop_caches the inserted name pointer
+and return pointer are 0xffff8b1480422638; 0xffff8b1480422638 ≠ 0xffff8b14804223f8, so the numeric
+address changed.
 
 **Checks**
 
