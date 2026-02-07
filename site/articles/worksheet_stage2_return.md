@@ -225,24 +225,20 @@ Record: post
 - do_filp_open return pointer = 0x________ | l_e.txt
 - inequality check: post-eviction pointer != pre-eviction pointer
 
-Diagram:
-Draw one chain per program with your own addresses.
-Use this format:
+Diagram (ASCII tree, fill with your numbers):
+```
 struct filename { name=0x________, str="..." }
--> do_filp_open entry
--> qstr { name=0x________, len=__, hash=__, str="..." }
--> d_lookup entry
--> d_lookup return NULL
--> __d_alloc entry
--> dentry { d_name.name=0x________, d_name.len=__, d_name.hash=__, d_name.str="..." }
--> __d_alloc return
--> __d_add entry
--> do_filp_open return pointer 0x________ | ...
-Diagram 
-struct filename { name=0xffff8b148256c020,
-str="/tmp/t_e.txt" } -> do_filp_open entry -> qstr { name=0xffff8b148256c025, len=7,
-hash=3583106372, str="t_e.txt" } -> d_lookup entry -> d_lookup return NULL -> __d_alloc entry ->
-dentry { d_name.name=0xffff8b14d0cc60f8, d_name.len=7, d_name.hash=3583106372, d_name.str="t_e.txt"
+└─ do_filp_open entry
+   └─ qstr { name=0x________, len=__, hash=__, str="..." }
+      └─ d_lookup entry
+         ├─ d_lookup return NULL
+         │  └─ __d_alloc entry
+         │     └─ dentry { d_name.name=0x________, d_name.len=__, d_name.hash=__, d_name.str="..." }
+         │        └─ __d_alloc return
+         │           └─ __d_add entry
+         │              └─ do_filp_open return pointer 0x________ | ...
+         └─ d_lookup return 0x________ | ...
+```
 } -> __d_alloc return -> __d_add entry -> do_filp_open return pointer 0xffff8b14d0cc60f8 | t_e.txt
 -> d_lookup return pointer 0xffff8b149e488cf8 | t_e.txt on cache hit -> d_delete entry
 0xffff8b149e488cf8 | t_e.txt on unlink -> __dentry_kill entry 0xffff8b149e488cf8 | t_e.txt on
