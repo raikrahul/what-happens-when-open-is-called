@@ -5,21 +5,29 @@ title: "Stage 2 Return"
 
 **Goal**
 
-Previous work: Stage 1 (entry path and first kernel filename pointer) <a
-href="https://raikrahul.github.io/what-happens-when-open-is-called/stage1.html">Stage 1</a>. Stage 2
-(entry, getname/filename buffer) <a href="https://raikrahul.github.io/what-happens-when-open-is-
-called/stage2.html">Stage 2</a>. Worksheet for this stage <a href="https://raikrahul.github.io/what-
-happens-when-open-is-called/articles/worksheet_stage2_return.html">Worksheet</a>. This stage uses
-one run of printed pointers and hashes and proves only what those lines show. /tmp/t_e.txt:
-do_filp_open entry pointer 0xffff8b1480ef7020, copy source pointer 0xffff8b1480ef7025, so
-0xffff8b1480ef7025 − 0xffff8b1480ef7020 = 0x5 = 5, and “/tmp/” length = 5. /mnt/loopfs/a.txt:
-do_filp_open entry pointer 0xffff8b1481353020, copy source pointer 0xffff8b148135302c, so
-0xffff8b148135302c − 0xffff8b1481353020 = 0xC = 12, and “/mnt/loopfs/” length = 12. t_e.txt after
-drop_caches in te_miss: copy destination pointer 0xffff8b1530b66338 = __d_add entry pointer
-0xffff8b1530b66338 = do_filp_open return pointer 0xffff8b1530b66338. a.txt: copy destination pointer
-0xffff8b148d558cf8 = __d_add entry pointer 0xffff8b148d558cf8 = do_filp_open return pointer
-0xffff8b148d558cf8. rebuild: t_e.txt copy destination 0xffff8b1484f55338 and earlier
-0xffff8b1484f55278 are not equal.
+Previous work:
+<a href="https://raikrahul.github.io/what-happens-when-open-is-called/stage1.html">Stage 1</a> (entry path, first kernel filename pointer).
+<a href="https://raikrahul.github.io/what-happens-when-open-is-called/stage2.html">Stage 2</a> (getname/filename buffer).
+<a href="https://raikrahul.github.io/what-happens-when-open-is-called/articles/worksheet_stage2_return.html">Worksheet</a> (this stage).
+
+This stage uses one run of printed pointers and hashes and proves only what those lines show.
+
+/tmp/t_e.txt: do_filp_open entry pointer 0xffff8b1480ef7020, copy source pointer 0xffff8b1480ef7025.
+0xffff8b1480ef7025 − 0xffff8b1480ef7020 = 0x5 = 5.
+"/tmp/" length = 5.
+
+/mnt/loopfs/a.txt: do_filp_open entry pointer 0xffff8b1481353020, copy source pointer 0xffff8b148135302c.
+0xffff8b148135302c − 0xffff8b1481353020 = 0xC = 12.
+"/mnt/loopfs/" length = 12.
+
+t_e.txt after drop_caches in te_miss:
+copy destination pointer 0xffff8b1530b66338 = __d_add entry pointer 0xffff8b1530b66338 = do_filp_open return pointer 0xffff8b1530b66338.
+
+a.txt:
+copy destination pointer 0xffff8b148d558cf8 = __d_add entry pointer 0xffff8b148d558cf8 = do_filp_open return pointer 0xffff8b148d558cf8.
+
+rebuild:
+t_e.txt copy destination 0xffff8b1484f55338 ≠ 0xffff8b1484f55278.
 
 **Programs**
 
