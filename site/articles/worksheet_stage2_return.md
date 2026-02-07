@@ -363,6 +363,7 @@ open(n1, O_RDONLY);
 - __d_lookup_rcu entry: hash ________ length 7 name l_e.txt
 - do_filp_open return pointer = 0x________ | l_e.txt
 - inequality check: post-eviction pointer != pre-eviction pointer
+If the numbers are equal, eviction still happened and the allocator reused the same address. Record equality explicitly as 0x________ = 0x________, not as a failure.
 Diagram (pstree):
 ```
 l_e.txt
