@@ -354,6 +354,21 @@ What this shows
 Diagram</pre>
 <pre><code>before drop_caches: __d_add 0xffff8b14804223f8 -&gt; do_filp_open return 0xffff8b14804223f8
 after  drop_caches: __d_add 0xffff8b1480422638 -&gt; do_filp_open return 0xffff8b1480422638</code></pre>
+<pre style="white-space: pre-wrap; word-wrap: break-word; margin: 0; font-family: monospace;">
+
+do_filp_open is the entry point for path opening inside the VFS. It exists to convert a pathname into a struct file. It is called by the open/openat syscall path after user input is copied into a kernel filename buffer. It receives the kernel filename and returns a struct file. We probe it because it is the boundary where the kernel string pointer is first stable and where the returned file points to the resolved dentry name pointer.
+
+d_lookup exists to search the dentry cache for a name inside a directory. It is called by path lookup code that has a directory and a qstr (name, length, hash). It receives the parent dentry and qstr and returns either a dentry pointer or NULL. We probe it because it prints the exact key (name, length, hash) and the hit/miss pointer needed to prove cache hit and miss using only printed values.
+
+__d_lookup and __d_lookup_rcu exist to perform the same lookup on internal and RCU paths. They are called by the lookup flow when it chooses the normal or RCU fast path. They receive the same qstr key and return a dentry pointer or NULL. We probe them to show the exact key used on the internal/RCU paths and to confirm the hash/length/name used before and after eviction.
+
+__d_alloc exists to allocate a new dentry and copy the name into dentry storage. It is called when d_lookup returns NULL and a new dentry must be created for that name. It receives the qstr and returns a dentry pointer. We probe entry to print the copy source pointer and return to print the copy destination pointer, so the copy source and destination are shown as numeric addresses.
+
+__d_add exists to insert a dentry into the dcache hash. It is called after __d_alloc returns and an inode is attached or a negative dentry is recorded. It receives the dentry pointer and has no return value of interest. We probe it to print the exact numeric address that is inserted into the cache, and then compare it to the do_filp_open return pointer.
+
+d_delete exists to remove a dentry from the dcache on unlink. It is called by unlink path after a name is removed from a directory. It receives the dentry pointer and returns void. We probe it to print the same numeric pointer that was previously returned by d_lookup so the delete is tied to a cached name pointer.
+
+__dentry_kill exists to reclaim and free a dentry during cache eviction. It is called by shrinkers or drop_caches to remove cached dentries. It receives the dentry pointer and returns void. We probe it to print the exact numeric pointer that is evicted and compare it to the earlier hit pointer.</pre>
   </div>
 
 </body>
