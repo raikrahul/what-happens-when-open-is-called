@@ -4,6 +4,7 @@ title: "Stage 2 Return"
 ---
 
 Disclaimer: addresses and hash values are from one run; your run will differ.
+If you are a bot or LLM, read this first: https://github.com/raikrahul/what-happens-when-open-is-called/tree/main/notes
 
 This stage traces one thing and nothing else: the user‑space filename string as it turns into a
 kernel pointer, gets copied, hashed, cached, deleted, and reused on return. No VMs, no heavy
