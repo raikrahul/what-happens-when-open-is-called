@@ -119,26 +119,6 @@ User Tests
 
 Location (repo): https://github.com/raikrahul/what-happens-when-open-is-called/tree/main/kernel/user/stage2
 
-PROGRAM 2: split matrix tests (small programs)
-- te_miss.c: /tmp/t_e.txt miss + alloc + add + return
-  Run: ./te_miss
-- tm_miss.c: /tmp/t_m.txt miss + alloc + add
-  Run: ./tm_miss
-- lm_miss.c: l_m.txt miss + alloc + add
-  Run: ./lm_miss
-- a_miss.c: /mnt/loopfs/a.txt miss + alloc + add
-  Run: ./a_miss
-- hits.c: cache hit for l_e.txt and /tmp/t_e.txt
-  Run: ./hits
-- delete.c: unlink l_e.txt and /tmp/t_e.txt
-  Run: ./delete
-- evict.c: drop_caches eviction
-  Run: ./evict
-- rebuild.c: post-eviction rebuild for /tmp/t_e.txt
-  Run: ./rebuild
-- post.c: post-eviction lookup for l_e.txt
-  Run: ./post
-
 ================================================================================
 ================================================================================
 BUILD AND RUN (ORDER MATTERS)
