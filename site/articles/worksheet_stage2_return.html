@@ -304,75 +304,20 @@ Single-chain diagram with concrete data: struct filename { name=0xffff8b148256c0
 
 ================================================================================
 
-CHAIN AND TRACE SUMMARY (END)
+Trace
 ================================================================================
 
-1) memcpy chain (t_e.txt, copy source -&gt; destination)
-"/tmp/t_e.txt" @ 0xffff8bd546392020 -&gt; __d_alloc entry 0xffff8bd546392025 -&gt; __d_alloc return 0xffff8bd728c76338
-qstr-&gt;name starts 5 bytes after /tmp/ and __d_alloc copies that name into dentry storage.
-2) cache build-up chain (t_e.txt, miss -&gt; insert)
-d_lookup return NULL -&gt; __d_add 0xffff8bd728c76338 -&gt; do_filp_open return 0xffff8bd728c76338
-Miss creates a new dentry name pointer and inserts it; the same pointer is returned by open.
-3) cache hit chain (t_e.txt, later lookup)
-d_lookup return 0xffff8bd728c76338 -&gt; do_filp_open return 0xffff8bd728c76338
-Hit returns the cached pointer without new allocation.
-4) cache miss chain (t_m.txt, missing)
-"/tmp/t_m.txt" -&gt; d_lookup return NULL -&gt; __d_add 0xffff8bd728c763f8
-Missing name still gets a dentry entry (negative dentry) with its own pointer.
-5) cache delete chain (unlink)
-d_delete 0xffff8bd7e94c8578 (l_e.txt) + d_delete 0xffff8bd728c76338 (t_e.txt)
-Unlink removes the cached dentries for these pointers.
-Later phases start after this: eviction (__dentry_kill) and rebuild after eviction.
-
-t_e.txt miss -&gt; alloc -&gt; insert -&gt; return
-open("/tmp/t_e.txt")
-  -&gt; do_filp_open entry 0xffff8bd546392020
-  -&gt; d_lookup hash 1830572521 len 7 "t_e.txt" -&gt; NULL
-  -&gt; __d_alloc entry 0xffff8bd546392025
-  -&gt; __d_alloc return 0xffff8bd728c76338
-  -&gt; __d_add entry 0xffff8bd728c76338
-  -&gt; do_filp_open return 0xffff8bd728c76338
-Miss path with /tmp prefix; name pointer shifts by +5, then alloc+insert returns same pointer.
-
-a.txt miss on loopback ext2
-open("/mnt/loopfs/a.txt")
-  -&gt; do_filp_open entry 0xffff8bd546392020
-  -&gt; d_lookup hash 3711754354 len 5 "a.txt" -&gt; NULL
-  -&gt; __d_alloc entry 0xffff8bd54639202c
-  -&gt; __d_alloc return 0xffff8bd728c76cf8
-  -&gt; __d_add entry 0xffff8bd728c76cf8
-  -&gt; do_filp_open return 0xffff8bd728c76cf8
-Same miss path on ext2 with /mnt/loopfs/ prefix; name pointer shifts by +12.
-
-cache hit for l_e.txt before deletion
-open("l_e.txt")
-  -&gt; d_lookup hash 440978933 len 7 "l_e.txt" -&gt; 0xffff8bd7e94c8578
-  -&gt; do_filp_open return 0xffff8bd7e94c8578
-Hit returns the cached pointer without allocation.
-
-unlink deletion + eviction
-unlink("l_e.txt") -&gt; d_delete 0xffff8bd7e94c8578
-unlink("/tmp/t_e.txt") -&gt; d_delete 0xffff8bd728c76338
-drop_caches -&gt; __dentry_kill 0xffff8bd7e94c8578 (l_e.txt)
-drop_caches -&gt; __dentry_kill 0xffff8bd728c76338 (t_e.txt)
-drop_caches -&gt; __dentry_kill 0xffff8bd728c763f8 (t_m.txt)
-drop_caches -&gt; __dentry_kill 0xffff8bd728c76938 (l_m.txt)
-drop_caches -&gt; __dentry_kill 0xffff8bd728c76cf8 (a.txt)
-Unlink removes entries; drop_caches reclaims remaining dentries.
-
-rebuild after eviction (t_e.txt)
-open("/tmp/t_e.txt") after drop_caches
-  -&gt; d_lookup hash 1830572521 len 7 "t_e.txt" -&gt; NULL
-  -&gt; __d_alloc return 0xffff8bd728c76338
-  -&gt; __d_add entry 0xffff8bd728c76338
-  -&gt; do_filp_open return 0xffff8bd728c76338
-In this run the rebuild reuses the same pointer value.
-
-post-eviction lookup for l_e.txt
-open("l_e.txt") after drop_caches
-  -&gt; __d_lookup_rcu hash 440978933 len 7 "l_e.txt"
-  -&gt; do_filp_open return 0xffff8bd7e94c8db8
-Post-eviction return pointer differs from pre-eviction pointer.
+1) "/tmp/t_e.txt" @ 0xffff8b148256c020 -&gt; __d_alloc entry 0xffff8b148256c025 -&gt; __d_alloc return 0xffff8b14d0cc60f8 -&gt; __d_add 0xffff8b14d0cc60f8 -&gt; do_filp_open return 0xffff8b14d0cc60f8. 0xffff8b148256c025 − 0xffff8b148256c020 = 0x5 = 5, so the copy source starts exactly after “/tmp/”.
+2) d_lookup return NULL -&gt; __d_add 0xffff8b14d0cc60f8 -&gt; do_filp_open return 0xffff8b14d0cc60f8. The same numeric pointer is created and returned.
+3) d_lookup return 0xffff8b149e488cf8 -&gt; do_filp_open return 0xffff8b149e488cf8. The hit uses the cached pointer without a new allocation.
+4) "/tmp/t_m.txt" -&gt; d_lookup return NULL -&gt; __d_add 0xffff8b148d58d3f8. The missing name still has its own cached pointer.
+5) d_delete 0xffff8b149e4886f8 (l_e.txt) + d_delete 0xffff8b149e488cf8 (t_e.txt). The exact cached pointers are removed on unlink.
+open("/tmp/t_e.txt") -&gt; do_filp_open entry 0xffff8b148256c020 -&gt; d_lookup hash 3583106372 len 7 "t_e.txt" -&gt; NULL -&gt; __d_alloc entry 0xffff8b148256c025 -&gt; __d_alloc return 0xffff8b14d0cc60f8 -&gt; __d_add 0xffff8b14d0cc60f8 -&gt; do_filp_open return 0xffff8b14d0cc60f8. The return pointer equals the copy destination and the insert pointer.
+open("/mnt/loopfs/a.txt") -&gt; do_filp_open entry 0xffff8b148256b020 -&gt; d_lookup hash 2244109168 len 5 "a.txt" -&gt; NULL -&gt; __d_alloc entry 0xffff8b148256b02c -&gt; __d_alloc return 0xffff8b14d0cc8e78 -&gt; __d_add 0xffff8b14d0cc8e78 -&gt; do_filp_open return 0xffff8b14d0cc8e78. 0xffff8b148256b02c − 0xffff8b148256b020 = 0xC = 12, so the copy source starts exactly after “/mnt/loopfs/”.
+open("l_e.txt") -&gt; d_lookup return 0xffff8b149e4886f8 -&gt; do_filp_open return 0xffff8b149e4886f8. The hit uses the cached pointer before deletion.
+unlink("l_e.txt") -&gt; d_delete 0xffff8b149e4886f8; unlink("/tmp/t_e.txt") -&gt; d_delete 0xffff8b149e488cf8; drop_caches -&gt; __dentry_kill 0xffff8b149e4886f8 and 0xffff8b149e488cf8. Deletion and eviction touch the same numeric pointers.
+open("/tmp/t_e.txt") after drop_caches -&gt; __d_alloc return 0xffff8b14a712db78 -&gt; __d_add 0xffff8b14a712db78 -&gt; do_filp_open return 0xffff8b14a712db78. 0xffff8b14a712db78 != 0xffff8b149e488cf8, so rebuild produces a different pointer.
+open("l_e.txt") after drop_caches -&gt; do_filp_open return 0xffff8b148a31f878. 0xffff8b148a31f878 != 0xffff8b149e4886f8, so post‑eviction return differs from pre‑eviction return.
 
 QUIZ (ANSWER YES/NO)
 - Did your memcpy chain show __d_alloc entry and __d_alloc return with the same return pointer as __d_add?
