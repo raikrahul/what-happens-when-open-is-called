@@ -1,0 +1,81 @@
+VERIFICATION RUN 2026-02-07
+
+CASE 1: CACHE MISS - ALLOCATION PATH (memcpy happens)
+Test: minimal_open.c
+File: test_file_very_long_name_to_force_external_allocation_1770484700
+
+[O] IN: 0xffff8f294c36e020
+__d_lookup_rcu return: NULL
+d_lookup return: NULL
+[A] SRC: 0xffff8f294c36e020
+[A] DST: 0xffff8f2bb3de6618
+__d_add entry: 0xffff8f2bb3de6618
+[O] OUT: 0xffff8f2bb3de6618
+d_lookup return: 0xffff8f2bb3de6618 (later cache hit)
+
+Pointer equality: 0xffff8f2bb3de6618 appears at [A] DST, __d_add, [O] OUT, later d_lookup
+Proof: memcpy happened, returned file points to dentry name, later lookup reuses same address
+
+CASE 3: NEGATIVE DENTRY - MISSING FILE (fd=-1, dentry created)
+Test: tm_miss.c
+File: /tmp/t_m.txt (does not exist)
+stdout: tm_miss first open fd=-1, tm_miss second open fd=-1
+
+First open:
+[O] IN: 0xffff8f2940f34020 | /tmp/t_m.txt
+__d_lookup_rcu return: NULL
+d_lookup return: NULL
+[A] SRC: 0xffff8f2940f34025
+[A] DST: 0xffff8f2bb95c0578
+__d_add entry: 0xffff8f2bb95c0578 | t_m.txt
+
+Second open:
+[O] IN: 0xffff8f2940f34020 | /tmp/t_m.txt
+__d_lookup_rcu return: 0xffff8f2bb95c0578 | t_m.txt
+
+Basename offset: 0xffff8f2940f34025 - 0xffff8f2940f34020 = 0x5 = 5 bytes = strlen("/tmp/")
+Pointer equality: 0xffff8f2bb95c0578 appears at [A] DST, __d_add (first open), __d_lookup_rcu (second open)
+Proof: negative dentry created on first open (fd=-1), reused on second open (fd=-1), no __d_alloc on second open
+
+CASE 2: CACHE HIT - REUSE PATH (no memcpy)
+Test: te_miss.c
+File: /tmp/t_e.txt (already exists)
+
+[O] IN: 0xffff8f29465fc020 | /tmp/t_e.txt
+__d_lookup_rcu return: 0xffff8f294ca81578 | t_e.txt
+d_lookup return: 0xffff8f294ca81578 | t_e.txt
+[O] OUT: 0xffff8f294ca81578 | t_e.txt
+
+No [A] SRC or [A] DST lines (no __d_alloc called)
+No __d_add line (no insertion)
+Pointer equality: 0xffff8f294ca81578 appears at __d_lookup_rcu, d_lookup, [O] OUT
+Proof: cache hit, no memcpy, returned file points to existing dentry name
+
+
+CASE 8: CACHE INVALIDATION - DROP_CACHES (address changes after eviction)
+Test: evict_test.c
+File: /tmp/evict_test.txt
+
+First open (before drop_caches):
+[O] IN: 0xffff8f294aea3020 | /tmp/evict_test.txt
+[A] SRC: 0xffff8f294aea3025
+[A] DST: 0xffff8f294c931038
+__d_add entry: 0xffff8f294c931038 | evict_test.txt
+[O] OUT: 0xffff8f294c931038 | evict_test.txt
+
+Second open (after drop_caches):
+[O] IN: 0xffff8f29465f9020 | /tmp/evict_test.txt
+[A] SRC: 0xffff8f29465f9025
+[A] DST: 0xffff8f2995e79db8
+__d_add entry: 0xffff8f2995e79db8 | evict_test.txt
+[O] OUT: 0xffff8f2995e79db8 | evict_test.txt
+
+Address comparison: 0xffff8f2995e79db8 ≠ 0xffff8f294c931038
+Subtraction: 0xffff8f2995e79db8 - 0xffff8f294c931038 = 0x4b48d80 = 78999936 bytes
+
+Basename offset (first): 0xffff8f294aea3025 - 0xffff8f294aea3020 = 0x5 = 5 bytes = strlen("/tmp/")
+Basename offset (second): 0xffff8f29465f9025 - 0xffff8f29465f9020 = 0x5 = 5 bytes = strlen("/tmp/")
+
+Proof: drop_caches evicted dentry, second open allocated new dentry at different address
+Both opens show __d_alloc (memcpy happened twice)
+Basename offset consistent across both opens
