@@ -44,88 +44,25 @@ User Tests
 
 Location (repo): https://github.com/raikrahul/what-happens-when-open-is-called/tree/main/kernel/user/stage2
 
-PROGRAM 2: matrix_open.c
-```c
-#include <fcntl.h>
-#include <stdio.h>
-#include <sys/stat.h>
-#include <unistd.h>
-
-static void close_if_open(int *fd) {
-    if (*fd >= 0) {
-        close(*fd);
-        *fd = -1;
-    }
-}
-
-static void drop_caches_if_root(void) {
-    int fd;
-    if (geteuid() != 0)
-        return;
-    sync();
-    fd = open("/proc/sys/vm/drop_caches", O_WRONLY);
-    if (fd >= 0) {
-        ssize_t w = write(fd, "2
-", 2);
-        (void)w;
-        close(fd);
-    }
-}
-
-int main() {
-    int f[6];
-    char n1[] = "l_e.txt";
-    char n2[] = "/tmp/t_e.txt";
-    char n3[] = "/tmp/t_m.txt";
-    char n4[] = "l_m.txt";
-    char n5[] = "/mnt/loopfs/a.txt";
-
-    for (int i = 0; i < 6; i++)
-        f[i] = -1;
-
-    close(creat(n1, 0644));
-    close(creat(n2, 0644));
-    drop_caches_if_root();
-    sleep(1);
-
-    f[0] = open(n1, O_RDONLY);
-    f[1] = open(n2, O_RDONLY);
-    f[2] = open(n3, O_RDONLY);
-    f[3] = open(n1, O_RDONLY);
-    f[4] = open(n4, O_RDONLY);
-    f[5] = open(n5, O_RDONLY);
-
-    close_if_open(&f[0]);
-    f[0] = open(n1, O_RDONLY);
-
-    sleep(2);
-    close_if_open(&f[0]);
-    close_if_open(&f[1]);
-    close_if_open(&f[2]);
-    close_if_open(&f[3]);
-    close_if_open(&f[4]);
-    close_if_open(&f[5]);
-
-    unlink(n1);
-    unlink(n2);
-    close(creat(n1, 0644));
-    close(creat(n2, 0644));
-    f[0] = open(n1, O_RDONLY);
-    f[1] = open(n2, O_RDONLY);
-
-    close_if_open(&f[0]);
-    close_if_open(&f[1]);
-
-    drop_caches_if_root();
-    sleep(1);
-    f[0] = open(n1, O_RDONLY);
-    f[1] = open(n2, O_RDONLY);
-    close_if_open(&f[0]);
-    close_if_open(&f[1]);
-
-    return 0;
-}
-```
+PROGRAM 2: split matrix tests (small programs)
+- te_miss.c: /tmp/t_e.txt miss + alloc + add + return
+  Run: ./te_miss
+- tm_miss.c: /tmp/t_m.txt miss + alloc + add
+  Run: ./tm_miss
+- lm_miss.c: l_m.txt miss + alloc + add
+  Run: ./lm_miss
+- a_miss.c: /mnt/loopfs/a.txt miss + alloc + add
+  Run: ./a_miss
+- hits.c: cache hit for l_e.txt and /tmp/t_e.txt
+  Run: ./hits
+- delete.c: unlink l_e.txt and /tmp/t_e.txt
+  Run: ./delete
+- evict.c: drop_caches eviction
+  Run: ./evict
+- rebuild.c: post-eviction rebuild for /tmp/t_e.txt
+  Run: ./rebuild
+- post.c: post-eviction lookup for l_e.txt
+  Run: ./post
 
 ================================================================================
 ================================================================================
@@ -223,16 +160,17 @@ sudo mount /tmp/loopfs.img /mnt/loopfs
 cd kernel/user/stage2
 sudo dmesg -C
 sudo rmmod trace_do_filp_open
-sudo insmod ../../drivers/trace_do_filp_open/trace_do_filp_open.ko target_comm=matrix_open
-sudo ./matrix_open
-sleep 3
-sudo dmesg | rg -n "l_e.txt|t_e.txt|t_m.txt|l_m.txt|a.txt|drop_caches|d_lookup entry|d_lookup return|__d_add entry|d_delete entry|__dentry_kill entry|__d_lookup entry|__d_lookup_rcu entry|__d_alloc"
+sudo insmod ../../drivers/trace_do_filp_open/trace_do_filp_open.ko target_comm=te_miss
+sudo ./te_miss
+sleep 2
+sudo dmesg | rg -n "t_e.txt|d_lookup entry|d_lookup return|__d_alloc|__d_add|do_filp_open"
 ```
 
-TEST 2: MATRIX (matrix_open)
+TEST 2: MATRIX (split programs)
 
 FILE A (t_e.txt, first open after drop_caches):
 Why: clean miss path with a /tmp prefix and offset +5.
+Run: ./te_miss
 - do_filp_open entry pointer = 0x________ | /tmp/t_e.txt
 - d_lookup entry hash ________ len 7 name t_e.txt
 - d_lookup return: NULL
@@ -244,6 +182,7 @@ Why: clean miss path with a /tmp prefix and offset +5.
 
 FILE B (t_m.txt, missing):
 Why: miss+insert for a missing /tmp name.
+Run: ./tm_miss
 - do_filp_open entry pointer = 0x________ | /tmp/t_m.txt
 - d_lookup return: NULL
 - __d_alloc return pointer = 0x________
@@ -251,6 +190,7 @@ Why: miss+insert for a missing /tmp name.
 
 FILE C (l_m.txt, missing):
 Why: miss+insert with no prefix (alloc entry equals string pointer).
+Run: ./lm_miss
 - do_filp_open entry pointer = 0x________ | l_m.txt
 - d_lookup return: NULL
 - __d_alloc return pointer = 0x________
@@ -258,6 +198,7 @@ Why: miss+insert with no prefix (alloc entry equals string pointer).
 
 FILE D (a.txt, loopback ext2):
 Why: same flow on ext2 with short name and /mnt/loopfs/ offset +12.
+Run: ./a_miss
 - do_filp_open entry pointer = 0x________ | /mnt/loopfs/a.txt
 - d_lookup return: NULL
 - __d_alloc entry pointer = 0x________
@@ -268,22 +209,26 @@ Why: same flow on ext2 with short name and /mnt/loopfs/ offset +12.
 
 CACHE HIT (before deletion):
 Why: show pointer reuse on hit.
+Run: ./hits
 - d_lookup return pointer = 0x________ | l_e.txt
 - d_lookup return pointer = 0x________ | t_e.txt
 
 DELETION (unlink):
 Why: show d_delete removal for the same pointers.
+Run: ./delete
 - d_delete entry = 0x________ | l_e.txt
 - d_delete entry = 0x________ | t_e.txt
 
 EVICTION (drop_caches):
 Why: show __dentry_kill for cached names.
+Run: ./evict
 - do_filp_open entry/return for /proc/sys/vm/drop_caches
 - __dentry_kill entry = 0x________ | l_e.txt
 - __dentry_kill entry = 0x________ | t_e.txt
 
 REBUILD (after eviction, t_e.txt):
 Why: show new or reused pointer after eviction.
+Run: ./rebuild
 - d_lookup return: NULL
 - __d_alloc return pointer = 0x________
 - __d_add entry pointer = 0x________ | t_e.txt
@@ -292,15 +237,16 @@ Why: show new or reused pointer after eviction.
 
 POST-EVICTION LOOKUP (l_e.txt):
 Why: compare post-eviction pointer to pre-eviction pointer.
+Run: ./post
 - __d_lookup_rcu entry: hash ________ length 7 name l_e.txt
 - do_filp_open return pointer = 0x________ | l_e.txt
 - inequality check: post-eviction pointer != pre-eviction pointer
 
 Why these commands exist (do not skip):
 - `sudo dmesg -C` clears the kernel ring buffer so the next lines are only from this run.
-- `sudo insmod ... target_comm=matrix_open` restricts probe output to the process named `matrix_open`.
-- `sudo ./matrix_open` is required because the program writes to `/proc/sys/vm/drop_caches`.
-- `sleep 3` allows delayed probe lines (lookups, eviction) to finish.
+- `sudo insmod ... target_comm=te_miss` restricts probe output to the active program name.
+- `sudo ./<program>` is required when the program writes to `/proc/sys/vm/drop_caches`.
+- `sleep 2` allows delayed probe lines (lookups, eviction) to finish.
 - `sudo dmesg | rg -n "..."` filters the kernel log to just the filename strings and probe labels we need.
   `rg -n` adds line numbers so you can cite the exact evidence line-by-line.
 
