@@ -216,62 +216,7 @@ sleep 2
 sudo dmesg | rg -n "t_e.txt|t_m.txt|l_m.txt|l_e.txt|a.txt|d_lookup entry|d_lookup return|__d_alloc|__d_add|do_filp_open|d_delete|__dentry_kill"</code></pre>
 <pre style="white-space: pre-wrap; word-wrap: break-word; margin: 0; font-family: monospace;">
 
-TEST 2: MATRIX (split programs, no labels)
-
-Problem statement and numbers: the kernel pointer for /tmp/t_e.txt is 0xffff8b148256c020 and the copy-source pointer is 0xffff8b148256c025, so 0xffff8b148256c025 − 0xffff8b148256c020 = 0x5 = 5, and “/tmp/” is 5 bytes. The kernel pointer for /mnt/loopfs/a.txt is 0xffff8b148256b020 and the copy-source pointer is 0xffff8b148256b02c, so 0xffff8b148256b02c − 0xffff8b148256b020 = 0xC = 12, and “/mnt/loopfs/” is 12 bytes. The copied name pointer 0xffff8b14d0cc60f8 appears in both __d_add and do_filp_open return for t_e.txt, so the file’s name pointer equals the copied name storage. The cache-hit pointers are 0xffff8b149e4886f8 for l_e.txt and 0xffff8b149e488cf8 for t_e.txt, and those exact pointers appear again in d_delete and __dentry_kill.
-
-te_miss (t_e.txt miss + copy + insert + return; /tmp/ offset +5):
-- do_filp_open entry pointer = 0xffff8b148256c020 | /tmp/t_e.txt
-- d_lookup entry hash 3583106372 len 7 name t_e.txt
-- d_lookup return: NULL
-- __d_alloc entry pointer = 0xffff8b148256c025
-- __d_alloc return pointer = 0xffff8b14d0cc60f8
-- __d_add entry pointer = 0xffff8b14d0cc60f8 | t_e.txt
-- do_filp_open return pointer = 0xffff8b14d0cc60f8 | t_e.txt
-
-tm_miss (t_m.txt miss + copy + insert; /tmp/ offset +5):
-- do_filp_open entry pointer = 0xffff8b1480ef5020 | /tmp/t_m.txt
-- d_lookup entry hash 502501587 len 7 name t_m.txt
-- d_lookup return: NULL
-- __d_alloc return pointer = 0xffff8b148d58d3f8
-- __d_add entry pointer = 0xffff8b148d58d3f8 | t_m.txt
-
-lm_miss (l_m.txt miss + copy + insert; no prefix):
-- do_filp_open entry pointer = 0xffff8b1482462020 | l_m.txt
-- d_lookup entry hash 2257632620 len 7 name l_m.txt
-- d_lookup return: NULL
-- __d_alloc return pointer = 0xffff8b14a70b6278
-- __d_add entry pointer = 0xffff8b14a70b6278 | l_m.txt
-
-a_miss (a.txt miss + copy + insert; /mnt/loopfs/ offset +12):
-- do_filp_open entry pointer = 0xffff8b148256b020 | /mnt/loopfs/a.txt
-- d_lookup entry hash 2244109168 len 5 name a.txt
-- d_lookup return: NULL
-- __d_alloc entry pointer = 0xffff8b148256b02c
-- __d_alloc return pointer = 0xffff8b14d0cc8e78
-- __d_add entry pointer = 0xffff8b14d0cc8e78 | a.txt
-- do_filp_open return pointer = 0xffff8b14d0cc8e78 | a.txt
-
-evict (pre-eviction lookup + eviction):
-- d_lookup return pointer = 0xffff8b149e4886f8 | l_e.txt
-- d_lookup return pointer = 0xffff8b149e488cf8 | t_e.txt
-- __dentry_kill entry = 0xffff8b149e4886f8 | l_e.txt
-- __dentry_kill entry = 0xffff8b149e488cf8 | t_e.txt
-
-delete (unlink):
-- d_delete entry = 0xffff8b149e4886f8 | l_e.txt
-- d_delete entry = 0xffff8b149e488cf8 | t_e.txt
-
-rebuild (post-eviction t_e.txt):
-- __d_alloc return pointer = 0xffff8b14a712db78
-- __d_add entry pointer = 0xffff8b14a712db78 | t_e.txt
-- do_filp_open return pointer = 0xffff8b14a712db78 | t_e.txt
-- inequality check: 0xffff8b14a712db78 != 0xffff8b149e488cf8
-
-post (post-eviction l_e.txt):
-- __d_lookup_rcu entry: hash 1845489866 length 7 name l_e.txt
-- do_filp_open return pointer = 0xffff8b148a31f878 | l_e.txt
-- inequality check: 0xffff8b148a31f878 != 0xffff8b149e4886f8
+1. 0xffff8b148256c025−0xffff8b148256c020=0x5=5, “/tmp/”=5 ✓, compute? 2. 0xffff8b148256b02c−0xffff8b148256b020=0xC=12, “/mnt/loopfs/”=12 ✓, compute? 3. te_miss: 0xffff8b148256c020→0xffff8b148256c025→0xffff8b14d0cc60f8→0xffff8b14d0cc60f8→0xffff8b14d0cc60f8, same pointer chain ✓, verify? 4. tm_miss: 0xffff8b1480ef5020→0xffff8b148d58d3f8→0xffff8b148d58d3f8, same pointer chain ✓, verify? 5. lm_miss: 0xffff8b1482462020→0xffff8b14a70b6278→0xffff8b14a70b6278, same pointer chain ✓, verify? 6. a_miss: 0xffff8b148256b020→0xffff8b148256b02c→0xffff8b14d0cc8e78→0xffff8b14d0cc8e78, same pointer chain ✓, verify? 7. hit: 0xffff8b149e4886f8 and 0xffff8b149e488cf8 reused ✓, verify? 8. delete: d_delete 0xffff8b149e4886f8 and 0xffff8b149e488cf8 ✓, verify? 9. evict: __dentry_kill 0xffff8b149e4886f8 and 0xffff8b149e488cf8 ✓, verify? 10. rebuild: 0xffff8b14a712db78 ≠ 0xffff8b149e488cf8 ✗, check? 11. post: 0xffff8b148a31f878 ≠ 0xffff8b149e4886f8 ✗, check?
 
 Single-chain diagram with concrete data: struct filename { name=0xffff8b148256c020, str="/tmp/t_e.txt" } -&gt; do_filp_open entry -&gt; qstr { name=0xffff8b148256c025, len=7, hash=3583106372, str="t_e.txt" } -&gt; d_lookup entry -&gt; d_lookup return NULL -&gt; __d_alloc entry -&gt; dentry { d_name.name=0xffff8b14d0cc60f8, d_name.len=7, d_name.hash=3583106372, d_name.str="t_e.txt" } -&gt; __d_alloc return -&gt; __d_add entry -&gt; do_filp_open return pointer 0xffff8b14d0cc60f8 | t_e.txt -&gt; d_lookup return pointer 0xffff8b149e488cf8 | t_e.txt on cache hit -&gt; d_delete entry 0xffff8b149e488cf8 | t_e.txt on unlink -&gt; __dentry_kill entry 0xffff8b149e488cf8 | t_e.txt on drop_caches, and for the short-name case struct filename { name=0xffff8b148256b020, str="/mnt/loopfs/a.txt" } -&gt; qstr { name=0xffff8b148256b02c, len=5, hash=2244109168, str="a.txt" } -&gt; __d_alloc return dentry { d_name.name=0xffff8b14d0cc8e78, d_name.len=5, d_name.hash=2244109168, d_name.str="a.txt" } -&gt; do_filp_open return pointer 0xffff8b14d0cc8e78 | a.txt, with the offsets 0xffff8b148256c025−0xffff8b148256c020=5 and 0xffff8b148256b02c−0xffff8b148256b020=12.
 
@@ -320,9 +265,7 @@ open("/tmp/t_e.txt") after drop_caches -&gt; __d_alloc return 0xffff8b14a712db78
 open("l_e.txt") after drop_caches -&gt; do_filp_open return 0xffff8b148a31f878. 0xffff8b148a31f878 != 0xffff8b149e4886f8, so post‑eviction return differs from pre‑eviction return.
 
 QUIZ (ANSWER YES/NO)
-- Did your memcpy chain show __d_alloc entry and __d_alloc return with the same return pointer as __d_add?
-- Did your cache hit for l_e.txt return the same pointer you saw before deletion?
-- Did your post-eviction l_e.txt return pointer differ from the pre-eviction pointer?</pre>
+1. 0xffff8b14d0cc60f8=0xffff8b14d0cc60f8=0xffff8b14d0cc60f8 ✓? 2. 0xffff8b149e4886f8 unchanged before delete ✓? 3. 0xffff8b148a31f878≠0xffff8b149e4886f8 ✓?</pre>
   </div>
 
 </body>
