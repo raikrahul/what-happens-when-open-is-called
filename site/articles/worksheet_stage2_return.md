@@ -178,6 +178,18 @@ Record: te_miss
 - __d_add entry pointer = 0x________ | t_e.txt
 - do_filp_open return pointer = 0x________ | t_e.txt
 - offset check: (entry pointer + 5) == __d_alloc entry pointer
+Diagram (pstree):
+```
+/tmp/t_e.txt
+└─ do_filp_open entry 0x________
+   └─ d_lookup entry (hash=____, len=7, name=t_e.txt)
+      ├─ d_lookup return NULL
+      │  └─ __d_alloc entry 0x________
+      │     └─ __d_alloc return 0x________
+      │        └─ __d_add entry 0x________ | t_e.txt
+      │           └─ do_filp_open return 0x________ | t_e.txt
+      └─ d_lookup return 0x________ | t_e.txt
+```
 
 Record: tm_miss
 - do_filp_open entry pointer = 0x________ | /tmp/t_m.txt
@@ -185,6 +197,17 @@ Record: tm_miss
 - d_lookup return: NULL
 - __d_alloc return pointer = 0x________
 - __d_add entry pointer = 0x________ | t_m.txt
+Diagram (pstree):
+```
+/tmp/t_m.txt
+└─ do_filp_open entry 0x________
+   └─ d_lookup entry (hash=____, len=7, name=t_m.txt)
+      ├─ d_lookup return NULL
+      │  └─ __d_alloc entry 0x________
+      │     └─ __d_alloc return 0x________
+      │        └─ __d_add entry 0x________ | t_m.txt
+      └─ d_lookup return 0x________ | t_m.txt
+```
 
 Record: lm_miss
 - do_filp_open entry pointer = 0x________ | l_m.txt
@@ -192,6 +215,17 @@ Record: lm_miss
 - d_lookup return: NULL
 - __d_alloc return pointer = 0x________
 - __d_add entry pointer = 0x________ | l_m.txt
+Diagram (pstree):
+```
+l_m.txt
+└─ do_filp_open entry 0x________
+   └─ d_lookup entry (hash=____, len=7, name=l_m.txt)
+      ├─ d_lookup return NULL
+      │  └─ __d_alloc entry 0x________
+      │     └─ __d_alloc return 0x________
+      │        └─ __d_add entry 0x________ | l_m.txt
+      └─ d_lookup return 0x________ | l_m.txt
+```
 
 Record: a_miss
 - do_filp_open entry pointer = 0x________ | /mnt/loopfs/a.txt
@@ -202,16 +236,44 @@ Record: a_miss
 - __d_add entry pointer = 0x________ | a.txt
 - do_filp_open return pointer = 0x________ | a.txt
 - offset check: (entry pointer + 12) == __d_alloc entry pointer
+Diagram (pstree):
+```
+/mnt/loopfs/a.txt
+└─ do_filp_open entry 0x________
+   └─ d_lookup entry (hash=____, len=5, name=a.txt)
+      ├─ d_lookup return NULL
+      │  └─ __d_alloc entry 0x________
+      │     └─ __d_alloc return 0x________
+      │        └─ __d_add entry 0x________ | a.txt
+      │           └─ do_filp_open return 0x________ | a.txt
+      └─ d_lookup return 0x________ | a.txt
+```
 
 Record: evict
 - d_lookup return pointer = 0x________ | l_e.txt
 - d_lookup return pointer = 0x________ | t_e.txt
 - __dentry_kill entry = 0x________ | l_e.txt
 - __dentry_kill entry = 0x________ | t_e.txt
+Diagram (pstree):
+```
+l_e.txt
+└─ d_lookup return 0x________ | l_e.txt
+   └─ __dentry_kill entry 0x________ | l_e.txt
+t_e.txt
+└─ d_lookup return 0x________ | t_e.txt
+   └─ __dentry_kill entry 0x________ | t_e.txt
+```
 
 Record: delete
 - d_delete entry = 0x________ | l_e.txt
 - d_delete entry = 0x________ | t_e.txt
+Diagram (pstree):
+```
+l_e.txt
+└─ d_delete entry 0x________ | l_e.txt
+t_e.txt
+└─ d_delete entry 0x________ | t_e.txt
+```
 
 Record: rebuild
 - d_lookup return: NULL
@@ -219,11 +281,27 @@ Record: rebuild
 - __d_add entry pointer = 0x________ | t_e.txt
 - do_filp_open return pointer = 0x________ | t_e.txt
 - inequality check: rebuild pointer != pre-eviction pointer
+Diagram (pstree):
+```
+/tmp/t_e.txt
+└─ d_lookup return NULL
+   └─ __d_alloc return 0x________
+      └─ __d_add entry 0x________ | t_e.txt
+         └─ do_filp_open return 0x________ | t_e.txt
+0x________ ≠ 0x________
+```
 
 Record: post
 - __d_lookup_rcu entry: hash ________ length 7 name l_e.txt
 - do_filp_open return pointer = 0x________ | l_e.txt
 - inequality check: post-eviction pointer != pre-eviction pointer
+Diagram (pstree):
+```
+l_e.txt
+└─ __d_lookup_rcu entry (hash=____, len=7, name=l_e.txt)
+   └─ do_filp_open return 0x________ | l_e.txt
+0x________ ≠ 0x________
+```
 
 Diagram (ASCII tree, fill with your numbers):
 ```
