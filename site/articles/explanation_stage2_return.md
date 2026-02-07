@@ -3,57 +3,57 @@ layout: default
 title: "Stage 2 Return"
 ---
 
-**Introduction**
+<h2>Introduction</h2>
 This report uses one run of printed pointers and hashes. All addresses are exact for this run. Your run will differ.
 
-Previous work:
+Previous work:<br>
 <a href="https://raikrahul.github.io/what-happens-when-open-is-called/stage1.html">Stage 1</a> entry path and first kernel filename pointer.<br>
 <a href="https://raikrahul.github.io/what-happens-when-open-is-called/stage2.html">Stage 2</a> getname/filename buffer.<br>
 <a href="https://raikrahul.github.io/what-happens-when-open-is-called/articles/worksheet_stage2_return.html">Worksheet</a> for this stage.
 
-**Man Pages Used (parts)**
-open(2): SYNOPSIS, RETURN VALUE, ERRORS.
-creat(2): SYNOPSIS, RETURN VALUE.
-unlink(2): SYNOPSIS, RETURN VALUE.
-write(2): SYNOPSIS, RETURN VALUE (drop_caches write).
-sync(2): DESCRIPTION.
-mount(8): SYNOPSIS, EXAMPLES.
-umount(8): SYNOPSIS.
-losetup(8): SYNOPSIS, EXAMPLES.
-mkfs.ext2(8): SYNOPSIS.
-dd(1): SYNOPSIS.
-dmesg(1): SYNOPSIS.
-insmod(8), rmmod(8): SYNOPSIS.
+<h2>Man Pages Used (parts)</h2>
+open(2): SYNOPSIS, RETURN VALUE, ERRORS.<br>
+creat(2): SYNOPSIS, RETURN VALUE.<br>
+unlink(2): SYNOPSIS, RETURN VALUE.<br>
+write(2): SYNOPSIS, RETURN VALUE (drop_caches write).<br>
+sync(2): DESCRIPTION.<br>
+mount(8): SYNOPSIS, EXAMPLES.<br>
+umount(8): SYNOPSIS.<br>
+losetup(8): SYNOPSIS, EXAMPLES.<br>
+mkfs.ext2(8): SYNOPSIS.<br>
+dd(1): SYNOPSIS.<br>
+dmesg(1): SYNOPSIS.<br>
+insmod(8), rmmod(8): SYNOPSIS.<br>
 
-**Tools**
-trace_do_filp_open.ko prints kernel pointers and hash keys.
-dmesg reads the kernel ring buffer.
-rg filters the ring buffer output.
+<h2>Tools</h2>
+trace_do_filp_open.ko prints kernel pointers and hash keys.<br>
+dmesg reads the kernel ring buffer.<br>
+rg filters the ring buffer output.<br>
 
-**User Programs (one line each)**
-minimal_open.c: one long name to show copy source, copy destination, insert, and later lookup of the same pointer.
-te_miss.c: /tmp/t_e.txt after drop_caches to show +5 offset and insert pointer.
-tm_miss.c: /tmp/t_m.txt missing to show miss and insert pointer with +5 offset.
-lm_miss.c: l_m.txt missing to show copy source equals entry pointer (no prefix).
-a_miss.c: /mnt/loopfs/a.txt on ext2 to show +12 offset and insert pointer.
-hits.c: pre‑eviction hits for l_e.txt and t_e.txt.
-delete.c: unlink l_e.txt and t_e.txt and capture d_delete pointers.
-evict.c: drop_caches and capture __dentry_kill pointers.
-rebuild.c: t_e.txt before and after drop_caches to show pointer change.
-post.c: l_e.txt before and after drop_caches to show pointer change.
+<h2>User Programs (one line each)</h2>
+minimal_open.c: one long name to show copy source, copy destination, insert, and later lookup of the same pointer.<br>
+te_miss.c: /tmp/t_e.txt after drop_caches to show +5 offset and insert pointer.<br>
+tm_miss.c: /tmp/t_m.txt missing to show miss and insert pointer with +5 offset.<br>
+lm_miss.c: l_m.txt missing to show copy source equals entry pointer (no prefix).<br>
+a_miss.c: /mnt/loopfs/a.txt on ext2 to show +12 offset and insert pointer.<br>
+hits.c: pre‑eviction hits for l_e.txt and t_e.txt.<br>
+delete.c: unlink l_e.txt and t_e.txt and capture d_delete pointers.<br>
+evict.c: drop_caches and capture __dentry_kill pointers.<br>
+rebuild.c: t_e.txt before and after drop_caches to show pointer change.<br>
+post.c: l_e.txt before and after drop_caches to show pointer change.<br>
 
-**Loopback ext2**
+<h2>Loopback ext2</h2>
 64M image at /tmp/loopfs.img, mounted at /mnt/loopfs, a.txt created, sync, unmount, remount.
 
-**Program Reports**
+<h2>Program Reports</h2>
 
 minimal_open.c
-```c
+<pre><code class="language-c">
 snprintf(filename, sizeof(filename),
          "test_file_very_long_name_to_force_external_allocation_%ld", now);
 int fd = open(filename, O_RDWR | O_CREAT, 0644);
 sleep(5);
-```
+</code></pre>
 Probe data
 - do_filp_open entry pointer = 0xffff8b1480ef7020 | test_file_very_long_name_to_force_external_allocation_1770451257
 - d_lookup entry: hash 1258787558 length 64 name test_file_very_long_name_to_force_external_allocation_1770451257
@@ -70,7 +70,7 @@ Kernel functions and pointers
 What this shows
 - same numeric address 0xffff8b14d0cc1a98 appears at __d_add, do_filp_open return, and later d_lookup return.
 Diagram
-```text
+<pre><code>
 long name
 └─ do_filp_open entry 0xffff8b1480ef7020
    └─ d_lookup entry (hash=1258787558,len=64)
@@ -80,16 +80,16 @@ long name
       │        └─ __d_add entry 0xffff8b14d0cc1a98
       │           └─ do_filp_open return 0xffff8b14d0cc1a98
       └─ d_lookup return 0xffff8b14d0cc1a98
-```
+</code></pre>
 
 te_miss.c
-```c
+<pre><code class="language-c">
 const char *n2 = "/tmp/t_e.txt";
 close(creat(n2, 0644));
 drop_caches_if_root();
 sleep(1);
 open(n2, O_RDONLY);
-```
+</code></pre>
 Probe data
 - do_filp_open entry pointer = 0xffff8b1480ef7020 | /tmp/t_e.txt
 - d_lookup entry: hash 3583106372 length 7 name t_e.txt
@@ -106,7 +106,7 @@ What this shows
 - 0xffff8b1480ef7025 − 0xffff8b1480ef7020 = 0x5 = 5, matches "/tmp/" length 5.
 - same numeric address 0xffff8b1530b66338 appears at __d_add and do_filp_open return.
 Diagram
-```text
+<pre><code>
 / tmp / t_e.txt
 └─ do_filp_open entry 0xffff8b1480ef7020
    └─ d_lookup entry (hash=3583106372,len=7)
@@ -116,15 +116,15 @@ Diagram
       │        └─ __d_add entry 0xffff8b1530b66338
       │           └─ do_filp_open return 0xffff8b1530b66338
       └─ d_lookup return 0xffff8b1530b66338
-```
+</code></pre>
 
 tm_miss.c
-```c
+<pre><code class="language-c">
 const char *n3 = "/tmp/t_m.txt";
 drop_caches_if_root();
 sleep(1);
 open(n3, O_RDONLY);
-```
+</code></pre>
 Probe data
 - do_filp_open entry pointer = 0xffff8b148f406020 | /tmp/t_m.txt
 - d_lookup entry: hash 502501587 length 7 name t_m.txt
@@ -140,7 +140,7 @@ What this shows
 - 0xffff8b148f406025 − 0xffff8b148f406020 = 0x5 = 5, matches "/tmp/" length 5.
 - same numeric address 0xffff8b1484f2ddb8 appears at __d_add.
 Diagram
-```text
+<pre><code>
 / tmp / t_m.txt
 └─ do_filp_open entry 0xffff8b148f406020
    └─ d_lookup entry (hash=502501587,len=7)
@@ -149,15 +149,15 @@ Diagram
       │     └─ copy destination 0xffff8b1484f2ddb8
       │        └─ __d_add entry 0xffff8b1484f2ddb8
       └─ d_lookup return 0xffff8b1484f2ddb8
-```
+</code></pre>
 
 lm_miss.c
-```c
+<pre><code class="language-c">
 const char *n4 = "l_m.txt";
 drop_caches_if_root();
 sleep(1);
 open(n4, O_RDONLY);
-```
+</code></pre>
 Probe data
 - do_filp_open entry pointer = 0xffff8b1480ef2020 | l_m.txt
 - d_lookup entry: hash 2257632620 length 7 name l_m.txt
@@ -173,7 +173,7 @@ What this shows
 - copy source equals entry pointer because there is no prefix.
 - same numeric address 0xffff8b148d58acf8 appears at __d_add.
 Diagram
-```text
+<pre><code>
 l_m.txt
 └─ do_filp_open entry 0xffff8b1480ef2020
    └─ d_lookup entry (hash=2257632620,len=7)
@@ -182,15 +182,15 @@ l_m.txt
       │     └─ copy destination 0xffff8b148d58acf8
       │        └─ __d_add entry 0xffff8b148d58acf8
       └─ d_lookup return 0xffff8b148d58acf8
-```
+</code></pre>
 
 a_miss.c
-```c
+<pre><code class="language-c">
 const char *n5 = "/mnt/loopfs/a.txt";
 drop_caches_if_root();
 sleep(1);
 open(n5, O_RDONLY);
-```
+</code></pre>
 Probe data
 - do_filp_open entry pointer = 0xffff8b1481353020 | /mnt/loopfs/a.txt
 - d_lookup entry: hash 2498248789 length 5 name a.txt
@@ -207,7 +207,7 @@ What this shows
 - 0xffff8b148135302c − 0xffff8b1481353020 = 0xC = 12, matches "/mnt/loopfs/" length 12.
 - same numeric address 0xffff8b148d558cf8 appears at __d_add and do_filp_open return.
 Diagram
-```text
+<pre><code>
 / mnt / loopfs / a.txt
 └─ do_filp_open entry 0xffff8b1481353020
    └─ d_lookup entry (hash=2498248789,len=5)
@@ -217,7 +217,7 @@ Diagram
       │        └─ __d_add entry 0xffff8b148d558cf8
       │           └─ do_filp_open return 0xffff8b148d558cf8
       └─ d_lookup return 0xffff8b148d558cf8
-```
+</code></pre>
 
 hits.c
 Probe data
@@ -228,10 +228,10 @@ Kernel functions and pointers
 What this shows
 - both hit pointers are captured before delete/evict.
 Diagram
-```text
+<pre><code>
 l_e.txt -> d_lookup return 0xffff8b14a710b338
 t_e.txt -> d_lookup return 0xffff8b14a710be78
-```
+</code></pre>
 
 delete.c
 Probe data
@@ -244,10 +244,10 @@ Kernel functions and pointers
 What this shows
 - delete uses the same numeric pointers printed at d_lookup return.
 Diagram
-```text
+<pre><code>
 l_e.txt -> d_lookup return 0xffff8b14a710b338 -> d_delete 0xffff8b14a710b338
 t_e.txt -> d_lookup return 0xffff8b14a710be78 -> d_delete 0xffff8b14a710be78
-```
+</code></pre>
 
 evict.c
 Probe data
@@ -260,10 +260,10 @@ Kernel functions and pointers
 What this shows
 - eviction uses the same numeric pointers printed at d_lookup return.
 Diagram
-```text
+<pre><code>
 l_e.txt -> d_lookup return 0xffff8b14a710b338 -> __dentry_kill 0xffff8b14a710b338
 t_e.txt -> d_lookup return 0xffff8b14a710be78 -> __dentry_kill 0xffff8b14a710be78
-```
+</code></pre>
 
 rebuild.c
 Probe data
@@ -275,10 +275,10 @@ Kernel functions and pointers
 What this shows
 - 0xffff8b1484f55338 ≠ 0xffff8b1484f55278.
 Diagram
-```text
+<pre><code>
 before drop_caches: __d_add 0xffff8b1484f55278 -> do_filp_open return 0xffff8b1484f55278
 after  drop_caches: __d_add 0xffff8b1484f55338 -> do_filp_open return 0xffff8b1484f55338
-```
+</code></pre>
 
 post.c
 Probe data
@@ -290,7 +290,7 @@ Kernel functions and pointers
 What this shows
 - 0xffff8b1480422638 ≠ 0xffff8b14804223f8.
 Diagram
-```text
+<pre><code>
 before drop_caches: __d_add 0xffff8b14804223f8 -> do_filp_open return 0xffff8b14804223f8
 after  drop_caches: __d_add 0xffff8b1480422638 -> do_filp_open return 0xffff8b1480422638
-```
+</code></pre>
