@@ -93,13 +93,17 @@ sequence. You will also measure prefix offsets (/tmp/ and /mnt/loopfs/) and conf
 miss followed by a later hit.
 
 ================================================================================
-FILES YOU WILL TOUCH
+Files Used
 ================================================================================
 
-kernel/drivers/trace_do_filp_open/trace_do_filp_open.c provides the probes that print pointer values
-and hash keys. kernel/user/stage2/minimal_open.c drives the long‑filename path (length 64).
-kernel/user/stage2/matrix_open.c drives the miss, hit, delete, eviction, rebuild, and prefix‑offset
-cases.
+kernel/drivers/trace_do_filp_open/trace_do_filp_open.c
+https://github.com/raikrahul/what-happens-when-open-is-called/blob/main/kernel/drivers/trace_do_filp_open/trace_do_filp_open.c
+
+kernel/user/stage2/minimal_open.c
+https://github.com/raikrahul/what-happens-when-open-is-called/blob/main/kernel/user/stage2/minimal_open.c
+
+kernel/user/stage2/matrix_open.c
+https://github.com/raikrahul/what-happens-when-open-is-called/blob/main/kernel/user/stage2/matrix_open.c
 
 What we trace (string → pointer flow, in order):
 do_filp_open(entry): reads struct filename-&gt;name (kernel string pointer).
