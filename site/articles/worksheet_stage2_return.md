@@ -22,7 +22,7 @@ Files Used
 
 kernel/drivers/trace_do_filp_open/trace_do_filp_open.c — https://github.com/raikrahul/what-happens-when-open-is-called/blob/main/kernel/drivers/trace_do_filp_open/trace_do_filp_open.c; kernel/user/stage2/minimal_open.c — https://github.com/raikrahul/what-happens-when-open-is-called/blob/main/kernel/user/stage2/minimal_open.c; kernel/user/stage2/matrix_open.c — https://github.com/raikrahul/what-happens-when-open-is-called/blob/main/kernel/user/stage2/matrix_open.c
 
-What we trace (string → pointer flow, in order):
+What we trace (string → pointer flow, in order). Location: kernel/drivers/trace_do_filp_open/trace_do_filp_open.c
 ```text
 [do_filp_open entry]   struct filename->name
 └─[d_lookup entry]     qstr->{name,len,hash}
@@ -43,31 +43,6 @@ User Tests
 ================================================================================
 
 Location (repo): https://github.com/raikrahul/what-happens-when-open-is-called/tree/main/kernel/user/stage2
-
-PROGRAM 1: minimal_open.c
-```c
-#include <fcntl.h>
-#include <stdio.h>
-#include <time.h>
-#include <unistd.h>
-
-int main() {
-    char filename[128];
-    time_t now = time(NULL);
-
-    // Long filename; you will verify the allocation path with probes.
-    snprintf(filename, sizeof(filename),
-             "test_file_very_long_name_to_force_external_allocation_%ld", now);
-
-    int fd = open(filename, O_RDWR | O_CREAT, 0644);
-    printf("fd=%d
-", fd);
-    sleep(5);  // Delay lets us observe a later cache hit.
-    close(fd);
-    unlink(filename);
-    return 0;
-}
-```
 
 PROGRAM 2: matrix_open.c
 ```c
@@ -153,27 +128,6 @@ int main() {
 ```
 
 ================================================================================
-Probes
-================================================================================
-
-Location: kernel/drivers/trace_do_filp_open/trace_do_filp_open.c
-
-```text
-[do_filp_open entry]   struct filename->name
-└─[d_lookup entry]     qstr->{name,len,hash}
-  ├─[__d_lookup entry] qstr->{name,len,hash}
-  ├─[__d_lookup_rcu]   qstr->{name,len,hash}
-  └─[d_lookup return]  NULL | dentry->d_name.name
-     └─[miss path]
-       ├─[__d_alloc entry]  qstr->name
-       ├─[__d_alloc return] dentry->d_name.name
-       └─[__d_add entry]    dentry->d_name.name
-[do_filp_open return]  f->f_path.dentry->d_name.name
-[d_delete entry]       dentry->d_name.name
-[__dentry_kill entry]  dentry->d_name.name
-```
-
-
 ================================================================================
 BUILD AND RUN (ORDER MATTERS)
 ================================================================================
@@ -201,6 +155,33 @@ TEST 1: LONG FILENAME (minimal_open)
 
 Why: isolate long-name allocation and later hit using a single name string.
 
+PROGRAM 1: minimal_open.c
+```c
+#include <fcntl.h>
+#include <stdio.h>
+#include <time.h>
+#include <unistd.h>
+
+int main() {
+    char filename[128];
+    time_t now = time(NULL);
+
+    // Long filename; you will verify the allocation path with probes.
+    snprintf(filename, sizeof(filename),
+             "test_file_very_long_name_to_force_external_allocation_%ld", now);
+
+    int fd = open(filename, O_RDWR | O_CREAT, 0644);
+    printf("fd=%d
+", fd);
+    sleep(5);  // Delay lets us observe a later cache hit.
+    close(fd);
+    unlink(filename);
+    return 0;
+}
+```
+
+Start at the equality checks in the middle because that is where the proof closes, then drive forward to the diagram end by chaining the same address from __d_alloc return to __d_add to do_filp_open return and then to the later d_lookup hit, and then walk backward from that chain to the start by matching each address in the Record list to the struct filename at entry and the dentry->d_name at return so every step has a numeric anchor before the next step is drawn.
+
 Record:
 - do_filp_open entry pointer = 0x________ | test_file_very_long_name_to_force_external_allocation_XXXX
 - d_lookup entry: hash ________ length 64 name test_file_very_long_name_to_force_external_allocation_XXXX
@@ -210,6 +191,7 @@ Record:
 - __d_add entry pointer = 0x________ | test_file_very_long_name_to_force_external_allocation_XXXX
 - do_filp_open return pointer = 0x________ | test_file_very_long_name_to_force_external_allocation_XXXX
 - cache hit later: d_lookup return pointer = 0x________ | test_file_very_long_name_to_force_external_allocation_XXXX
+Draw the struct filename { name = 0x________, len = 64, uptr = user string } and the dentry { d_name.name = 0x________, d_name.len = 64, d_name.hash = ________ } with the exact values you just recorded, then chain the calls in order by reusing the same addresses as they move from do_filp_open entry to d_lookup miss to __d_alloc entry/return to __d_add to do_filp_open return to the later d_lookup hit, so every pointer equality in your record is shown as the same numeric address in your drawn structs and every miss/hit is shown as NULL vs the recorded dentry->d_name.name value.
 
 Checks:
 - __d_alloc return == __d_add entry == do_filp_open return
