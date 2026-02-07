@@ -28,17 +28,8 @@ d_lookup, __d_lookup, __d_lookup_rcu, __d_alloc, __d_add, d_delete, __dentry_kil
 [__dentry_kill entry]  dentry->d_name.name
 ```
 
-================================================================================
-User Tests
-================================================================================
-
-Location (repo): https://github.com/raikrahul/what-happens-when-open-is-
-called/tree/main/kernel/user/stage2
-
-================================================================================
-================================================================================
-BUILD AND RUN (ORDER MATTERS)
-================================================================================
+User tests repo: https://github.com/raikrahul/what-happens-when-open-is-called/tree/main/kernel/user/stage2
+Build and run:
 
 1) Build the driver (repo root)
 ```
