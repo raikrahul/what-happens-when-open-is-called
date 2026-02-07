@@ -173,23 +173,30 @@ Code:
 const char *n3 = "/tmp/t_m.txt";
 drop_caches_if_root();
 sleep(1);
-open(n3, O_RDONLY);
+int fd1 = open(n3, O_RDONLY);
+printf("tm_miss first open fd=%d\n", fd1);
+int fd2 = open(n3, O_RDONLY);
+printf("tm_miss second open fd=%d\n", fd2);
 ```
 - do_filp_open entry pointer = 0x________ | /tmp/t_m.txt
 - d_lookup entry: hash ________ length 7 name t_m.txt
 - d_lookup return: NULL
+- __d_lookup_rcu return: NULL
 - __d_alloc return pointer = 0x________
 - __d_add entry pointer = 0x________ | t_m.txt
+- __d_lookup_rcu return (second open): 0x________ | t_m.txt
+- do_filp_open return pointer: not printed for tm_miss (open returned -1)
 Diagram (pstree):
 ```
 /tmp/t_m.txt
 └─ do_filp_open entry 0x________
    └─ d_lookup entry (hash=____, len=7, name=t_m.txt)
       ├─ d_lookup return NULL
-      │  └─ __d_alloc entry 0x________
-      │     └─ __d_alloc return 0x________
-      │        └─ __d_add entry 0x________ | t_m.txt
-      └─ d_lookup return 0x________ | t_m.txt
+      │  └─ __d_lookup_rcu return NULL
+      │     └─ __d_alloc entry 0x________
+      │        └─ __d_alloc return 0x________
+      │           └─ __d_add entry 0x________ | t_m.txt
+      └─ __d_lookup_rcu return 0x________ | t_m.txt (second open)
 ```
 
 Record: lm_miss
@@ -231,7 +238,7 @@ open(n5, O_RDONLY);
 - __d_alloc entry pointer = 0x________
 - __d_alloc return pointer = 0x________
 - __d_add entry pointer = 0x________ | a.txt
-- do_filp_open return pointer = 0x________ | a.txt
+- do_filp_open return pointer: not printed for a_miss (if open failed)
 - offset check: (entry pointer + 12) == __d_alloc entry pointer
 Diagram (pstree):
 ```
