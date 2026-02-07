@@ -84,6 +84,17 @@ Memcpy proof anchor
 
 Run A: split programs (root, drop_caches enabled)
 
+Latest split run values (2026-02-07)
+te_miss: do_filp_open entry pointer = 0xffff8b1491175020 | /tmp/t_e.txt; d_lookup entry hash 3583106372 len 7 name t_e.txt; d_lookup return NULL; __d_alloc entry pointer = 0xffff8b1491175025; __d_alloc return pointer = 0xffff8b148a129038; __d_add entry pointer = 0xffff8b148a129038 | t_e.txt; do_filp_open return pointer = 0xffff8b148a129038 | t_e.txt.
+tm_miss: do_filp_open entry pointer = 0xffff8b1489ae4020 | /tmp/t_m.txt; d_lookup entry hash 502501587 len 7 name t_m.txt; d_lookup return NULL; __d_alloc entry pointer = 0xffff8b1489ae4025; __d_alloc return pointer = 0xffff8b14d0f037b8; __d_add entry pointer = 0xffff8b14d0f037b8 | t_m.txt.
+lm_miss: do_filp_open entry pointer = 0xffff8b148eeb3020 | l_m.txt; d_lookup entry hash 2257632620 len 7 name l_m.txt; d_lookup return NULL; __d_alloc entry pointer = 0xffff8b148eeb3020; __d_alloc return pointer = 0xffff8b148042adb8; __d_add entry pointer = 0xffff8b148042adb8 | l_m.txt.
+a_miss: do_filp_open entry pointer = 0xffff8b148256e020 | /mnt/loopfs/a.txt; d_lookup entry hash 1021948357 len 5 name a.txt; d_lookup return NULL; __d_alloc entry pointer = 0xffff8b148256e02c; __d_alloc return pointer = 0xffff8b148d7ad4b8; __d_add entry pointer = 0xffff8b148d7ad4b8 | a.txt; do_filp_open return pointer = 0xffff8b148d7ad4b8 | a.txt.
+hits: d_lookup return pointer = 0xffff8b148d7a7938 | l_e.txt; d_lookup return pointer = 0xffff8b148d7a71b8 | t_e.txt.
+delete: d_delete entry = 0xffff8b148d7a7938 | l_e.txt; d_delete entry = 0xffff8b148d7a71b8 | t_e.txt.
+evict: __dentry_kill entry = 0xffff8b148d7a7938 | l_e.txt; __dentry_kill entry = 0xffff8b148d7a71b8 | t_e.txt.
+rebuild: __d_alloc return pointer = 0xffff8b1484f8cb78; __d_add entry pointer = 0xffff8b1484f8cb78 | t_e.txt; do_filp_open return pointer = 0xffff8b1484f8cb78 | t_e.txt.
+post: do_filp_open return pointer = 0xffff8b14805a3c38 | l_e.txt.
+
 l_m.txt miss, insert.
 ```c
 char n4[] = "l_m.txt";
@@ -555,11 +566,11 @@ Post-eviction l_e.txt lookup/return is visible even without __d_add:
 ```text
 sudo dmesg | rg -n "__d_lookup_rcu entry:.*l_e.txt|\[O\] OUT: .*l_e.txt"
 15:[33032.402797] __d_lookup_rcu entry: hash 440978933 length 7 name l_e.txt
-17:[33032.402853] [O] OUT: 0xffff8bd54e0c74b8 | l_e.txt
+17:[33032.402853] do_filp_open return pointer = 0xffff8bd54e0c74b8 | l_e.txt
 35:[33033.423905] __d_lookup_rcu entry: hash 440978933 length 7 name l_e.txt
-37:[33033.423931] [O] OUT: 0xffff8bd7e94c8578 | l_e.txt
+37:[33033.423931] do_filp_open return pointer = 0xffff8bd7e94c8578 | l_e.txt
 149:[33036.444278] __d_lookup_rcu entry: hash 440978933 length 7 name l_e.txt
-151:[33036.444304] [O] OUT: 0xffff8bd7e94c8db8 | l_e.txt
+151:[33036.444304] do_filp_open return pointer = 0xffff8bd7e94c8db8 | l_e.txt
 ```
 
-Explanation: the repeated __d_lookup_rcu entries show the lookup key for l_e.txt after eviction, and the [O] OUT lines show the return pointer seen by do_filp_open. The change from 0xffff8bd7e94c8578 to 0xffff8bd7e94c8db8 records a new return pointer after eviction without an __d_add line in this run.
+Explanation: the repeated __d_lookup_rcu entries show the lookup key for l_e.txt after eviction, and the do_filp_open return pointer lines show the return pointer seen by do_filp_open. The change from 0xffff8bd7e94c8578 to 0xffff8bd7e94c8db8 records a new return pointer after eviction without an __d_add line in this run.
