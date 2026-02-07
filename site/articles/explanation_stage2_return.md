@@ -111,7 +111,9 @@ Negative dentry when file later appears: not observed in this run. To answer it,
 
 Memcpy always? memcpy is inside __d_alloc. It appears only on misses where __d_alloc runs. On hits (e.g., second open in tm_miss) there is no __d_alloc line, so no memcpy is shown on hits.
 
-USER PROGRAMS (ONE LINE EACH)
+USER PROGRAMS
+
+CASE 1: CACHE MISS - ALLOCATION PATH (memcpy happens)
 
 minimal_open.c
 ```c
@@ -143,6 +145,8 @@ long name
 ```
 
 Learned: same numeric pointer appears at __d_add, do_filp_open return, later d_lookup return for the long name.
+
+CASE 2: BASENAME OFFSET - PREFIX DIRECTORY (subtraction proves offset)
 
 te_miss.c
 ```c
@@ -176,6 +180,8 @@ open(n2, O_RDONLY);       // second open after drop_caches (miss/alloc)
 ```
 
 Learned: basename offset = 5 and the same numeric pointer appears at __d_add and do_filp_open return.
+
+CASE 3: NEGATIVE DENTRY - MISSING FILE FIRST OPEN (fd=-1, dentry created)
 
 tm_miss.c
 ```c
@@ -217,6 +223,8 @@ tm_miss second open fd=-1
 
 Learned: missing file creates a cached name; second open hits __d_lookup_rcu with the same pointer while fd=-1.
 
+CASE 4: BASENAME OFFSET - NO PREFIX (local file, offset=0)
+
 lm_miss.c
 ```c
 const char *n4 = "l_m.txt";
@@ -244,6 +252,8 @@ l_m.txt
 ```
 
 Learned: no prefix shift; copy source equals entry pointer; __d_add uses the same numeric pointer.
+
+CASE 5: BASENAME OFFSET - LONG PREFIX (12-byte prefix /mnt/loopfs/)
 
 a_miss.c
 ```c
@@ -278,6 +288,8 @@ open(n5, O_RDONLY);
 
 Learned: basename offset = 12; __d_add uses the same numeric pointer; no do_filp_open return printed here.
 
+CASE 6: CACHE HIT - REUSE PATH (no memcpy, d_lookup returns existing dentry)
+
 hits.c + delete.c + evict.c (one pointer chain per name)
 ```c
 // hits.c
@@ -302,6 +314,8 @@ t_e.txt: 0xffff897725f9f7b8 → 0xffff897725f9f7b8 → 0xffff897725f9f7b8
 
 Learned: l_e.txt and t_e.txt keep the same pointer across hit → delete → evict.
 
+CASE 7: CACHE INVALIDATION - DROP_CACHES (address changes after eviction)
+
 rebuild.c
 ```c
 open("/tmp/t_e.txt", O_RDONLY);
@@ -319,6 +333,8 @@ after  drop_caches: __d_add 0xffff8977f40ec278 -> do_filp_open return 0xffff8977
 
 Learned: after drop_caches the pointer changed; subtraction shown in hex and decimal.
 
+CASE 8: CACHE INVALIDATION - LOCAL FILE (drop_caches for local file)
+
 post.c
 ```c
 open("l_e.txt", O_RDONLY);
@@ -333,6 +349,57 @@ open("l_e.txt", O_RDONLY);
 before drop_caches: __d_add 0xffff89775bdcf638 -> do_filp_open return 0xffff89775bdcf638
 after  drop_caches: __d_add 0xffff8976c341e938 -> do_filp_open return 0xffff8976c341e938
 ```
+
+CASE SUMMARY
+
+CASE 1: CACHE MISS - ALLOCATION PATH
+- Test: minimal_open.c (long filename)
+- What happens: d_lookup returns NULL, __d_alloc runs, memcpy copies basename to dentry
+- Proof: same address at __d_add, do_filp_open return, later d_lookup return
+- Key addresses: 0xffff8977eb463eb8 appears 3 times
+
+CASE 2: BASENAME OFFSET - PREFIX DIRECTORY
+- Test: te_miss.c (/tmp/t_e.txt)
+- What happens: __d_alloc receives pointer offset by 5 bytes from full path
+- Proof: 0xffff8976cc495025 - 0xffff8976cc495020 = 5 = strlen("/tmp/")
+- Key addresses: entry 0x...020, basename 0x...025, offset = 5
+
+CASE 3: NEGATIVE DENTRY - MISSING FILE FIRST OPEN
+- Test: tm_miss.c (first open of /tmp/t_m.txt)
+- What happens: file does not exist, fd=-1, but dentry created with d_inode=NULL
+- Proof: __d_add creates 0xffff897725f170f8 even though open returns -1
+- Key addresses: 0xffff897725f170f8 created for missing file
+
+CASE 4: NEGATIVE DENTRY CACHE HIT - MISSING FILE SECOND OPEN
+- Test: tm_miss.c (second open of /tmp/t_m.txt)
+- What happens: __d_lookup_rcu returns cached negative dentry, no __d_alloc runs
+- Proof: __d_lookup_rcu returns 0xffff897725f170f8 (same address from first open)
+- Key addresses: 0xffff897725f170f8 reused on second open, fd=-1 again
+
+CASE 5: BASENAME OFFSET - NO PREFIX
+- Test: lm_miss.c (l_m.txt)
+- What happens: local file has no directory prefix, offset = 0
+- Proof: copy source 0xffff8976c643c020 equals entry pointer 0xffff8976c643c020
+- Key addresses: no offset, source = entry
+
+CASE 6: BASENAME OFFSET - LONG PREFIX
+- Test: a_miss.c (/mnt/loopfs/a.txt)
+- What happens: __d_alloc receives pointer offset by 12 bytes from full path
+- Proof: 0xffff8976c643302c - 0xffff8976c6433020 = 12 = strlen("/mnt/loopfs/")
+- Key addresses: entry 0x...020, basename 0x...02c, offset = 12
+
+CASE 7: CACHE HIT - REUSE PATH
+- Test: hits.c (second open of l_e.txt and t_e.txt)
+- What happens: d_lookup returns existing dentry, no __d_alloc runs, no memcpy
+- Proof: __d_lookup_rcu returns 0xffff897725f9f0f8 (l_e.txt) and 0xffff897725f9f7b8 (t_e.txt)
+- Key addresses: same pointer across hit → delete → evict
+
+CASE 8: CACHE INVALIDATION - DROP_CACHES
+- Test: rebuild.c and post.c
+- What happens: drop_caches evicts dentry, next open allocates new dentry at different address
+- Proof: rebuild.c before 0xffff8977185a9578, after 0xffff8977f40ec278 (addresses differ)
+- Proof: post.c before 0xffff89775bdcf638, after 0xffff8976c341e938 (addresses differ)
+- Key addresses: address changes after drop_caches proves new allocation
 
 WHY THESE PROBES
 
