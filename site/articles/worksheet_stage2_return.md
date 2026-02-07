@@ -169,16 +169,7 @@ sleep 2
 sudo dmesg | rg -n "t_e.txt|t_m.txt|l_m.txt|l_e.txt|a.txt|d_lookup entry|d_lookup return|__d_alloc|__d_add|do_filp_open|d_delete|__dentry_kill"
 ```
 
-1. 0xffff8b148256c025−0xffff8b148256c020=0x5=5, “/tmp/”=5 ✓, compute? 2.
-0xffff8b148256b02c−0xffff8b148256b020=0xC=12, “/mnt/loopfs/”=12 ✓, compute? 3. te_miss:
-0xffff8b148256c020→0xffff8b148256c025→0xffff8b14d0cc60f8→0xffff8b14d0cc60f8→0xffff8b14d0cc60f8, same
-pointer chain ✓, verify? 4. tm_miss: 0xffff8b1480ef5020→0xffff8b148d58d3f8→0xffff8b148d58d3f8, same
-pointer chain ✓, verify? 5. lm_miss: 0xffff8b1482462020→0xffff8b14a70b6278→0xffff8b14a70b6278, same
-pointer chain ✓, verify? 6. a_miss:
-0xffff8b148256b020→0xffff8b148256b02c→0xffff8b14d0cc8e78→0xffff8b14d0cc8e78, same pointer chain ✓,
-verify? 7. hit: 0xffff8b149e4886f8 and 0xffff8b149e488cf8 reused ✓, verify? 8. delete: d_delete
-0xffff8b149e4886f8 and 0xffff8b149e488cf8 ✓, verify? 9. evict: __dentry_kill 0xffff8b149e4886f8 and
-0xffff8b149e488cf8 ✓, verify? 10. rebuild: 0xffff8b14a712db78 ≠ 0xffff8b149e488cf8 ✗, check? 11.
+1. te_miss.c https://github.com/raikrahul/what-happens-when-open-is-called/blob/main/kernel/user/stage2/te_miss.c → 0xffff8b148256c020→0xffff8b148256c025→0xffff8b14d0cc60f8→0xffff8b14d0cc60f8→0xffff8b14d0cc60f8 ✓, 0xffff8b148256c025−0xffff8b148256c020=0x5=5, “/tmp/”=5 ✓, compute? 2. tm_miss.c https://github.com/raikrahul/what-happens-when-open-is-called/blob/main/kernel/user/stage2/tm_miss.c → 0xffff8b1480ef5020→0xffff8b148d58d3f8→0xffff8b148d58d3f8 ✓, compute? 3. lm_miss.c https://github.com/raikrahul/what-happens-when-open-is-called/blob/main/kernel/user/stage2/lm_miss.c → 0xffff8b1482462020→0xffff8b14a70b6278→0xffff8b14a70b6278 ✓, compute? 4. a_miss.c https://github.com/raikrahul/what-happens-when-open-is-called/blob/main/kernel/user/stage2/a_miss.c → 0xffff8b148256b020→0xffff8b148256b02c→0xffff8b14d0cc8e78→0xffff8b14d0cc8e78 ✓, 0xffff8b148256b02c−0xffff8b148256b020=0xC=12, “/mnt/loopfs/”=12 ✓, compute? 5. evict.c https://github.com/raikrahul/what-happens-when-open-is-called/blob/main/kernel/user/stage2/evict.c → hit 0xffff8b149e4886f8 + 0xffff8b149e488cf8 ✓, __dentry_kill 0xffff8b149e4886f8 + 0xffff8b149e488cf8 ✓, compute? 6. delete.c https://github.com/raikrahul/what-happens-when-open-is-called/blob/main/kernel/user/stage2/delete.c → d_delete 0xffff8b149e4886f8 + 0xffff8b149e488cf8 ✓, compute? 7. rebuild.c https://github.com/raikrahul/what-happens-when-open-is-called/blob/main/kernel/user/stage2/rebuild.c → 0xffff8b14a712db78≠0xffff8b149e488cf8 ✗, check? 8. post.c https://github.com/raikrahul/what-happens-when-open-is-called/blob/main/kernel/user/stage2/post.c → 0xffff8b148a31f878≠0xffff8b149e4886f8 ✗, check? 11.
 post: 0xffff8b148a31f878 ≠ 0xffff8b149e4886f8 ✗, check?
 
 Single-chain diagram with concrete data: struct filename { name=0xffff8b148256c020,
