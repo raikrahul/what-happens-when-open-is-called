@@ -478,7 +478,86 @@ losetup(8): losetup -fP &lt;img&gt; maps loopback device.
 mkfs.ext2(8): mkfs.ext2 -F &lt;img&gt; formats loopback image.
 dd(1): dd if=/dev/zero of=/tmp/loopfs.img bs=1M count=64 creates 64M image.
 dmesg(1): dmesg prints kernel ring buffer.
-insmod(8), rmmod(8): insmod &lt;ko&gt; / rmmod &lt;ko&gt; load/unload driver.</pre>
+insmod(8), rmmod(8): insmod &lt;ko&gt; / rmmod &lt;ko&gt; load/unload driver.
+
+PREVIOUS WORK (WHAT WE ALREADY PROVED)
+
+Stage 1: User Space to Syscall Boundary
+URL: https://raikrahul.github.io/what-happens-when-open-is-called/stage1.html
+
+What we proved:
+- User code: open("somefile", O_RDWR) in C source
+- Preprocessor: expands to __open_2("somefile", O_RDWR) from fcntl.h
+- Compilation: gcc generates call to open@plt
+- Linking: ld creates PLT stub that jumps to GOT entry
+- Runtime: dynamic linker fills GOT with libc address
+- Libc: glibc transforms open() to openat(AT_FDCWD, "somefile", O_RDWR, 0)
+- Syscall: openat() uses syscall instruction with RAX=257 (openat syscall number)
+- Registers: RDI=-100 (AT_FDCWD), RSI=0x7ffe... (filename pointer), RDX=0x2 (O_RDWR), R10=0 (mode)
+
+How we proved it:
+- objdump -d minimal_open: showed call to open@plt
+- readelf -r minimal_open: showed R_X86_64_JUMP_SLOT relocation for open
+- gdb: set breakpoint at open, stepped through PLT/GOT, captured register values
+- strace: showed openat(AT_FDCWD, "somefile", O_RDWR) = 3
+
+Key addresses captured:
+- PLT stub: 0x401030
+- GOT entry: 0x404018
+- Libc open: 0x7ffff7d1b150
+- Filename pointer in RSI: 0x7fffffffe3a0
+
+Concrete proof: objdump showed "jmp *0x2fe2(%rip)" which calculates to GOT address 0x404018. readelf showed this GOT entry holds the relocation for open. gdb showed after dynamic linking, GOT[0x404018] = 0x7ffff7d1b150 (libc address). This proves PLT → GOT → libc chain.
+
+Stage 2 Entry: Kernel Space - Tracing getname()
+URL: https://raikrahul.github.io/what-happens-when-open-is-called/stage2.html
+
+What we proved:
+- Kernel entry: openat syscall lands in do_sys_openat2 (fs/open.c:1388)
+- First kernel function: getname(filename) at line 1398
+- getname() copies user string to kernel memory
+- getname() returns struct filename * with kernel copy
+- struct filename has: const char *name (kernel copy), const __user char *uptr (user pointer), int refcnt, struct qstr name_attr
+
+How we proved it:
+- Kernel module: kernel/drivers/arg2_filename/trace_filename.c
+- Kprobe on do_sys_openat2 entry: captured RDI register = user pointer 0x7ffe...
+- Kretprobe on getname return: captured RAX register = struct filename * at 0xffff...
+- Dereferenced struct filename-&gt;name: printed kernel copy address 0xffff...
+- Compared addresses: user pointer (0x7ffe...) != kernel copy (0xffff...)
+
+Key addresses captured:
+- User pointer (RDI at do_sys_openat2 entry): 0x7fffffffe3a0
+- struct filename * (RAX at getname return): 0xffff8bd546396000
+- Kernel copy (struct filename-&gt;name): 0xffff8bd546396020
+
+Concrete proof: kprobe printed user pointer 0x7ffe... from RDI. kretprobe printed struct filename * 0xffff... from RAX. Dereferenced filename-&gt;name at offset +0 and printed 0xffff...020. The addresses differ by 0x20 bytes (struct filename header). User pointer starts with 0x7ffe (user space range). Kernel pointer starts with 0xffff (kernel space range). This proves getname() copied the string from user space to kernel space.
+
+Stage 2 Return: This Document
+URL: https://raikrahul.github.io/what-happens-when-open-is-called/articles/explanation_stage2_return.html
+
+What we prove:
+- do_filp_open receives struct filename * from getname
+- do_filp_open returns struct file * pointing to dentry name
+- __d_alloc copies filename from struct qstr to dentry
+- d_lookup searches cache before __d_alloc
+- Returned file struct points to dentry-&gt;d_name.name
+- Cache hit reuses existing dentry name (no copy)
+- Cache miss allocates new dentry and copies name
+- Eviction (drop_caches) frees dentry, next open allocates new one
+- Negative dentry caches "file does not exist" result
+
+How we prove it:
+- 5 kprobes print addresses at exact transitions
+- Pointer equality proves same memory (A == B)
+- Pointer subtraction proves basename offset (A - B = 5 = strlen("/tmp/"))
+- Address change after drop_caches proves new allocation
+- Same address on second open of missing file proves negative dentry cache
+
+All three stages form a complete chain:
+User space open("file") → libc openat(AT_FDCWD, "file", flags) → syscall → kernel do_sys_openat2 → getname copies to kernel → do_filp_open → __d_alloc copies to dentry → return struct file pointing to dentry name.
+
+Every step verified with printed addresses from actual runs.</pre>
   </div>
 
 </body>
