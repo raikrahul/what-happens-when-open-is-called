@@ -28,32 +28,16 @@ int fd = open(filename, O_RDWR | O_CREAT, 0644);
 sleep(5);
 ```
 
-matrix_open.c
-```c
-close(creat("l_e.txt", 0644));
-close(creat("/tmp/t_e.txt", 0644));
-drop_caches_if_root();
-sleep(1);
-open("l_e.txt", O_RDONLY);
-open("/tmp/t_e.txt", O_RDONLY);
-open("/tmp/t_m.txt", O_RDONLY);
-open("l_e.txt", O_RDONLY);
-open("l_m.txt", O_RDONLY);
-open("/mnt/loopfs/a.txt", O_RDONLY);
-open("l_e.txt", O_RDONLY);
-sleep(2);
-close_all();
-unlink("l_e.txt");
-unlink("/tmp/t_e.txt");
-close(creat("l_e.txt", 0644));
-close(creat("/tmp/t_e.txt", 0644));
-open("l_e.txt", O_RDONLY);
-open("/tmp/t_e.txt", O_RDONLY);
-drop_caches_if_root();
-sleep(1);
-open("l_e.txt", O_RDONLY);
-open("/tmp/t_e.txt", O_RDONLY);
-```
+Split programs (matrix cases):
+te_miss.c (t_e.txt miss + alloc + add + return)
+tm_miss.c (t_m.txt miss + alloc + add)
+lm_miss.c (l_m.txt miss + alloc + add)
+a_miss.c (a.txt miss + alloc + add)
+hits.c (cache hits for l_e.txt and t_e.txt)
+delete.c (unlink l_e.txt and t_e.txt)
+evict.c (drop_caches eviction)
+rebuild.c (post-eviction rebuild for t_e.txt)
+post.c (post-eviction lookup for l_e.txt)
 
 What we trace (string → pointer flow, in order):
 ```text
@@ -71,9 +55,8 @@ What we trace (string → pointer flow, in order):
 [__dentry_kill entry]  dentry->d_name.name
 ```
 
-Per-line purpose is in the inline `//` comments in `kernel/user/stage2/matrix_open.c`. Each open,
-unlink, and drop_caches call is annotated next to the code line, so no duplicate listing appears
-here.
+Per-line purpose is in the inline `//` comments in each `kernel/user/stage2/*.c` program. Each open,
+unlink, and drop_caches call is annotated next to its line, so no duplicate listing appears here.
 
 Loopback filesystem test:
 - 64M loopback file formatted as ext2
@@ -99,7 +82,7 @@ __dentry_kill entry -> dentry name pointer + string -> driver __dentry_kill prob
 Memcpy proof anchor
 `/usr/src/linux-source-6.8.0/fs/dcache.c:1660` memcpy(dname, name->name, name->len);
 
-Run A: matrix_open (root, drop_caches enabled)
+Run A: split programs (root, drop_caches enabled)
 
 l_m.txt miss, insert.
 ```c
@@ -259,6 +242,7 @@ __dentry_kill entry from dentry_kill_entry: 0xffff8bd7e94c8578 | l_e.txt
 __dentry_kill entry from dentry_kill_entry: 0xffff8bd728c76338 | t_e.txt
 __dentry_kill entry from dentry_kill_entry: 0xffff8bd728c76cf8 | a.txt
 matrix_open (129968): drop_caches: 2
+With split programs, this line will show the comm of the program that writes drop_caches (evict.c).
 
 Derivation.
 0xffff8bd728c763f8 = t_m.txt pointer
@@ -468,11 +452,11 @@ Derivation: 0xffff8bd54639202c - 0xffff8bd546392020 = 0xC = 12 "/mnt/loopfs/" le
 
 Wide-Screen Trace Appendix
 
-Full Trace A (matrix_open, latest run)
+Full Trace A (legacy combined run)
 
-Scope note: this trace lists the open sequence after the first drop_caches call. The earlier
-creat(...) calls also execute do_filp_open and appear in dmesg, but they are not repeated here to
-keep the step list aligned to the open sequence used for the claims.
+Scope note: this trace is from the earlier combined matrix_open run. With split programs, the same
+steps appear in per‑program logs under their own comm names; the order here is kept only to show the
+complete sequence in one place.
 
 1. do_filp_open entry | name pointer 0xffff8bd546392020 | name /tmp/t_e.txt | begin lookup for basename t_e.txt | caller line not recorded | current line not recorded | resume to caller with file pointer
 2. __d_lookup_rcu entry | hash 2802308728 | length 3 | name tmp/t_e.txt | RCU prefix lookup | caller line not recorded | current line not recorded | resume to lookup path
