@@ -83,7 +83,8 @@
 Print ../articles/worksheet_stage2_return.html
 Stage 1 https://raikrahul.github.io/what-happens-when-open-is-called/stage1.html
 Stage 2 Entry https://raikrahul.github.io/what-happens-when-open-is-called/stage2.html
-Stage 2 Return (Explanation) https://raikrahul.github.io/what-happens-when-open-is-called/articles/explanation_stage2_return.html
+Stage 2 Return (Explanation) https://raikrahul.github.io/what-happens-when-open-is-
+called/articles/explanation_stage2_return.html
 ================================================================================
 Proof Goals
 ================================================================================
@@ -96,9 +97,15 @@ miss followed by a later hit.
 Files Used
 ================================================================================
 
-kernel/drivers/trace_do_filp_open/trace_do_filp_open.c — https://github.com/raikrahul/what-happens-when-open-is-called/blob/main/kernel/drivers/trace_do_filp_open/trace_do_filp_open.c; kernel/user/stage2/minimal_open.c — https://github.com/raikrahul/what-happens-when-open-is-called/blob/main/kernel/user/stage2/minimal_open.c; kernel/user/stage2/matrix_open.c — https://github.com/raikrahul/what-happens-when-open-is-called/blob/main/kernel/user/stage2/matrix_open.c
+kernel/drivers/trace_do_filp_open/trace_do_filp_open.c — https://github.com/raikrahul/what-happens-
+when-open-is-called/blob/main/kernel/drivers/trace_do_filp_open/trace_do_filp_open.c;
+kernel/user/stage2/minimal_open.c — https://github.com/raikrahul/what-happens-when-open-is-
+called/blob/main/kernel/user/stage2/minimal_open.c; kernel/user/stage2/matrix_open.c —
+https://github.com/raikrahul/what-happens-when-open-is-
+called/blob/main/kernel/user/stage2/matrix_open.c
 
-What we trace (string → pointer flow, in order). Location: kernel/drivers/trace_do_filp_open/trace_do_filp_open.c</pre>
+What we trace (string → pointer flow, in order). Location:
+kernel/drivers/trace_do_filp_open/trace_do_filp_open.c</pre>
 <pre><code class="language-text">[do_filp_open entry]   struct filename-&gt;name
 └─[d_lookup entry]     qstr-&gt;{name,len,hash}
   ├─[__d_lookup entry] qstr-&gt;{name,len,hash}
@@ -117,7 +124,8 @@ What we trace (string → pointer flow, in order). Location: kernel/drivers/trac
 User Tests
 ================================================================================
 
-Location (repo): https://github.com/raikrahul/what-happens-when-open-is-called/tree/main/kernel/user/stage2
+Location (repo): https://github.com/raikrahul/what-happens-when-open-is-
+called/tree/main/kernel/user/stage2
 
 ================================================================================
 ================================================================================
@@ -169,18 +177,31 @@ int main() {
 }</code></pre>
 <pre style="white-space: pre-wrap; word-wrap: break-word; margin: 0; font-family: monospace;">
 
-Start at the equality checks in the middle because that is where the proof closes, then drive forward to the diagram end by chaining the same address from __d_alloc return to __d_add to do_filp_open return and then to the later d_lookup hit, and then walk backward from that chain to the start by matching each address in the Record list to the struct filename at entry and the dentry-&gt;d_name at return so every step has a numeric anchor before the next step is drawn.
+Start at the equality checks in the middle because that is where the proof closes, then drive
+forward to the diagram end by chaining the same address from __d_alloc return to __d_add to
+do_filp_open return and then to the later d_lookup hit, and then walk backward from that chain to
+the start by matching each address in the Record list to the struct filename at entry and the
+dentry-&gt;d_name at return so every step has a numeric anchor before the next step is drawn.
 
 Record:
-- do_filp_open entry pointer = 0x________ | test_file_very_long_name_to_force_external_allocation_XXXX
-- d_lookup entry: hash ________ length 64 name test_file_very_long_name_to_force_external_allocation_XXXX
+- do_filp_open entry pointer = 0x________ |
+test_file_very_long_name_to_force_external_allocation_XXXX
+- d_lookup entry: hash ________ length 64 name
+test_file_very_long_name_to_force_external_allocation_XXXX
 - d_lookup return: NULL
 - __d_alloc entry pointer = 0x________
 - __d_alloc return pointer = 0x________
 - __d_add entry pointer = 0x________ | test_file_very_long_name_to_force_external_allocation_XXXX
-- do_filp_open return pointer = 0x________ | test_file_very_long_name_to_force_external_allocation_XXXX
-- cache hit later: d_lookup return pointer = 0x________ | test_file_very_long_name_to_force_external_allocation_XXXX
-Draw the struct filename { name = 0x________, len = 64, uptr = user string } and the dentry { d_name.name = 0x________, d_name.len = 64, d_name.hash = ________ } with the exact values you just recorded, then chain the calls in order by reusing the same addresses as they move from do_filp_open entry to d_lookup miss to __d_alloc entry/return to __d_add to do_filp_open return to the later d_lookup hit, so every pointer equality in your record is shown as the same numeric address in your drawn structs and every miss/hit is shown as NULL vs the recorded dentry-&gt;d_name.name value.
+- do_filp_open return pointer = 0x________ |
+test_file_very_long_name_to_force_external_allocation_XXXX
+- cache hit later: d_lookup return pointer = 0x________ |
+test_file_very_long_name_to_force_external_allocation_XXXX
+Draw the struct filename { name = 0x________, len = 64, uptr = user string } and the dentry {
+d_name.name = 0x________, d_name.len = 64, d_name.hash = ________ } with the exact values you just
+recorded, then chain the calls in order by reusing the same addresses as they move from do_filp_open
+entry to d_lookup miss to __d_alloc entry/return to __d_add to do_filp_open return to the later
+d_lookup hit, so every pointer equality in your record is shown as the same numeric address in your
+drawn structs and every miss/hit is shown as NULL vs the recorded dentry-&gt;d_name.name value.
 
 Checks:
 - __d_alloc return == __d_add entry == do_filp_open return
@@ -188,11 +209,13 @@ Checks:
 
 Make a diagram (required):
 - Draw the full pointer flow for this long filename as a single chain:
-  do_filp_open entry -&gt; d_lookup miss -&gt; __d_alloc entry -&gt; __d_alloc return -&gt; __d_add -&gt; do_filp_open return -&gt; d_lookup hit.
+  do_filp_open entry -&gt; d_lookup miss -&gt; __d_alloc entry -&gt; __d_alloc return -&gt; __d_add -&gt;
+do_filp_open return -&gt; d_lookup hit.
 - Use your recorded addresses in the diagram, not placeholders.
 - Base the copy step on kernel source: /usr/src/linux-headers-$(uname -r)/fs/dcache.c
   Search for: memcpy(dname, name-&gt;name, name-&gt;len);
-  This is the line that explains why the __d_alloc destination pointer equals the dentry name pointer.
+  This is the line that explains why the __d_alloc destination pointer equals the dentry name
+pointer.
 
 2b) Prepare loopback ext2 (a.txt)</pre>
 <pre><code>sudo mkdir -p /mnt/loopfs
@@ -216,9 +239,30 @@ sleep 2
 sudo dmesg | rg -n "t_e.txt|t_m.txt|l_m.txt|l_e.txt|a.txt|d_lookup entry|d_lookup return|__d_alloc|__d_add|do_filp_open|d_delete|__dentry_kill"</code></pre>
 <pre style="white-space: pre-wrap; word-wrap: break-word; margin: 0; font-family: monospace;">
 
-1. 0xffff8b148256c025−0xffff8b148256c020=0x5=5, “/tmp/”=5 ✓, compute? 2. 0xffff8b148256b02c−0xffff8b148256b020=0xC=12, “/mnt/loopfs/”=12 ✓, compute? 3. te_miss: 0xffff8b148256c020→0xffff8b148256c025→0xffff8b14d0cc60f8→0xffff8b14d0cc60f8→0xffff8b14d0cc60f8, same pointer chain ✓, verify? 4. tm_miss: 0xffff8b1480ef5020→0xffff8b148d58d3f8→0xffff8b148d58d3f8, same pointer chain ✓, verify? 5. lm_miss: 0xffff8b1482462020→0xffff8b14a70b6278→0xffff8b14a70b6278, same pointer chain ✓, verify? 6. a_miss: 0xffff8b148256b020→0xffff8b148256b02c→0xffff8b14d0cc8e78→0xffff8b14d0cc8e78, same pointer chain ✓, verify? 7. hit: 0xffff8b149e4886f8 and 0xffff8b149e488cf8 reused ✓, verify? 8. delete: d_delete 0xffff8b149e4886f8 and 0xffff8b149e488cf8 ✓, verify? 9. evict: __dentry_kill 0xffff8b149e4886f8 and 0xffff8b149e488cf8 ✓, verify? 10. rebuild: 0xffff8b14a712db78 ≠ 0xffff8b149e488cf8 ✗, check? 11. post: 0xffff8b148a31f878 ≠ 0xffff8b149e4886f8 ✗, check?
+1. 0xffff8b148256c025−0xffff8b148256c020=0x5=5, “/tmp/”=5 ✓, compute? 2.
+0xffff8b148256b02c−0xffff8b148256b020=0xC=12, “/mnt/loopfs/”=12 ✓, compute? 3. te_miss:
+0xffff8b148256c020→0xffff8b148256c025→0xffff8b14d0cc60f8→0xffff8b14d0cc60f8→0xffff8b14d0cc60f8, same
+pointer chain ✓, verify? 4. tm_miss: 0xffff8b1480ef5020→0xffff8b148d58d3f8→0xffff8b148d58d3f8, same
+pointer chain ✓, verify? 5. lm_miss: 0xffff8b1482462020→0xffff8b14a70b6278→0xffff8b14a70b6278, same
+pointer chain ✓, verify? 6. a_miss:
+0xffff8b148256b020→0xffff8b148256b02c→0xffff8b14d0cc8e78→0xffff8b14d0cc8e78, same pointer chain ✓,
+verify? 7. hit: 0xffff8b149e4886f8 and 0xffff8b149e488cf8 reused ✓, verify? 8. delete: d_delete
+0xffff8b149e4886f8 and 0xffff8b149e488cf8 ✓, verify? 9. evict: __dentry_kill 0xffff8b149e4886f8 and
+0xffff8b149e488cf8 ✓, verify? 10. rebuild: 0xffff8b14a712db78 ≠ 0xffff8b149e488cf8 ✗, check? 11.
+post: 0xffff8b148a31f878 ≠ 0xffff8b149e4886f8 ✗, check?
 
-Single-chain diagram with concrete data: struct filename { name=0xffff8b148256c020, str="/tmp/t_e.txt" } -&gt; do_filp_open entry -&gt; qstr { name=0xffff8b148256c025, len=7, hash=3583106372, str="t_e.txt" } -&gt; d_lookup entry -&gt; d_lookup return NULL -&gt; __d_alloc entry -&gt; dentry { d_name.name=0xffff8b14d0cc60f8, d_name.len=7, d_name.hash=3583106372, d_name.str="t_e.txt" } -&gt; __d_alloc return -&gt; __d_add entry -&gt; do_filp_open return pointer 0xffff8b14d0cc60f8 | t_e.txt -&gt; d_lookup return pointer 0xffff8b149e488cf8 | t_e.txt on cache hit -&gt; d_delete entry 0xffff8b149e488cf8 | t_e.txt on unlink -&gt; __dentry_kill entry 0xffff8b149e488cf8 | t_e.txt on drop_caches, and for the short-name case struct filename { name=0xffff8b148256b020, str="/mnt/loopfs/a.txt" } -&gt; qstr { name=0xffff8b148256b02c, len=5, hash=2244109168, str="a.txt" } -&gt; __d_alloc return dentry { d_name.name=0xffff8b14d0cc8e78, d_name.len=5, d_name.hash=2244109168, d_name.str="a.txt" } -&gt; do_filp_open return pointer 0xffff8b14d0cc8e78 | a.txt, with the offsets 0xffff8b148256c025−0xffff8b148256c020=5 and 0xffff8b148256b02c−0xffff8b148256b020=12.
+Single-chain diagram with concrete data: struct filename { name=0xffff8b148256c020,
+str="/tmp/t_e.txt" } -&gt; do_filp_open entry -&gt; qstr { name=0xffff8b148256c025, len=7,
+hash=3583106372, str="t_e.txt" } -&gt; d_lookup entry -&gt; d_lookup return NULL -&gt; __d_alloc entry -&gt;
+dentry { d_name.name=0xffff8b14d0cc60f8, d_name.len=7, d_name.hash=3583106372, d_name.str="t_e.txt"
+} -&gt; __d_alloc return -&gt; __d_add entry -&gt; do_filp_open return pointer 0xffff8b14d0cc60f8 | t_e.txt
+-&gt; d_lookup return pointer 0xffff8b149e488cf8 | t_e.txt on cache hit -&gt; d_delete entry
+0xffff8b149e488cf8 | t_e.txt on unlink -&gt; __dentry_kill entry 0xffff8b149e488cf8 | t_e.txt on
+drop_caches, and for the short-name case struct filename { name=0xffff8b148256b020,
+str="/mnt/loopfs/a.txt" } -&gt; qstr { name=0xffff8b148256b02c, len=5, hash=2244109168, str="a.txt" }
+-&gt; __d_alloc return dentry { d_name.name=0xffff8b14d0cc8e78, d_name.len=5, d_name.hash=2244109168,
+d_name.str="a.txt" } -&gt; do_filp_open return pointer 0xffff8b14d0cc8e78 | a.txt, with the offsets
+0xffff8b148256c025−0xffff8b148256c020=5 and 0xffff8b148256b02c−0xffff8b148256b020=12.
 
 
 
@@ -231,7 +275,8 @@ Single-chain diagram with concrete data: struct filename { name=0xffff8b148256c0
 → __d_alloc allocates and copies name, __d_add inserts into dcache
 → do_filp_open return pointer = f-&gt;f_path.dentry-&gt;d_name.name
 → d_delete = unlink removal, __dentry_kill = drop_caches eviction
-→ /tmp/ length 5, /mnt/loopfs/ length 12 via `python3 - &lt;&lt;'PY'\nprint(len('/tmp/'))\nprint(len('/mnt/loopfs/'))\nPY`
+→ /tmp/ length 5, /mnt/loopfs/ length 12 via `python3 -
+&lt;&lt;'PY'\nprint(len('/tmp/'))\nprint(len('/mnt/loopfs/'))\nPY`
 → `nl -ba /usr/src/linux-source-6.8.0/fs/dcache.c | sed -n '2245,2265p'`
 → `rg -n "memcpy\\(dname, name-&gt;name, name-&gt;len\\)" /usr/src/linux-source-6.8.0/fs/dcache.c`
 → `rg -n "__d_add\\(|d_delete\\(|__dentry_kill" /usr/src/linux-source-6.8.0/fs/dcache.c`
@@ -252,20 +297,39 @@ Single-chain diagram with concrete data: struct filename { name=0xffff8b148256c0
 Trace
 ================================================================================
 
-1) "/tmp/t_e.txt" @ 0xffff8b148256c020 -&gt; __d_alloc entry 0xffff8b148256c025 -&gt; __d_alloc return 0xffff8b14d0cc60f8 -&gt; __d_add 0xffff8b14d0cc60f8 -&gt; do_filp_open return 0xffff8b14d0cc60f8. 0xffff8b148256c025 − 0xffff8b148256c020 = 0x5 = 5, so the copy source starts exactly after “/tmp/”.
-2) d_lookup return NULL -&gt; __d_add 0xffff8b14d0cc60f8 -&gt; do_filp_open return 0xffff8b14d0cc60f8. The same numeric pointer is created and returned.
-3) d_lookup return 0xffff8b149e488cf8 -&gt; do_filp_open return 0xffff8b149e488cf8. The hit uses the cached pointer without a new allocation.
-4) "/tmp/t_m.txt" -&gt; d_lookup return NULL -&gt; __d_add 0xffff8b148d58d3f8. The missing name still has its own cached pointer.
-5) d_delete 0xffff8b149e4886f8 (l_e.txt) + d_delete 0xffff8b149e488cf8 (t_e.txt). The exact cached pointers are removed on unlink.
-open("/tmp/t_e.txt") -&gt; do_filp_open entry 0xffff8b148256c020 -&gt; d_lookup hash 3583106372 len 7 "t_e.txt" -&gt; NULL -&gt; __d_alloc entry 0xffff8b148256c025 -&gt; __d_alloc return 0xffff8b14d0cc60f8 -&gt; __d_add 0xffff8b14d0cc60f8 -&gt; do_filp_open return 0xffff8b14d0cc60f8. The return pointer equals the copy destination and the insert pointer.
-open("/mnt/loopfs/a.txt") -&gt; do_filp_open entry 0xffff8b148256b020 -&gt; d_lookup hash 2244109168 len 5 "a.txt" -&gt; NULL -&gt; __d_alloc entry 0xffff8b148256b02c -&gt; __d_alloc return 0xffff8b14d0cc8e78 -&gt; __d_add 0xffff8b14d0cc8e78 -&gt; do_filp_open return 0xffff8b14d0cc8e78. 0xffff8b148256b02c − 0xffff8b148256b020 = 0xC = 12, so the copy source starts exactly after “/mnt/loopfs/”.
-open("l_e.txt") -&gt; d_lookup return 0xffff8b149e4886f8 -&gt; do_filp_open return 0xffff8b149e4886f8. The hit uses the cached pointer before deletion.
-unlink("l_e.txt") -&gt; d_delete 0xffff8b149e4886f8; unlink("/tmp/t_e.txt") -&gt; d_delete 0xffff8b149e488cf8; drop_caches -&gt; __dentry_kill 0xffff8b149e4886f8 and 0xffff8b149e488cf8. Deletion and eviction touch the same numeric pointers.
-open("/tmp/t_e.txt") after drop_caches -&gt; __d_alloc return 0xffff8b14a712db78 -&gt; __d_add 0xffff8b14a712db78 -&gt; do_filp_open return 0xffff8b14a712db78. 0xffff8b14a712db78 != 0xffff8b149e488cf8, so rebuild produces a different pointer.
-open("l_e.txt") after drop_caches -&gt; do_filp_open return 0xffff8b148a31f878. 0xffff8b148a31f878 != 0xffff8b149e4886f8, so post‑eviction return differs from pre‑eviction return.
+1) "/tmp/t_e.txt" @ 0xffff8b148256c020 -&gt; __d_alloc entry 0xffff8b148256c025 -&gt; __d_alloc return
+0xffff8b14d0cc60f8 -&gt; __d_add 0xffff8b14d0cc60f8 -&gt; do_filp_open return 0xffff8b14d0cc60f8.
+0xffff8b148256c025 − 0xffff8b148256c020 = 0x5 = 5, so the copy source starts exactly after “/tmp/”.
+2) d_lookup return NULL -&gt; __d_add 0xffff8b14d0cc60f8 -&gt; do_filp_open return 0xffff8b14d0cc60f8. The
+same numeric pointer is created and returned.
+3) d_lookup return 0xffff8b149e488cf8 -&gt; do_filp_open return 0xffff8b149e488cf8. The hit uses the
+cached pointer without a new allocation.
+4) "/tmp/t_m.txt" -&gt; d_lookup return NULL -&gt; __d_add 0xffff8b148d58d3f8. The missing name still has
+its own cached pointer.
+5) d_delete 0xffff8b149e4886f8 (l_e.txt) + d_delete 0xffff8b149e488cf8 (t_e.txt). The exact cached
+pointers are removed on unlink.
+open("/tmp/t_e.txt") -&gt; do_filp_open entry 0xffff8b148256c020 -&gt; d_lookup hash 3583106372 len 7
+"t_e.txt" -&gt; NULL -&gt; __d_alloc entry 0xffff8b148256c025 -&gt; __d_alloc return 0xffff8b14d0cc60f8 -&gt;
+__d_add 0xffff8b14d0cc60f8 -&gt; do_filp_open return 0xffff8b14d0cc60f8. The return pointer equals the
+copy destination and the insert pointer.
+open("/mnt/loopfs/a.txt") -&gt; do_filp_open entry 0xffff8b148256b020 -&gt; d_lookup hash 2244109168 len 5
+"a.txt" -&gt; NULL -&gt; __d_alloc entry 0xffff8b148256b02c -&gt; __d_alloc return 0xffff8b14d0cc8e78 -&gt;
+__d_add 0xffff8b14d0cc8e78 -&gt; do_filp_open return 0xffff8b14d0cc8e78. 0xffff8b148256b02c −
+0xffff8b148256b020 = 0xC = 12, so the copy source starts exactly after “/mnt/loopfs/”.
+open("l_e.txt") -&gt; d_lookup return 0xffff8b149e4886f8 -&gt; do_filp_open return 0xffff8b149e4886f8. The
+hit uses the cached pointer before deletion.
+unlink("l_e.txt") -&gt; d_delete 0xffff8b149e4886f8; unlink("/tmp/t_e.txt") -&gt; d_delete
+0xffff8b149e488cf8; drop_caches -&gt; __dentry_kill 0xffff8b149e4886f8 and 0xffff8b149e488cf8. Deletion
+and eviction touch the same numeric pointers.
+open("/tmp/t_e.txt") after drop_caches -&gt; __d_alloc return 0xffff8b14a712db78 -&gt; __d_add
+0xffff8b14a712db78 -&gt; do_filp_open return 0xffff8b14a712db78. 0xffff8b14a712db78 !=
+0xffff8b149e488cf8, so rebuild produces a different pointer.
+open("l_e.txt") after drop_caches -&gt; do_filp_open return 0xffff8b148a31f878. 0xffff8b148a31f878 !=
+0xffff8b149e4886f8, so post‑eviction return differs from pre‑eviction return.
 
 QUIZ (ANSWER YES/NO)
-1. 0xffff8b14d0cc60f8=0xffff8b14d0cc60f8=0xffff8b14d0cc60f8 ✓? 2. 0xffff8b149e4886f8 unchanged before delete ✓? 3. 0xffff8b148a31f878≠0xffff8b149e4886f8 ✓?</pre>
+1. 0xffff8b14d0cc60f8=0xffff8b14d0cc60f8=0xffff8b14d0cc60f8 ✓? 2. 0xffff8b149e4886f8 unchanged
+before delete ✓? 3. 0xffff8b148a31f878≠0xffff8b149e4886f8 ✓?</pre>
   </div>
 
 </body>
