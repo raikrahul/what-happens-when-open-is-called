@@ -6,9 +6,9 @@ title: "Stage 2 Return"
 **Introduction**
 This report uses one run of printed pointers and hashes. All addresses are exact for this run. Your run will differ.
 
-**Previous Work**
-<a href="https://raikrahul.github.io/what-happens-when-open-is-called/stage1.html">Stage 1</a> entry path and first kernel filename pointer.
-<a href="https://raikrahul.github.io/what-happens-when-open-is-called/stage2.html">Stage 2</a> getname/filename buffer.
+Previous work:
+<a href="https://raikrahul.github.io/what-happens-when-open-is-called/stage1.html">Stage 1</a> entry path and first kernel filename pointer.<br>
+<a href="https://raikrahul.github.io/what-happens-when-open-is-called/stage2.html">Stage 2</a> getname/filename buffer.<br>
 <a href="https://raikrahul.github.io/what-happens-when-open-is-called/articles/worksheet_stage2_return.html">Worksheet</a> for this stage.
 
 **Man Pages Used (parts)**
