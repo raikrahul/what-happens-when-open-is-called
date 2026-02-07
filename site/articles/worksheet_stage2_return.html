@@ -79,16 +79,14 @@
     <button onclick="window.print()" style="font-size: 10px; cursor: pointer;">Print</button>
   </div>
   <div class="content">
-    <pre style="white-space: pre-wrap; word-wrap: break-word; margin: 0; font-family: monospace;">[HOME] ../index.html
-Print ../articles/worksheet_stage2_return.html
-Stage 1 https://raikrahul.github.io/what-happens-when-open-is-called/stage1.html
-Stage 2 Entry https://raikrahul.github.io/what-happens-when-open-is-called/stage2.html
-Stage 2 Return (Explanation) https://raikrahul.github.io/what-happens-when-open-is-
-called/articles/explanation_stage2_return.html
+    <pre style="white-space: pre-wrap; word-wrap: break-word; margin: 0; font-family: monospace;">This worksheet is built for one kind of proof: choose the cached name pointer printed at `__d_add`, then trace it forward to `do_filp_open return` and later `d_lookup` hits, and trace it backward to `__d_alloc return` and the copy source. Every step is either “same address”, “NULL”, or a subtraction that equals a path prefix length. The blanks are arranged around `__d_alloc` and `__d_add` because those are the only steps where the name address can change. Fill the numbers first, then draw the tree from the middle out; that is the only order that prevents hand‑waving.
+
+Trace Map
 What we trace and where it lives:
 trace_do_filp_open driver: kernel/drivers/trace_do_filp_open/trace_do_filp_open.c
 do_filp_open: /usr/src/linux-source-6.8.0/fs/open.c
-d_lookup, __d_lookup, __d_lookup_rcu, __d_alloc, __d_add, d_delete, __dentry_kill: /usr/src/linux-source-6.8.0/fs/dcache.c</pre>
+d_lookup, __d_lookup, __d_lookup_rcu, __d_alloc, __d_add, d_delete, __dentry_kill: /usr/src/linux-source-6.8.0/fs/dcache.c
+</pre>
 <pre><code class="language-text">[do_filp_open entry]   struct filename-&gt;name
 └─[d_lookup entry]     qstr-&gt;{name,len,hash}
   ├─[__d_lookup entry] qstr-&gt;{name,len,hash}
@@ -153,8 +151,7 @@ int main() {
              "test_file_very_long_name_to_force_external_allocation_%ld", now);
 
     int fd = open(filename, O_RDWR | O_CREAT, 0644);
-    printf("fd=%d
-", fd);
+    printf("fd=%d\n", fd);
     sleep(5);  // Delay lets us observe a later cache hit.
     close(fd);
     unlink(filename);
@@ -214,7 +211,7 @@ sudo rmmod trace_do_filp_open
 sudo insmod ../../drivers/trace_do_filp_open/trace_do_filp_open.ko target_comm=&lt;program&gt;
 sudo ./&lt;program&gt;
 sleep 2
-sudo dmesg | rg -n "t_e.txt|t_m.txt|l_m.txt|l_e.txt|a.txt|d_lookup entry|d_lookup return|__d_alloc|__d_add|do_filp_open|d_delete|__dentry_kill"</code></pre>
+sudo dmesg | rg -n "t_e.txt|t_m.txt|l_m.txt|l_e.txt|a.txt|d_lookup entry|d_lookup return|__d_lookup_rcu|__d_alloc|__d_add|do_filp_open|d_delete|__dentry_kill"</code></pre>
 <pre style="white-space: pre-wrap; word-wrap: break-word; margin: 0; font-family: monospace;">
 
 Record: te_miss
@@ -261,6 +258,7 @@ printf("tm_miss second open fd=%d\n", fd2);</code></pre>
 - d_lookup entry: hash ________ length 7 name t_m.txt
 - d_lookup return: NULL
 - __d_lookup_rcu return: NULL
+- __d_alloc entry pointer = 0x________
 - __d_alloc return pointer = 0x________
 - __d_add entry pointer = 0x________ | t_m.txt
 - __d_lookup_rcu return (second open): 0x________ | t_m.txt
@@ -287,6 +285,7 @@ open(n4, O_RDONLY);</code></pre>
 - do_filp_open entry pointer = 0x________ | l_m.txt
 - d_lookup entry: hash ________ length 7 name l_m.txt
 - d_lookup return: NULL
+- __d_alloc entry pointer = 0x________
 - __d_alloc return pointer = 0x________
 - __d_add entry pointer = 0x________ | l_m.txt
 Diagram (pstree):</pre>
@@ -314,7 +313,7 @@ open(n5, O_RDONLY);</code></pre>
 - __d_alloc entry pointer = 0x________
 - __d_alloc return pointer = 0x________
 - __d_add entry pointer = 0x________ | a.txt
-- do_filp_open return pointer: not printed for a_miss (if open failed)
+- do_filp_open return pointer: may be absent if open failed
 - offset check: (entry pointer + 12) == __d_alloc entry pointer
 Diagram (pstree):</pre>
 <pre><code>/mnt/loopfs/a.txt
@@ -324,7 +323,7 @@ Diagram (pstree):</pre>
       │  └─ __d_alloc entry 0x________
       │     └─ __d_alloc return 0x________
       │        └─ __d_add entry 0x________ | a.txt
-      │           └─ do_filp_open return 0x________ | a.txt
+      │           └─ do_filp_open return 0x________ | a.txt (if printed)
       └─ d_lookup return 0x________ | a.txt</code></pre>
 <pre style="white-space: pre-wrap; word-wrap: break-word; margin: 0; font-family: monospace;">
 
@@ -386,6 +385,7 @@ open(n2, O_RDONLY);</code></pre>
 - before drop_caches: __d_add entry pointer = 0x________ | t_e.txt
 - before drop_caches: do_filp_open return pointer = 0x________ | t_e.txt
 - d_lookup return: NULL
+- __d_alloc entry pointer = 0x________
 - __d_alloc return pointer = 0x________
 - __d_add entry pointer = 0x________ | t_e.txt
 - do_filp_open return pointer = 0x________ | t_e.txt
@@ -396,7 +396,7 @@ Diagram (pstree):</pre>
    └─ __d_alloc return 0x________
       └─ __d_add entry 0x________ | t_e.txt
          └─ do_filp_open return 0x________ | t_e.txt
-0x________ ≠ 0x________</code></pre>
+0x________ ≠ 0x________  OR  0x________ = 0x________</code></pre>
 <pre style="white-space: pre-wrap; word-wrap: break-word; margin: 0; font-family: monospace;">
 
 Record: post
@@ -415,13 +415,20 @@ open(n1, O_RDONLY);</code></pre>
 - before drop_caches: do_filp_open return pointer = 0x________ | l_e.txt
 - __d_lookup_rcu entry: hash ________ length 7 name l_e.txt
 - do_filp_open return pointer = 0x________ | l_e.txt
-- inequality check: post-eviction pointer != pre-eviction pointer
+- compare pointers: post-eviction vs pre-eviction
 If the numbers are equal, eviction still happened and the allocator reused the same address. Record equality explicitly as 0x________ = 0x________, not as a failure.
 Diagram (pstree):</pre>
 <pre><code>l_e.txt
 └─ __d_lookup_rcu entry (hash=____, len=7, name=l_e.txt)
    └─ do_filp_open return 0x________ | l_e.txt
-0x________ ≠ 0x________</code></pre>
+0x________ ≠ 0x________  OR  0x________ = 0x________</code></pre>
+<pre style="white-space: pre-wrap; word-wrap: break-word; margin: 0; font-family: monospace;">
+
+[HOME] ../index.html
+Print ../articles/worksheet_stage2_return.html
+Stage 1 https://raikrahul.github.io/what-happens-when-open-is-called/stage1.html
+Stage 2 Entry https://raikrahul.github.io/what-happens-when-open-is-called/stage2.html
+Stage 2 Return (Explanation) https://raikrahul.github.io/what-happens-when-open-is-called/articles/explanation_stage2_return.html</pre>
   </div>
 
 </body>
