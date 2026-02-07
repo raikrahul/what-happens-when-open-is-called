@@ -138,6 +138,14 @@ sudo dmesg | rg -n "t_e.txt|t_m.txt|l_m.txt|l_e.txt|a.txt|d_lookup entry|d_looku
 ```
 
 Record: te_miss
+Code:
+```c
+const char *n2 = "/tmp/t_e.txt";
+close(creat(n2, 0644));
+drop_caches_if_root();
+sleep(1);
+open(n2, O_RDONLY);
+```
 - do_filp_open entry pointer = 0x________ | /tmp/t_e.txt
 - d_lookup entry: hash ________ length 7 name t_e.txt
 - d_lookup return: NULL
@@ -160,6 +168,13 @@ Diagram (pstree):
 ```
 
 Record: tm_miss
+Code:
+```c
+const char *n3 = "/tmp/t_m.txt";
+drop_caches_if_root();
+sleep(1);
+open(n3, O_RDONLY);
+```
 - do_filp_open entry pointer = 0x________ | /tmp/t_m.txt
 - d_lookup entry: hash ________ length 7 name t_m.txt
 - d_lookup return: NULL
@@ -178,6 +193,13 @@ Diagram (pstree):
 ```
 
 Record: lm_miss
+Code:
+```c
+const char *n4 = "l_m.txt";
+drop_caches_if_root();
+sleep(1);
+open(n4, O_RDONLY);
+```
 - do_filp_open entry pointer = 0x________ | l_m.txt
 - d_lookup entry: hash ________ length 7 name l_m.txt
 - d_lookup return: NULL
@@ -196,6 +218,13 @@ l_m.txt
 ```
 
 Record: a_miss
+Code:
+```c
+const char *n5 = "/mnt/loopfs/a.txt";
+drop_caches_if_root();
+sleep(1);
+open(n5, O_RDONLY);
+```
 - do_filp_open entry pointer = 0x________ | /mnt/loopfs/a.txt
 - d_lookup entry: hash ________ length 5 name a.txt
 - d_lookup return: NULL
@@ -218,6 +247,16 @@ Diagram (pstree):
 ```
 
 Record: evict
+Code:
+```c
+const char *n1 = "l_e.txt";
+const char *n2 = "/tmp/t_e.txt";
+close(creat(n1, 0644));
+close(creat(n2, 0644));
+open(n1, O_RDONLY);
+open(n2, O_RDONLY);
+drop_caches_if_root();
+```
 - d_lookup return pointer = 0x________ | l_e.txt
 - d_lookup return pointer = 0x________ | t_e.txt
 - __dentry_kill entry = 0x________ | l_e.txt
@@ -233,6 +272,17 @@ t_e.txt
 ```
 
 Record: delete
+Code:
+```c
+const char *n1 = "l_e.txt";
+const char *n2 = "/tmp/t_e.txt";
+close(creat(n1, 0644));
+close(creat(n2, 0644));
+open(n1, O_RDONLY);
+open(n2, O_RDONLY);
+unlink(n1);
+unlink(n2);
+```
 - d_delete entry = 0x________ | l_e.txt
 - d_delete entry = 0x________ | t_e.txt
 Diagram (pstree):
@@ -244,6 +294,18 @@ t_e.txt
 ```
 
 Record: rebuild
+Code:
+```c
+const char *n1 = "l_e.txt";
+const char *n2 = "/tmp/t_e.txt";
+close(creat(n1, 0644));
+close(creat(n2, 0644));
+open(n1, O_RDONLY);
+open(n2, O_RDONLY);
+drop_caches_if_root();
+sleep(1);
+open(n2, O_RDONLY);
+```
 - d_lookup return: NULL
 - __d_alloc return pointer = 0x________
 - __d_add entry pointer = 0x________ | t_e.txt
@@ -260,6 +322,18 @@ Diagram (pstree):
 ```
 
 Record: post
+Code:
+```c
+const char *n1 = "l_e.txt";
+const char *n2 = "/tmp/t_e.txt";
+close(creat(n1, 0644));
+close(creat(n2, 0644));
+open(n1, O_RDONLY);
+open(n2, O_RDONLY);
+drop_caches_if_root();
+sleep(1);
+open(n1, O_RDONLY);
+```
 - __d_lookup_rcu entry: hash ________ length 7 name l_e.txt
 - do_filp_open return pointer = 0x________ | l_e.txt
 - inequality check: post-eviction pointer != pre-eviction pointer
