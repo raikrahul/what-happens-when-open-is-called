@@ -9,8 +9,10 @@ Stage 1 https://raikrahul.github.io/what-happens-when-open-is-called/stage1.html
 Stage 2 Entry https://raikrahul.github.io/what-happens-when-open-is-called/stage2.html
 Stage 2 Return (Explanation) https://raikrahul.github.io/what-happens-when-open-is-
 called/articles/explanation_stage2_return.html
-What we trace (string → pointer flow, in order). Location:
-kernel/drivers/trace_do_filp_open/trace_do_filp_open.c
+What we trace and where it lives:
+trace_do_filp_open driver: kernel/drivers/trace_do_filp_open/trace_do_filp_open.c
+do_filp_open: /usr/src/linux-source-6.8.0/fs/open.c
+d_lookup, __d_lookup, __d_lookup_rcu, __d_alloc, __d_add, d_delete, __dentry_kill: /usr/src/linux-source-6.8.0/fs/dcache.c
 ```text
 [do_filp_open entry]   struct filename->name
 └─[d_lookup entry]     qstr->{name,len,hash}
