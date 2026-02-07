@@ -46,6 +46,18 @@ sleep(2);
 close_all();
 unlink("l_e.txt");
 unlink("/tmp/t_e.txt");
+
+What we trace (string → pointer flow, in order):
+do_filp_open(entry): reads struct filename->name (kernel string pointer).
+d_lookup(entry): reads qstr->name/qstr->len/qstr->hash (lookup key).
+d_lookup(return): NULL on miss, dentry->d_name.name on hit.
+__d_alloc(entry): reads qstr->name (copy source pointer).
+__d_alloc(return): returns dentry->d_name.name (copy destination pointer).
+__d_add(entry): inserts dentry->d_name.name into the dcache.
+do_filp_open(return): returns file whose f_path.dentry->d_name.name is printed.
+d_delete(entry): removes dentry name on unlink.
+__dentry_kill(entry): reclaims dentry on drop_caches.
+__d_lookup / __d_lookup_rcu: internal/RCU lookup paths for the same key.
 close(creat("l_e.txt", 0644));
 close(creat("/tmp/t_e.txt", 0644));
 open("l_e.txt", O_RDONLY);
