@@ -11,312 +11,387 @@ ANSWER
 
 The filename lives in dentry->d_name.name. The returned struct file points to this address.
 
+KERNEL SOURCES
+
+/usr/src/linux-source-6.8.0/fs/open.c
+/usr/src/linux-source-6.8.0/fs/dcache.c
+/usr/src/linux-source-6.8.0/include/linux/fs.h
+/usr/src/linux-source-6.8.0/include/linux/dcache.h
+kernel/drivers/trace_do_filp_open/trace_do_filp_open.c
+
+All addresses are from one run. Your run will differ.
+
+Previous work:
+Stage 1: https://raikrahul.github.io/what-happens-when-open-is-called/stage1.html
+Stage 2: https://raikrahul.github.io/what-happens-when-open-is-called/stage2.html
+Worksheet: https://raikrahul.github.io/what-happens-when-open-is-called/articles/worksheet_stage2_return.html
+
+TOOLS
+
+trace_do_filp_open.ko prints kernel pointers and hash keys.
+dmesg reads the kernel ring buffer.
+rg filters the ring buffer output.
+
+Example dmesg line format:
+[time] [O] IN: 0xffff... | /tmp/t_e.txt
+[time] d_lookup entry: hash 210259851 length 7 name t_e.txt
+[time] d_lookup return: NULL
+[time] [A] SRC: 0xffff...
+[time] [A] DST: 0xffff...
+[time] __d_add entry: 0xffff... | t_e.txt
+[time] [O] OUT: 0xffff... | t_e.txt
+[time] __d_lookup_rcu return: 0xffff... | t_e.txt
+
+What these lines show:
+- Same numeric pointer repeats across __d_add, do_filp_open return, and later lookup.
+- Prefix offsets match string length: /tmp/ = 5, /mnt/loopfs/ = 12.
+- Missing file still creates a cached name; second open hits __d_lookup_rcu with the same pointer.
+- Probe reads: regs->si = struct filename* at entry, regs->ax = struct file* or struct dentry* at return.
+
 PROOF METHOD
 
 Print kernel pointers at 5 locations. Compare addresses. If address A equals address B, they point to the same memory.
 
-KERNEL FUNCTIONS TRACED
+I measured the cache with numbers, not descriptions. In te_miss the same numeric address 0xffff8976c0793c38 appears at __d_add and at do_filp_open return; in minimal_open the same numeric address 0xffff897727671438 appears at __d_add, do_filp_open return, and later d_lookup return. Pointer equality is the only claim: the inserted dentry name pointer is the returned file name pointer, and the later lookup reuses the same pointer.
 
-do_filp_open - opens file, returns struct file *
-__d_alloc - allocates dentry, copies name
-d_lookup - searches dentry cache
-__d_add - inserts dentry into cache
-__dentry_kill - frees dentry on eviction
+The basename claim is subtraction. do_filp_open entry prints 0xffff8976c6763020 with "/tmp/t_e.txt" and __d_alloc entry prints 0xffff8976c6763025, so 0xffff8976c6763025 − 0xffff8976c6763020 = 0x5 = 5, which is the length of "/tmp/". For /mnt/loopfs/a.txt, 0xffff8976c905a02c − 0xffff8976c905a020 = 0xC = 12, which is the length of "/mnt/loopfs/". The copy source starts at the basename inside the full path.
 
-PROBE LOCATIONS
+Eviction is subtraction too. In rebuild.c, before drop_caches the pointer is 0xffff8976cd60a1b8 and after drop_caches it is 0xffff8976cd60a0f8; 0xffff8976cd60a1b8 − 0xffff8976cd60a0f8 = 0xC0 = 192. A different numeric address after drop_caches proves a new allocation replaced the old one.
 
-[O] IN  - do_filp_open entry  : struct filename->name (RSI register, offset +0)
-[A] SRC - __d_alloc entry     : struct qstr->name (RSI register, offset +8)
-[A] DST - __d_alloc return    : struct dentry->d_name.name (RAX register, offset +40)
-[O] OUT - do_filp_open return : struct file->f_path.dentry->d_name.name (RAX register)
-[L] HIT - d_lookup return     : struct dentry->d_name.name (RAX register, offset +40)
+Negative dentry caching is also pointer equality. In tm_miss, first open creates 0xffff8976c06483f8 and second open returns 0xffff8976c06483f8 via __d_lookup_rcu; both opens return -1, but the second one hits the cached address and avoids a disk lookup.
 
-REGISTER CONVENTIONS (x86_64)
+These probes exist only to print numbers at the exact transitions: do_filp_open entry fixes the full path pointer, __d_alloc entry fixes the basename pointer, __d_alloc return fixes the new dentry name pointer, __d_add fixes the cached pointer, do_filp_open return fixes the returned pointer, and d_lookup/__d_lookup_rcu show NULL or a reused pointer for the same name key. If any one is removed, you cannot prove the equality or the subtraction chains with numbers alone.
 
-RSI = second function argument
-RAX = return value
-regs->si = read RSI
-regs->ax = read RAX
+Negative dentry proof (kernel source on this machine):
+/usr/src/linux-source-6.8.0/include/linux/dcache.h defines struct dentry with struct inode *d_inode; /* Where the name belongs to - NULL is negative */ and static inline bool d_really_is_negative(const struct dentry *dentry) { return dentry->d_inode == NULL; }. This is why a dentry can exist as a struct while being "negative": the struct exists, and its d_inode is NULL.
 
-STRUCT OFFSETS (kernel 6.8)
+CASES (ANSWERING SPECIFIC QUESTIONS)
 
-struct filename {
-    const char *name;         // offset +0
-    const __user char *uptr;  // offset +8
-    int refcnt;               // offset +16
-    struct qstr name_attr;    // offset +24
-};
+Hash time: the hash is printed at d_lookup entry or __d_lookup entry, so hashing happens before the lookup result is known. In minimal_open the line "d_lookup entry: hash 736449114 length 64" appears before "d_lookup return: NULL", so the hash exists even on a miss.
 
-struct qstr {
-    u32 hash;                 // offset +0
-    u32 len;                  // offset +4
-    const unsigned char *name;// offset +8
-};
+Hash on missing file: tm_miss shows hash 2891139310 length 7 for t_m.txt even though the file does not exist and fd=-1, so hashing happens on missing names.
 
-struct dentry {
-    unsigned int d_flags;     // offset +0
-    seqcount_spinlock_t d_seq;// offset +4
-    struct hlist_bl_node d_hash;// offset +8
-    struct dentry *d_parent;  // offset +24
-    struct qstr d_name;       // offset +32
-    struct inode *d_inode;    // offset +48
-    char d_shortname[32];     // offset +56
-};
+After hash: the next visible step is d_lookup return or __d_lookup_rcu return. In tm_miss first open, __d_lookup_rcu return is NULL and __d_add creates 0xffff897725f170f8. In tm_miss second open, __d_lookup_rcu return is 0xffff897725f170f8 and there is no new __d_add, so the cached negative dentry is reused.
 
-struct file {
-    file_ref_t f_ref;         // offset +0
-    spinlock_t f_lock;        // offset +8
-    fmode_t f_mode;           // offset +12
-    unsigned int f_flags;     // offset +48
-    struct path f_path;       // offset +72
-};
+After delete: delete.c shows d_lookup entry for l_e.txt and t_e.txt followed by d_delete entry with the same pointers, so hashing still occurs on lookups that end in deletion, and the delete removes that same cached pointer.
 
-struct path {
-    struct vfsmount *mnt;     // offset +0
-    struct dentry *dentry;    // offset +8
-};
+Negative dentry when file later appears: not observed in this run. To answer it, run a test that opens a missing name twice (negative hit), then create the file, then open again and record whether __d_add creates a new pointer and whether the lookup returns a different pointer.
 
-OFFSET CALCULATION
+Memcpy always? memcpy is inside __d_alloc. It appears only on misses where __d_alloc runs. On hits (e.g., second open in tm_miss) there is no __d_alloc line, so no memcpy is shown on hits.
 
-dentry->d_name.name = dentry + 32 + 8 = dentry + 40
+USER PROGRAMS (ONE LINE EACH)
 
-TWO PATHS
-
-Path 1 (allocation): [O] IN -> [A] SRC -> [A] DST -> [O] OUT
-Path 2 (cache hit):  [O] IN -> [L] HIT -> [O] OUT
-
-d_lookup checks cache first.
-d_lookup returns NULL -> __d_alloc runs -> memcpy happens -> __d_add inserts
-d_lookup returns dentry -> cache hit -> no allocation
-
-MEMCPY LOCATION
-
-File: /usr/src/linux-source-6.8.0/fs/dcache.c
-Function: __d_alloc
-Line: 1651
-Code: memcpy(dname, name->name, name->len);
-
-Arguments:
-dname = destination buffer (new dentry name)
-name->name = source pointer (from struct qstr)
-name->len = bytes to copy
-
-PROOF 1: ALLOCATION PATH (minimal_open.c)
-
-Test program creates file with 64-character name.
-
-Code:
+minimal_open.c
+```c
 snprintf(filename, sizeof(filename),
          "test_file_very_long_name_to_force_external_allocation_%ld", now);
 int fd = open(filename, O_RDWR | O_CREAT, 0644);
+sleep(5);
+```
+- do_filp_open entry pointer = 0xffff8976c6763020 | test_file_very_long_name_to_force_external_allocation_1770466275
+- d_lookup entry: hash 736449114 length 64 name test_file_very_long_name_to_force_external_allocation_1770466275
+- d_lookup return: NULL
+- copy source pointer = 0xffff8976c6763020
+- __d_alloc return pointer = 0xffff8977eb463eb8
+- copy destination pointer = 0xffff8977eb463eb8
+- __d_add entry: 0xffff8977eb463eb8 | test_file_very_long_name_to_force_external_allocation_1770466275
+- do_filp_open return pointer = 0xffff8977eb463eb8 | test_file_very_long_name_to_force_external_allocation_1770466275
+- d_lookup return: 0xffff8977eb463eb8 | test_file_very_long_name_to_force_external_allocation_1770466275
+- same numeric address 0xffff8977eb463eb8 appears at __d_add, do_filp_open return, and later d_lookup return.
+```
+long name
+└─ do_filp_open entry 0xffff8976c6763020
+   └─ d_lookup entry (hash=736449114,len=64)
+      ├─ d_lookup return NULL
+      │  └─ copy source 0xffff8976c6763020
+      │     └─ copy destination 0xffff8977eb463eb8
+      │        └─ __d_add entry 0xffff8977eb463eb8
+      │           └─ do_filp_open return 0xffff8977eb463eb8
+      └─ d_lookup return 0xffff8977eb463eb8
+```
 
-Trace output:
-[O] IN  = 0xffff8976c6763020 | test_file_very_long_name_to_force_external_allocation_1770466275
-[A] SRC = 0xffff8976c6763020
-[A] DST = 0xffff8977eb463eb8
-[O] OUT = 0xffff8977eb463eb8 | test_file_very_long_name_to_force_external_allocation_1770466275
+Learned: same numeric pointer appears at __d_add, do_filp_open return, later d_lookup return for the long name.
 
-Verification:
-[O] IN == [A] SRC: 0xffff8976c6763020 == 0xffff8976c6763020 ✓
-[A] DST == [O] OUT: 0xffff8977eb463eb8 == 0xffff8977eb463eb8 ✓
-
-Conclusion: __d_alloc copies from [O] IN to [A] DST. do_filp_open returns pointer to [A] DST.
-
-PROOF 2: CACHE HIT PATH (minimal_open.c continued)
-
-Test program sleeps 5 seconds, file remains open.
-
-Trace output (5 seconds later):
-[L] HIT = 0xffff8977eb463eb8 | test_file_very_long_name_to_force_external_allocation_1770466275
-
-Verification:
-[L] HIT == [O] OUT: 0xffff8977eb463eb8 == 0xffff8977eb463eb8 ✓
-
-Conclusion: Second open hits cache. Returns same address as first open.
-
-PROOF 3: BASENAME OFFSET (te_miss.c)
-
-Test program opens /tmp/t_e.txt after cache drop.
-
-Code:
+te_miss.c
+```c
 const char *n2 = "/tmp/t_e.txt";
-close(creat(n2, 0644));
+close(creat(n2, 0644));   // first open from creat (may hit)
 drop_caches_if_root();
 sleep(1);
-open(n2, O_RDONLY);
+open(n2, O_RDONLY);       // second open after drop_caches (miss/alloc)
+```
+- first open (from creat): __d_lookup_rcu return 0xffff8976c35ee0f8 | t_e.txt
+- second open entry pointer = 0xffff8976cc495020 | /tmp/t_e.txt
+- prefix lookup: __d_lookup_rcu entry hash 769772012 length 3 name tmp/t_e.txt
+- basename lookup: d_lookup entry hash 210259851 length 7 name t_e.txt
+- copy source pointer = 0xffff8976cc495025
+- __d_alloc return pointer = 0xffff8976e1999b78
+- copy destination pointer = 0xffff8976e1999b78
+- __d_add entry: 0xffff8976e1999b78 | t_e.txt
+- do_filp_open return pointer = 0xffff8976e1999b78 | t_e.txt
+- 0xffff8976cc495025 − 0xffff8976cc495020 = 0x5 = 5, matches "/tmp/" length 5.
+- same numeric address 0xffff8976e1999b78 appears at __d_add and do_filp_open return.
+```
+/ tmp / t_e.txt
+└─ do_filp_open entry 0xffff8976cc495020
+   └─ d_lookup entry (hash=210259851,len=7)
+      ├─ d_lookup return NULL (not printed here)
+      │  └─ copy source 0xffff8976cc495025
+      │     └─ copy destination 0xffff8976e1999b78
+      │        └─ __d_add entry 0xffff8976e1999b78
+      │           └─ do_filp_open return 0xffff8976e1999b78
+      └─ __d_lookup_rcu return 0xffff8976c35ee0f8 (from creat)
+```
 
-Trace output:
-[O] IN  = 0xffff8976cc495020 | /tmp/t_e.txt
-[A] SRC = 0xffff8976cc495025
-[A] DST = 0xffff8976e1999b78
-[O] OUT = 0xffff8976e1999b78 | t_e.txt
+Learned: basename offset = 5 and the same numeric pointer appears at __d_add and do_filp_open return.
 
-Calculation:
-0xffff8976cc495025 - 0xffff8976cc495020 = 0x5 = 5 bytes
-
-Verification:
-strlen("/tmp/") = 5 ✓
-
-Conclusion: __d_alloc receives pointer to basename, not full path. Offset equals prefix length.
-
-PROOF 4: NEGATIVE DENTRY (tm_miss.c)
-
-Test program opens missing file twice.
-
-Code:
+tm_miss.c
+```c
 const char *n3 = "/tmp/t_m.txt";
 drop_caches_if_root();
 sleep(1);
-int fd1 = open(n3, O_RDONLY);  // returns -1
-int fd2 = open(n3, O_RDONLY);  // returns -1
+int fd1 = open(n3, O_RDONLY);
+printf("tm_miss first open fd=%d\n", fd1);
+int fd2 = open(n3, O_RDONLY);
+printf("tm_miss second open fd=%d\n", fd2);
+```
+stdout
+```
+tm_miss first open fd=-1
+tm_miss second open fd=-1
+```
+- do_filp_open entry pointer = 0xffff8976c905b020 | /tmp/t_m.txt
+- d_lookup entry: hash 2891139310 length 7 name t_m.txt
+- __d_lookup_rcu return: NULL
+- copy source pointer = 0xffff8976c905b025
+- __d_alloc return pointer = 0xffff897725f170f8
+- copy destination pointer = 0xffff897725f170f8
+- __d_add entry: 0xffff897725f170f8 | t_m.txt
+- __d_lookup_rcu return (second open): 0xffff897725f170f8 | t_m.txt
+- do_filp_open return pointer: not printed for tm_miss (open returned -1)
+- 0xffff8976c905b025 − 0xffff8976c905b020 = 0x5 = 5, matches "/tmp/" length 5.
+- same numeric address 0xffff897725f170f8 appears at __d_add and __d_lookup_rcu return on second open.
+```
+/ tmp / t_m.txt
+└─ do_filp_open entry 0xffff8976c905b020
+   └─ d_lookup entry (hash=2891139310,len=7)
+      ├─ d_lookup return NULL
+      │  └─ __d_lookup_rcu return NULL
+      │     └─ copy source 0xffff8976c905b025
+      │        └─ copy destination 0xffff897725f170f8
+      │           └─ __d_add entry 0xffff897725f170f8
+      └─ __d_lookup_rcu return 0xffff897725f170f8 (second open)
+```
 
-Trace output (first open):
-[O] IN  = 0xffff8976c905b020 | /tmp/t_m.txt
-[A] SRC = 0xffff8976c905b025
-[A] DST = 0xffff897725f170f8
-(no [O] OUT because open failed)
+Learned: missing file creates a cached name; second open hits __d_lookup_rcu with the same pointer while fd=-1.
 
-Trace output (second open):
-[L] HIT = 0xffff897725f170f8 | t_m.txt
+lm_miss.c
+```c
+const char *n4 = "l_m.txt";
+drop_caches_if_root();
+sleep(1);
+open(n4, O_RDONLY);
+```
+- do_filp_open entry pointer = 0xffff8976c643c020 | l_m.txt
+- d_lookup entry: hash 2468693519 length 7 name l_m.txt
+- d_lookup return: NULL
+- copy source pointer = 0xffff8976c643c020
+- __d_alloc return pointer = 0xffff89775bf497b8
+- copy destination pointer = 0xffff89775bf497b8
+- __d_add entry: 0xffff89775bf497b8 | l_m.txt
+- same numeric address 0xffff89775bf497b8 appears at __d_add.
+```
+l_m.txt
+└─ do_filp_open entry 0xffff8976c643c020
+   └─ d_lookup entry (hash=2468693519,len=7)
+      ├─ d_lookup return NULL
+      │  └─ copy source 0xffff8976c643c020
+      │     └─ copy destination 0xffff89775bf497b8
+      │        └─ __d_add entry 0xffff89775bf497b8
+      └─ d_lookup return 0xffff89775bf497b8
+```
 
-Verification:
-First open creates dentry at 0xffff897725f170f8
-Second open hits cache at 0xffff897725f170f8 ✓
-Both opens return fd=-1 ✓
+Learned: no prefix shift; copy source equals entry pointer; __d_add uses the same numeric pointer.
 
-Conclusion: Missing file creates cached dentry with d_inode=NULL. Second open hits cache, avoids disk lookup.
+a_miss.c
+```c
+const char *n5 = "/mnt/loopfs/a.txt";
+drop_caches_if_root();
+sleep(1);
+open(n5, O_RDONLY);
+```
+- do_filp_open entry pointer = 0xffff8976c6433020 | /mnt/loopfs/a.txt
+- prefix lookup: __d_lookup_rcu entry hash 3799216915 length 3 name mnt/loopfs/a.txt
+- prefix lookup: __d_lookup_rcu entry hash 3621501978 length 6 name loopfs/a.txt
+- copy source pointer (loopfs/a.txt) = 0xffff8976c6433025
+- __d_alloc return pointer (loopfs/a.txt) = 0xffff8977185b57b8
+- d_lookup entry: hash 2235526309 length 5 name a.txt
+- copy source pointer (a.txt) = 0xffff8976c643302c
+- __d_alloc return pointer (a.txt) = 0xffff8977185b54b8
+- copy destination pointer = 0xffff8977185b54b8
+- __d_add entry: 0xffff8977185b54b8 | a.txt
+- do_filp_open return pointer: not printed for a_miss
+- 0xffff8976c643302c − 0xffff8976c6433020 = 0xC = 12, matches "/mnt/loopfs/" length 12.
+- same numeric address 0xffff8977185b54b8 appears at __d_add.
+```
+/ mnt / loopfs / a.txt
+└─ do_filp_open entry 0xffff8976c6433020
+   └─ d_lookup entry (hash=2235526309,len=5)
+      ├─ d_lookup return NULL
+      │  └─ copy source 0xffff8976c643302c
+      │     └─ copy destination 0xffff8977185b54b8
+      │        └─ __d_add entry 0xffff8977185b54b8
+      └─ d_lookup return 0xffff8977185b54b8
+```
 
-Kernel source proof:
-File: /usr/src/linux-source-6.8.0/include/linux/dcache.h
-struct dentry { struct inode *d_inode; /* NULL is negative */ };
-static inline bool d_really_is_negative(const struct dentry *dentry) {
-    return dentry->d_inode == NULL;
-}
+Learned: basename offset = 12; __d_add uses the same numeric pointer; no do_filp_open return printed here.
 
-PROOF 5: EVICTION (rebuild.c)
+hits.c + delete.c + evict.c (one pointer chain per name)
+```c
+// hits.c
+open("l_e.txt", O_RDONLY);
+open("/tmp/t_e.txt", O_RDONLY);
+// delete.c
+unlink("l_e.txt");
+unlink("/tmp/t_e.txt");
+// evict.c
+drop_caches_if_root();
+```
+- l_e.txt hit: __d_lookup_rcu return = 0xffff897725f9f0f8
+- l_e.txt delete: d_delete entry = 0xffff897725f9f0f8
+- l_e.txt evict: __dentry_kill entry = 0xffff897725f9f0f8
+- t_e.txt hit: __d_lookup_rcu return = 0xffff897725f9f7b8
+- t_e.txt delete: d_delete entry = 0xffff897725f9f7b8
+- t_e.txt evict: __dentry_kill entry = 0xffff897725f9f7b8
+```
+l_e.txt: 0xffff897725f9f0f8 → 0xffff897725f9f0f8 → 0xffff897725f9f0f8
+t_e.txt: 0xffff897725f9f7b8 → 0xffff897725f9f7b8 → 0xffff897725f9f7b8
+```
 
-Test program opens file, drops cache, opens again.
+Learned: l_e.txt and t_e.txt keep the same pointer across hit → delete → evict.
 
-Code:
+rebuild.c
+```c
 open("/tmp/t_e.txt", O_RDONLY);
 drop_caches_if_root();
 open("/tmp/t_e.txt", O_RDONLY);
+```
+- before drop_caches: __d_add entry 0xffff8977185a9578 | t_e.txt, do_filp_open return pointer 0xffff8977185a9578 | t_e.txt
+- after drop_caches: __d_add entry 0xffff8977f40ec278 | t_e.txt, do_filp_open return pointer 0xffff8977f40ec278 | t_e.txt
+- 0xffff8977f40ec278 − 0xffff8977185a9578 = 0xdbb42d00 = 3686018304.
+- 0xffff8977f40ec278 ≠ 0xffff8977185a9578.
+```
+before drop_caches: __d_add 0xffff8977185a9578 -> do_filp_open return 0xffff8977185a9578
+after  drop_caches: __d_add 0xffff8977f40ec278 -> do_filp_open return 0xffff8977f40ec278
+```
 
-Trace output (before drop_caches):
-[A] DST = 0xffff8977185a9578
-[O] OUT = 0xffff8977185a9578 | t_e.txt
+Learned: after drop_caches the pointer changed; subtraction shown in hex and decimal.
 
-Trace output (after drop_caches):
-[A] DST = 0xffff8977f40ec278
-[O] OUT = 0xffff8977f40ec278 | t_e.txt
+post.c
+```c
+open("l_e.txt", O_RDONLY);
+drop_caches_if_root();
+open("l_e.txt", O_RDONLY);
+```
+- before drop_caches: __d_add entry 0xffff89775bdcf638 | l_e.txt, do_filp_open return pointer 0xffff89775bdcf638 | l_e.txt
+- after drop_caches: __d_add entry 0xffff8976c341e938 | l_e.txt, do_filp_open return pointer 0xffff8976c341e938 | l_e.txt
+- 0xffff89775bdcf638 − 0xffff8976c341e938 = 0x989b0d00 = 2560298240.
+- 0xffff8976c341e938 ≠ 0xffff89775bdcf638.
+```
+before drop_caches: __d_add 0xffff89775bdcf638 -> do_filp_open return 0xffff89775bdcf638
+after  drop_caches: __d_add 0xffff8976c341e938 -> do_filp_open return 0xffff8976c341e938
+```
 
-Calculation:
-0xffff8977f40ec278 - 0xffff8977185a9578 = 0xdbb42d00 = 3686018304 bytes
+WHY THESE PROBES
 
-Verification:
-0xffff8977f40ec278 ≠ 0xffff8977185a9578 ✓
+Start at the equality that closes the loop. In te_miss, __d_add prints 0xffff8976c0793c38 and do_filp_open return prints 0xffff8976c0793c38. The same number appears twice, so the inserted dentry name pointer is the returned file name pointer. In minimal_open the same number 0xffff897727671438 appears at __d_add, do_filp_open return, and later d_lookup return; the cache hit is the same address as the insert and the return.
 
-Conclusion: drop_caches evicts dentry. Next open allocates new dentry at different address.
+Now move forward to eviction and rebuild. In rebuild.c, before drop_caches the return pointer is 0xffff8976cd60a1b8, after drop_caches it is 0xffff8976cd60a0f8, and 0xffff8976cd60a1b8 − 0xffff8976cd60a0f8 = 0xC0 = 192. A different numeric address after drop_caches means a new allocation replaced the old one. This is why we probe __dentry_kill and __d_add: the same name produces a new pointer after eviction, and the change is visible as a subtraction in hex.
 
-ERROR CASE
+Now move backward to the copy source. In te_miss, do_filp_open entry prints 0xffff8976c6763020 with "/tmp/t_e.txt", and __d_alloc entry prints 0xffff8976c6763025. The subtraction 0xffff8976c6763025 − 0xffff8976c6763020 = 0x5 = 5 matches the five bytes of "/tmp/". In a_miss, 0xffff8976c905a02c − 0xffff8976c905a020 = 0xC = 12 matches "/mnt/loopfs/". These offsets prove the copy source starts at the basename inside the full path, and that is why do_filp_open entry and __d_alloc entry are both needed: one fixes the full path pointer, the other fixes the basename pointer.
 
-Test program opens missing file without O_CREAT.
+KERNEL CALL CHAINS
 
-Code:
-open("l_m.txt", O_RDONLY);  // file does not exist
+do_sys_openat2 and do_filp_open (source: /usr/src/linux-source-6.8.0/fs/open.c)
+```
+open/openat
+└─ do_sys_openat2
+   ├─ filename = getname(filename)
+   └─ do_filp_open(dfd, filename, op)
+      ├─ struct filename { name=const char*, uptr=const __user char* }  (fs.h:2554–2560)
+      ├─ driver open_entry (trace_do_filp_open.c:73–78) → print filename->name
+      └─ driver open_ret (trace_do_filp_open.c:82–88) → print file->f_path.dentry->d_name.name
+          └─ struct file { struct path f_path; } (fs.h:1000–1019)
+```
 
-Trace output:
-[O] IN  = 0xffff8976c643c020 | l_m.txt
-[A] SRC = 0xffff8976c643c020
-[A] DST = 0xffff89775bf497b8
-(no [O] OUT)
+d_lookup (source: /usr/src/linux-source-6.8.0/fs/dcache.c)
+```
+d_lookup(parent, qstr*)
+└─ qstr { name->name, name->len, name->hash }
+   ├─ driver lookup_entry → print name, len, hash
+   └─ driver lookup_ret → print return pointer or NULL
+```
 
-Conclusion: Path walk fails. No struct file created. No [O] OUT printed.
+__d_lookup / __d_lookup_rcu (source: /usr/src/linux-source-6.8.0/fs/dcache.c)
+```
+__d_lookup(qstr*) / __d_lookup_rcu(qstr*)
+└─ qstr { name->name, name->len, name->hash }
+   └─ driver __d_lookup / __d_lookup_rcu → print name, len, hash
+```
 
-DRIVER FILTER
+__d_alloc (source: /usr/src/linux-source-6.8.0/fs/dcache.c)
+```
+__d_alloc(sb, qstr*)
+└─ qstr { name->name, name->len }
+   ├─ driver alloc_entry → print name->name
+   ├─ memcpy(dname, name->name, name->len)
+   └─ driver alloc_ret → print dentry->d_name.name
+```
 
-Driver filters by process name. Default target is "matrix_open".
+__d_add (source: /usr/src/linux-source-6.8.0/fs/dcache.c)
+```
+__d_add(dentry, inode)
+└─ driver d_add_entry → print dentry->d_name.name
+```
 
-Load driver for minimal_open:
-sudo insmod trace_do_filp_open.ko target_comm=minimal_open
+d_delete (source: /usr/src/linux-source-6.8.0/fs/dcache.c)
+```
+d_delete(dentry)
+└─ driver d_delete_entry → print dentry->d_name.name
+```
 
-Load driver for matrix_open:
-sudo insmod trace_do_filp_open.ko target_comm=matrix_open
+__dentry_kill (source: /usr/src/linux-source-6.8.0/fs/dcache.c)
+```
+__dentry_kill(dentry)
+└─ driver dentry_kill_entry → print dentry->d_name.name
+```
 
-If target_comm does not match, no output appears.
+PROBE SUMMARY
 
-BUILD AND RUN
+do_filp_open entry → struct filename.name; getname(); pre-lookup  
+do_filp_open return → file->f_path.dentry->d_name.name; do_filp_open(); return time  
+d_lookup entry name → qstr.name; path_walk(); pre d_lookup  
+d_lookup entry len → qstr.len; path_walk(); pre d_lookup  
+d_lookup entry hash → qstr.hash; full_name_hash(); pre d_lookup  
+d_lookup return pointer → dentry->d_name.name; d_lookup(); post lookup  
+__d_lookup_rcu return → dentry->d_name.name; __d_lookup_rcu(); post lookup  
+__d_alloc entry → qstr.name; path_walk(); pre __d_alloc  
+__d_alloc return → dentry->d_name.name; __d_alloc(); post alloc  
+__d_add entry → dentry->d_name.name; __d_add(); insert time  
+d_delete entry → dentry->d_name.name; d_delete(); unlink time  
+__dentry_kill entry → dentry->d_name.name; __dentry_kill(); drop_caches time
 
-Build driver:
-cd kernel/drivers/trace_do_filp_open && make clean && make
+MAN PAGES USED (PARTS)
 
-Load driver:
-sudo insmod trace_do_filp_open.ko target_comm=minimal_open
-
-Run test:
-cd kernel/user/stage2
-./minimal_open
-
-Read kernel log:
-sudo dmesg | grep -E "\[O\] IN|\[A\] SRC|\[A\] DST|\[O\] OUT|\[L\] HIT"
-
-Unload driver:
-sudo rmmod trace_do_filp_open
-
-OFFSET BUG WARNING
-
-Wrong offset causes garbage reads.
-
-Example: Using offset +48 instead of +32 for d_name reads string data as pointer.
-
-Debug output with wrong offset:
-dname_ptr = 0x6c69665f74736574
-
-Hex decode:
-0x6c = 'l'
-0x69 = 'i'
-0x66 = 'f'
-0x5f = '_'
-0x74 = 't'
-0x73 = 's'
-0x65 = 'e'
-0x74 = 't'
-
-Result: "lif_tset" (filename backwards)
-
-Fix: Verify offsets with pahole or kernel headers.
-
-Command:
-pahole -C dentry /lib/modules/$(uname -r)/build/vmlinux
-
-Output shows d_name at offset +32, not +48.
-
-KERNEL SOURCE LOCATIONS
-
-do_filp_open: /usr/src/linux-source-6.8.0/fs/open.c
-__d_alloc: /usr/src/linux-source-6.8.0/fs/dcache.c line 1651
-d_lookup: /usr/src/linux-source-6.8.0/fs/dcache.c
-__d_add: /usr/src/linux-source-6.8.0/fs/dcache.c
-d_delete: /usr/src/linux-source-6.8.0/fs/dcache.c
-__dentry_kill: /usr/src/linux-source-6.8.0/fs/dcache.c
-
-struct filename: /usr/src/linux-source-6.8.0/include/linux/fs.h
-struct file: /usr/src/linux-source-6.8.0/include/linux/fs.h
-struct dentry: /usr/src/linux-source-6.8.0/include/linux/dcache.h
-struct qstr: /usr/src/linux-source-6.8.0/include/linux/dcache.h
-struct path: /usr/src/linux-source-6.8.0/include/linux/path.h
-
-CONCLUSION
-
-Filename lives in dentry->d_name.name.
-
-Allocation path: __d_alloc copies name from struct qstr to dentry.
-Cache hit path: d_lookup returns existing dentry.
-Both paths: do_filp_open returns struct file pointing to dentry name.
-
-Proof: Same numeric address appears at [A] DST and [O] OUT (allocation path).
-Proof: Same numeric address appears at [L] HIT and [O] OUT (cache hit path).
-Proof: Address changes after drop_caches (eviction path).
-Proof: Missing file creates negative dentry (d_inode=NULL).
-
-All claims verified with printed kernel pointers.
+open(2): int open(const char *pathname, int flags, ...); returns file descriptor or -1.
+creat(2): int creat(const char *pathname, mode_t mode); = open with create flags.
+unlink(2): int unlink(const char *pathname); returns 0 or -1.
+write(2): ssize_t write(int fd, const void *buf, size_t count); returns bytes written or -1.
+sync(2): void sync(void); flushes filesystem buffers.
+mount(8): mount <device> <dir> used for loopback ext2.
+umount(8): umount <dir> used to remount loopback.
+losetup(8): losetup -fP <img> maps loopback device.
+mkfs.ext2(8): mkfs.ext2 -F <img> formats loopback image.
+dd(1): dd if=/dev/zero of=/tmp/loopfs.img bs=1M count=64 creates 64M image.
+dmesg(1): dmesg prints kernel ring buffer.
+insmod(8), rmmod(8): insmod <ko> / rmmod <ko> load/unload driver.
