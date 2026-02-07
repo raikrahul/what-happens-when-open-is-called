@@ -221,79 +221,79 @@ TEST 2: MATRIX (split programs)
 FILE A (t_e.txt, first open after drop_caches):
 Why: clean miss path with a /tmp prefix and offset +5.
 Run: ./te_miss
-- do_filp_open entry pointer = 0xffff8b1491175020 | /tmp/t_e.txt
+- do_filp_open entry pointer = 0xffff8b148256c020 | /tmp/t_e.txt
 - d_lookup entry hash 3583106372 len 7 name t_e.txt
 - d_lookup return: NULL
-- __d_alloc entry pointer = 0xffff8b1491175025
-- __d_alloc return pointer = 0xffff8b148a129038
-- __d_add entry pointer = 0xffff8b148a129038 | t_e.txt
-- do_filp_open return pointer = 0xffff8b148a129038 | t_e.txt
-- offset check: (0xffff8b1491175020 + 5) == 0xffff8b1491175025
+- __d_alloc entry pointer = 0xffff8b148256c025
+- __d_alloc return pointer = 0xffff8b14d0cc60f8
+- __d_add entry pointer = 0xffff8b14d0cc60f8 | t_e.txt
+- do_filp_open return pointer = 0xffff8b14d0cc60f8 | t_e.txt
+- offset check: (0xffff8b148256c020 + 5) == 0xffff8b148256c025
 
 FILE B (t_m.txt, missing):
 Why: miss+insert for a missing /tmp name.
 Run: ./tm_miss
-- do_filp_open entry pointer = 0xffff8b1489ae4020 | /tmp/t_m.txt
+- do_filp_open entry pointer = 0xffff8b1480ef5020 | /tmp/t_m.txt
 - d_lookup entry hash 502501587 len 7 name t_m.txt
 - d_lookup return: NULL
-- __d_alloc return pointer = 0xffff8b14d0f037b8
-- __d_add entry pointer = 0xffff8b14d0f037b8 | t_m.txt
+- __d_alloc return pointer = 0xffff8b148d58d3f8
+- __d_add entry pointer = 0xffff8b148d58d3f8 | t_m.txt
 
 FILE C (l_m.txt, missing):
 Why: miss+insert with no prefix (alloc entry equals string pointer).
 Run: ./lm_miss
-- do_filp_open entry pointer = 0xffff8b148eeb3020 | l_m.txt
+- do_filp_open entry pointer = 0xffff8b1482462020 | l_m.txt
 - d_lookup entry hash 2257632620 len 7 name l_m.txt
 - d_lookup return: NULL
-- __d_alloc return pointer = 0xffff8b148042adb8
-- __d_add entry pointer = 0xffff8b148042adb8 | l_m.txt
+- __d_alloc return pointer = 0xffff8b14a70b6278
+- __d_add entry pointer = 0xffff8b14a70b6278 | l_m.txt
 
 FILE D (a.txt, loopback ext2):
 Why: same flow on ext2 with short name and /mnt/loopfs/ offset +12.
 Run: ./a_miss
-- do_filp_open entry pointer = 0xffff8b148256e020 | /mnt/loopfs/a.txt
-- d_lookup entry hash 1021948357 len 5 name a.txt
+- do_filp_open entry pointer = 0xffff8b148256b020 | /mnt/loopfs/a.txt
+- d_lookup entry hash 2244109168 len 5 name a.txt
 - d_lookup return: NULL
-- __d_alloc entry pointer = 0xffff8b148256e02c
-- __d_alloc return pointer = 0xffff8b148d7ad4b8
-- __d_add entry pointer = 0xffff8b148d7ad4b8 | a.txt
-- do_filp_open return pointer = 0xffff8b148d7ad4b8 | a.txt
-- offset check: (0xffff8b148256e020 + 12) == 0xffff8b148256e02c
+- __d_alloc entry pointer = 0xffff8b148256b02c
+- __d_alloc return pointer = 0xffff8b14d0cc8e78
+- __d_add entry pointer = 0xffff8b14d0cc8e78 | a.txt
+- do_filp_open return pointer = 0xffff8b14d0cc8e78 | a.txt
+- offset check: (0xffff8b148256b020 + 12) == 0xffff8b148256b02c
 
 CACHE HIT (before deletion):
 Why: show pointer reuse on hit.
-Run: ./hits
-- d_lookup return pointer = 0xffff8b148d7a7938 | l_e.txt
-- d_lookup return pointer = 0xffff8b148d7a71b8 | t_e.txt
+Run: ./evict (pre-eviction lookup)
+- d_lookup return pointer = 0xffff8b149e4886f8 | l_e.txt
+- d_lookup return pointer = 0xffff8b149e488cf8 | t_e.txt
 
 DELETION (unlink):
 Why: show d_delete removal for the same pointers.
 Run: ./delete
-- d_delete entry = 0xffff8b148d7a7938 | l_e.txt
-- d_delete entry = 0xffff8b148d7a71b8 | t_e.txt
+- d_delete entry = 0xffff8b149e4886f8 | l_e.txt
+- d_delete entry = 0xffff8b149e488cf8 | t_e.txt
 
 EVICTION (drop_caches):
 Why: show __dentry_kill for cached names.
 Run: ./evict
 - do_filp_open entry/return for /proc/sys/vm/drop_caches
-- __dentry_kill entry = 0xffff8b148d7a7938 | l_e.txt
-- __dentry_kill entry = 0xffff8b148d7a71b8 | t_e.txt
+- __dentry_kill entry = 0xffff8b149e4886f8 | l_e.txt
+- __dentry_kill entry = 0xffff8b149e488cf8 | t_e.txt
 
 REBUILD (after eviction, t_e.txt):
 Why: show new or reused pointer after eviction.
 Run: ./rebuild
 - d_lookup return: NULL
-- __d_alloc return pointer = 0xffff8b1484f8cb78
-- __d_add entry pointer = 0xffff8b1484f8cb78 | t_e.txt
-- do_filp_open return pointer = 0xffff8b1484f8cb78 | t_e.txt
-- inequality check: 0xffff8b1484f8cb78 != 0xffff8b148d7a71b8
+- __d_alloc return pointer = 0xffff8b14a712db78
+- __d_add entry pointer = 0xffff8b14a712db78 | t_e.txt
+- do_filp_open return pointer = 0xffff8b14a712db78 | t_e.txt
+- inequality check: 0xffff8b14a712db78 != 0xffff8b149e488cf8
 
 POST-EVICTION LOOKUP (l_e.txt):
 Why: compare post-eviction pointer to pre-eviction pointer.
 Run: ./post
 - __d_lookup_rcu entry: hash 1845489866 length 7 name l_e.txt
-- do_filp_open return pointer = 0xffff8b14805a3c38 | l_e.txt
-- inequality check: 0xffff8b14805a3c38 != 0xffff8b148d7a7938
+- do_filp_open return pointer = 0xffff8b148a31f878 | l_e.txt
+- inequality check: 0xffff8b148a31f878 != 0xffff8b149e4886f8
 
 Why these commands exist (do not skip):
 - `sudo dmesg -C` clears the kernel ring buffer so the next lines are only from this run.

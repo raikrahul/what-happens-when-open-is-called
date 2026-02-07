@@ -94,6 +94,8 @@ Stage 1: https://raikrahul.github.io/what-happens-when-open-is-called/stage1.htm
 Stage 2 Entry: https://raikrahul.github.io/what-happens-when-open-is-called/stage2.html
 Worksheet: https://raikrahul.github.io/what-happens-when-open-is-called/articles/worksheet_stage2_return.html
 
+Problem statement and numeric example: prove, using only printed pointers and hashes, that the user‑space filename string becomes a kernel pointer, that the basename pointer is a fixed offset inside that kernel buffer, that the name bytes are copied into dentry name storage, and that the cache hit reuses the same pointer. The run numbers are: do_filp_open entry pointer for /tmp/t_e.txt is 0xffff8b148256c020, and __d_alloc entry pointer is 0xffff8b148256c025, so 0xffff8b148256c025 − 0xffff8b148256c020 = 0x5 = 5, and the prefix length of “/tmp/” is 5, so the copy source starts exactly at the basename. For /mnt/loopfs/a.txt, do_filp_open entry pointer is 0xffff8b148256b020 and __d_alloc entry pointer is 0xffff8b148256b02c, so 0xffff8b148256b02c − 0xffff8b148256b020 = 0xC = 12, and the prefix length of “/mnt/loopfs/” is 12. For t_e.txt, __d_alloc return pointer is 0xffff8b14d0cc60f8, __d_add entry pointer is 0xffff8b14d0cc60f8, and do_filp_open return pointer is 0xffff8b14d0cc60f8, so the copied name pointer is reused as the file’s name pointer. For the cache hit before eviction, d_lookup return pointer for l_e.txt is 0xffff8b149e4886f8 and for t_e.txt is 0xffff8b149e488cf8, and those same pointers appear in d_delete and __dentry_kill, so the cache hit, delete, and eviction refer to the same dentry name addresses.
+
 Programs
 
 minimal_open.c</pre>
@@ -158,15 +160,15 @@ Memcpy proof anchor
 Run A: split programs (root, drop_caches enabled)
 
 Latest split run values (2026-02-07)
-te_miss: do_filp_open entry pointer = 0xffff8b1491175020 | /tmp/t_e.txt; d_lookup entry hash 3583106372 len 7 name t_e.txt; d_lookup return NULL; __d_alloc entry pointer = 0xffff8b1491175025; __d_alloc return pointer = 0xffff8b148a129038; __d_add entry pointer = 0xffff8b148a129038 | t_e.txt; do_filp_open return pointer = 0xffff8b148a129038 | t_e.txt.
-tm_miss: do_filp_open entry pointer = 0xffff8b1489ae4020 | /tmp/t_m.txt; d_lookup entry hash 502501587 len 7 name t_m.txt; d_lookup return NULL; __d_alloc entry pointer = 0xffff8b1489ae4025; __d_alloc return pointer = 0xffff8b14d0f037b8; __d_add entry pointer = 0xffff8b14d0f037b8 | t_m.txt.
-lm_miss: do_filp_open entry pointer = 0xffff8b148eeb3020 | l_m.txt; d_lookup entry hash 2257632620 len 7 name l_m.txt; d_lookup return NULL; __d_alloc entry pointer = 0xffff8b148eeb3020; __d_alloc return pointer = 0xffff8b148042adb8; __d_add entry pointer = 0xffff8b148042adb8 | l_m.txt.
-a_miss: do_filp_open entry pointer = 0xffff8b148256e020 | /mnt/loopfs/a.txt; d_lookup entry hash 1021948357 len 5 name a.txt; d_lookup return NULL; __d_alloc entry pointer = 0xffff8b148256e02c; __d_alloc return pointer = 0xffff8b148d7ad4b8; __d_add entry pointer = 0xffff8b148d7ad4b8 | a.txt; do_filp_open return pointer = 0xffff8b148d7ad4b8 | a.txt.
-hits: d_lookup return pointer = 0xffff8b148d7a7938 | l_e.txt; d_lookup return pointer = 0xffff8b148d7a71b8 | t_e.txt.
-delete: d_delete entry = 0xffff8b148d7a7938 | l_e.txt; d_delete entry = 0xffff8b148d7a71b8 | t_e.txt.
-evict: __dentry_kill entry = 0xffff8b148d7a7938 | l_e.txt; __dentry_kill entry = 0xffff8b148d7a71b8 | t_e.txt.
-rebuild: __d_alloc return pointer = 0xffff8b1484f8cb78; __d_add entry pointer = 0xffff8b1484f8cb78 | t_e.txt; do_filp_open return pointer = 0xffff8b1484f8cb78 | t_e.txt.
-post: do_filp_open return pointer = 0xffff8b14805a3c38 | l_e.txt.
+te_miss: do_filp_open entry pointer = 0xffff8b148256c020 | /tmp/t_e.txt; d_lookup entry hash 3583106372 len 7 name t_e.txt; d_lookup return NULL; __d_alloc entry pointer = 0xffff8b148256c025; __d_alloc return pointer = 0xffff8b14d0cc60f8; __d_add entry pointer = 0xffff8b14d0cc60f8 | t_e.txt; do_filp_open return pointer = 0xffff8b14d0cc60f8 | t_e.txt.
+tm_miss: do_filp_open entry pointer = 0xffff8b1480ef5020 | /tmp/t_m.txt; d_lookup entry hash 502501587 len 7 name t_m.txt; d_lookup return NULL; __d_alloc entry pointer = 0xffff8b1480ef5025; __d_alloc return pointer = 0xffff8b148d58d3f8; __d_add entry pointer = 0xffff8b148d58d3f8 | t_m.txt.
+lm_miss: do_filp_open entry pointer = 0xffff8b1482462020 | l_m.txt; d_lookup entry hash 2257632620 len 7 name l_m.txt; d_lookup return NULL; __d_alloc entry pointer = 0xffff8b1482462020; __d_alloc return pointer = 0xffff8b14a70b6278; __d_add entry pointer = 0xffff8b14a70b6278 | l_m.txt.
+a_miss: do_filp_open entry pointer = 0xffff8b148256b020 | /mnt/loopfs/a.txt; d_lookup entry hash 2244109168 len 5 name a.txt; d_lookup return NULL; __d_alloc entry pointer = 0xffff8b148256b02c; __d_alloc return pointer = 0xffff8b14d0cc8e78; __d_add entry pointer = 0xffff8b14d0cc8e78 | a.txt; do_filp_open return pointer = 0xffff8b14d0cc8e78 | a.txt.
+cache hit (pre-eviction): d_lookup return pointer = 0xffff8b149e4886f8 | l_e.txt; d_lookup return pointer = 0xffff8b149e488cf8 | t_e.txt.
+delete: d_delete entry = 0xffff8b149e4886f8 | l_e.txt; d_delete entry = 0xffff8b149e488cf8 | t_e.txt.
+evict: __dentry_kill entry = 0xffff8b149e4886f8 | l_e.txt; __dentry_kill entry = 0xffff8b149e488cf8 | t_e.txt.
+rebuild: __d_alloc return pointer = 0xffff8b14a712db78; __d_add entry pointer = 0xffff8b14a712db78 | t_e.txt; do_filp_open return pointer = 0xffff8b14a712db78 | t_e.txt.
+post: do_filp_open return pointer = 0xffff8b148a31f878 | l_e.txt.
 
 l_m.txt miss, insert.</pre>
 <pre><code class="language-c">char n4[] = "l_m.txt";
