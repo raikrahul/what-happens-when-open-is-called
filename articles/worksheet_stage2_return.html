@@ -1,0 +1,436 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+  <meta charset="UTF-8">
+  <title>Stage 2 Return - Kernel Filename Tracing (Copy vs Cache)</title>
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/styles/github.min.css">
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/highlight.min.js"></script>
+  <script>window.addEventListener('DOMContentLoaded', () => { if (window.hljs) hljs.highlightAll(); });</script>
+  <style>
+    body {
+      background: #fff;
+      color: #000;
+      font-family: monospace;
+      font-size: 13px;
+      line-height: 1.2;
+      padding: 0 5px;
+      margin: 0;
+    }
+
+    pre {
+      margin: 0.5em 0;
+      white-space: pre-wrap;
+      word-wrap: break-word;
+    }
+    pre code {
+      display: block;
+      white-space: pre;
+    }
+
+    h1,
+    h2,
+    h3,
+    h4,
+    h5,
+    h6 {
+      margin: 0.5em 0 0.2em 0;
+      font-size: 1em;
+      font-weight: bold;
+      text-transform: uppercase;
+    }
+
+    p,
+    ul,
+    ol {
+      margin: 0.5em 0;
+    }
+
+    hr {
+      margin: 0.5em 0;
+      border: none;
+      border-bottom: 1px dashed #000;
+    }
+
+    .blank {
+      display: inline-block;
+      min-width: 150px;
+      border-bottom: 1px solid #000;
+      color: #000;
+    }
+
+    @media print {
+
+      button,
+      div[style*="text-align: right"] {
+        display: none !important;
+      }
+
+      body {
+        padding: 0;
+      }
+    }
+  </style>
+</head>
+
+<body>
+  <div style="text-align: right; font-size: 10px; padding: 2px;">
+    <span><a href="../index.html" style="color: #666; text-decoration: none;">[HOME]</a></span>
+    <button onclick="window.print()" style="font-size: 10px; cursor: pointer;">Print</button>
+  </div>
+  <div class="content">
+    <pre style="white-space: pre-wrap; word-wrap: break-word; margin: 0; font-family: monospace;">This worksheet is built for one kind of proof: choose the cached name pointer printed at `__d_add`, then trace it forward to `do_filp_open return` and later `d_lookup` hits, and trace it backward to `__d_alloc return` and the copy source. Every step is either “same address”, “NULL”, or a subtraction that equals a path prefix length. The blanks are arranged around `__d_alloc` and `__d_add` because those are the only steps where the name address can change. Fill the numbers first, then draw the tree from the middle out; that is the only order that prevents hand‑waving.
+
+Trace Map
+What we trace and where it lives:
+trace_do_filp_open driver: kernel/drivers/trace_do_filp_open/trace_do_filp_open.c
+do_filp_open: /usr/src/linux-source-6.8.0/fs/open.c
+d_lookup, __d_lookup, __d_lookup_rcu, __d_alloc, __d_add, d_delete, __dentry_kill: /usr/src/linux-source-6.8.0/fs/dcache.c
+</pre>
+<pre><code class="language-text">[do_filp_open entry]   struct filename-&gt;name
+└─[d_lookup entry]     qstr-&gt;{name,len,hash}
+  ├─[__d_lookup entry] qstr-&gt;{name,len,hash}
+  ├─[__d_lookup_rcu]   qstr-&gt;{name,len,hash}
+  └─[d_lookup return]  NULL | dentry-&gt;d_name.name
+     └─[miss path]
+       ├─[__d_alloc entry]  qstr-&gt;name
+       ├─[__d_alloc return] dentry-&gt;d_name.name
+       └─[__d_add entry]    dentry-&gt;d_name.name
+[do_filp_open return]  f-&gt;f_path.dentry-&gt;d_name.name
+[d_delete entry]       dentry-&gt;d_name.name
+[__dentry_kill entry]  dentry-&gt;d_name.name</code></pre>
+<pre style="white-space: pre-wrap; word-wrap: break-word; margin: 0; font-family: monospace;">
+
+User tests repo: https://github.com/raikrahul/what-happens-when-open-is-called/tree/main/kernel/user/stage2
+Build and run:
+
+1) Build the driver (repo root)</pre>
+<pre><code>cd kernel/drivers/trace_do_filp_open &amp;&amp; make clean &amp;&amp; make</code></pre>
+<pre style="white-space: pre-wrap; word-wrap: break-word; margin: 0; font-family: monospace;">
+
+2) Run minimal_open (long filename)</pre>
+<pre><code>cd kernel/user/stage2
+sudo dmesg -C
+sudo rmmod trace_do_filp_open
+sudo insmod ../../drivers/trace_do_filp_open/trace_do_filp_open.ko target_comm=minimal_open
+./minimal_open
+sleep 5
+sudo dmesg | rg -n "test_file_very_long_name_to_force_external_allocation"</code></pre>
+<pre style="white-space: pre-wrap; word-wrap: break-word; margin: 0; font-family: monospace;">
+
+Example dmesg line format (from this driver):</pre>
+<pre><code>[time] [O] IN: 0xffff... | /tmp/t_e.txt
+[time] d_lookup entry: hash 210259851 length 7 name t_e.txt
+[time] d_lookup return: NULL
+[time] [A] SRC: 0xffff...
+[time] [A] DST: 0xffff...
+[time] __d_add entry: 0xffff... | t_e.txt
+[time] [O] OUT: 0xffff... | t_e.txt
+[time] __d_lookup_rcu return: 0xffff... | t_e.txt</code></pre>
+<pre style="white-space: pre-wrap; word-wrap: break-word; margin: 0; font-family: monospace;">
+
+WHAT TO RECORD (FILL THIS IN)
+================================================================================
+
+TEST 1: LONG FILENAME (minimal_open)
+
+Why: isolate long-name allocation and later hit using a single name string.
+
+PROGRAM 1: minimal_open.c</pre>
+<pre><code class="language-c">#include &lt;fcntl.h&gt;
+#include &lt;stdio.h&gt;
+#include &lt;time.h&gt;
+#include &lt;unistd.h&gt;
+
+int main() {
+    char filename[128];
+    time_t now = time(NULL);
+
+    // Long filename; you will verify the allocation path with probes.
+    snprintf(filename, sizeof(filename),
+             "test_file_very_long_name_to_force_external_allocation_%ld", now);
+
+    int fd = open(filename, O_RDWR | O_CREAT, 0644);
+    printf("fd=%d\n", fd);
+    sleep(5);  // Delay lets us observe a later cache hit.
+    close(fd);
+    unlink(filename);
+    return 0;
+}</code></pre>
+<pre style="white-space: pre-wrap; word-wrap: break-word; margin: 0; font-family: monospace;">
+
+Start at the equal-pointer checks, then link the same address across __d_alloc return → __d_add →
+do_filp_open return → later d_lookup hit. Then walk backward and match each address to do_filp_open
+entry (struct filename-&gt;name) and the dentry name on return. Every step must reuse a number already
+written.
+
+Record:
+- do_filp_open entry pointer = 0x________ |
+test_file_very_long_name_to_force_external_allocation_XXXX
+- d_lookup entry: hash ________ length 64 name
+test_file_very_long_name_to_force_external_allocation_XXXX
+- d_lookup return: NULL
+- __d_alloc entry pointer = 0x________
+- __d_alloc return pointer = 0x________
+- __d_add entry pointer = 0x________ | test_file_very_long_name_to_force_external_allocation_XXXX
+- do_filp_open return pointer = 0x________ |
+test_file_very_long_name_to_force_external_allocation_XXXX
+- cache hit later: d_lookup return pointer = 0x________ |
+test_file_very_long_name_to_force_external_allocation_XXXX
+Diagram (pstree):</pre>
+<pre><code>test_file_very_long_name_to_force_external_allocation_XXXX
+└─ do_filp_open entry 0x________
+   └─ d_lookup entry (hash=____, len=64, name=...)
+      ├─ d_lookup return NULL
+      │  └─ __d_alloc entry 0x________
+      │     └─ __d_alloc return 0x________
+      │        └─ __d_add entry 0x________ | test_file_...
+      │           └─ do_filp_open return 0x________ | test_file_...
+      └─ d_lookup return 0x________ | test_file_...</code></pre>
+<pre style="white-space: pre-wrap; word-wrap: break-word; margin: 0; font-family: monospace;">
+Checks:
+- __d_alloc return == __d_add entry == do_filp_open return
+- cache hit pointer equals earlier return pointer
+
+2b) Prepare loopback ext2 (a.txt)</pre>
+<pre><code>sudo mkdir -p /mnt/loopfs
+sudo dd if=/dev/zero of=/tmp/loopfs.img bs=1M count=64
+sudo losetup -fP /tmp/loopfs.img
+sudo mkfs.ext2 -F /tmp/loopfs.img
+sudo mount /tmp/loopfs.img /mnt/loopfs
+sudo sh -c 'echo x &gt; /mnt/loopfs/a.txt'
+sync
+sudo umount /mnt/loopfs
+sudo mount /tmp/loopfs.img /mnt/loopfs</code></pre>
+<pre style="white-space: pre-wrap; word-wrap: break-word; margin: 0; font-family: monospace;">
+
+3) Run split programs (one at a time)</pre>
+<pre><code>cd kernel/user/stage2
+sudo dmesg -C
+sudo rmmod trace_do_filp_open
+sudo insmod ../../drivers/trace_do_filp_open/trace_do_filp_open.ko target_comm=&lt;program&gt;
+sudo ./&lt;program&gt;
+sleep 2
+sudo dmesg | rg -n "t_e.txt|t_m.txt|l_m.txt|l_e.txt|a.txt|d_lookup entry|d_lookup return|__d_lookup_rcu|__d_alloc|__d_add|do_filp_open|d_delete|__dentry_kill"</code></pre>
+<pre style="white-space: pre-wrap; word-wrap: break-word; margin: 0; font-family: monospace;">
+
+Record: te_miss
+Code:</pre>
+<pre><code class="language-c">const char *n2 = "/tmp/t_e.txt";
+close(creat(n2, 0644));
+drop_caches_if_root();
+sleep(1);
+open(n2, O_RDONLY);</code></pre>
+<pre style="white-space: pre-wrap; word-wrap: break-word; margin: 0; font-family: monospace;">
+- extra [O] IN lines from creat may appear before the post-drop_caches open.
+- prefix lookup lines may show tmp/t_e.txt (len 3) before t_e.txt (len 7).
+- do_filp_open entry pointer = 0x________ | /tmp/t_e.txt
+- d_lookup entry: hash ________ length 7 name t_e.txt
+- d_lookup return: NULL
+- __d_alloc entry pointer = 0x________
+- __d_alloc return pointer = 0x________
+- __d_add entry pointer = 0x________ | t_e.txt
+- do_filp_open return pointer = 0x________ | t_e.txt
+- offset check: (entry pointer + 5) == __d_alloc entry pointer
+Diagram (pstree):</pre>
+<pre><code>/tmp/t_e.txt
+└─ do_filp_open entry 0x________
+   └─ d_lookup entry (hash=____, len=7, name=t_e.txt)
+      ├─ d_lookup return NULL
+      │  └─ __d_alloc entry 0x________
+      │     └─ __d_alloc return 0x________
+      │        └─ __d_add entry 0x________ | t_e.txt
+      │           └─ do_filp_open return 0x________ | t_e.txt
+      └─ d_lookup return 0x________ | t_e.txt</code></pre>
+<pre style="white-space: pre-wrap; word-wrap: break-word; margin: 0; font-family: monospace;">
+
+Record: tm_miss
+Code:</pre>
+<pre><code class="language-c">const char *n3 = "/tmp/t_m.txt";
+drop_caches_if_root();
+sleep(1);
+int fd1 = open(n3, O_RDONLY);
+printf("tm_miss first open fd=%d\n", fd1);
+int fd2 = open(n3, O_RDONLY);
+printf("tm_miss second open fd=%d\n", fd2);</code></pre>
+<pre style="white-space: pre-wrap; word-wrap: break-word; margin: 0; font-family: monospace;">
+- do_filp_open entry pointer = 0x________ | /tmp/t_m.txt
+- d_lookup entry: hash ________ length 7 name t_m.txt
+- d_lookup return: NULL
+- __d_lookup_rcu return: NULL
+- __d_alloc entry pointer = 0x________
+- __d_alloc return pointer = 0x________
+- __d_add entry pointer = 0x________ | t_m.txt
+- __d_lookup_rcu return (second open): 0x________ | t_m.txt
+- do_filp_open return pointer: not printed for tm_miss (open returned -1)
+Diagram (pstree):</pre>
+<pre><code>/tmp/t_m.txt
+└─ do_filp_open entry 0x________
+   └─ d_lookup entry (hash=____, len=7, name=t_m.txt)
+      ├─ d_lookup return NULL
+      │  └─ __d_lookup_rcu return NULL
+      │     └─ __d_alloc entry 0x________
+      │        └─ __d_alloc return 0x________
+      │           └─ __d_add entry 0x________ | t_m.txt
+      └─ __d_lookup_rcu return 0x________ | t_m.txt (second open)</code></pre>
+<pre style="white-space: pre-wrap; word-wrap: break-word; margin: 0; font-family: monospace;">
+
+Record: lm_miss
+Code:</pre>
+<pre><code class="language-c">const char *n4 = "l_m.txt";
+drop_caches_if_root();
+sleep(1);
+open(n4, O_RDONLY);</code></pre>
+<pre style="white-space: pre-wrap; word-wrap: break-word; margin: 0; font-family: monospace;">
+- do_filp_open entry pointer = 0x________ | l_m.txt
+- d_lookup entry: hash ________ length 7 name l_m.txt
+- d_lookup return: NULL
+- __d_alloc entry pointer = 0x________
+- __d_alloc return pointer = 0x________
+- __d_add entry pointer = 0x________ | l_m.txt
+Diagram (pstree):</pre>
+<pre><code>l_m.txt
+└─ do_filp_open entry 0x________
+   └─ d_lookup entry (hash=____, len=7, name=l_m.txt)
+      ├─ d_lookup return NULL
+      │  └─ __d_alloc entry 0x________
+      │     └─ __d_alloc return 0x________
+      │        └─ __d_add entry 0x________ | l_m.txt
+      └─ d_lookup return 0x________ | l_m.txt</code></pre>
+<pre style="white-space: pre-wrap; word-wrap: break-word; margin: 0; font-family: monospace;">
+
+Record: a_miss
+Code:</pre>
+<pre><code class="language-c">const char *n5 = "/mnt/loopfs/a.txt";
+drop_caches_if_root();
+sleep(1);
+open(n5, O_RDONLY);</code></pre>
+<pre style="white-space: pre-wrap; word-wrap: break-word; margin: 0; font-family: monospace;">
+- prefix lookup lines may show mnt/loopfs/a.txt (len 3) and loopfs/a.txt (len 6) before a.txt (len 5).
+- do_filp_open entry pointer = 0x________ | /mnt/loopfs/a.txt
+- d_lookup entry: hash ________ length 5 name a.txt
+- d_lookup return: NULL
+- __d_alloc entry pointer = 0x________
+- __d_alloc return pointer = 0x________
+- __d_add entry pointer = 0x________ | a.txt
+- do_filp_open return pointer: may be absent if open failed
+- offset check: (entry pointer + 12) == __d_alloc entry pointer
+Diagram (pstree):</pre>
+<pre><code>/mnt/loopfs/a.txt
+└─ do_filp_open entry 0x________
+   └─ d_lookup entry (hash=____, len=5, name=a.txt)
+      ├─ d_lookup return NULL
+      │  └─ __d_alloc entry 0x________
+      │     └─ __d_alloc return 0x________
+      │        └─ __d_add entry 0x________ | a.txt
+      │           └─ do_filp_open return 0x________ | a.txt (if printed)
+      └─ d_lookup return 0x________ | a.txt</code></pre>
+<pre style="white-space: pre-wrap; word-wrap: break-word; margin: 0; font-family: monospace;">
+
+Record: evict
+Code:</pre>
+<pre><code class="language-c">const char *n1 = "l_e.txt";
+const char *n2 = "/tmp/t_e.txt";
+close(creat(n1, 0644));
+close(creat(n2, 0644));
+open(n1, O_RDONLY);
+open(n2, O_RDONLY);
+drop_caches_if_root();</code></pre>
+<pre style="white-space: pre-wrap; word-wrap: break-word; margin: 0; font-family: monospace;">
+- d_lookup return pointer = 0x________ | l_e.txt
+- d_lookup return pointer = 0x________ | t_e.txt
+- __dentry_kill entry = 0x________ | l_e.txt
+- __dentry_kill entry = 0x________ | t_e.txt
+Diagram (pstree):</pre>
+<pre><code>l_e.txt
+└─ d_lookup return 0x________ | l_e.txt
+   └─ __dentry_kill entry 0x________ | l_e.txt
+t_e.txt
+└─ d_lookup return 0x________ | t_e.txt
+   └─ __dentry_kill entry 0x________ | t_e.txt</code></pre>
+<pre style="white-space: pre-wrap; word-wrap: break-word; margin: 0; font-family: monospace;">
+
+Record: delete
+Code:</pre>
+<pre><code class="language-c">const char *n1 = "l_e.txt";
+const char *n2 = "/tmp/t_e.txt";
+close(creat(n1, 0644));
+close(creat(n2, 0644));
+open(n1, O_RDONLY);
+open(n2, O_RDONLY);
+unlink(n1);
+unlink(n2);</code></pre>
+<pre style="white-space: pre-wrap; word-wrap: break-word; margin: 0; font-family: monospace;">
+- d_delete entry = 0x________ | l_e.txt
+- d_delete entry = 0x________ | t_e.txt
+Diagram (pstree):</pre>
+<pre><code>l_e.txt
+└─ d_delete entry 0x________ | l_e.txt
+t_e.txt
+└─ d_delete entry 0x________ | t_e.txt</code></pre>
+<pre style="white-space: pre-wrap; word-wrap: break-word; margin: 0; font-family: monospace;">
+
+Record: rebuild
+Code:</pre>
+<pre><code class="language-c">const char *n1 = "l_e.txt";
+const char *n2 = "/tmp/t_e.txt";
+close(creat(n1, 0644));
+close(creat(n2, 0644));
+open(n1, O_RDONLY);
+open(n2, O_RDONLY);
+drop_caches_if_root();
+sleep(1);
+open(n2, O_RDONLY);</code></pre>
+<pre style="white-space: pre-wrap; word-wrap: break-word; margin: 0; font-family: monospace;">
+- before drop_caches: __d_add entry pointer = 0x________ | t_e.txt
+- before drop_caches: do_filp_open return pointer = 0x________ | t_e.txt
+- d_lookup return: NULL
+- __d_alloc entry pointer = 0x________
+- __d_alloc return pointer = 0x________
+- __d_add entry pointer = 0x________ | t_e.txt
+- do_filp_open return pointer = 0x________ | t_e.txt
+- inequality check: rebuild pointer != pre-eviction pointer
+Diagram (pstree):</pre>
+<pre><code>/tmp/t_e.txt
+└─ d_lookup return NULL
+   └─ __d_alloc return 0x________
+      └─ __d_add entry 0x________ | t_e.txt
+         └─ do_filp_open return 0x________ | t_e.txt
+0x________ ≠ 0x________  OR  0x________ = 0x________</code></pre>
+<pre style="white-space: pre-wrap; word-wrap: break-word; margin: 0; font-family: monospace;">
+
+Record: post
+Code:</pre>
+<pre><code class="language-c">const char *n1 = "l_e.txt";
+const char *n2 = "/tmp/t_e.txt";
+close(creat(n1, 0644));
+close(creat(n2, 0644));
+open(n1, O_RDONLY);
+open(n2, O_RDONLY);
+drop_caches_if_root();
+sleep(1);
+open(n1, O_RDONLY);</code></pre>
+<pre style="white-space: pre-wrap; word-wrap: break-word; margin: 0; font-family: monospace;">
+- before drop_caches: __d_add entry pointer = 0x________ | l_e.txt
+- before drop_caches: do_filp_open return pointer = 0x________ | l_e.txt
+- __d_lookup_rcu entry: hash ________ length 7 name l_e.txt
+- do_filp_open return pointer = 0x________ | l_e.txt
+- compare pointers: post-eviction vs pre-eviction
+If the numbers are equal, eviction still happened and the allocator reused the same address. Record equality explicitly as 0x________ = 0x________, not as a failure.
+Diagram (pstree):</pre>
+<pre><code>l_e.txt
+└─ __d_lookup_rcu entry (hash=____, len=7, name=l_e.txt)
+   └─ do_filp_open return 0x________ | l_e.txt
+0x________ ≠ 0x________  OR  0x________ = 0x________</code></pre>
+<pre style="white-space: pre-wrap; word-wrap: break-word; margin: 0; font-family: monospace;">
+
+[HOME] ../index.html
+Print ../articles/worksheet_stage2_return.html
+Stage 1 https://raikrahul.github.io/what-happens-when-open-is-called/stage1.html
+Stage 2 Entry https://raikrahul.github.io/what-happens-when-open-is-called/stage2.html
+Stage 2 Return (Explanation) https://raikrahul.github.io/what-happens-when-open-is-called/articles/explanation_stage2_return.html</pre>
+  </div>
+
+</body>
+
+</html>

@@ -1,0 +1,153 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+  <meta charset="UTF-8">
+  <title>Axial Derivation: __d_alloc Mechanics</title>
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/styles/github.min.css">
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/highlight.min.js"></script>
+  <script>window.addEventListener('DOMContentLoaded', () => { if (window.hljs) hljs.highlightAll(); });</script>
+  <style>
+    body {
+      background: #fff;
+      color: #000;
+      font-family: monospace;
+      font-size: 13px;
+      line-height: 1.2;
+      padding: 0 5px;
+      margin: 0;
+    }
+
+    pre {
+      margin: 0.5em 0;
+      white-space: pre-wrap;
+      word-wrap: break-word;
+    }
+    pre code {
+      display: block;
+      white-space: pre;
+    }
+
+    h1,
+    h2,
+    h3,
+    h4,
+    h5,
+    h6 {
+      margin: 0.5em 0 0.2em 0;
+      font-size: 1em;
+      font-weight: bold;
+      text-transform: uppercase;
+    }
+
+    p,
+    ul,
+    ol {
+      margin: 0.5em 0;
+    }
+
+    hr {
+      margin: 0.5em 0;
+      border: none;
+      border-bottom: 1px dashed #000;
+    }
+
+    .blank {
+      display: inline-block;
+      min-width: 150px;
+      border-bottom: 1px solid #000;
+      color: #000;
+    }
+
+    @media print {
+
+      button,
+      div[style*="text-align: right"] {
+        display: none !important;
+      }
+
+      body {
+        padding: 0;
+      }
+    }
+  </style>
+</head>
+
+<body>
+  <div style="text-align: right; font-size: 10px; padding: 2px;">
+    <span><a href="../index.html" style="color: #666; text-decoration: none;">[HOME]</a></span>
+    <button onclick="window.print()" style="font-size: 10px; cursor: pointer;">Print</button>
+  </div>
+  <div class="content">
+    <pre style="white-space: pre-wrap; word-wrap: break-word; margin: 0; font-family: monospace;"># AXIAL DERIVATION: __d_alloc (THE SETTLEMENT)
+
+01. **PREMISE**: Function `__d_alloc` allocates the metadata container for a filename.
+02. **AXIOM**: Allocation choice depends on `name-&gt;len` vs `DNAME_INLINE_LEN`.
+
+--------------------------------------------------------------------------------
+01. STRUCT DENTRY LAYOUT (KERNEL 6.14.0-37-GENERIC)
+--------------------------------------------------------------------------------
+
+| Offset | Member | Size | Note |
+| :--- | :--- | :--- | :--- |
+| +0 | `d_flags` | 4 | |
+| +4 | `d_seq` | 4 | |
+| +8 | `d_hash` | 16 | |
+| +24 | `d_parent` | 8 | |
+| **+32** | `d_name` | **16** | `struct qstr` |
+| +48 | `d_inode` | 8 | |
+| **+56** | `d_iname` | **32** | Inline Buffer |
+
+--------------------------------------------------------------------------------
+02. THE BRANCHING LOGIC (INLINE ↔ EXTERNAL)
+--------------------------------------------------------------------------------
+
+**CONST**: `DNAME_INLINE_LEN` = 32
+
+**ALGORITHM**:</pre>
+<pre><code class="language-c">if (name-&gt;len &lt; DNAME_INLINE_LEN) {
+    // CASE A: SMALL NAME
+    dentry-&gt;d_name.name = dentry-&gt;d_iname; // +56
+} else {
+    // CASE B: LARGE NAME
+    dentry-&gt;d_name.name = kmalloc(name-&gt;len + 1, ...);
+}</code></pre>
+<pre style="white-space: pre-wrap; word-wrap: break-word; margin: 0; font-family: monospace;">
+
+**NUMERICAL PROOF**:
+- **Test Input**: "test_file_1770" (14 chars).
+- **Condition**: `14 &lt; 32` → **TRUE**.
+- **Settlement**: `d_name.name` = `&amp;dentry + 56`.
+
+--------------------------------------------------------------------------------
+03. THE SETTLEMENT MEMCPY
+--------------------------------------------------------------------------------
+
+**SOURCE**: `fs/dcache.c`</pre>
+<pre><code class="language-c">memcpy(dname, name-&gt;name, name-&gt;len);</code></pre>
+<pre style="white-space: pre-wrap; word-wrap: break-word; margin: 0; font-family: monospace;">
+
+**X86_64 TRACE CONVERGENCE**:
+01. **Input Ptr** (`RDI` in `getname`): `0x7ffe...` (User Address)
+02. **Transient Ptr** (`RAX` in `getname`): `0xffff...020` (Kernel Stack/Slab)
+03. **Settled Ptr** (`RAX` in `__d_alloc`): `0xffff...6f8` (Persistent Slab)
+
+**AXIOM**: Address 03 is the final home of the string. It is the address stored in the dentry's `d_name.name` pointer.
+
+--------------------------------------------------------------------------------
+04. ADDRESS DEREFERENCE AXIOMS (+64, +8, +32)
+--------------------------------------------------------------------------------
+
+01. `file` → `f_path` (+64)
+02. `f_path` → `dentry` (+8)
+03. `dentry` → `d_name` (+32, struct qstr)
+04. `d_name` → `name` (+8, char *)
+
+**CONVERGENCE**: Dereferencing `file + 64 + 8` then taking that pointer `+ 32 + 8` MUST yield the **Settled Ptr**.
+
+[✓] __d_alloc DERIVATION COMPLETE.</pre>
+  </div>
+
+</body>
+
+</html>
