@@ -79,11 +79,10 @@ int main() {
 }
 ```
 
-Start at the equality checks in the middle because that is where the proof closes, then drive
-forward to the diagram end by chaining the same address from __d_alloc return to __d_add to
-do_filp_open return and then to the later d_lookup hit, and then walk backward from that chain to
-the start by matching each address in the Record list to the struct filename at entry and the
-dentry->d_name at return so every step has a numeric anchor before the next step is drawn.
+Start at the equal-pointer checks, then link the same address across __d_alloc return → __d_add →
+do_filp_open return → later d_lookup hit. Then walk backward and match each address to do_filp_open
+entry (struct filename->name) and the dentry name on return. Every step must reuse a number already
+written.
 
 Record:
 - do_filp_open entry pointer = 0x________ |
