@@ -158,6 +158,8 @@ drop_caches_if_root();
 sleep(1);
 open(n2, O_RDONLY);
 ```
+- extra [O] IN lines from creat may appear before the post-drop_caches open.
+- prefix lookup lines may show tmp/t_e.txt (len 3) before t_e.txt (len 7).
 - do_filp_open entry pointer = 0x________ | /tmp/t_e.txt
 - d_lookup entry: hash ________ length 7 name t_e.txt
 - d_lookup return: NULL
@@ -244,6 +246,7 @@ drop_caches_if_root();
 sleep(1);
 open(n5, O_RDONLY);
 ```
+- prefix lookup lines may show mnt/loopfs/a.txt (len 3) and loopfs/a.txt (len 6) before a.txt (len 5).
 - do_filp_open entry pointer = 0x________ | /mnt/loopfs/a.txt
 - d_lookup entry: hash ________ length 5 name a.txt
 - d_lookup return: NULL

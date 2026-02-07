@@ -56,26 +56,26 @@ snprintf(filename, sizeof(filename),
 int fd = open(filename, O_RDWR | O_CREAT, 0644);
 sleep(5);
 ```
-- do_filp_open entry pointer = 0xffff8976c905a020 | test_file_very_long_name_to_force_external_allocation_1770463889
-- d_lookup entry: hash 2135126975 length 64 name test_file_very_long_name_to_force_external_allocation_1770463889
+- do_filp_open entry pointer = 0xffff8976c6763020 | test_file_very_long_name_to_force_external_allocation_1770466275
+- d_lookup entry: hash 736449114 length 64 name test_file_very_long_name_to_force_external_allocation_1770466275
 - d_lookup return: NULL
-- copy source pointer = 0xffff8976c905a020
-- __d_alloc return pointer = 0xffff897727671438
-- copy destination pointer = 0xffff897727671438
-- __d_add entry: 0xffff897727671438 | test_file_very_long_name_to_force_external_allocation_1770463889
-- do_filp_open return pointer = 0xffff897727671438 | test_file_very_long_name_to_force_external_allocation_1770463889
-- d_lookup return: 0xffff897727671438 | test_file_very_long_name_to_force_external_allocation_1770463889
-- same numeric address 0xffff897727671438 appears at __d_add, do_filp_open return, and later d_lookup return.
+- copy source pointer = 0xffff8976c6763020
+- __d_alloc return pointer = 0xffff8977eb463eb8
+- copy destination pointer = 0xffff8977eb463eb8
+- __d_add entry: 0xffff8977eb463eb8 | test_file_very_long_name_to_force_external_allocation_1770466275
+- do_filp_open return pointer = 0xffff8977eb463eb8 | test_file_very_long_name_to_force_external_allocation_1770466275
+- d_lookup return: 0xffff8977eb463eb8 | test_file_very_long_name_to_force_external_allocation_1770466275
+- same numeric address 0xffff8977eb463eb8 appears at __d_add, do_filp_open return, and later d_lookup return.
 ```
 long name
-└─ do_filp_open entry 0xffff8976c905a020
-   └─ d_lookup entry (hash=2135126975,len=64)
+└─ do_filp_open entry 0xffff8976c6763020
+   └─ d_lookup entry (hash=736449114,len=64)
       ├─ d_lookup return NULL
-      │  └─ copy source 0xffff8976c905a020
-      │     └─ copy destination 0xffff897727671438
-      │        └─ __d_add entry 0xffff897727671438
-      │           └─ do_filp_open return 0xffff897727671438
-      └─ d_lookup return 0xffff897727671438
+      │  └─ copy source 0xffff8976c6763020
+      │     └─ copy destination 0xffff8977eb463eb8
+      │        └─ __d_add entry 0xffff8977eb463eb8
+      │           └─ do_filp_open return 0xffff8977eb463eb8
+      └─ d_lookup return 0xffff8977eb463eb8
 ```
 
 Learned: same numeric pointer appears at __d_add, do_filp_open return, later d_lookup return for the long name.
@@ -83,31 +83,32 @@ Learned: same numeric pointer appears at __d_add, do_filp_open return, later d_l
 ### te_miss.c
 ```c
 const char *n2 = "/tmp/t_e.txt";
-close(creat(n2, 0644));
+close(creat(n2, 0644));   // first open from creat (may hit)
 drop_caches_if_root();
 sleep(1);
-open(n2, O_RDONLY);
+open(n2, O_RDONLY);       // second open after drop_caches (miss/alloc)
 ```
-- do_filp_open entry pointer = 0xffff8976c6763020 | /tmp/t_e.txt
-- d_lookup entry: hash 210259851 length 7 name t_e.txt
-- d_lookup return: NULL
-- copy source pointer = 0xffff8976c6763025
-- __d_alloc return pointer = 0xffff8976c0793c38
-- copy destination pointer = 0xffff8976c0793c38
-- __d_add entry: 0xffff8976c0793c38 | t_e.txt
-- do_filp_open return pointer = 0xffff8976c0793c38 | t_e.txt
-- 0xffff8976c6763025 − 0xffff8976c6763020 = 0x5 = 5, matches "/tmp/" length 5.
-- same numeric address 0xffff8976c0793c38 appears at __d_add and do_filp_open return.
+- first open (from creat): __d_lookup_rcu return 0xffff8976c35ee0f8 | t_e.txt
+- second open entry pointer = 0xffff8976cc495020 | /tmp/t_e.txt
+- prefix lookup: __d_lookup_rcu entry hash 769772012 length 3 name tmp/t_e.txt
+- basename lookup: d_lookup entry hash 210259851 length 7 name t_e.txt
+- copy source pointer = 0xffff8976cc495025
+- __d_alloc return pointer = 0xffff8976e1999b78
+- copy destination pointer = 0xffff8976e1999b78
+- __d_add entry: 0xffff8976e1999b78 | t_e.txt
+- do_filp_open return pointer = 0xffff8976e1999b78 | t_e.txt
+- 0xffff8976cc495025 − 0xffff8976cc495020 = 0x5 = 5, matches "/tmp/" length 5.
+- same numeric address 0xffff8976e1999b78 appears at __d_add and do_filp_open return.
 ```
 / tmp / t_e.txt
-└─ do_filp_open entry 0xffff8976c6763020
+└─ do_filp_open entry 0xffff8976cc495020
    └─ d_lookup entry (hash=210259851,len=7)
-      ├─ d_lookup return NULL
-      │  └─ copy source 0xffff8976c6763025
-      │     └─ copy destination 0xffff8976c0793c38
-      │        └─ __d_add entry 0xffff8976c0793c38
-      │           └─ do_filp_open return 0xffff8976c0793c38
-      └─ d_lookup return 0xffff8976c0793c38
+      ├─ d_lookup return NULL (not printed here)
+      │  └─ copy source 0xffff8976cc495025
+      │     └─ copy destination 0xffff8976e1999b78
+      │        └─ __d_add entry 0xffff8976e1999b78
+      │           └─ do_filp_open return 0xffff8976e1999b78
+      └─ __d_lookup_rcu return 0xffff8976c35ee0f8 (from creat)
 ```
 
 Learned: basename offset = 5 and the same numeric pointer appears at __d_add and do_filp_open return.
@@ -129,28 +130,27 @@ stdout
 tm_miss first open fd=-1
 tm_miss second open fd=-1
 ```
-- do_filp_open entry pointer = 0xffff8976c6437020 | /tmp/t_m.txt
+- do_filp_open entry pointer = 0xffff8976c905b020 | /tmp/t_m.txt
 - d_lookup entry: hash 2891139310 length 7 name t_m.txt
-- d_lookup return: NULL
 - __d_lookup_rcu return: NULL
-- copy source pointer = 0xffff8976c6437025
-- __d_alloc return pointer = 0xffff8976c06483f8
-- copy destination pointer = 0xffff8976c06483f8
-- __d_add entry: 0xffff8976c06483f8 | t_m.txt
-- __d_lookup_rcu return (second open): 0xffff8976c06483f8 | t_m.txt
+- copy source pointer = 0xffff8976c905b025
+- __d_alloc return pointer = 0xffff897725f170f8
+- copy destination pointer = 0xffff897725f170f8
+- __d_add entry: 0xffff897725f170f8 | t_m.txt
+- __d_lookup_rcu return (second open): 0xffff897725f170f8 | t_m.txt
 - do_filp_open return pointer: not printed for tm_miss (open returned -1)
-- 0xffff8976c6437025 − 0xffff8976c6437020 = 0x5 = 5, matches "/tmp/" length 5.
-- same numeric address 0xffff8976c06483f8 appears at __d_add and __d_lookup_rcu return on second open.
+- 0xffff8976c905b025 − 0xffff8976c905b020 = 0x5 = 5, matches "/tmp/" length 5.
+- same numeric address 0xffff897725f170f8 appears at __d_add and __d_lookup_rcu return on second open.
 ```
 / tmp / t_m.txt
-└─ do_filp_open entry 0xffff8976c6437020
+└─ do_filp_open entry 0xffff8976c905b020
    └─ d_lookup entry (hash=2891139310,len=7)
       ├─ d_lookup return NULL
       │  └─ __d_lookup_rcu return NULL
-      │     └─ copy source 0xffff8976c6437025
-      │        └─ copy destination 0xffff8976c06483f8
-      │           └─ __d_add entry 0xffff8976c06483f8
-      └─ __d_lookup_rcu return 0xffff8976c06483f8 (second open)
+      │     └─ copy source 0xffff8976c905b025
+      │        └─ copy destination 0xffff897725f170f8
+      │           └─ __d_add entry 0xffff897725f170f8
+      └─ __d_lookup_rcu return 0xffff897725f170f8 (second open)
 ```
 
 Learned: missing file creates a cached name; second open hits __d_lookup_rcu with the same pointer while fd=-1.
@@ -162,23 +162,23 @@ drop_caches_if_root();
 sleep(1);
 open(n4, O_RDONLY);
 ```
-- do_filp_open entry pointer = 0xffff8976cc493020 | l_m.txt
+- do_filp_open entry pointer = 0xffff8976c643c020 | l_m.txt
 - d_lookup entry: hash 2468693519 length 7 name l_m.txt
 - d_lookup return: NULL
-- copy source pointer = 0xffff8976cc493020
-- __d_alloc return pointer = 0xffff8976ceafcb78
-- copy destination pointer = 0xffff8976ceafcb78
-- __d_add entry: 0xffff8976ceafcb78 | l_m.txt
-- same numeric address 0xffff8976ceafcb78 appears at __d_add.
+- copy source pointer = 0xffff8976c643c020
+- __d_alloc return pointer = 0xffff89775bf497b8
+- copy destination pointer = 0xffff89775bf497b8
+- __d_add entry: 0xffff89775bf497b8 | l_m.txt
+- same numeric address 0xffff89775bf497b8 appears at __d_add.
 ```
 l_m.txt
-└─ do_filp_open entry 0xffff8976cc493020
+└─ do_filp_open entry 0xffff8976c643c020
    └─ d_lookup entry (hash=2468693519,len=7)
       ├─ d_lookup return NULL
-      │  └─ copy source 0xffff8976cc493020
-      │     └─ copy destination 0xffff8976ceafcb78
-      │        └─ __d_add entry 0xffff8976ceafcb78
-      └─ d_lookup return 0xffff8976ceafcb78
+      │  └─ copy source 0xffff8976c643c020
+      │     └─ copy destination 0xffff89775bf497b8
+      │        └─ __d_add entry 0xffff89775bf497b8
+      └─ d_lookup return 0xffff89775bf497b8
 ```
 
 Learned: no prefix shift; copy source equals entry pointer; __d_add uses the same numeric pointer.
@@ -190,25 +190,28 @@ drop_caches_if_root();
 sleep(1);
 open(n5, O_RDONLY);
 ```
-- do_filp_open entry pointer = 0xffff8976c905a020 | /mnt/loopfs/a.txt
-- d_lookup entry: hash 390194167 length 5 name a.txt
-- d_lookup return: NULL
-- copy source pointer = 0xffff8976c905a02c
-- __d_alloc return pointer = 0xffff8976c7aa94b8
-- copy destination pointer = 0xffff8976c7aa94b8
-- __d_add entry: 0xffff8976c7aa94b8 | a.txt
+- do_filp_open entry pointer = 0xffff8976c6433020 | /mnt/loopfs/a.txt
+- prefix lookup: __d_lookup_rcu entry hash 3799216915 length 3 name mnt/loopfs/a.txt
+- prefix lookup: __d_lookup_rcu entry hash 3621501978 length 6 name loopfs/a.txt
+- copy source pointer (loopfs/a.txt) = 0xffff8976c6433025
+- __d_alloc return pointer (loopfs/a.txt) = 0xffff8977185b57b8
+- d_lookup entry: hash 2235526309 length 5 name a.txt
+- copy source pointer (a.txt) = 0xffff8976c643302c
+- __d_alloc return pointer (a.txt) = 0xffff8977185b54b8
+- copy destination pointer = 0xffff8977185b54b8
+- __d_add entry: 0xffff8977185b54b8 | a.txt
 - do_filp_open return pointer: not printed for a_miss
-- 0xffff8976c905a02c − 0xffff8976c905a020 = 0xC = 12, matches "/mnt/loopfs/" length 12.
-- same numeric address 0xffff8976c7aa94b8 appears at __d_add.
+- 0xffff8976c643302c − 0xffff8976c6433020 = 0xC = 12, matches "/mnt/loopfs/" length 12.
+- same numeric address 0xffff8977185b54b8 appears at __d_add.
 ```
 / mnt / loopfs / a.txt
-└─ do_filp_open entry 0xffff8976c905a020
-   └─ d_lookup entry (hash=390194167,len=5)
+└─ do_filp_open entry 0xffff8976c6433020
+   └─ d_lookup entry (hash=2235526309,len=5)
       ├─ d_lookup return NULL
-      │  └─ copy source 0xffff8976c905a02c
-      │     └─ copy destination 0xffff8976c7aa94b8
-      │        └─ __d_add entry 0xffff8976c7aa94b8
-      └─ d_lookup return 0xffff8976c7aa94b8
+      │  └─ copy source 0xffff8976c643302c
+      │     └─ copy destination 0xffff8977185b54b8
+      │        └─ __d_add entry 0xffff8977185b54b8
+      └─ d_lookup return 0xffff8977185b54b8
 ```
 
 Learned: basename offset = 12; __d_add uses the same numeric pointer; no do_filp_open return printed here.
@@ -224,15 +227,15 @@ unlink("/tmp/t_e.txt");
 // evict.c
 drop_caches_if_root();
 ```
-- l_e.txt hit: d_lookup return = 0xffff8976e49fab78
-- l_e.txt delete: d_delete entry = 0xffff8976e49fab78
-- l_e.txt evict: __dentry_kill entry = 0xffff8976e49fab78
-- t_e.txt hit: d_lookup return = 0xffff8976e49fa4b8
-- t_e.txt delete: d_delete entry = 0xffff8976e49fa4b8
-- t_e.txt evict: __dentry_kill entry = 0xffff8976e49fa4b8
+- l_e.txt hit: __d_lookup_rcu return = 0xffff897725f9f0f8
+- l_e.txt delete: d_delete entry = 0xffff897725f9f0f8
+- l_e.txt evict: __dentry_kill entry = 0xffff897725f9f0f8
+- t_e.txt hit: __d_lookup_rcu return = 0xffff897725f9f7b8
+- t_e.txt delete: d_delete entry = 0xffff897725f9f7b8
+- t_e.txt evict: __dentry_kill entry = 0xffff897725f9f7b8
 ```
-l_e.txt: 0xffff8976e49fab78 → 0xffff8976e49fab78 → 0xffff8976e49fab78
-t_e.txt: 0xffff8976e49fa4b8 → 0xffff8976e49fa4b8 → 0xffff8976e49fa4b8
+l_e.txt: 0xffff897725f9f0f8 → 0xffff897725f9f0f8 → 0xffff897725f9f0f8
+t_e.txt: 0xffff897725f9f7b8 → 0xffff897725f9f7b8 → 0xffff897725f9f7b8
 ```
 
 Learned: l_e.txt and t_e.txt keep the same pointer across hit → delete → evict.
@@ -243,13 +246,13 @@ open("/tmp/t_e.txt", O_RDONLY);
 drop_caches_if_root();
 open("/tmp/t_e.txt", O_RDONLY);
 ```
-- before drop_caches: __d_add entry 0xffff8976cd60a1b8 | t_e.txt, do_filp_open return pointer 0xffff8976cd60a1b8 | t_e.txt
-- after drop_caches: __d_add entry 0xffff8976cd60a0f8 | t_e.txt, do_filp_open return pointer 0xffff8976cd60a0f8 | t_e.txt
-- 0xffff8976cd60a1b8 − 0xffff8976cd60a0f8 = 0xc0 = 192.
-- 0xffff8976cd60a0f8 ≠ 0xffff8976cd60a1b8.
+- before drop_caches: __d_add entry 0xffff8977185a9578 | t_e.txt, do_filp_open return pointer 0xffff8977185a9578 | t_e.txt
+- after drop_caches: __d_add entry 0xffff8977f40ec278 | t_e.txt, do_filp_open return pointer 0xffff8977f40ec278 | t_e.txt
+- 0xffff8977f40ec278 − 0xffff8977185a9578 = 0xdbb42d00 = 3686018304.
+- 0xffff8977f40ec278 ≠ 0xffff8977185a9578.
 ```
-before drop_caches: __d_add 0xffff8976cd60a1b8 -> do_filp_open return 0xffff8976cd60a1b8
-after  drop_caches: __d_add 0xffff8976cd60a0f8 -> do_filp_open return 0xffff8976cd60a0f8
+before drop_caches: __d_add 0xffff8977185a9578 -> do_filp_open return 0xffff8977185a9578
+after  drop_caches: __d_add 0xffff8977f40ec278 -> do_filp_open return 0xffff8977f40ec278
 ```
 
 Learned: after drop_caches the pointer changed; subtraction shown in hex and decimal.
@@ -260,13 +263,13 @@ open("l_e.txt", O_RDONLY);
 drop_caches_if_root();
 open("l_e.txt", O_RDONLY);
 ```
-- before drop_caches: __d_add entry 0xffff8976c04f7c38 | l_e.txt, do_filp_open return pointer 0xffff8976c04f7c38 | l_e.txt
-- after drop_caches: __d_add entry 0xffff8976c04f70f8 | l_e.txt, do_filp_open return pointer 0xffff8976c04f70f8 | l_e.txt
-- 0xffff8976c04f7c38 − 0xffff8976c04f70f8 = 0xb40 = 2880.
-- 0xffff8976c04f70f8 ≠ 0xffff8976c04f7c38.
+- before drop_caches: __d_add entry 0xffff89775bdcf638 | l_e.txt, do_filp_open return pointer 0xffff89775bdcf638 | l_e.txt
+- after drop_caches: __d_add entry 0xffff8976c341e938 | l_e.txt, do_filp_open return pointer 0xffff8976c341e938 | l_e.txt
+- 0xffff89775bdcf638 − 0xffff8976c341e938 = 0x989b0d00 = 2560298240.
+- 0xffff8976c341e938 ≠ 0xffff89775bdcf638.
 ```
-before drop_caches: __d_add 0xffff8976c04f7c38 -> do_filp_open return 0xffff8976c04f7c38
-after  drop_caches: __d_add 0xffff8976c04f70f8 -> do_filp_open return 0xffff8976c04f70f8
+before drop_caches: __d_add 0xffff89775bdcf638 -> do_filp_open return 0xffff89775bdcf638
+after  drop_caches: __d_add 0xffff8976c341e938 -> do_filp_open return 0xffff8976c341e938
 ```
 
 ## Why These Probes
