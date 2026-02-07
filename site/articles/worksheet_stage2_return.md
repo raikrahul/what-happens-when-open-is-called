@@ -345,7 +345,6 @@ l_e.txt
 0x________ ≠ 0x________
 ```
 
-Diagram (ASCII tree, fill with your numbers):
 ```
 struct filename { name=0x________, str="..." }
 └─ do_filp_open entry
