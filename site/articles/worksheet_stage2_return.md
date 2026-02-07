@@ -156,7 +156,7 @@ int main() {
 ```
 
 ================================================================================
-KERNEL PROBES YOU MUST HAVE (WHY EACH EXISTS)
+Kernel Probes
 ================================================================================
 
 Location: kernel/drivers/trace_do_filp_open/trace_do_filp_open.c
