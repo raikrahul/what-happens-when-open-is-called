@@ -59,37 +59,29 @@ Our filename length = 64 bytes > 36 bytes, so kmalloc runs, dname points to exte
 
 PROBES
 
-We need 5 probes to capture addresses at exact transitions. Each probe reads CPU registers at function entry or return.
+do_sys_openat2 (fs/open.c:1388) calls getname which copies user string to kernel buffer and returns struct filename * at 0xffff8f294c36e020.
 
-Probe 1: do_filp_open entry
-Location: fs/open.c:1404
-Reads: regs->si = struct filename *
-Prints: filename->name (full path pointer from getname)
-Why: Fixes input address, shows what do_filp_open receives
+Line 1404 calls do_filp_open(dfd, filename, op). Probe at do_filp_open entry prints filename->name which is 0xffff8f294c36e020 pointing to "test_file_very_long_name_to_force_external_allocation_1770484700". This is the input: the full path string that do_filp_open receives from getname.
 
-Probe 2: __d_alloc entry
-Location: fs/dcache.c:1651
-Reads: regs->si = struct qstr *
-Prints: qstr->name (basename pointer)
-Why: Fixes memcpy source address, proves basename offset
+do_filp_open calls path_openat which calls link_path_walk which walks the path component by component. For each component, link_path_walk calls walk_component which calls lookup_fast which calls __d_lookup_rcu to search the dcache.
 
-Probe 3: __d_alloc return
-Location: fs/dcache.c:1651
-Reads: regs->ax = struct dentry *
-Prints: dentry->d_name.name (memcpy destination)
-Why: Fixes memcpy destination address, proves allocation happened
+__d_lookup_rcu computes hash of the component name using full_name_hash, searches the dcache hash table for a dentry with matching hash and name. If found, returns existing dentry. If not found, returns NULL.
 
-Probe 4: __d_add entry
-Location: fs/dcache.c
-Reads: regs->di = struct dentry *
-Prints: dentry->d_name.name (inserted dentry name)
-Why: Fixes cached pointer, proves insertion into dcache
+On NULL, lookup_fast returns -ECHILD, walk_component calls lookup_slow which calls __lookup_slow which calls d_lookup. d_lookup calls __d_lookup which searches again without RCU. On NULL, __lookup_slow calls d_alloc_parallel which calls __d_alloc.
 
-Probe 5: do_filp_open return
-Location: fs/open.c:1404
-Reads: regs->ax = struct file *
-Prints: file->f_path.dentry->d_name.name (returned file name)
-Why: Fixes output address, proves returned file points to dentry name
+Probe at __d_alloc entry prints qstr->name which is 0xffff8f294c36e020 pointing to "test_file_very_long_name_to_force_external_allocation_1770484700". This is the memcpy source: the basename pointer that __d_alloc will copy from.
+
+__d_alloc allocates struct dentry from dentry_cache slab. If name length > 35 bytes, __d_alloc calls kmalloc to allocate external buffer for the name. Our name is 64 bytes so kmalloc returns buffer at 0xffff8f2bb3de6618. __d_alloc calls memcpy(0xffff8f2bb3de6618, 0xffff8f294c36e020, 64) to copy the name. __d_alloc sets dentry->d_name.name = 0xffff8f2bb3de6618.
+
+Probe at __d_alloc return prints dentry->d_name.name which is 0xffff8f2bb3de6618. This is the memcpy destination: the new buffer where the name now lives.
+
+__d_alloc returns dentry to d_alloc_parallel which returns dentry to __lookup_slow which calls lookup_open which calls atomic_open which fails, then calls lookup_real which calls vfs_create which creates the file and sets dentry->d_inode.
+
+lookup_open calls d_add which calls __d_add. __d_add inserts the dentry into the dcache hash table so future lookups can find it. Probe at __d_add entry prints dentry->d_name.name which is 0xffff8f2bb3de6618. This is the cached pointer: the name address that is now in the dcache.
+
+__d_add returns to d_add which returns to lookup_open which returns to open_last_lookups which returns to path_openat which calls do_open which calls vfs_open which calls do_dentry_open which allocates struct file and sets file->f_path.dentry = dentry.
+
+do_dentry_open returns file to vfs_open which returns file to do_open which returns file to path_openat which returns file to do_filp_open. Probe at do_filp_open return prints file->f_path.dentry->d_name.name which is 0xffff8f2bb3de6618. This is the output: the name address that the returned file points to.
 
 DATA STRUCTURES BEFORE FIRST CALL
 
