@@ -195,65 +195,18 @@ d_name.str="a.txt" } -> do_filp_open return pointer 0xffff8b14d0cc8e78 | a.txt, 
 
 ================================================================================
 
-`/usr/src/linux-source-6.8.0/fs/open.c` and `/usr/src/linux-source-6.8.0/fs/dcache.c`
-→ `nl -ba /usr/src/linux-source-6.8.0/fs/open.c | sed -n '1388,1436p'`
-→ open/openat → do_filp_open
-→ d_lookup uses (name,len,hash) and NULL return = miss
-→ __d_alloc allocates and copies name, __d_add inserts into dcache
-→ do_filp_open return pointer = f->f_path.dentry->d_name.name
-→ d_delete = unlink removal, __dentry_kill = drop_caches eviction
-→ /tmp/ length 5, /mnt/loopfs/ length 12 via `python3 -
-<<'PY'\nprint(len('/tmp/'))\nprint(len('/mnt/loopfs/'))\nPY`
-→ `nl -ba /usr/src/linux-source-6.8.0/fs/dcache.c | sed -n '2245,2265p'`
-→ `rg -n "memcpy\\(dname, name->name, name->len\\)" /usr/src/linux-source-6.8.0/fs/dcache.c`
-→ `rg -n "__d_add\\(|d_delete\\(|__dentry_kill" /usr/src/linux-source-6.8.0/fs/dcache.c`
-→ `nl -ba kernel/drivers/trace_do_filp_open/trace_do_filp_open.c | sed -n '82,90p'`
-→ /tmp/t_e.txt miss + alloc + add + return; offset +5
-→ /tmp/t_m.txt miss + alloc + add
-→ l_m.txt alloc entry equals full string pointer
-→ /mnt/loopfs/a.txt miss + alloc + add + return; offset +12
-→ l_e.txt and /tmp/t_e.txt hits vs earlier return pointers
-→ unlink l_e.txt and /tmp/t_e.txt: d_delete
-→ drop_caches: __dentry_kill
-→ reopen /tmp/t_e.txt: rebuild pointer vs pre-eviction
-→ reopen l_e.txt: post-eviction pointer vs pre-eviction
-
-
-================================================================================
-
-Trace
-================================================================================
-
-1) "/tmp/t_e.txt" @ 0xffff8b148256c020 -> __d_alloc entry 0xffff8b148256c025 -> __d_alloc return
-0xffff8b14d0cc60f8 -> __d_add 0xffff8b14d0cc60f8 -> do_filp_open return 0xffff8b14d0cc60f8.
-0xffff8b148256c025 − 0xffff8b148256c020 = 0x5 = 5, so the copy source starts exactly after “/tmp/”.
-2) d_lookup return NULL -> __d_add 0xffff8b14d0cc60f8 -> do_filp_open return 0xffff8b14d0cc60f8. The
-same numeric pointer is created and returned.
-3) d_lookup return 0xffff8b149e488cf8 -> do_filp_open return 0xffff8b149e488cf8. The hit uses the
-cached pointer without a new allocation.
-4) "/tmp/t_m.txt" -> d_lookup return NULL -> __d_add 0xffff8b148d58d3f8. The missing name still has
-its own cached pointer.
-5) d_delete 0xffff8b149e4886f8 (l_e.txt) + d_delete 0xffff8b149e488cf8 (t_e.txt). The exact cached
-pointers are removed on unlink.
-open("/tmp/t_e.txt") -> do_filp_open entry 0xffff8b148256c020 -> d_lookup hash 3583106372 len 7
-"t_e.txt" -> NULL -> __d_alloc entry 0xffff8b148256c025 -> __d_alloc return 0xffff8b14d0cc60f8 ->
-__d_add 0xffff8b14d0cc60f8 -> do_filp_open return 0xffff8b14d0cc60f8. The return pointer equals the
-copy destination and the insert pointer.
-open("/mnt/loopfs/a.txt") -> do_filp_open entry 0xffff8b148256b020 -> d_lookup hash 2244109168 len 5
-"a.txt" -> NULL -> __d_alloc entry 0xffff8b148256b02c -> __d_alloc return 0xffff8b14d0cc8e78 ->
-__d_add 0xffff8b14d0cc8e78 -> do_filp_open return 0xffff8b14d0cc8e78. 0xffff8b148256b02c −
-0xffff8b148256b020 = 0xC = 12, so the copy source starts exactly after “/mnt/loopfs/”.
-open("l_e.txt") -> d_lookup return 0xffff8b149e4886f8 -> do_filp_open return 0xffff8b149e4886f8. The
-hit uses the cached pointer before deletion.
-unlink("l_e.txt") -> d_delete 0xffff8b149e4886f8; unlink("/tmp/t_e.txt") -> d_delete
-0xffff8b149e488cf8; drop_caches -> __dentry_kill 0xffff8b149e4886f8 and 0xffff8b149e488cf8. Deletion
-and eviction touch the same numeric pointers.
-open("/tmp/t_e.txt") after drop_caches -> __d_alloc return 0xffff8b14a712db78 -> __d_add
-0xffff8b14a712db78 -> do_filp_open return 0xffff8b14a712db78. 0xffff8b14a712db78 !=
-0xffff8b149e488cf8, so rebuild produces a different pointer.
-open("l_e.txt") after drop_caches -> do_filp_open return 0xffff8b148a31f878. 0xffff8b148a31f878 !=
-0xffff8b149e4886f8, so post‑eviction return differs from pre‑eviction return.
-
+1. /usr/src/linux-source-6.8.0/fs/open.c + /usr/src/linux-source-6.8.0/fs/dcache.c → `nl -ba /usr/src/linux-source-6.8.0/fs/open.c | sed -n '1388,1436p'` → open/openat→do_filp_open ✓ → `nl -ba /usr/src/linux-source-6.8.0/fs/dcache.c | sed -n '2245,2265p'` → d_lookup(name,len,hash), NULL=miss ✓ → `rg -n "memcpy(dname, name->name, name->len)" /usr/src/linux-source-6.8.0/fs/dcache.c` → __d_alloc copy ✓ → `rg -n "__d_add\(|d_delete\(|__dentry_kill" /usr/src/linux-source-6.8.0/fs/dcache.c` → __d_add/d_delete/__dentry_kill ✓ → `nl -ba kernel/drivers/trace_do_filp_open/trace_do_filp_open.c | sed -n '82,90p'` → do_filp_open return pointer ✓
+2. 0xffff8b148256c025−0xffff8b148256c020=0x5=5, /tmp/=5 ✓, compute?
+3. 0xffff8b148256b02c−0xffff8b148256b020=0xC=12, /mnt/loopfs/=12 ✓, compute?
+4. /tmp/t_e.txt: 0xffff8b148256c020→0xffff8b148256c025→0xffff8b14d0cc60f8→0xffff8b14d0cc60f8→0xffff8b14d0cc60f8 ✓, compute?
+5. /tmp/t_m.txt: 0xffff8b1480ef5020→0xffff8b148d58d3f8→0xffff8b148d58d3f8 ✓, compute?
+6. l_m.txt: 0xffff8b1482462020→0xffff8b14a70b6278→0xffff8b14a70b6278 ✓, compute?
+7. /mnt/loopfs/a.txt: 0xffff8b148256b020→0xffff8b148256b02c→0xffff8b14d0cc8e78→0xffff8b14d0cc8e78 ✓, compute?
+8. hit: 0xffff8b149e4886f8 + 0xffff8b149e488cf8 reused ✓, verify?
+9. delete: d_delete 0xffff8b149e4886f8 + 0xffff8b149e488cf8 ✓, verify?
+10. evict: __dentry_kill 0xffff8b149e4886f8 + 0xffff8b149e488cf8 ✓, verify?
+11. rebuild: 0xffff8b14a712db78≠0xffff8b149e488cf8 ✗, verify?
+12. post: 0xffff8b148a31f878≠0xffff8b149e4886f8 ✗, verify?
 QUIZ (ANSWER YES/NO)
 1. 0xffff8b14d0cc60f8=0xffff8b14d0cc60f8=0xffff8b14d0cc60f8 ✓? 2. 0xffff8b149e4886f8 unchanged
 before delete ✓? 3. 0xffff8b148a31f878≠0xffff8b149e4886f8 ✓?
