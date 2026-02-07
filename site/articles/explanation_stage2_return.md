@@ -3,6 +3,38 @@ layout: default
 title: "Stage 2 Return"
 ---
 
+INTRODUCTION
+
+This document proves where the filename string lives when do_filp_open returns. We use kernel probes to print memory addresses at 5 locations. We compare these addresses. If two addresses are equal, they point to the same memory. This is the only method used: pointer equality and pointer arithmetic.
+
+Why this matters: when you call open("file.txt"), the kernel must store that filename somewhere. The kernel has two choices: allocate new memory and copy the string, or reuse an existing cached copy. We prove which choice the kernel makes by printing the actual memory addresses and comparing them.
+
+What we will do:
+1. Print the filename pointer when do_filp_open starts (input address)
+2. Print the filename pointer when __d_alloc copies it (source and destination addresses)
+3. Print the filename pointer when do_filp_open returns (output address)
+4. Print the filename pointer when d_lookup finds a cached entry (cache hit address)
+5. Compare these addresses using equality (A == B) and subtraction (A - B)
+
+Why we need 5 probes:
+- do_filp_open entry: fixes the input address (full path like "/tmp/file.txt")
+- __d_alloc entry: fixes the copy source address (basename like "file.txt")
+- __d_alloc return: fixes the copy destination address (new dentry name)
+- do_filp_open return: fixes the output address (returned file struct points here)
+- d_lookup return: fixes the cache hit address (reused dentry name)
+
+If we remove any probe, we cannot prove the chain with numbers alone.
+
+Why subtraction: when do_filp_open entry prints 0xffff...020 with "/tmp/file.txt" and __d_alloc entry prints 0xffff...025, the subtraction 0xffff...025 - 0xffff...020 = 5 bytes. This equals strlen("/tmp/"). This proves __d_alloc receives a pointer to the basename, not the full path. The kernel skips the directory prefix.
+
+Why equality: when __d_add prints 0xffff...eb8 and do_filp_open return prints 0xffff...eb8, the same number appears twice. This proves the returned file struct points to the dentry name that was just inserted into the cache. No copy happened between insert and return.
+
+Why eviction test: when we drop_caches and open the same file again, if the address changes from 0xffff...1b8 to 0xffff...0f8, this proves the kernel allocated new memory. The old cached entry was freed. The subtraction 0xffff...1b8 - 0xffff...0f8 = 192 bytes shows the addresses differ.
+
+Why negative dentry test: when we open a missing file twice and both opens return fd=-1, if __d_lookup_rcu returns the same address 0xffff...0f8 on the second open, this proves the kernel cached the "file does not exist" result. The second open hits the cache and avoids a disk lookup, even though the file still does not exist.
+
+All claims in this document are verified with printed kernel pointers from actual test runs. Your run will produce different addresses, but the equality and subtraction relationships will be the same.
+
 QUESTION
 
 Where does the filename string live when do_filp_open returns?
