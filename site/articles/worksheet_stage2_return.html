@@ -206,21 +206,21 @@ sudo umount /mnt/loopfs
 sudo mount /tmp/loopfs.img /mnt/loopfs</code></pre>
 <pre style="white-space: pre-wrap; word-wrap: break-word; margin: 0; font-family: monospace;">
 
-3) Run matrix_open (all paths)</pre>
+3) Run split programs (one at a time)</pre>
 <pre><code>cd kernel/user/stage2
 sudo dmesg -C
 sudo rmmod trace_do_filp_open
-sudo insmod ../../drivers/trace_do_filp_open/trace_do_filp_open.ko target_comm=te_miss
-sudo ./te_miss
+sudo insmod ../../drivers/trace_do_filp_open/trace_do_filp_open.ko target_comm=&lt;program&gt;
+sudo ./&lt;program&gt;
 sleep 2
-sudo dmesg | rg -n "t_e.txt|d_lookup entry|d_lookup return|__d_alloc|__d_add|do_filp_open"</code></pre>
+sudo dmesg | rg -n "t_e.txt|t_m.txt|l_m.txt|l_e.txt|a.txt|d_lookup entry|d_lookup return|__d_alloc|__d_add|do_filp_open|d_delete|__dentry_kill"</code></pre>
 <pre style="white-space: pre-wrap; word-wrap: break-word; margin: 0; font-family: monospace;">
 
-TEST 2: MATRIX (split programs)
+TEST 2: MATRIX (split programs, no labels)
 
-FILE A (t_e.txt, first open after drop_caches):
-Why: clean miss path with a /tmp prefix and offset +5.
-Run: ./te_miss
+Problem statement and numbers: the kernel pointer for /tmp/t_e.txt is 0xffff8b148256c020 and the copy-source pointer is 0xffff8b148256c025, so 0xffff8b148256c025 − 0xffff8b148256c020 = 0x5 = 5, and “/tmp/” is 5 bytes. The kernel pointer for /mnt/loopfs/a.txt is 0xffff8b148256b020 and the copy-source pointer is 0xffff8b148256b02c, so 0xffff8b148256b02c − 0xffff8b148256b020 = 0xC = 12, and “/mnt/loopfs/” is 12 bytes. The copied name pointer 0xffff8b14d0cc60f8 appears in both __d_add and do_filp_open return for t_e.txt, so the file’s name pointer equals the copied name storage. The cache-hit pointers are 0xffff8b149e4886f8 for l_e.txt and 0xffff8b149e488cf8 for t_e.txt, and those exact pointers appear again in d_delete and __dentry_kill.
+
+te_miss (t_e.txt miss + copy + insert + return; /tmp/ offset +5):
 - do_filp_open entry pointer = 0xffff8b148256c020 | /tmp/t_e.txt
 - d_lookup entry hash 3583106372 len 7 name t_e.txt
 - d_lookup return: NULL
@@ -228,29 +228,22 @@ Run: ./te_miss
 - __d_alloc return pointer = 0xffff8b14d0cc60f8
 - __d_add entry pointer = 0xffff8b14d0cc60f8 | t_e.txt
 - do_filp_open return pointer = 0xffff8b14d0cc60f8 | t_e.txt
-- offset check: (0xffff8b148256c020 + 5) == 0xffff8b148256c025
 
-FILE B (t_m.txt, missing):
-Why: miss+insert for a missing /tmp name.
-Run: ./tm_miss
+tm_miss (t_m.txt miss + copy + insert; /tmp/ offset +5):
 - do_filp_open entry pointer = 0xffff8b1480ef5020 | /tmp/t_m.txt
 - d_lookup entry hash 502501587 len 7 name t_m.txt
 - d_lookup return: NULL
 - __d_alloc return pointer = 0xffff8b148d58d3f8
 - __d_add entry pointer = 0xffff8b148d58d3f8 | t_m.txt
 
-FILE C (l_m.txt, missing):
-Why: miss+insert with no prefix (alloc entry equals string pointer).
-Run: ./lm_miss
+lm_miss (l_m.txt miss + copy + insert; no prefix):
 - do_filp_open entry pointer = 0xffff8b1482462020 | l_m.txt
 - d_lookup entry hash 2257632620 len 7 name l_m.txt
 - d_lookup return: NULL
 - __d_alloc return pointer = 0xffff8b14a70b6278
 - __d_add entry pointer = 0xffff8b14a70b6278 | l_m.txt
 
-FILE D (a.txt, loopback ext2):
-Why: same flow on ext2 with short name and /mnt/loopfs/ offset +12.
-Run: ./a_miss
+a_miss (a.txt miss + copy + insert; /mnt/loopfs/ offset +12):
 - do_filp_open entry pointer = 0xffff8b148256b020 | /mnt/loopfs/a.txt
 - d_lookup entry hash 2244109168 len 5 name a.txt
 - d_lookup return: NULL
@@ -258,39 +251,24 @@ Run: ./a_miss
 - __d_alloc return pointer = 0xffff8b14d0cc8e78
 - __d_add entry pointer = 0xffff8b14d0cc8e78 | a.txt
 - do_filp_open return pointer = 0xffff8b14d0cc8e78 | a.txt
-- offset check: (0xffff8b148256b020 + 12) == 0xffff8b148256b02c
 
-CACHE HIT (before deletion):
-Why: show pointer reuse on hit.
-Run: ./evict (pre-eviction lookup)
+evict (pre-eviction lookup + eviction):
 - d_lookup return pointer = 0xffff8b149e4886f8 | l_e.txt
 - d_lookup return pointer = 0xffff8b149e488cf8 | t_e.txt
-
-DELETION (unlink):
-Why: show d_delete removal for the same pointers.
-Run: ./delete
-- d_delete entry = 0xffff8b149e4886f8 | l_e.txt
-- d_delete entry = 0xffff8b149e488cf8 | t_e.txt
-
-EVICTION (drop_caches):
-Why: show __dentry_kill for cached names.
-Run: ./evict
-- do_filp_open entry/return for /proc/sys/vm/drop_caches
 - __dentry_kill entry = 0xffff8b149e4886f8 | l_e.txt
 - __dentry_kill entry = 0xffff8b149e488cf8 | t_e.txt
 
-REBUILD (after eviction, t_e.txt):
-Why: show new or reused pointer after eviction.
-Run: ./rebuild
-- d_lookup return: NULL
+delete (unlink):
+- d_delete entry = 0xffff8b149e4886f8 | l_e.txt
+- d_delete entry = 0xffff8b149e488cf8 | t_e.txt
+
+rebuild (post-eviction t_e.txt):
 - __d_alloc return pointer = 0xffff8b14a712db78
 - __d_add entry pointer = 0xffff8b14a712db78 | t_e.txt
 - do_filp_open return pointer = 0xffff8b14a712db78 | t_e.txt
 - inequality check: 0xffff8b14a712db78 != 0xffff8b149e488cf8
 
-POST-EVICTION LOOKUP (l_e.txt):
-Why: compare post-eviction pointer to pre-eviction pointer.
-Run: ./post
+post (post-eviction l_e.txt):
 - __d_lookup_rcu entry: hash 1845489866 length 7 name l_e.txt
 - do_filp_open return pointer = 0xffff8b148a31f878 | l_e.txt
 - inequality check: 0xffff8b148a31f878 != 0xffff8b149e4886f8
