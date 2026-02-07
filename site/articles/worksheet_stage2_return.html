@@ -226,21 +226,24 @@ int main() {
 <pre style="white-space: pre-wrap; word-wrap: break-word; margin: 0; font-family: monospace;">
 
 ================================================================================
-Kernel Probes
+Probes
 ================================================================================
 
 Location: kernel/drivers/trace_do_filp_open/trace_do_filp_open.c
-
-Required probes:
-- do_filp_open entry: prints filename pointer and string
-- d_lookup entry: prints hash, length, name (lookup key)
-- d_lookup return: prints NULL (miss) or dentry name pointer (hit)
-- __d_alloc entry: prints copy source pointer
-- __d_alloc return: prints copy destination pointer
-- __d_add entry: prints inserted dentry name pointer
-- d_delete entry: prints deleted dentry name pointer
-- __dentry_kill entry: prints evicted dentry name pointer
-- __d_lookup and __d_lookup_rcu: internal lookup path keys
+</pre>
+<pre><code class="language-text">[do_filp_open entry]   struct filename-&gt;name
+└─[d_lookup entry]     qstr-&gt;{name,len,hash}
+  ├─[__d_lookup entry] qstr-&gt;{name,len,hash}
+  ├─[__d_lookup_rcu]   qstr-&gt;{name,len,hash}
+  └─[d_lookup return]  NULL | dentry-&gt;d_name.name
+     └─[miss path]
+       ├─[__d_alloc entry]  qstr-&gt;name
+       ├─[__d_alloc return] dentry-&gt;d_name.name
+       └─[__d_add entry]    dentry-&gt;d_name.name
+[do_filp_open return]  f-&gt;f_path.dentry-&gt;d_name.name
+[d_delete entry]       dentry-&gt;d_name.name
+[__dentry_kill entry]  dentry-&gt;d_name.name</code></pre>
+<pre style="white-space: pre-wrap; word-wrap: break-word; margin: 0; font-family: monospace;">
 
 
 ================================================================================
