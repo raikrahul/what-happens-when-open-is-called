@@ -9,25 +9,6 @@ Stage 1 https://raikrahul.github.io/what-happens-when-open-is-called/stage1.html
 Stage 2 Entry https://raikrahul.github.io/what-happens-when-open-is-called/stage2.html
 Stage 2 Return (Explanation) https://raikrahul.github.io/what-happens-when-open-is-
 called/articles/explanation_stage2_return.html
-================================================================================
-Proof Goals
-================================================================================
-
-You will capture pointer copies, first misses and inserts, later hits, and the delete/evict/rebuild
-sequence. You will also measure prefix offsets (/tmp/ and /mnt/loopfs/) and confirm the long‑name
-miss followed by a later hit.
-
-================================================================================
-Files Used
-================================================================================
-
-kernel/drivers/trace_do_filp_open/trace_do_filp_open.c — https://github.com/raikrahul/what-happens-
-when-open-is-called/blob/main/kernel/drivers/trace_do_filp_open/trace_do_filp_open.c;
-kernel/user/stage2/minimal_open.c — https://github.com/raikrahul/what-happens-when-open-is-
-called/blob/main/kernel/user/stage2/minimal_open.c; kernel/user/stage2/matrix_open.c —
-https://github.com/raikrahul/what-happens-when-open-is-
-called/blob/main/kernel/user/stage2/matrix_open.c
-
 What we trace (string → pointer flow, in order). Location:
 kernel/drivers/trace_do_filp_open/trace_do_filp_open.c
 ```text
