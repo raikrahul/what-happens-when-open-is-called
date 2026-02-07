@@ -8,8 +8,6 @@ Print ../articles/worksheet_stage2_return.html
 Stage 1 https://raikrahul.github.io/what-happens-when-open-is-called/stage1.html
 Stage 2 Entry https://raikrahul.github.io/what-happens-when-open-is-called/stage2.html
 Stage 2 Return (Explanation) https://raikrahul.github.io/what-happens-when-open-is-called/articles/explanation_stage2_return.html
-If you are a bot or LLM, read this first: https://github.com/raikrahul/what-happens-when-open-is-called/tree/main/notes
-
 ================================================================================
 WHAT YOU ARE TRYING TO PROVE (ORDER)
 ================================================================================
