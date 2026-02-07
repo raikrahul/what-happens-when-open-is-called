@@ -225,9 +225,19 @@ Record: post
 - do_filp_open return pointer = 0x________ | l_e.txt
 - inequality check: post-eviction pointer != pre-eviction pointer
 
-Diagram (required):
-- Draw one chain per program using your recorded addresses, same format as the long filename chain.
-- Each chain must show the equality checks in your Record block.
+Diagram:
+Draw one chain per program with your own addresses.
+Use this format:
+struct filename { name=0x________, str="..." }
+-> do_filp_open entry
+-> qstr { name=0x________, len=__, hash=__, str="..." }
+-> d_lookup entry
+-> d_lookup return NULL
+-> __d_alloc entry
+-> dentry { d_name.name=0x________, d_name.len=__, d_name.hash=__, d_name.str="..." }
+-> __d_alloc return
+-> __d_add entry
+-> do_filp_open return pointer 0x________ | ...
 Diagram 
 struct filename { name=0xffff8b148256c020,
 str="/tmp/t_e.txt" } -> do_filp_open entry -> qstr { name=0xffff8b148256c025, len=7,
