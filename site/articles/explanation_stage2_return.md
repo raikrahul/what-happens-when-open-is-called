@@ -17,20 +17,6 @@ Previous work:
 [Stage 2](https://raikrahul.github.io/what-happens-when-open-is-called/stage2.html) getname/filename buffer.
 [Worksheet](https://raikrahul.github.io/what-happens-when-open-is-called/articles/worksheet_stage2_return.html) for this stage.
 
-## Man Pages Used (parts)
-open(2): `int open(const char *pathname, int flags, ...);` returns file descriptor or -1.
-creat(2): `int creat(const char *pathname, mode_t mode);` = open with create flags.
-unlink(2): `int unlink(const char *pathname);` returns 0 or -1.
-write(2): `ssize_t write(int fd, const void *buf, size_t count);` returns bytes written or -1.
-sync(2): `void sync(void);` flushes filesystem buffers.
-mount(8): `mount <device> <dir>` used for loopback ext2.
-umount(8): `umount <dir>` used to remount loopback.
-losetup(8): `losetup -fP <img>` maps loopback device.
-mkfs.ext2(8): `mkfs.ext2 -F <img>` formats loopback image.
-dd(1): `dd if=/dev/zero of=/tmp/loopfs.img bs=1M count=64` creates 64M image.
-dmesg(1): `dmesg` prints kernel ring buffer.
-insmod(8), rmmod(8): `insmod <ko>` / `rmmod <ko>` load/unload driver.
-
 ## Tools
 trace_do_filp_open.ko prints kernel pointers and hash keys.
 dmesg reads the kernel ring buffer.
@@ -46,8 +32,24 @@ Example dmesg line format (from this driver):
 [time] [O] OUT: 0xffff... | t_e.txt
 [time] __d_lookup_rcu return: 0xffff... | t_e.txt
 
+What we learned (from these lines only):
+- Same numeric pointer repeats across __d_add, do_filp_open return, and later lookup.
+- Prefix offsets match string length: /tmp/ = 5, /mnt/loopfs/ = 12.
+- Missing file still creates a cached name; second open hits __d_lookup_rcu with the same pointer.
+- Probe reads: regs->si → struct filename* at entry, regs->ax → struct file* or struct dentry* at return.
+
+I measured the cache with numbers, not descriptions. In te_miss the same numeric address 0xffff8976c0793c38 appears at __d_add and at do_filp_open return; in minimal_open the same numeric address 0xffff897727671438 appears at __d_add, do_filp_open return, and later d_lookup return. Pointer equality is the only claim: the inserted dentry name pointer is the returned file name pointer, and the later lookup reuses the same pointer.
+
+The basename claim is subtraction. do_filp_open entry prints 0xffff8976c6763020 with "/tmp/t_e.txt" and __d_alloc entry prints 0xffff8976c6763025, so 0xffff8976c6763025 − 0xffff8976c6763020 = 0x5 = 5, which is the length of "/tmp/". For /mnt/loopfs/a.txt, 0xffff8976c905a02c − 0xffff8976c905a020 = 0xC = 12, which is the length of "/mnt/loopfs/". The copy source starts at the basename inside the full path.
+
+Eviction is subtraction too. In rebuild.c, before drop_caches the pointer is 0xffff8976cd60a1b8 and after drop_caches it is 0xffff8976cd60a0f8; 0xffff8976cd60a1b8 − 0xffff8976cd60a0f8 = 0xC0 = 192. A different numeric address after drop_caches proves a new allocation replaced the old one.
+
+Negative dentry caching is also pointer equality. In tm_miss, first open creates 0xffff8976c06483f8 and second open returns 0xffff8976c06483f8 via __d_lookup_rcu; both opens return -1, but the second one hits the cached address and avoids a disk lookup.
+
+These probes exist only to print numbers at the exact transitions: do_filp_open entry fixes the full path pointer, __d_alloc entry fixes the basename pointer, __d_alloc return fixes the new dentry name pointer, __d_add fixes the cached pointer, do_filp_open return fixes the returned pointer, and d_lookup/__d_lookup_rcu show NULL or a reused pointer for the same name key. If any one is removed, you cannot prove the equality or the subtraction chains with numbers alone.
+
 ## User Programs (one line each)
-minimal_open.c
+### minimal_open.c
 ```c
 snprintf(filename, sizeof(filename),
          "test_file_very_long_name_to_force_external_allocation_%ld", now);
@@ -76,7 +78,9 @@ long name
       └─ d_lookup return 0xffff897727671438
 ```
 
-te_miss.c
+Learned: same numeric pointer appears at __d_add, do_filp_open return, later d_lookup return for the long name.
+
+### te_miss.c
 ```c
 const char *n2 = "/tmp/t_e.txt";
 close(creat(n2, 0644));
@@ -106,7 +110,9 @@ open(n2, O_RDONLY);
       └─ d_lookup return 0xffff8976c0793c38
 ```
 
-tm_miss.c
+Learned: basename offset = 5 and the same numeric pointer appears at __d_add and do_filp_open return.
+
+### tm_miss.c
 ```c
 const char *n3 = "/tmp/t_m.txt";
 drop_caches_if_root();
@@ -147,7 +153,9 @@ tm_miss second open fd=-1
       └─ __d_lookup_rcu return 0xffff8976c06483f8 (second open)
 ```
 
-lm_miss.c
+Learned: missing file creates a cached name; second open hits __d_lookup_rcu with the same pointer while fd=-1.
+
+### lm_miss.c
 ```c
 const char *n4 = "l_m.txt";
 drop_caches_if_root();
@@ -173,7 +181,9 @@ l_m.txt
       └─ d_lookup return 0xffff8976ceafcb78
 ```
 
-a_miss.c
+Learned: no prefix shift; copy source equals entry pointer; __d_add uses the same numeric pointer.
+
+### a_miss.c
 ```c
 const char *n5 = "/mnt/loopfs/a.txt";
 drop_caches_if_root();
@@ -201,7 +211,19 @@ open(n5, O_RDONLY);
       └─ d_lookup return 0xffff8976c7aa94b8
 ```
 
-hits.c + delete.c + evict.c (one pointer chain per name)
+Learned: basename offset = 12; __d_add uses the same numeric pointer; no do_filp_open return printed here.
+
+### hits.c + delete.c + evict.c (one pointer chain per name)
+```c
+// hits.c
+open("l_e.txt", O_RDONLY);
+open("/tmp/t_e.txt", O_RDONLY);
+// delete.c
+unlink("l_e.txt");
+unlink("/tmp/t_e.txt");
+// evict.c
+drop_caches_if_root();
+```
 - l_e.txt hit: d_lookup return = 0xffff8976e49fab78
 - l_e.txt delete: d_delete entry = 0xffff8976e49fab78
 - l_e.txt evict: __dentry_kill entry = 0xffff8976e49fab78
@@ -213,7 +235,14 @@ l_e.txt: 0xffff8976e49fab78 → 0xffff8976e49fab78 → 0xffff8976e49fab78
 t_e.txt: 0xffff8976e49fa4b8 → 0xffff8976e49fa4b8 → 0xffff8976e49fa4b8
 ```
 
-rebuild.c
+Learned: l_e.txt and t_e.txt keep the same pointer across hit → delete → evict.
+
+### rebuild.c
+```c
+open("/tmp/t_e.txt", O_RDONLY);
+drop_caches_if_root();
+open("/tmp/t_e.txt", O_RDONLY);
+```
 - before drop_caches: __d_add entry 0xffff8976cd60a1b8 | t_e.txt, do_filp_open return pointer 0xffff8976cd60a1b8 | t_e.txt
 - after drop_caches: __d_add entry 0xffff8976cd60a0f8 | t_e.txt, do_filp_open return pointer 0xffff8976cd60a0f8 | t_e.txt
 - 0xffff8976cd60a1b8 − 0xffff8976cd60a0f8 = 0xc0 = 192.
@@ -223,7 +252,14 @@ before drop_caches: __d_add 0xffff8976cd60a1b8 -> do_filp_open return 0xffff8976
 after  drop_caches: __d_add 0xffff8976cd60a0f8 -> do_filp_open return 0xffff8976cd60a0f8
 ```
 
-post.c
+Learned: after drop_caches the pointer changed; subtraction shown in hex and decimal.
+
+### post.c
+```c
+open("l_e.txt", O_RDONLY);
+drop_caches_if_root();
+open("l_e.txt", O_RDONLY);
+```
 - before drop_caches: __d_add entry 0xffff8976c04f7c38 | l_e.txt, do_filp_open return pointer 0xffff8976c04f7c38 | l_e.txt
 - after drop_caches: __d_add entry 0xffff8976c04f70f8 | l_e.txt, do_filp_open return pointer 0xffff8976c04f70f8 | l_e.txt
 - 0xffff8976c04f7c38 − 0xffff8976c04f70f8 = 0xb40 = 2880.
@@ -233,7 +269,14 @@ before drop_caches: __d_add 0xffff8976c04f7c38 -> do_filp_open return 0xffff8976
 after  drop_caches: __d_add 0xffff8976c04f70f8 -> do_filp_open return 0xffff8976c04f70f8
 ```
 
-do_sys_openat2 and do_filp_open (source: `/usr/src/linux-source-6.8.0/fs/open.c`, lines 1388–1414)
+## Why These Probes
+Start at the equality that closes the loop. In te_miss, __d_add prints 0xffff8976c0793c38 and do_filp_open return prints 0xffff8976c0793c38. The same number appears twice, so the inserted dentry name pointer is the returned file name pointer. In minimal_open the same number 0xffff897727671438 appears at __d_add, do_filp_open return, and later d_lookup return; the cache hit is the same address as the insert and the return.
+
+Now move forward to eviction and rebuild. In rebuild.c, before drop_caches the return pointer is 0xffff8976cd60a1b8, after drop_caches it is 0xffff8976cd60a0f8, and 0xffff8976cd60a1b8 − 0xffff8976cd60a0f8 = 0xC0 = 192. A different numeric address after drop_caches means a new allocation replaced the old one. This is why we probe __dentry_kill and __d_add: the same name produces a new pointer after eviction, and the change is visible as a subtraction in hex.
+
+Now move backward to the copy source. In te_miss, do_filp_open entry prints 0xffff8976c6763020 with "/tmp/t_e.txt", and __d_alloc entry prints 0xffff8976c6763025. The subtraction 0xffff8976c6763025 − 0xffff8976c6763020 = 0x5 = 5 matches the five bytes of "/tmp/". In a_miss, 0xffff8976c905a02c − 0xffff8976c905a020 = 0xC = 12 matches "/mnt/loopfs/". These offsets prove the copy source starts at the basename inside the full path, and that is why do_filp_open entry and __d_alloc entry are both needed: one fixes the full path pointer, the other fixes the basename pointer.
+
+do_sys_openat2 and do_filp_open (source: `/usr/src/linux-source-6.8.0/fs/open.c`)
 ```
 open/openat
 └─ do_sys_openat2
@@ -287,15 +330,29 @@ __dentry_kill(dentry)
 └─ driver dentry_kill_entry → print dentry->d_name.name
 ```
 
-## Why These Probes
-do_filp_open entry: prints the kernel pathname pointer from `struct filename->name`, the first stable kernel copy of the user string for this call.  
-do_filp_open return: prints `file->f_path.dentry->d_name.name`, the name pointer carried by the returned file.  
-d_lookup entry: prints `qstr->name`, `qstr->len`, `qstr->hash`, the exact lookup key the cache search uses.  
-d_lookup return: prints NULL or a dentry name pointer, so hit vs miss is a numeric fact.  
-__d_lookup / __d_lookup_rcu: print the same key on internal/RCU paths so the key is visible on those paths too.  
-__d_lookup_rcu return: prints dentry name pointer or NULL on the RCU path.  
-__d_alloc entry: prints `qstr->name` as the copy source pointer used by `memcpy(dname, name->name, name->len)`.  
-__d_alloc return: prints `dentry->d_name.name` as the copy destination pointer created by the allocation.  
-__d_add entry: prints the dentry name pointer inserted into the dcache hash.  
-d_delete entry: prints the dentry name pointer removed by unlink.  
-__dentry_kill entry: prints the dentry name pointer reclaimed by drop_caches.  
+do_filp_open entry → struct filename.name; getname(); pre-lookup  
+do_filp_open return → file->f_path.dentry->d_name.name; do_filp_open(); return time  
+d_lookup entry name → qstr.name; path_walk(); pre d_lookup  
+d_lookup entry len → qstr.len; path_walk(); pre d_lookup  
+d_lookup entry hash → qstr.hash; full_name_hash(); pre d_lookup  
+d_lookup return pointer → dentry->d_name.name; d_lookup(); post lookup  
+__d_lookup_rcu return → dentry->d_name.name; __d_lookup_rcu(); post lookup  
+__d_alloc entry → qstr.name; path_walk(); pre __d_alloc  
+__d_alloc return → dentry->d_name.name; __d_alloc(); post alloc  
+__d_add entry → dentry->d_name.name; __d_add(); insert time  
+d_delete entry → dentry->d_name.name; d_delete(); unlink time  
+__dentry_kill entry → dentry->d_name.name; __dentry_kill(); drop_caches time
+
+## Man Pages Used (parts)
+open(2): `int open(const char *pathname, int flags, ...);` returns file descriptor or -1.
+creat(2): `int creat(const char *pathname, mode_t mode);` = open with create flags.
+unlink(2): `int unlink(const char *pathname);` returns 0 or -1.
+write(2): `ssize_t write(int fd, const void *buf, size_t count);` returns bytes written or -1.
+sync(2): `void sync(void);` flushes filesystem buffers.
+mount(8): `mount <device> <dir>` used for loopback ext2.
+umount(8): `umount <dir>` used to remount loopback.
+losetup(8): `losetup -fP <img>` maps loopback device.
+mkfs.ext2(8): `mkfs.ext2 -F <img>` formats loopback image.
+dd(1): `dd if=/dev/zero of=/tmp/loopfs.img bs=1M count=64` creates 64M image.
+dmesg(1): `dmesg` prints kernel ring buffer.
+insmod(8), rmmod(8): `insmod <ko>` / `rmmod <ko>` load/unload driver.
