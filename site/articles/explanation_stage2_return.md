@@ -48,6 +48,9 @@ Negative dentry caching is also pointer equality. In tm_miss, first open creates
 
 These probes exist only to print numbers at the exact transitions: do_filp_open entry fixes the full path pointer, __d_alloc entry fixes the basename pointer, __d_alloc return fixes the new dentry name pointer, __d_add fixes the cached pointer, do_filp_open return fixes the returned pointer, and d_lookup/__d_lookup_rcu show NULL or a reused pointer for the same name key. If any one is removed, you cannot prove the equality or the subtraction chains with numbers alone.
 
+Negative dentry proof (kernel source on this machine):
+`/usr/src/linux-source-6.8.0/include/linux/dcache.h` defines `struct dentry` with `struct inode *d_inode; /* Where the name belongs to - NULL is negative */` and `static inline bool d_really_is_negative(const struct dentry *dentry) { return dentry->d_inode == NULL; }`. This is why a dentry can exist as a struct while being “negative”: the struct exists, and its `d_inode` is NULL.
+
 ## Cases (answering the specific questions)
 Hash time: the hash is printed at d_lookup entry or __d_lookup entry, so hashing happens before the lookup result is known. In minimal_open the line “d_lookup entry: hash 736449114 length 64” appears before “d_lookup return: NULL”, so the hash exists even on a miss.
 
