@@ -246,18 +246,6 @@ Required probes:
 - __dentry_kill entry: prints evicted dentry name pointer
 - __d_lookup and __d_lookup_rcu: internal lookup path keys
 
-Probe code locations (driver file, local):
-`kernel/drivers/trace_do_filp_open/trace_do_filp_open.c:73` open entry
-`kernel/drivers/trace_do_filp_open/trace_do_filp_open.c:82` open return
-`kernel/drivers/trace_do_filp_open/trace_do_filp_open.c:94` __d_alloc entry
-`kernel/drivers/trace_do_filp_open/trace_do_filp_open.c:104` __d_alloc return
-`kernel/drivers/trace_do_filp_open/trace_do_filp_open.c:115` d_lookup return
-`kernel/drivers/trace_do_filp_open/trace_do_filp_open.c:131` d_lookup entry
-`kernel/drivers/trace_do_filp_open/trace_do_filp_open.c:141` __d_lookup entry
-`kernel/drivers/trace_do_filp_open/trace_do_filp_open.c:151` __d_lookup_rcu entry
-`kernel/drivers/trace_do_filp_open/trace_do_filp_open.c:195` __d_add entry
-`kernel/drivers/trace_do_filp_open/trace_do_filp_open.c:225` d_delete entry
-`kernel/drivers/trace_do_filp_open/trace_do_filp_open.c:258` __dentry_kill entry
 
 ================================================================================
 BUILD AND RUN (ORDER MATTERS)
