@@ -42,7 +42,7 @@ __dentry_kill(entry): reclaims dentry on drop_caches.
 __d_lookup / __d_lookup_rcu: internal/RCU lookup paths for the same key.
 
 ================================================================================
-USER SPACE TEST PROGRAMS (AND WHY THEY EXIST)
+User Tests
 ================================================================================
 
 Location (repo): https://github.com/raikrahul/what-happens-when-open-is-called/tree/main/kernel/user/stage2
