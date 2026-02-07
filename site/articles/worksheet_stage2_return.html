@@ -120,6 +120,17 @@ sleep 5
 sudo dmesg | rg -n "test_file_very_long_name_to_force_external_allocation"</code></pre>
 <pre style="white-space: pre-wrap; word-wrap: break-word; margin: 0; font-family: monospace;">
 
+Example dmesg line format (from this driver):</pre>
+<pre><code>[time] [O] IN: 0xffff... | /tmp/t_e.txt
+[time] d_lookup entry: hash 210259851 length 7 name t_e.txt
+[time] d_lookup return: NULL
+[time] [A] SRC: 0xffff...
+[time] [A] DST: 0xffff...
+[time] __d_add entry: 0xffff... | t_e.txt
+[time] [O] OUT: 0xffff... | t_e.txt
+[time] __d_lookup_rcu return: 0xffff... | t_e.txt</code></pre>
+<pre style="white-space: pre-wrap; word-wrap: break-word; margin: 0; font-family: monospace;">
+
 WHAT TO RECORD (FILL THIS IN)
 ================================================================================
 
@@ -369,6 +380,8 @@ drop_caches_if_root();
 sleep(1);
 open(n2, O_RDONLY);</code></pre>
 <pre style="white-space: pre-wrap; word-wrap: break-word; margin: 0; font-family: monospace;">
+- before drop_caches: __d_add entry pointer = 0x________ | t_e.txt
+- before drop_caches: do_filp_open return pointer = 0x________ | t_e.txt
 - d_lookup return: NULL
 - __d_alloc return pointer = 0x________
 - __d_add entry pointer = 0x________ | t_e.txt
@@ -395,6 +408,8 @@ drop_caches_if_root();
 sleep(1);
 open(n1, O_RDONLY);</code></pre>
 <pre style="white-space: pre-wrap; word-wrap: break-word; margin: 0; font-family: monospace;">
+- before drop_caches: __d_add entry pointer = 0x________ | l_e.txt
+- before drop_caches: do_filp_open return pointer = 0x________ | l_e.txt
 - __d_lookup_rcu entry: hash ________ length 7 name l_e.txt
 - do_filp_open return pointer = 0x________ | l_e.txt
 - inequality check: post-eviction pointer != pre-eviction pointer
