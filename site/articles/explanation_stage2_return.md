@@ -512,7 +512,7 @@ keep the step list aligned to the open sequence used for the claims.
 51. __d_alloc entry | name pointer 0xffff8bd546392025 | basename pointer | allocate new name storage | caller line not recorded | current line not recorded | resume with new dentry pointer
 52. __d_alloc return | name pointer 0xffff8bd728c76338 | new name storage for t_e.txt | allocation completed | caller line not recorded | current line not recorded | resume to insert into dcache
 53. __d_add entry | name pointer 0xffff8bd728c76338 | name t_e.txt | insert into dcache | caller line not recorded | current line not recorded | resume to open path
-54. do_filp_open return | name pointer 0xffff8bd728c76338 | name t_e.txt | rebuilt pointer differs from pre-eviction pointer 0xffff8bd728c76338 | caller line not recorded | current line not recorded | resume to user space
+54. do_filp_open return | name pointer 0xffff8bd728c76338 | name t_e.txt | rebuilt pointer equals pre-eviction pointer 0xffff8bd728c76338 | caller line not recorded | current line not recorded | resume to user space
 
 Symbol availability proof (from this machine)
 
@@ -563,4 +563,4 @@ sudo dmesg | rg -n "__d_lookup_rcu entry:.*l_e.txt|\[O\] OUT: .*l_e.txt"
 151:[33036.444304] [O] OUT: 0xffff8bd7e94c8db8 | l_e.txt
 ```
 
-Explanation: the repeated __d_lookup_rcu entries show the lookup key for l_e.txt after eviction, and the [O] OUT lines show the return pointer seen by do_filp_open. The change from 0xffff8bd54e0c74b8 and 0xffff8bd7e94c8578 to 0xffff8bd7e94c8db8 records a new return pointer after eviction without an __d_add line in this run.
+Explanation: the repeated __d_lookup_rcu entries show the lookup key for l_e.txt after eviction, and the [O] OUT lines show the return pointer seen by do_filp_open. The change from 0xffff8bd7e94c8578 to 0xffff8bd7e94c8db8 records a new return pointer after eviction without an __d_add line in this run.
