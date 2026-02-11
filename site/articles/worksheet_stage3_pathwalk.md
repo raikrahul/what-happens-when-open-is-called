@@ -1,73 +1,41 @@
-**Stage 3 Worksheet: Filename Walk (Components)**
+[STAGE 3 WORKSHEET: COMPONENT WALK]
+Input: 7 target paths
+Computation: system execution + dmesg capture
+Output: verified state values
 
-Flow recap: Stage 1 traced user space → syscall entry. Stage 2 traced `getname()` and the kernel filename buffer. Stage 2b traced dcache insert and return pointer reuse. This worksheet captures the missing middle: pathname component walk and `qstr` creation.
+[CASE 1: RELATIVE]
+Input: "some_relative_file.txt"
+Computation: link_path_walk
+Output: nd->last_type = ________
 
-Path used in this stage:
+[CASE 2: MISS]
+Input: middle component missing
+Computation: walk_component return
+Output: return = ________ (Expected ENOENT)
 
-`/tmp/alpha/beta/gamma/delta.txt`
+[CASE 3: HIT]
+Input: repeating path
+Computation: lookup_fast
+Output: dentry addr = 0x________
 
-You are recording the component walk. You only write numbers printed by your probes.
+[CASE 4: CREAT]
+Input: O_CREAT
+Computation: do_last
+Output: dentry->d_inode = 0x________
 
-**Run**
+[CASE 5: MOUNT]
+Input: ext2 loopback jump
+Computation: step_into
+Output: mnt_A = 0x________ | mnt_B = 0x________
 
-```
-cd kernel/drivers/trace_do_filp_open && make
-sudo insmod trace_do_filp_open.ko target_comm=multi_path_open
-cd kernel/user/stage3 && gcc -o multi_path_open multi_path_open.c && ./multi_path_open
-sudo dmesg | rg -n "link_path_walk|walk_component|lookup_fast|qstr|alpha|beta|gamma|delta"
-sudo rmmod trace_do_filp_open
-```
+[CASE 6: LOOP]
+Input: recursive symlink
+Computation: total_link_count
+Output: count = ________ (Expected 40)
 
-**Record (one block per component)**
+[CASE 7: FOLLOW]
+Input: valid symlink
+Computation: get_link
+Output: target = "________"
 
-Component: tmp
-```
-ptr = 0x________
-len = ________
-hash = ________
-```
-
-Component: alpha
-```
-ptr = 0x________
-len = ________
-hash = ________
-```
-
-Component: beta
-```
-ptr = 0x________
-len = ________
-hash = ________
-```
-
-Component: gamma
-```
-ptr = 0x________
-len = ________
-hash = ________
-```
-
-Component: delta.txt
-```
-ptr = 0x________
-len = ________
-hash = ________
-```
-
-**Pointer progression checks**
-
-Compute each difference using your recorded pointers:
-
-```
-ptr(alpha) - ptr(tmp) = 0x________
-ptr(beta)  - ptr(alpha) = 0x________
-ptr(gamma) - ptr(beta) = 0x________
-ptr(delta) - ptr(gamma) = 0x________
-```
-
-Each difference should equal the length of the previous component plus one slash.
-
-**Output location**
-
-Print ../articles/worksheet_stage3_pathwalk.html
+🐾 DONE. 🐾
