@@ -1,3 +1,8 @@
+---
+layout: default
+title: "Stage 3 Case 1: Textbook"
+---
+
 [STAGE 3 CASE 1: RELATIVE PATH]
 Input: "some_relative_file.txt"
 Computation: path walk short‑circuit

@@ -1,3 +1,8 @@
+---
+layout: default
+title: "Stage 3 Case 6: Textbook"
+---
+
 [STAGE 3 CASE 6: LOOP]
 Input: infinite symlink
 Computation: total_link_count increment

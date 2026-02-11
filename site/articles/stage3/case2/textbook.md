@@ -1,3 +1,8 @@
+---
+layout: default
+title: "Stage 3 Case 2: Textbook"
+---
+
 [STAGE 3 CASE 2: PATH MISS]
 Input: "/tmp/nonexistent/file"
 Computation: walk_component fail

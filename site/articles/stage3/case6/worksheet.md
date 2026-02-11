@@ -1,3 +1,8 @@
+---
+layout: default
+title: "Stage 3 Case 6: Worksheet"
+---
+
 [CASE 6 WORKSHEET: SYMLINK LOOP]
 Input: ./case6_symlink_loop.out
 Computation: dmesg capture

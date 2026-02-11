@@ -1,3 +1,8 @@
+---
+layout: default
+title: "Stage 3 Case 7: Textbook"
+---
+
 [STAGE 3 CASE 7: FOLLOW]
 Input: good symlink
 Computation: path replacement

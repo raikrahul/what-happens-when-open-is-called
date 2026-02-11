@@ -1,3 +1,8 @@
+---
+layout: default
+title: "Stage 3 Case 2: Worksheet"
+---
+
 [CASE 2 WORKSHEET: PATH MISS]
 Input: ./case2_deep_miss.out
 Computation: dmesg capture

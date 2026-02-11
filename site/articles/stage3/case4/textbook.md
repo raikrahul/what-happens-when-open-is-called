@@ -1,3 +1,8 @@
+---
+layout: default
+title: "Stage 3 Case 4: Textbook"
+---
+
 [STAGE 3 CASE 4: O_CREAT]
 Input: open + O_CREAT
 Computation: atomic reservation

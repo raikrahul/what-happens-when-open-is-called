@@ -1,3 +1,8 @@
+---
+layout: default
+title: "Stage 3 Case 7: Worksheet"
+---
+
 [CASE 7 WORKSHEET: GOOD LINK]
 Input: ./case7_symlink_fast.out
 Computation: dmesg capture

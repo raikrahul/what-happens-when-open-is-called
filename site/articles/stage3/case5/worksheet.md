@@ -1,3 +1,8 @@
+---
+layout: default
+title: "Stage 3 Case 5: Worksheet"
+---
+
 [CASE 5 WORKSHEET: MOUNT JUMP]
 Input: ./case5_mount_jump.out
 Computation: dmesg capture

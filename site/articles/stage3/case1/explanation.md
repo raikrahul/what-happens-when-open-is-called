@@ -1,3 +1,8 @@
+---
+layout: default
+title: "Stage 3 Case 1: Explanation"
+---
+
 [CASE 1 EXPLANATION: RELATIVE PATH]
 Input: open("file")
 Computation: path walk entry

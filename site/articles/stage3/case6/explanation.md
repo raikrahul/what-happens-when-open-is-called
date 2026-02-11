@@ -1,3 +1,8 @@
+---
+layout: default
+title: "Stage 3 Case 6: Explanation"
+---
+
 [CASE 6 EXPLANATION: SYMLINK LOOP]
 Input: A -> B -> A
 Computation: recursion tracking

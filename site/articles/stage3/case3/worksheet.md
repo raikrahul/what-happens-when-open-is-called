@@ -1,3 +1,8 @@
+---
+layout: default
+title: "Stage 3 Case 3: Worksheet"
+---
+
 [CASE 3 WORKSHEET: PATH HIT]
 Input: ./case3_deep_hit.out
 Computation: dmesg capture

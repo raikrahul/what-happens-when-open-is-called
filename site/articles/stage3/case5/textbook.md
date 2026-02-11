@@ -1,3 +1,8 @@
+---
+layout: default
+title: "Stage 3 Case 5: Textbook"
+---
+
 [STAGE 3 CASE 5: MOUNT]
 Input: boundary crossing
 Computation: step_into jump

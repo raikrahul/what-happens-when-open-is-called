@@ -1,3 +1,8 @@
+---
+layout: default
+title: "Stage 3 Case 4: Worksheet"
+---
+
 [CASE 4 WORKSHEET: O_CREAT]
 Input: ./case4_create_flow.out
 Computation: dmesg + sleep check

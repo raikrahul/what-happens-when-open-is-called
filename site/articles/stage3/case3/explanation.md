@@ -1,3 +1,8 @@
+---
+layout: default
+title: "Stage 3 Case 3: Explanation"
+---
+
 [CASE 3 EXPLANATION: PATH HIT]
 Input: repeated path walk
 Computation: dcache search

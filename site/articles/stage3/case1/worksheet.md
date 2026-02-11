@@ -1,3 +1,8 @@
+---
+layout: default
+title: "Stage 3 Case 1: Worksheet"
+---
+
 [CASE 1 WORKSHEET: RELATIVE PATH]
 Input: ./case1_relative.out
 Computation: dmesg capture

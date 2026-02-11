@@ -1,3 +1,8 @@
+---
+layout: default
+title: "Stage 3 Case 5: Explanation"
+---
+
 [CASE 5 EXPLANATION: MOUNT JUMP]
 Input: path crossing loopback bound
 Computation: mount resolution

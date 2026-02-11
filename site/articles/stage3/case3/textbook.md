@@ -1,3 +1,8 @@
+---
+layout: default
+title: "Stage 3 Case 3: Textbook"
+---
+
 [STAGE 3 CASE 3: PATH HIT]
 Input: "/tmp/a/file" (cached)
 Computation: lookup_fast hit

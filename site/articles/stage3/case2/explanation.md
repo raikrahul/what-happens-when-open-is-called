@@ -1,3 +1,8 @@
+---
+layout: default
+title: "Stage 3 Case 2: Explanation"
+---
+
 [CASE 2 EXPLANATION: PATH MISS]
 Input: path string with missing node
 Computation: component walk loop

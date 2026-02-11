@@ -1,3 +1,8 @@
+---
+layout: default
+title: "Stage 3 Case 4: Explanation"
+---
+
 [CASE 4 EXPLANATION: O_CREAT]
 Input: file creation path
 Computation: intent resolution
