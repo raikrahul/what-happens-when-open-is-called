@@ -144,6 +144,34 @@ fill from steps 3, 9, 10 → %rip = call_va + 5
 
 12. REFRESH: main_va = 0x________ (step 1) → open_va = 0x________ (step 1) → call_va = 0x________ (step 3) → GOT_slot = 0x________ (step 6) → string_va = 0x________ (step 9) → all 5 filled ✓ ∨ missing ✗ → if ✗ go back → ORTHOGONAL CHECK: call_va - main_va = 0x________ - 0x________ = 0x________ → open case1_listing.txt → find `call open@PLT` → offset = 0x________ → match ✓ ∨ ✗ → this confirms listing offset = linked offset from main
 
+[CROSSING INTO GLIBC: open → openat]
+
+13. RUNTIME: run `gdb -batch -ex "break open" -ex "run" -ex "disas" ./case1_relative.out` → gdb stops inside glibc → function name shown = `__libc_open64` or `__open_nocancel` → write: glibc_open_va = 0x________ → this is the REAL address of open after ASLR → compare to open_va from step 1 (0x1050) → DIFFERENT ✓ → 0x1050 was the PLT stub, this is the actual function → VERIFY: `nm -D /lib/x86_64-linux-gnu/libc.so.6 | grep " open@"` → offset = 0x________ → glibc_open_va - libc_base = offset ✓ ∨ ✗ → libc_base = glibc_open_va - offset = 0x________
+
+14. INSIDE GLIBC: run `gdb -batch -ex "break open" -ex "run" -ex "x/30i \$rip" ./case1_relative.out` → scan output for `syscall` instruction → find instruction before syscall → `mov $0x________,%eax` → write: syscall_number = ________ decimal → VERIFY: `grep __NR_openat /usr/include/asm/unistd_64.h` → `#define __NR_openat 257` → syscall_number == 257 ✓ ∨ ✗ → if ✗ search for `mov.*%eax` lines near syscall → the one just before it is the syscall number
+
+15. AT_FDCWD: in same gdb output → find `mov $0x________,%edi` near syscall → write: edi_value = 0x________ → CALCULATE: 0xffffff9c → is this negative? MSB = 0xff ≥ 0x80 → yes → two's complement (32-bit): invert 0x00000063, add 1 = 0x00000064 = 100 → value = -100 → VERIFY: `grep AT_FDCWD /usr/include/linux/fcntl.h` → `#define AT_FDCWD -100` → match ✓ ∨ ✗ → AT_FDCWD means "resolve relative to current working directory"
+
+16. DRAW REGISTER STATE AT syscall instruction (inside glibc):</pre>
+<pre><code>+--------+--------------+--------------------------------------+
+| %rdi   | 0x__________ | → AT_FDCWD = -100 = 0xffffff9c      |
+| %rsi   | 0x__________ | → filename ptr (from step 9)         |
+| %rdx   | 0x__________ | → O_CREAT|O_WRONLY = 65 = 0x41       |
+| %r10   | 0x__________ | → mode 0644₈ = 420₁₀ = 0x1A4        |
+| %rax   | 0x__________ | → syscall# = 257 = __NR_openat       |
++--------+--------------+--------------------------------------+</code></pre>
+<pre style="white-space: pre-wrap; word-wrap: break-word; margin: 0; font-family: monospace;">
+fill from steps 13-15 → NOTICE: registers SHIFTED → your open(file, flags, mode) became openat(AT_FDCWD, file, flags, mode) → %rdi changed from filename to AT_FDCWD → %rsi changed from flags to filename → glibc did this shuffle
+
+17. FULL CHAIN SUMMARY: fill every 0x____ from previous steps:</pre>
+<pre><code>case1_relative.c           .S file              PLT               GOT              glibc              kernel
+open(file,flags,mode) → call open@PLT → 0x____ endbr64 → 0x____ [ptr] → 0x____ __open → syscall
+                         at 0x____        jmp *0x____(rip)                  mov $257,%eax     (openat)
+                                                                           mov $0xffffff9c,%edi
+                                                                           syscall ← CROSSES INTO KERNEL</code></pre>
+<pre style="white-space: pre-wrap; word-wrap: break-word; margin: 0; font-family: monospace;">
+every address from a previous step → no new numbers → VERIFY: count addresses filled = ________ → expected ≥ 8
+
 [FAILURE PREDICTIONS]
 F1. call_target ≠ open_va → user forgot: E8 displacement is relative to NEXT instruction → must add 5 to call_va before adding displacement → call_target = (call_va + 5) + displacement, NOT call_va + displacement
 F2. GOT_slot mismatch → user added rip_offset to jmp_address instead of next_instruction_address → rip = address AFTER the jmp, not AT it → jmp at 0x1054, length 6 → rip = 0x105a not 0x1054
@@ -151,7 +179,10 @@ F3. string_computed ≠ string_va → same rip mistake as F2 → lea instruction
 F4. mode 420 ≠ 0644 → user forgot decimal vs octal → 0644 is OCTAL → 0644₈ = 6×64 + 4×8 + 4 = 420₁₀ = 0x1A4
 F5. user opens case1_listing.txt looking for virtual addresses → listing has section-relative offsets (0021) NOT virtual addresses → only .dump has virtual addresses → listing offset ≠ virtual address
 F6. displacement sign error → bytes `e1 fe ff ff` → little-endian = 0xfffffee1 → MSB = 0xff ≥ 0x80 → NEGATIVE → two's complement: invert 0x0000011e, add 1 = 0x0000011f = 287 → displacement = -287 → if user gets positive 0xfffffee1, they forgot sign
-F7. user confuses `open@plt` (0x1050, the PLT stub) with `open` in glibc (unknown until runtime ASLR) → the .dump only shows the PLT stub address, NOT the glibc function address → glibc address only visible via gdb at runtime</pre>
+F7. user confuses `open@plt` (0x1050, the PLT stub) with `open` in glibc (unknown until runtime ASLR) → the .dump only shows the PLT stub address, NOT the glibc function address → glibc address only visible via gdb at runtime
+F8. syscall number ≠ 257 → user found wrong `mov` instruction → multiple `mov %eax` may exist → the correct one is the LAST mov to %eax BEFORE the syscall instruction, not the first one
+F9. AT_FDCWD two's complement error → user computed on 64-bit (0xffffffffffffff9c) instead of 32-bit (0xffffff9c) → `mov $0xffffff9c,%edi` is a 32-bit move → use 32-bit two's complement
+F10. register shuffle confusion → user expects %rdi = filename at syscall → WRONG → glibc shifted: %rdi = AT_FDCWD, %rsi = filename → open(file, flags, mode) became openat(dirfd, file, flags, mode) → 3 args became 4 args</pre>
   </div>
 
 </body>
