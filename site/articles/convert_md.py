@@ -8,16 +8,19 @@ import re
 import os
 import sys
 
-def read_layout(layout_name):
-    """Read the layout template"""
-    layout_paths = [
-        f"_layouts/{layout_name}.html",
-        f"../_layouts/{layout_name}.html"
-    ]
-    for layout_path in layout_paths:
+def read_layout(layout_name, start_dir='.'):
+    """Search for the layout template upward from start_dir"""
+    curr = os.path.abspath(start_dir)
+    while True:
+        layout_path = os.path.join(curr, '_layouts', f"{layout_name}.html")
         if os.path.exists(layout_path):
             with open(layout_path, 'r') as f:
                 return f.read()
+        
+        parent = os.path.dirname(curr)
+        if parent == curr: # Root reached
+            break
+        curr = parent
     return None
 
 def parse_front_matter(content):
@@ -112,7 +115,7 @@ def process_file(md_file):
         print(f"No layout specified for {md_file}")
         return
     
-    layout = read_layout(metadata['layout'])
+    layout = read_layout(metadata['layout'], os.path.dirname(md_file))
     if not layout:
         print(f"Layout not found: {metadata['layout']}")
         return
