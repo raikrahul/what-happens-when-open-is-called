@@ -10,7 +10,7 @@
             color: #000;
             font-family: monospace;
             padding: 40px;
-            max-width: 800px;
+            max-width: 900px;
             margin: 0 auto;
         }
 
@@ -24,7 +24,6 @@
             border: 1px solid #000;
             margin: 20px 0;
             padding: 20px;
-            border-radius: 0;
             background: #fff;
         }
 
@@ -32,20 +31,33 @@
             background: #f0f0f0;
         }
 
+        .case-grid {
+            display: grid;
+            grid-template-columns: repeat(2, 1fr);
+            gap: 10px;
+        }
+
+        .case-item {
+            border: 1px dotted #000;
+            padding: 10px;
+            text-decoration: none;
+            color: #000;
+        }
+
+        .case-item:hover {
+            background: #eee;
+        }
+
         h2 {
             margin-top: 0;
-            color: #000;
         }
 
         a {
             color: #000;
             text-decoration: none;
-            display: block;
-            height: 100%;
         }
 
         code {
-            color: #000;
             background: #eee;
             padding: 2px 4px;
         }
@@ -54,44 +66,36 @@
 
 <body>
     <h1>What Happens When open() Is Called</h1>
-    <p>An axiomatic, step-by-step deconstruction of the Linux <code>open()</code> system call.</p>
+    <p>Axiomatic Pathwalk Scenarios (Stage 3).</p>
+
+    <div class="stage">
+        <h2>STAGE 3: Path Walk Investigations</h2>
+        <div class="case-grid">
+            <a href="articles/stage3/case1/explanation.html" class="case-item">1. Relative Path</a>
+            <a href="articles/stage3/case2/explanation.html" class="case-item">2. Deep Miss</a>
+            <a href="articles/stage3/case3/explanation.html" class="case-item">3. Deep Hit</a>
+            <a href="articles/stage3/case4/explanation.html" class="case-item">4. Create Flow</a>
+            <a href="articles/stage3/case5/explanation.html" class="case-item">5. Mount Jump</a>
+            <a href="articles/stage3/case6/explanation.html" class="case-item">6. Symlink Loop</a>
+            <a href="articles/stage3/case7/explanation.html" class="case-item">7. Symlink Follow</a>
+        </div>
+    </div>
 
     <a href="articles/stage1.html">
         <div class="stage">
-            <h2>STAGE 1: User Space → Syscall</h2>
-            <p>From <code>open("file")</code> in C to the <code>syscall</code> assembly instruction.</p>
-            <p><strong>Topics:</strong> Headers, Preprocessor, Compilation, Linking, PLT/GOT, Assembly.</p>
+            <h2>STAGE 1 ✓</h2>
         </div>
     </a>
-
     <a href="articles/stage2.html">
         <div class="stage">
-            <h2>STAGE 2: Kernel Space - The Filename</h2>
-            <p>Tracing the first kernel function: <code>getname()</code>.</p>
-            <p><strong>Topics:</strong> <code>struct filename</code>, Slab Allocator, kprobes, User-to-Kernel Copy.</p>
+            <h2>STAGE 2 ✓</h2>
         </div>
     </a>
-
     <a href="articles/stage2_return.html">
         <div class="stage">
-            <h2>STAGE 2b: Kernel Space - The Return Cavern</h2>
-            <p>Tracing the return of <code>do_filp_open()</code>.</p>
-            <p><strong>Topics:</strong> <code>struct file</code>, Atomics, Error Pointers, Dentry Name Verification.</p>
+            <h2>STAGE 2b ✓</h2>
         </div>
     </a>
-
-    <a href="articles/stage3_pathwalk.html">
-        <div class="stage">
-            <h2>STAGE 3: Kernel Space - Path Walk</h2>
-            <p>Tracing pathname components before lookup.</p>
-            <p><strong>Topics:</strong> <code>link_path_walk</code>, <code>walk_component</code>, <code>qstr</code>.</p>
-        </div>
-    </a>
-
-    <div class="stage" style="opacity: 0.5;">
-        <h2>STAGE 4: Kernel Space - Flags & Mode</h2>
-        <p>Coming soon: <code>build_open_flags()</code> and <code>get_unused_fd_flags()</code>.</p>
-    </div>
 
 </body>
 
