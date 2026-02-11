@@ -1,0 +1,181 @@
+   1              		.file	"case3_deep_hit.c"
+   2              		.text
+   3              	.Ltext0:
+   4              		.file 0 "/home/r/Desktop/what-happens-when-open-is-called" "kernel/user/stage3/case3_deep_hit/case
+   5              		.section	.rodata
+   6              	.LC0:
+   7 0000 2F746D70 		.string	"/tmp/alpha/beta/gamma/hit.txt"
+   7      2F616C70 
+   7      68612F62 
+   7      6574612F 
+   7      67616D6D 
+   8 001e 0000     		.align 8
+   9              	.LC1:
+  10 0020 43617365 		.string	"Case 3: Opening deep path with cached components '%s'\n"
+  10      20333A20 
+  10      4F70656E 
+  10      696E6720 
+  10      64656570 
+  11              	.LC2:
+  12 0057 41747465 		.string	"Attempt %d...\n"
+  12      6D707420 
+  12      25642E2E 
+  12      2E0A00
+  13              	.LC3:
+  14 0066 53756363 		.string	"Success: fd=%d\n"
+  14      6573733A 
+  14      2066643D 
+  14      25640A00 
+  15              	.LC4:
+  16 0076 6F70656E 		.string	"open"
+  16      00
+  17              		.text
+  18              		.globl	main
+  20              	main:
+  21              	.LFB0:
+  22              		.file 1 "kernel/user/stage3/case3_deep_hit/case3_deep_hit.c"
+   1:kernel/user/stage3/case3_deep_hit/case3_deep_hit.c **** #include <fcntl.h>
+   2:kernel/user/stage3/case3_deep_hit/case3_deep_hit.c **** #include <stdio.h>
+   3:kernel/user/stage3/case3_deep_hit/case3_deep_hit.c **** #include <sys/stat.h>
+   4:kernel/user/stage3/case3_deep_hit/case3_deep_hit.c **** #include <unistd.h>
+   5:kernel/user/stage3/case3_deep_hit/case3_deep_hit.c **** 
+   6:kernel/user/stage3/case3_deep_hit/case3_deep_hit.c **** int main(void) {
+  23              		.loc 1 6 16
+  24              		.cfi_startproc
+  25 0000 F30F1EFA 		endbr64
+  26 0004 55       		pushq	%rbp
+  27              		.cfi_def_cfa_offset 16
+  28              		.cfi_offset 6, -16
+  29 0005 4889E5   		movq	%rsp, %rbp
+  30              		.cfi_def_cfa_register 6
+  31 0008 4883EC10 		subq	$16, %rsp
+   7:kernel/user/stage3/case3_deep_hit/case3_deep_hit.c ****   const char *path = "/tmp/alpha/beta/gamma/hit.txt";
+  32              		.loc 1 7 15
+  33 000c 488D0500 		leaq	.LC0(%rip), %rax
+  33      000000
+  34 0013 488945F8 		movq	%rax, -8(%rbp)
+   8:kernel/user/stage3/case3_deep_hit/case3_deep_hit.c **** 
+   9:kernel/user/stage3/case3_deep_hit/case3_deep_hit.c ****   // The setup script will handle mkdir -p and touch
+  10:kernel/user/stage3/case3_deep_hit/case3_deep_hit.c ****   // This program just triggers the walk
+  11:kernel/user/stage3/case3_deep_hit/case3_deep_hit.c **** 
+  12:kernel/user/stage3/case3_deep_hit/case3_deep_hit.c ****   printf("Case 3: Opening deep path with cached components '%s'\n", path);
+  35              		.loc 1 12 3
+  36 0017 488B45F8 		movq	-8(%rbp), %rax
+  37 001b 4889C6   		movq	%rax, %rsi
+  38 001e 488D0500 		leaq	.LC1(%rip), %rax
+  38      000000
+  39 0025 4889C7   		movq	%rax, %rdi
+  40 0028 B8000000 		movl	$0, %eax
+  40      00
+  41 002d E8000000 		call	printf@PLT
+  41      00
+  42              	.LBB2:
+  13:kernel/user/stage3/case3_deep_hit/case3_deep_hit.c **** 
+  14:kernel/user/stage3/case3_deep_hit/case3_deep_hit.c ****   // Open twice to ensure dcache hits on the second pass
+  15:kernel/user/stage3/case3_deep_hit/case3_deep_hit.c ****   for (int i = 0; i < 2; i++) {
+  43              		.loc 1 15 12
+  44 0032 C745F000 		movl	$0, -16(%rbp)
+  44      000000
+  45              		.loc 1 15 3
+  46 0039 EB73     		jmp	.L2
+  47              	.L5:
+  48              	.LBB3:
+  16:kernel/user/stage3/case3_deep_hit/case3_deep_hit.c ****     printf("Attempt %d...\n", i + 1);
+  49              		.loc 1 16 5
+  50 003b 8B45F0   		movl	-16(%rbp), %eax
+  51 003e 83C001   		addl	$1, %eax
+  52 0041 89C6     		movl	%eax, %esi
+  53 0043 488D0500 		leaq	.LC2(%rip), %rax
+  53      000000
+  54 004a 4889C7   		movq	%rax, %rdi
+  55 004d B8000000 		movl	$0, %eax
+  55      00
+  56 0052 E8000000 		call	printf@PLT
+  56      00
+  17:kernel/user/stage3/case3_deep_hit/case3_deep_hit.c ****     int fd = open(path, O_RDONLY);
+  57              		.loc 1 17 14
+  58 0057 488B45F8 		movq	-8(%rbp), %rax
+  59 005b BE000000 		movl	$0, %esi
+  59      00
+  60 0060 4889C7   		movq	%rax, %rdi
+  61 0063 B8000000 		movl	$0, %eax
+  61      00
+  62 0068 E8000000 		call	open@PLT
+  62      00
+  63 006d 8945F4   		movl	%eax, -12(%rbp)
+  18:kernel/user/stage3/case3_deep_hit/case3_deep_hit.c ****     if (fd >= 0) {
+  64              		.loc 1 18 8
+  65 0070 837DF400 		cmpl	$0, -12(%rbp)
+  66 0074 7825     		js	.L3
+  19:kernel/user/stage3/case3_deep_hit/case3_deep_hit.c ****       printf("Success: fd=%d\n", fd);
+  67              		.loc 1 19 7
+  68 0076 8B45F4   		movl	-12(%rbp), %eax
+  69 0079 89C6     		movl	%eax, %esi
+  70 007b 488D0500 		leaq	.LC3(%rip), %rax
+  70      000000
+  71 0082 4889C7   		movq	%rax, %rdi
+  72 0085 B8000000 		movl	$0, %eax
+  72      00
+  73 008a E8000000 		call	printf@PLT
+  73      00
+  20:kernel/user/stage3/case3_deep_hit/case3_deep_hit.c ****       close(fd);
+  74              		.loc 1 20 7
+  75 008f 8B45F4   		movl	-12(%rbp), %eax
+  76 0092 89C7     		movl	%eax, %edi
+  77 0094 E8000000 		call	close@PLT
+  77      00
+  78 0099 EB0F     		jmp	.L4
+  79              	.L3:
+  21:kernel/user/stage3/case3_deep_hit/case3_deep_hit.c ****     } else {
+  22:kernel/user/stage3/case3_deep_hit/case3_deep_hit.c ****       perror("open");
+  80              		.loc 1 22 7
+  81 009b 488D0500 		leaq	.LC4(%rip), %rax
+  81      000000
+  82 00a2 4889C7   		movq	%rax, %rdi
+  83 00a5 E8000000 		call	perror@PLT
+  83      00
+  84              	.L4:
+  85              	.LBE3:
+  15:kernel/user/stage3/case3_deep_hit/case3_deep_hit.c ****     printf("Attempt %d...\n", i + 1);
+  86              		.loc 1 15 27 discriminator 2
+  87 00aa 8345F001 		addl	$1, -16(%rbp)
+  88              	.L2:
+  15:kernel/user/stage3/case3_deep_hit/case3_deep_hit.c ****     printf("Attempt %d...\n", i + 1);
+  89              		.loc 1 15 21 discriminator 1
+  90 00ae 837DF001 		cmpl	$1, -16(%rbp)
+  91 00b2 7E87     		jle	.L5
+  92              	.LBE2:
+  23:kernel/user/stage3/case3_deep_hit/case3_deep_hit.c ****     }
+  24:kernel/user/stage3/case3_deep_hit/case3_deep_hit.c ****   }
+  25:kernel/user/stage3/case3_deep_hit/case3_deep_hit.c **** 
+  26:kernel/user/stage3/case3_deep_hit/case3_deep_hit.c ****   return 0;
+  93              		.loc 1 26 10
+  94 00b4 B8000000 		movl	$0, %eax
+  94      00
+  27:kernel/user/stage3/case3_deep_hit/case3_deep_hit.c **** }
+  95              		.loc 1 27 1
+  96 00b9 C9       		leave
+  97              		.cfi_def_cfa 7, 8
+  98 00ba C3       		ret
+  99              		.cfi_endproc
+ 100              	.LFE0:
+ 102              	.Letext0:
+ 103              		.file 2 "/usr/include/unistd.h"
+ 104              		.file 3 "/usr/include/fcntl.h"
+ 105              		.file 4 "/usr/include/stdio.h"
+ 511              		.section	.note.gnu.property,"a"
+ 512              		.align 8
+ 513 0000 04000000 		.long	1f - 0f
+ 514 0004 10000000 		.long	4f - 1f
+ 515 0008 05000000 		.long	5
+ 516              	0:
+ 517 000c 474E5500 		.string	"GNU"
+ 518              	1:
+ 519              		.align 8
+ 520 0010 020000C0 		.long	0xc0000002
+ 521 0014 04000000 		.long	3f - 2f
+ 522              	2:
+ 523 0018 03000000 		.long	0x3
+ 524              	3:
+ 525 001c 00000000 		.align 8
+ 526              	4:

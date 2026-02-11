@@ -1,0 +1,175 @@
+   1              		.file	"case2_deep_miss.c"
+   2              		.text
+   3              	.Ltext0:
+   4              		.file 0 "/home/r/Desktop/what-happens-when-open-is-called" "kernel/user/stage3/case2_deep_miss/cas
+   5              		.section	.rodata
+   6              		.align 8
+   7              	.LC0:
+   8 0000 2F746D70 		.string	"/tmp/alpha/beta/gamma/nonexistent.txt"
+   8      2F616C70 
+   8      68612F62 
+   8      6574612F 
+   8      67616D6D 
+   9 0026 0000     		.align 8
+  10              	.LC1:
+  11 0028 43617365 		.string	"Case 2: Opening deep path with missing components '%s'\n"
+  11      20323A20 
+  11      4F70656E 
+  11      696E6720 
+  11      64656570 
+  12              		.align 8
+  13              	.LC2:
+  14 0060 53756363 		.string	"Success: Received expected ENOENT"
+  14      6573733A 
+  14      20526563 
+  14      65697665 
+  14      64206578 
+  15              	.LC3:
+  16 0082 6F70656E 		.string	"open"
+  16      00
+  17 0087 00       		.align 8
+  18              	.LC4:
+  19 0088 4572726F 		.string	"Error: File opened unexpectedly (fd=%d)\n"
+  19      723A2046 
+  19      696C6520 
+  19      6F70656E 
+  19      65642075 
+  20              		.text
+  21              		.globl	main
+  23              	main:
+  24              	.LFB0:
+  25              		.file 1 "kernel/user/stage3/case2_deep_miss/case2_deep_miss.c"
+   1:kernel/user/stage3/case2_deep_miss/case2_deep_miss.c **** #include <errno.h>
+   2:kernel/user/stage3/case2_deep_miss/case2_deep_miss.c **** #include <fcntl.h>
+   3:kernel/user/stage3/case2_deep_miss/case2_deep_miss.c **** #include <stdio.h>
+   4:kernel/user/stage3/case2_deep_miss/case2_deep_miss.c **** #include <sys/stat.h>
+   5:kernel/user/stage3/case2_deep_miss/case2_deep_miss.c **** #include <unistd.h>
+   6:kernel/user/stage3/case2_deep_miss/case2_deep_miss.c **** 
+   7:kernel/user/stage3/case2_deep_miss/case2_deep_miss.c **** int main(void) {
+  26              		.loc 1 7 16
+  27              		.cfi_startproc
+  28 0000 F30F1EFA 		endbr64
+  29 0004 55       		pushq	%rbp
+  30              		.cfi_def_cfa_offset 16
+  31              		.cfi_offset 6, -16
+  32 0005 4889E5   		movq	%rsp, %rbp
+  33              		.cfi_def_cfa_register 6
+  34 0008 4883EC10 		subq	$16, %rsp
+   8:kernel/user/stage3/case2_deep_miss/case2_deep_miss.c ****   const char *path = "/tmp/alpha/beta/gamma/nonexistent.txt";
+  35              		.loc 1 8 15
+  36 000c 488D0500 		leaq	.LC0(%rip), %rax
+  36      000000
+  37 0013 488945F8 		movq	%rax, -8(%rbp)
+   9:kernel/user/stage3/case2_deep_miss/case2_deep_miss.c **** 
+  10:kernel/user/stage3/case2_deep_miss/case2_deep_miss.c ****   // Ensure the parents do NOT exist to force a middle-of-path miss
+  11:kernel/user/stage3/case2_deep_miss/case2_deep_miss.c ****   // (Actual cleanup is in the driver/script logic)
+  12:kernel/user/stage3/case2_deep_miss/case2_deep_miss.c **** 
+  13:kernel/user/stage3/case2_deep_miss/case2_deep_miss.c ****   printf("Case 2: Opening deep path with missing components '%s'\n", path);
+  38              		.loc 1 13 3
+  39 0017 488B45F8 		movq	-8(%rbp), %rax
+  40 001b 4889C6   		movq	%rax, %rsi
+  41 001e 488D0500 		leaq	.LC1(%rip), %rax
+  41      000000
+  42 0025 4889C7   		movq	%rax, %rdi
+  43 0028 B8000000 		movl	$0, %eax
+  43      00
+  44 002d E8000000 		call	printf@PLT
+  44      00
+  14:kernel/user/stage3/case2_deep_miss/case2_deep_miss.c ****   int fd = open(path, O_RDONLY);
+  45              		.loc 1 14 12
+  46 0032 488B45F8 		movq	-8(%rbp), %rax
+  47 0036 BE000000 		movl	$0, %esi
+  47      00
+  48 003b 4889C7   		movq	%rax, %rdi
+  49 003e B8000000 		movl	$0, %eax
+  49      00
+  50 0043 E8000000 		call	open@PLT
+  50      00
+  51 0048 8945F4   		movl	%eax, -12(%rbp)
+  15:kernel/user/stage3/case2_deep_miss/case2_deep_miss.c **** 
+  16:kernel/user/stage3/case2_deep_miss/case2_deep_miss.c ****   if (fd < 0) {
+  52              		.loc 1 16 6
+  53 004b 837DF400 		cmpl	$0, -12(%rbp)
+  54 004f 792E     		jns	.L2
+  17:kernel/user/stage3/case2_deep_miss/case2_deep_miss.c ****     if (errno == ENOENT) {
+  55              		.loc 1 17 9
+  56 0051 E8000000 		call	__errno_location@PLT
+  56      00
+  57              		.loc 1 17 9 is_stmt 0 discriminator 1
+  58 0056 8B00     		movl	(%rax), %eax
+  59              		.loc 1 17 8 is_stmt 1 discriminator 1
+  60 0058 83F802   		cmpl	$2, %eax
+  61 005b 7511     		jne	.L3
+  18:kernel/user/stage3/case2_deep_miss/case2_deep_miss.c ****       printf("Success: Received expected ENOENT\n");
+  62              		.loc 1 18 7
+  63 005d 488D0500 		leaq	.LC2(%rip), %rax
+  63      000000
+  64 0064 4889C7   		movq	%rax, %rdi
+  65 0067 E8000000 		call	puts@PLT
+  65      00
+  66 006c EB34     		jmp	.L4
+  67              	.L3:
+  19:kernel/user/stage3/case2_deep_miss/case2_deep_miss.c ****     } else {
+  20:kernel/user/stage3/case2_deep_miss/case2_deep_miss.c ****       perror("open");
+  68              		.loc 1 20 7
+  69 006e 488D0500 		leaq	.LC3(%rip), %rax
+  69      000000
+  70 0075 4889C7   		movq	%rax, %rdi
+  71 0078 E8000000 		call	perror@PLT
+  71      00
+  72 007d EB23     		jmp	.L4
+  73              	.L2:
+  21:kernel/user/stage3/case2_deep_miss/case2_deep_miss.c ****     }
+  22:kernel/user/stage3/case2_deep_miss/case2_deep_miss.c ****   } else {
+  23:kernel/user/stage3/case2_deep_miss/case2_deep_miss.c ****     printf("Error: File opened unexpectedly (fd=%d)\n", fd);
+  74              		.loc 1 23 5
+  75 007f 8B45F4   		movl	-12(%rbp), %eax
+  76 0082 89C6     		movl	%eax, %esi
+  77 0084 488D0500 		leaq	.LC4(%rip), %rax
+  77      000000
+  78 008b 4889C7   		movq	%rax, %rdi
+  79 008e B8000000 		movl	$0, %eax
+  79      00
+  80 0093 E8000000 		call	printf@PLT
+  80      00
+  24:kernel/user/stage3/case2_deep_miss/case2_deep_miss.c ****     close(fd);
+  81              		.loc 1 24 5
+  82 0098 8B45F4   		movl	-12(%rbp), %eax
+  83 009b 89C7     		movl	%eax, %edi
+  84 009d E8000000 		call	close@PLT
+  84      00
+  85              	.L4:
+  25:kernel/user/stage3/case2_deep_miss/case2_deep_miss.c ****   }
+  26:kernel/user/stage3/case2_deep_miss/case2_deep_miss.c **** 
+  27:kernel/user/stage3/case2_deep_miss/case2_deep_miss.c ****   return 0;
+  86              		.loc 1 27 10
+  87 00a2 B8000000 		movl	$0, %eax
+  87      00
+  28:kernel/user/stage3/case2_deep_miss/case2_deep_miss.c **** }
+  88              		.loc 1 28 1
+  89 00a7 C9       		leave
+  90              		.cfi_def_cfa 7, 8
+  91 00a8 C3       		ret
+  92              		.cfi_endproc
+  93              	.LFE0:
+  95              	.Letext0:
+  96              		.file 2 "/usr/include/unistd.h"
+  97              		.file 3 "/usr/include/fcntl.h"
+  98              		.file 4 "/usr/include/stdio.h"
+  99              		.file 5 "/usr/include/errno.h"
+ 511              		.section	.note.gnu.property,"a"
+ 512              		.align 8
+ 513 0000 04000000 		.long	1f - 0f
+ 514 0004 10000000 		.long	4f - 1f
+ 515 0008 05000000 		.long	5
+ 516              	0:
+ 517 000c 474E5500 		.string	"GNU"
+ 518              	1:
+ 519              		.align 8
+ 520 0010 020000C0 		.long	0xc0000002
+ 521 0014 04000000 		.long	3f - 2f
+ 522              	2:
+ 523 0018 03000000 		.long	0x3
+ 524              	3:
+ 525 001c 00000000 		.align 8
+ 526              	4:

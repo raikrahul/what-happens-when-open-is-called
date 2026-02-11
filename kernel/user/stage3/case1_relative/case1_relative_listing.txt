@@ -1,0 +1,66 @@
+   1              		.file	"case1_relative.c"
+   2              		.text
+   3              	.Ltext0:
+   4              		.file 0 "/home/r/Desktop/what-happens-when-open-is-called" "kernel/user/stage3/case1_relative/case
+   5              		.section	.rodata
+   6              	.LC0:
+   7 0000 736F6D65 		.string	"some_relative_file.txt"
+   7      5F72656C 
+   7      61746976 
+   7      655F6669 
+   7      6C652E74 
+   8              		.text
+   9              		.globl	main
+  11              	main:
+  12              	.LFB0:
+  13              		.file 1 "kernel/user/stage3/case1_relative/case1_relative.c"
+   1:kernel/user/stage3/case1_relative/case1_relative.c **** #include <fcntl.h>
+   2:kernel/user/stage3/case1_relative/case1_relative.c **** #include <unistd.h>
+   3:kernel/user/stage3/case1_relative/case1_relative.c **** 
+   4:kernel/user/stage3/case1_relative/case1_relative.c **** int main(void) { open("some_relative_file.txt", O_CREAT | O_WRONLY, 0644); }
+  14              		.loc 1 4 16
+  15              		.cfi_startproc
+  16 0000 F30F1EFA 		endbr64
+  17 0004 55       		pushq	%rbp
+  18              		.cfi_def_cfa_offset 16
+  19              		.cfi_offset 6, -16
+  20 0005 4889E5   		movq	%rsp, %rbp
+  21              		.cfi_def_cfa_register 6
+  22              		.loc 1 4 18
+  23 0008 BAA40100 		movl	$420, %edx
+  23      00
+  24 000d BE410000 		movl	$65, %esi
+  24      00
+  25 0012 488D0500 		leaq	.LC0(%rip), %rax
+  25      000000
+  26 0019 4889C7   		movq	%rax, %rdi
+  27 001c B8000000 		movl	$0, %eax
+  27      00
+  28 0021 E8000000 		call	open@PLT
+  28      00
+  29 0026 B8000000 		movl	$0, %eax
+  29      00
+  30              		.loc 1 4 76
+  31 002b 5D       		popq	%rbp
+  32              		.cfi_def_cfa 7, 8
+  33 002c C3       		ret
+  34              		.cfi_endproc
+  35              	.LFE0:
+  37              	.Letext0:
+  38              		.file 2 "/usr/include/fcntl.h"
+ 285              		.section	.note.gnu.property,"a"
+ 286              		.align 8
+ 287 0000 04000000 		.long	1f - 0f
+ 288 0004 10000000 		.long	4f - 1f
+ 289 0008 05000000 		.long	5
+ 290              	0:
+ 291 000c 474E5500 		.string	"GNU"
+ 292              	1:
+ 293              		.align 8
+ 294 0010 020000C0 		.long	0xc0000002
+ 295 0014 04000000 		.long	3f - 2f
+ 296              	2:
+ 297 0018 03000000 		.long	0x3
+ 298              	3:
+ 299 001c 00000000 		.align 8
+ 300              	4:

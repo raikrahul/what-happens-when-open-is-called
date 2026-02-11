@@ -1,0 +1,147 @@
+   1              		.file	"case5_mount_jump.c"
+   2              		.text
+   3              	.Ltext0:
+   4              		.file 0 "/home/r/Desktop/what-happens-when-open-is-called" "kernel/user/stage3/case5_mount_jump/ca
+   5              		.section	.rodata
+   6              	.LC0:
+   7 0000 2F746D70 		.string	"/tmp/mnt_stage3/loop_file.txt"
+   7      2F6D6E74 
+   7      5F737461 
+   7      6765332F 
+   7      6C6F6F70 
+   8 001e 0000     		.align 8
+   9              	.LC1:
+  10 0020 43617365 		.string	"Case 5: Opening file across mount boundary '%s'\n"
+  10      20353A20 
+  10      4F70656E 
+  10      696E6720 
+  10      66696C65 
+  11              	.LC2:
+  12 0051 53756363 		.string	"Success: fd=%d\n"
+  12      6573733A 
+  12      2066643D 
+  12      25640A00 
+  13              	.LC3:
+  14 0061 6F70656E 		.string	"open"
+  14      00
+  15              		.text
+  16              		.globl	main
+  18              	main:
+  19              	.LFB0:
+  20              		.file 1 "kernel/user/stage3/case5_mount_jump/case5_mount_jump.c"
+   1:kernel/user/stage3/case5_mount_jump/case5_mount_jump.c **** #include <fcntl.h>
+   2:kernel/user/stage3/case5_mount_jump/case5_mount_jump.c **** #include <stdio.h>
+   3:kernel/user/stage3/case5_mount_jump/case5_mount_jump.c **** #include <unistd.h>
+   4:kernel/user/stage3/case5_mount_jump/case5_mount_jump.c **** 
+   5:kernel/user/stage3/case5_mount_jump/case5_mount_jump.c **** /*
+   6:kernel/user/stage3/case5_mount_jump/case5_mount_jump.c ****  * NOTE: This requires Case 5 Setup Script (setup.sh) to:
+   7:kernel/user/stage3/case5_mount_jump/case5_mount_jump.c ****  * 1. dd if=/dev/zero of=ext2.img bs=1M count=10
+   8:kernel/user/stage3/case5_mount_jump/case5_mount_jump.c ****  * 2. mkfs.ext2 ext2.img
+   9:kernel/user/stage3/case5_mount_jump/case5_mount_jump.c ****  * 3. mkdir /tmp/mnt_stage3
+  10:kernel/user/stage3/case5_mount_jump/case5_mount_jump.c ****  * 4. mount -o loop ext2.img /tmp/mnt_stage3
+  11:kernel/user/stage3/case5_mount_jump/case5_mount_jump.c ****  * 5. touch /tmp/mnt_stage3/loop_file.txt
+  12:kernel/user/stage3/case5_mount_jump/case5_mount_jump.c ****  */
+  13:kernel/user/stage3/case5_mount_jump/case5_mount_jump.c **** 
+  14:kernel/user/stage3/case5_mount_jump/case5_mount_jump.c **** int main(void) {
+  21              		.loc 1 14 16
+  22              		.cfi_startproc
+  23 0000 F30F1EFA 		endbr64
+  24 0004 55       		pushq	%rbp
+  25              		.cfi_def_cfa_offset 16
+  26              		.cfi_offset 6, -16
+  27 0005 4889E5   		movq	%rsp, %rbp
+  28              		.cfi_def_cfa_register 6
+  29 0008 4883EC10 		subq	$16, %rsp
+  15:kernel/user/stage3/case5_mount_jump/case5_mount_jump.c ****   const char *path = "/tmp/mnt_stage3/loop_file.txt";
+  30              		.loc 1 15 15
+  31 000c 488D0500 		leaq	.LC0(%rip), %rax
+  31      000000
+  32 0013 488945F8 		movq	%rax, -8(%rbp)
+  16:kernel/user/stage3/case5_mount_jump/case5_mount_jump.c **** 
+  17:kernel/user/stage3/case5_mount_jump/case5_mount_jump.c ****   printf("Case 5: Opening file across mount boundary '%s'\n", path);
+  33              		.loc 1 17 3
+  34 0017 488B45F8 		movq	-8(%rbp), %rax
+  35 001b 4889C6   		movq	%rax, %rsi
+  36 001e 488D0500 		leaq	.LC1(%rip), %rax
+  36      000000
+  37 0025 4889C7   		movq	%rax, %rdi
+  38 0028 B8000000 		movl	$0, %eax
+  38      00
+  39 002d E8000000 		call	printf@PLT
+  39      00
+  18:kernel/user/stage3/case5_mount_jump/case5_mount_jump.c ****   int fd = open(path, O_RDONLY);
+  40              		.loc 1 18 12
+  41 0032 488B45F8 		movq	-8(%rbp), %rax
+  42 0036 BE000000 		movl	$0, %esi
+  42      00
+  43 003b 4889C7   		movq	%rax, %rdi
+  44 003e B8000000 		movl	$0, %eax
+  44      00
+  45 0043 E8000000 		call	open@PLT
+  45      00
+  46 0048 8945F4   		movl	%eax, -12(%rbp)
+  19:kernel/user/stage3/case5_mount_jump/case5_mount_jump.c ****   if (fd >= 0) {
+  47              		.loc 1 19 6
+  48 004b 837DF400 		cmpl	$0, -12(%rbp)
+  49 004f 7825     		js	.L2
+  20:kernel/user/stage3/case5_mount_jump/case5_mount_jump.c ****     printf("Success: fd=%d\n", fd);
+  50              		.loc 1 20 5
+  51 0051 8B45F4   		movl	-12(%rbp), %eax
+  52 0054 89C6     		movl	%eax, %esi
+  53 0056 488D0500 		leaq	.LC2(%rip), %rax
+  53      000000
+  54 005d 4889C7   		movq	%rax, %rdi
+  55 0060 B8000000 		movl	$0, %eax
+  55      00
+  56 0065 E8000000 		call	printf@PLT
+  56      00
+  21:kernel/user/stage3/case5_mount_jump/case5_mount_jump.c ****     close(fd);
+  57              		.loc 1 21 5
+  58 006a 8B45F4   		movl	-12(%rbp), %eax
+  59 006d 89C7     		movl	%eax, %edi
+  60 006f E8000000 		call	close@PLT
+  60      00
+  61 0074 EB0F     		jmp	.L3
+  62              	.L2:
+  22:kernel/user/stage3/case5_mount_jump/case5_mount_jump.c ****   } else {
+  23:kernel/user/stage3/case5_mount_jump/case5_mount_jump.c ****     perror("open");
+  63              		.loc 1 23 5
+  64 0076 488D0500 		leaq	.LC3(%rip), %rax
+  64      000000
+  65 007d 4889C7   		movq	%rax, %rdi
+  66 0080 E8000000 		call	perror@PLT
+  66      00
+  67              	.L3:
+  24:kernel/user/stage3/case5_mount_jump/case5_mount_jump.c ****   }
+  25:kernel/user/stage3/case5_mount_jump/case5_mount_jump.c **** 
+  26:kernel/user/stage3/case5_mount_jump/case5_mount_jump.c ****   return 0;
+  68              		.loc 1 26 10
+  69 0085 B8000000 		movl	$0, %eax
+  69      00
+  27:kernel/user/stage3/case5_mount_jump/case5_mount_jump.c **** }
+  70              		.loc 1 27 1
+  71 008a C9       		leave
+  72              		.cfi_def_cfa 7, 8
+  73 008b C3       		ret
+  74              		.cfi_endproc
+  75              	.LFE0:
+  77              	.Letext0:
+  78              		.file 2 "/usr/include/unistd.h"
+  79              		.file 3 "/usr/include/fcntl.h"
+  80              		.file 4 "/usr/include/stdio.h"
+ 461              		.section	.note.gnu.property,"a"
+ 462              		.align 8
+ 463 0000 04000000 		.long	1f - 0f
+ 464 0004 10000000 		.long	4f - 1f
+ 465 0008 05000000 		.long	5
+ 466              	0:
+ 467 000c 474E5500 		.string	"GNU"
+ 468              	1:
+ 469              		.align 8
+ 470 0010 020000C0 		.long	0xc0000002
+ 471 0014 04000000 		.long	3f - 2f
+ 472              	2:
+ 473 0018 03000000 		.long	0x3
+ 474              	3:
+ 475 001c 00000000 		.align 8
+ 476              	4:

@@ -3,18 +3,80 @@ layout: default
 title: "Stage 3 Case 1: Worksheet"
 ---
 
-[CASE 1 WORKSHEET: RELATIVE PATH]
-Input: ./case1_relative.out
-Computation: dmesg capture
-Output: verified state
+[PROGRAM: case1_relative.c]
+https://github.com/raikrahul/what-happens-when-open-is-called/blob/main/kernel/user/stage3/case1_relative/case1_relative.c
+```c
+#include <fcntl.h>
+#include <unistd.h>
 
-[RECORD]
-Component: some_relative_file.txt
-Ptr: 0x________
-Len: ________
-Hash: 0x________
+int main(void) { open("some_relative_file.txt", O_CREAT | O_WRONLY, 0644); }
+```
 
-[VERIFY]
-nd->last_type = ________ (Expected 1/LAST_NORM)
+[FILES YOU NEED]
+- Disassembly (virtual addresses): kernel/user/stage3/case1_relative/case1_relative.dump
+- Listing (mnemonics + source): kernel/user/stage3/case1_relative/case1_listing.txt
+- Binary: kernel/user/stage3/case1_relative/case1_relative.out
 
-🐾 DONE. 🐾
+[STAGE 3 CASE 1 WORKSHEET: FIND VIRTUAL ADDRESS OF open]
+
+1. open case1_relative.dump → find `<main>:` → first address on that line = 0x________ → write: main_va = 0x________ → find `<open@plt>:` → first address on that line = 0x________ → write: open_va = 0x________ → find `<_start>:` → first address = 0x________ → write: start_va = 0x________
+
+2. DRAW:
+```
+nm case1_relative.out
+|-----------|----------|
+| Address   | Symbol   |
+|-----------|----------|
+| 0x_______ | _start   |
+| 0x_______ | main     |
+| 0x_______ | open@plt |
+|-----------|----------|
+```
+fill from step 1 → verify: _start < open@plt < main ✓ ∨ ✗ → if ✗ re-read .dump
+
+3. open case1_relative.dump → inside `<main>:` section → find the line containing `call` → full line = `____: e8 __ __ __ __    call   ____ <open@plt>` → write: call_va = 0x________ → write: patched_bytes = 0x________ (the 4 bytes after e8)
+
+4. CALCULATE call target from patched bytes: patched_bytes from step 3 = __ __ __ __ → little-endian → as 32-bit signed = 0x________ → is this negative? MSB ≥ 0x80 → yes/no → two's complement: invert = 0x________, add 1 = 0x________ → magnitude = ________ decimal → displacement = -________ → call_target = (call_va + 5) + displacement = (0x________ + 0x5) + (-________) = 0x________ → compare call_target to open_va from step 1 → equal ✓ ∨ not equal ✗
+
+5. SHORTCUT: the .dump already shows the target after `call` → `call 0x________ <open@plt>` → this must match open_va from step 1 → if it does, step 4 arithmetic is confirmed ✓ → step 4 exists to prove the CPU does this math, not the disassembler
+
+6. open case1_relative.dump → `<open@plt>:` section → second instruction = `jmp *0x________(%rip)` → write: rip_offset = 0x________ → the jmp instruction is at address 0x________, length = 6 bytes (ff 25 + 4 bytes) → rip_at_jmp = 0x________ + 6 = 0x________ → GOT_slot = rip_at_jmp + rip_offset = 0x________ + 0x________ = 0x________ → .dump shows `# ____` as a comment after the jmp → that comment = GOT_slot → match ✓ ∨ ✗
+
+7. VERIFY GOT: run `readelf -r case1_relative.out | grep open` → relocation offset = 0x________ → compare to GOT_slot from step 6 → equal ✓ ∨ ✗ → type = R_X86_64_JUMP_SLOT → this confirms the GOT entry is a lazy-binding jump slot
+
+8. DRAW:
+```
+main                          PLT                           GOT
++------------------------+    +------------------------+    +------------------+
+| 0x____: call 0x____ ---+--->| 0x____: endbr64        |    | 0x____: [addr] --+--> glibc open()
+|                        |    | 0x____: jmp *0x____(rip)+--->|                  |
++------------------------+    +------------------------+    +------------------+
+```
+fill ALL boxes from steps 1-7 → every address must come from a previous step → no new numbers
+
+9. STRING: open case1_relative.dump → find `.rodata` section → run `objdump -s -j .rodata case1_relative.out` → find "some_relative_file.txt" → starting address = 0x________ → write: string_va = 0x________ → go to `<main>:` in .dump → find `lea` instruction → `lea 0x________(%rip),%rax` at address 0x________ → lea length = 7 bytes → rip_at_lea = 0x________ + 7 = 0x________ → string_computed = rip_at_lea + lea_offset = 0x________ + 0x________ = 0x________ → compare to string_va → equal ✓ ∨ ✗
+
+10. ARGUMENTS before call: open case1_relative.dump → `<main>:` → read backwards from call instruction → movl $________, %edx → decimal = ________ → octal = 0________ → this is mode → 0644₈ = 6×64 + 4×8 + 4 = 384+32+4 = 420 → matches ✓ ∨ ✗ → movl $________, %esi → decimal = ________ → O_CREAT=0x40=64, O_WRONLY=0x1=1 → 64+1=65 → matches ✓ ∨ ✗ → %rdi = string address from step 9 ✓ ∨ ✗
+
+11. DRAW REGISTER STATE AT call instruction (address from step 3):
+```
++--------+------------+-------------------------------+
+| %rdi   | 0x________ | → "some_relative_file.txt"    |
+| %esi   | 0x________ | → O_CREAT|O_WRONLY = 65 = 0x41|
+| %edx   | 0x________ | → 0644₈ = 420₁₀ = 0x1A4      |
+| %eax   | 0x________ | → 0 (variadic ABI marker)     |
+| %rip   | 0x________ | → next instr after call       |
++--------+------------+-------------------------------+
+```
+fill from steps 3, 9, 10 → %rip = call_va + 5
+
+12. REFRESH: main_va = 0x________ (step 1) → open_va = 0x________ (step 1) → call_va = 0x________ (step 3) → GOT_slot = 0x________ (step 6) → string_va = 0x________ (step 9) → all 5 filled ✓ ∨ missing ✗ → if ✗ go back → ORTHOGONAL CHECK: call_va - main_va = 0x________ - 0x________ = 0x________ → open case1_listing.txt → find `call open@PLT` → offset = 0x________ → match ✓ ∨ ✗ → this confirms listing offset = linked offset from main
+
+[FAILURE PREDICTIONS]
+F1. call_target ≠ open_va → user forgot: E8 displacement is relative to NEXT instruction → must add 5 to call_va before adding displacement → call_target = (call_va + 5) + displacement, NOT call_va + displacement
+F2. GOT_slot mismatch → user added rip_offset to jmp_address instead of next_instruction_address → rip = address AFTER the jmp, not AT it → jmp at 0x1054, length 6 → rip = 0x105a not 0x1054
+F3. string_computed ≠ string_va → same rip mistake as F2 → lea instruction length = 7 bytes → rip_at_lea = lea_address + 7, not lea_address
+F4. mode 420 ≠ 0644 → user forgot decimal vs octal → 0644 is OCTAL → 0644₈ = 6×64 + 4×8 + 4 = 420₁₀ = 0x1A4
+F5. user opens case1_listing.txt looking for virtual addresses → listing has section-relative offsets (0021) NOT virtual addresses → only .dump has virtual addresses → listing offset ≠ virtual address
+F6. displacement sign error → bytes `e1 fe ff ff` → little-endian = 0xfffffee1 → MSB = 0xff ≥ 0x80 → NEGATIVE → two's complement: invert 0x0000011e, add 1 = 0x0000011f = 287 → displacement = -287 → if user gets positive 0xfffffee1, they forgot sign
+F7. user confuses `open@plt` (0x1050, the PLT stub) with `open` in glibc (unknown until runtime ASLR) → the .dump only shows the PLT stub address, NOT the glibc function address → glibc address only visible via gdb at runtime

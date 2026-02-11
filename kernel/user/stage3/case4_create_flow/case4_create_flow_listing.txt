@@ -1,0 +1,212 @@
+   1              		.file	"case4_create_flow.c"
+   2              		.text
+   3              	.Ltext0:
+   4              		.file 0 "/home/r/Desktop/what-happens-when-open-is-called" "kernel/user/stage3/case4_create_flow/c
+   5              		.section	.rodata
+   6              	.LC0:
+   7 0000 2F746D70 		.string	"/tmp/new_creation_file.txt"
+   7      2F6E6577 
+   7      5F637265 
+   7      6174696F 
+   7      6E5F6669 
+   8 001b 00000000 		.align 8
+   8      00
+   9              	.LC1:
+  10 0020 43617365 		.string	"Case 4: O_CREAT metamorphosis flow '%s'\n"
+  10      20343A20 
+  10      4F5F4352 
+  10      45415420 
+  10      6D657461 
+  11 0049 00000000 		.align 8
+  11      000000
+  12              	.LC2:
+  13 0050 43726561 		.string	"Created: fd=%d. Sleeping 5s...\n"
+  13      7465643A 
+  13      2066643D 
+  13      25642E20 
+  13      536C6565 
+  14              	.LC3:
+  15 0070 6F70656E 		.string	"open(create)"
+  15      28637265 
+  15      61746529 
+  15      00
+  16              	.LC4:
+  17 007d 52652D6F 		.string	"Re-opened: fd=%d\n"
+  17      70656E65 
+  17      643A2066 
+  17      643D2564 
+  17      0A00
+  18              	.LC5:
+  19 008f 6F70656E 		.string	"open(re-open)"
+  19      2872652D 
+  19      6F70656E 
+  19      2900
+  20              		.text
+  21              		.globl	main
+  23              	main:
+  24              	.LFB0:
+  25              		.file 1 "kernel/user/stage3/case4_create_flow/case4_create_flow.c"
+   1:kernel/user/stage3/case4_create_flow/case4_create_flow.c **** #include <fcntl.h>
+   2:kernel/user/stage3/case4_create_flow/case4_create_flow.c **** #include <stdio.h>
+   3:kernel/user/stage3/case4_create_flow/case4_create_flow.c **** #include <time.h>
+   4:kernel/user/stage3/case4_create_flow/case4_create_flow.c **** #include <unistd.h>
+   5:kernel/user/stage3/case4_create_flow/case4_create_flow.c **** 
+   6:kernel/user/stage3/case4_create_flow/case4_create_flow.c **** int main(void) {
+  26              		.loc 1 6 16
+  27              		.cfi_startproc
+  28 0000 F30F1EFA 		endbr64
+  29 0004 55       		pushq	%rbp
+  30              		.cfi_def_cfa_offset 16
+  31              		.cfi_offset 6, -16
+  32 0005 4889E5   		movq	%rsp, %rbp
+  33              		.cfi_def_cfa_register 6
+  34 0008 4883EC10 		subq	$16, %rsp
+   7:kernel/user/stage3/case4_create_flow/case4_create_flow.c ****   const char *path = "/tmp/new_creation_file.txt";
+  35              		.loc 1 7 15
+  36 000c 488D0500 		leaq	.LC0(%rip), %rax
+  36      000000
+  37 0013 488945F8 		movq	%rax, -8(%rbp)
+   8:kernel/user/stage3/case4_create_flow/case4_create_flow.c **** 
+   9:kernel/user/stage3/case4_create_flow/case4_create_flow.c ****   printf("Case 4: O_CREAT metamorphosis flow '%s'\n", path);
+  38              		.loc 1 9 3
+  39 0017 488B45F8 		movq	-8(%rbp), %rax
+  40 001b 4889C6   		movq	%rax, %rsi
+  41 001e 488D0500 		leaq	.LC1(%rip), %rax
+  41      000000
+  42 0025 4889C7   		movq	%rax, %rdi
+  43 0028 B8000000 		movl	$0, %eax
+  43      00
+  44 002d E8000000 		call	printf@PLT
+  44      00
+  10:kernel/user/stage3/case4_create_flow/case4_create_flow.c **** 
+  11:kernel/user/stage3/case4_create_flow/case4_create_flow.c ****   // 1. Create and Open
+  12:kernel/user/stage3/case4_create_flow/case4_create_flow.c ****   int fd1 = open(path, O_RDWR | O_CREAT, 0644);
+  45              		.loc 1 12 13
+  46 0032 488B45F8 		movq	-8(%rbp), %rax
+  47 0036 BAA40100 		movl	$420, %edx
+  47      00
+  48 003b BE420000 		movl	$66, %esi
+  48      00
+  49 0040 4889C7   		movq	%rax, %rdi
+  50 0043 B8000000 		movl	$0, %eax
+  50      00
+  51 0048 E8000000 		call	open@PLT
+  51      00
+  52 004d 8945F0   		movl	%eax, -16(%rbp)
+  13:kernel/user/stage3/case4_create_flow/case4_create_flow.c ****   if (fd1 >= 0) {
+  53              		.loc 1 13 6
+  54 0050 837DF000 		cmpl	$0, -16(%rbp)
+  55 0054 782F     		js	.L2
+  14:kernel/user/stage3/case4_create_flow/case4_create_flow.c ****     printf("Created: fd=%d. Sleeping 5s...\n", fd1);
+  56              		.loc 1 14 5
+  57 0056 8B45F0   		movl	-16(%rbp), %eax
+  58 0059 89C6     		movl	%eax, %esi
+  59 005b 488D0500 		leaq	.LC2(%rip), %rax
+  59      000000
+  60 0062 4889C7   		movq	%rax, %rdi
+  61 0065 B8000000 		movl	$0, %eax
+  61      00
+  62 006a E8000000 		call	printf@PLT
+  62      00
+  15:kernel/user/stage3/case4_create_flow/case4_create_flow.c ****     sleep(5); // Hold reference so we can check fd state in /proc
+  63              		.loc 1 15 5
+  64 006f BF050000 		movl	$5, %edi
+  64      00
+  65 0074 E8000000 		call	sleep@PLT
+  65      00
+  16:kernel/user/stage3/case4_create_flow/case4_create_flow.c ****     close(fd1);
+  66              		.loc 1 16 5
+  67 0079 8B45F0   		movl	-16(%rbp), %eax
+  68 007c 89C7     		movl	%eax, %edi
+  69 007e E8000000 		call	close@PLT
+  69      00
+  70 0083 EB0F     		jmp	.L3
+  71              	.L2:
+  17:kernel/user/stage3/case4_create_flow/case4_create_flow.c ****   } else {
+  18:kernel/user/stage3/case4_create_flow/case4_create_flow.c ****     perror("open(create)");
+  72              		.loc 1 18 5
+  73 0085 488D0500 		leaq	.LC3(%rip), %rax
+  73      000000
+  74 008c 4889C7   		movq	%rax, %rdi
+  75 008f E8000000 		call	perror@PLT
+  75      00
+  76              	.L3:
+  19:kernel/user/stage3/case4_create_flow/case4_create_flow.c ****   }
+  20:kernel/user/stage3/case4_create_flow/case4_create_flow.c **** 
+  21:kernel/user/stage3/case4_create_flow/case4_create_flow.c ****   // 2. Open again (should be hit)
+  22:kernel/user/stage3/case4_create_flow/case4_create_flow.c ****   int fd2 = open(path, O_RDONLY);
+  77              		.loc 1 22 13
+  78 0094 488B45F8 		movq	-8(%rbp), %rax
+  79 0098 BE000000 		movl	$0, %esi
+  79      00
+  80 009d 4889C7   		movq	%rax, %rdi
+  81 00a0 B8000000 		movl	$0, %eax
+  81      00
+  82 00a5 E8000000 		call	open@PLT
+  82      00
+  83 00aa 8945F4   		movl	%eax, -12(%rbp)
+  23:kernel/user/stage3/case4_create_flow/case4_create_flow.c ****   if (fd2 >= 0) {
+  84              		.loc 1 23 6
+  85 00ad 837DF400 		cmpl	$0, -12(%rbp)
+  86 00b1 7825     		js	.L4
+  24:kernel/user/stage3/case4_create_flow/case4_create_flow.c ****     printf("Re-opened: fd=%d\n", fd2);
+  87              		.loc 1 24 5
+  88 00b3 8B45F4   		movl	-12(%rbp), %eax
+  89 00b6 89C6     		movl	%eax, %esi
+  90 00b8 488D0500 		leaq	.LC4(%rip), %rax
+  90      000000
+  91 00bf 4889C7   		movq	%rax, %rdi
+  92 00c2 B8000000 		movl	$0, %eax
+  92      00
+  93 00c7 E8000000 		call	printf@PLT
+  93      00
+  25:kernel/user/stage3/case4_create_flow/case4_create_flow.c ****     close(fd2);
+  94              		.loc 1 25 5
+  95 00cc 8B45F4   		movl	-12(%rbp), %eax
+  96 00cf 89C7     		movl	%eax, %edi
+  97 00d1 E8000000 		call	close@PLT
+  97      00
+  98 00d6 EB0F     		jmp	.L5
+  99              	.L4:
+  26:kernel/user/stage3/case4_create_flow/case4_create_flow.c ****   } else {
+  27:kernel/user/stage3/case4_create_flow/case4_create_flow.c ****     perror("open(re-open)");
+ 100              		.loc 1 27 5
+ 101 00d8 488D0500 		leaq	.LC5(%rip), %rax
+ 101      000000
+ 102 00df 4889C7   		movq	%rax, %rdi
+ 103 00e2 E8000000 		call	perror@PLT
+ 103      00
+ 104              	.L5:
+  28:kernel/user/stage3/case4_create_flow/case4_create_flow.c ****   }
+  29:kernel/user/stage3/case4_create_flow/case4_create_flow.c **** 
+  30:kernel/user/stage3/case4_create_flow/case4_create_flow.c ****   return 0;
+ 105              		.loc 1 30 10
+ 106 00e7 B8000000 		movl	$0, %eax
+ 106      00
+  31:kernel/user/stage3/case4_create_flow/case4_create_flow.c **** }
+ 107              		.loc 1 31 1
+ 108 00ec C9       		leave
+ 109              		.cfi_def_cfa 7, 8
+ 110 00ed C3       		ret
+ 111              		.cfi_endproc
+ 112              	.LFE0:
+ 114              	.Letext0:
+ 115              		.file 2 "/usr/include/unistd.h"
+ 116              		.file 3 "/usr/include/fcntl.h"
+ 117              		.file 4 "/usr/include/stdio.h"
+ 518              		.section	.note.gnu.property,"a"
+ 519              		.align 8
+ 520 0000 04000000 		.long	1f - 0f
+ 521 0004 10000000 		.long	4f - 1f
+ 522 0008 05000000 		.long	5
+ 523              	0:
+ 524 000c 474E5500 		.string	"GNU"
+ 525              	1:
+ 526              		.align 8
+ 527 0010 020000C0 		.long	0xc0000002
+ 528 0014 04000000 		.long	3f - 2f
+ 529              	2:
+ 530 0018 03000000 		.long	0x3
+ 531              	3:
+ 532 001c 00000000 		.align 8
+ 533              	4:

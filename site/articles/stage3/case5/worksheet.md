@@ -1,18 +1,29 @@
 ---
 layout: default
-title: "Stage 3 Case 5: Worksheet"
+title: "Stage 3 Case 5: Worksheet (Mount Jump)"
 ---
 
-[CASE 5 WORKSHEET: MOUNT JUMP]
-Input: ./case5_mount_jump.out
-Computation: dmesg capture
-Output: mount proofs
+This worksheet derives the path walk for: Mount Jump.
 
-[RECORD]
-Host MNT addr = 0x________
-Loopback MNT addr = 0x________
+### [TRACE MAP]
+**Target:** `link_path_walk` / `walk_component`
+**Process:** link_path_walk crossing vfsmount boundary
 
-[VERIFY]
-MNT_A != MNT_B ∴ Jump Verified ✓
+1.  **[entry]** link_path_walk
+2.  **[step]** component lookup
+3.  **[exit]** result verification
 
-🐾 DONE. 🐾
+---
+
+### [WORKSHEET: RECORD DATA]
+
+1.  **Syscall Filename Pointer:** 0x________________
+2.  **Component 1 (Entry):** 0x________________ | name: "________"
+3.  **Component 2 (Step):** 0x________________ | name: "________"
+4.  **Final dentry/inode Ptr:** 0x________________
+
+---
+
+### [VERIFICATION]
+- **Axiom:** (Child ptr) - (Parent ptr) matches directory entry offset? [YES / NO]
+- **Status:** 🐾 IN PROGRESS. 🐾
