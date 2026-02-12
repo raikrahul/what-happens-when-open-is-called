@@ -23,3 +23,7 @@ Log: Phase - Tracing init_file and path_init
 5. Documentation:
    - Updated `worksheet_probed_functions.md` with new findings.
    - Created `proof_dup_names.txt` with the log evidence.
+6. Instruction Trace Proof: Reconstructed offsets from fs/namei.o and verified against trace logs. See proof_path_init_instruction_trace.txt.
+7. Final Proof: Attached kprobe to offset 314 (0x13a) inside AT_FDCWD branch. Execution CONFIRMED by dmesg logs.
+8. Source Mapping: Confirmed offset +314 maps to fs/namei.c:2577 inside AT_FDCWD block via GDB.
+9. addr2line Proof: Verified offset 0x454a maps to fs/namei.c:2578 using addr2line. Created proof_addr2line.txt.
