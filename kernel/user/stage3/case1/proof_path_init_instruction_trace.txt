@@ -1,0 +1,47 @@
+Proof: Instruction Trace of path_init (AT_FDCWD Branch)
+
+We reconstructed the execution path numerically using specific instruction offsets derived from the binary `fs/namei.o` and confirmed by runtime traces.
+
+1. Binary Analysis (fs/namei.o)
+   - Function: `path_init`
+   - Start Address: `0x4410`
+
+   Relevant Instruction Sequence:
+   Offset (Abs) | Offset (Dec) | Instruction                              | Meaning
+   -------------|--------------|------------------------------------------|---------------------------------
+   0x4541       | +305         | `cmp $0xffffff9c, %edi`                  | Compare (`nd->dfd`) with -100 (`AT_FDCWD`)
+   0x4544       | +308         | `jne 0x45ca`                             | Jump to `0x45ca` (Offset +442) if NOT equal
+   0x454a       | +314         | `mov %gs:0x0(%rip), %rax`                | Load `current` task (Start of AT_FDCWD block)
+   0x4552       | +322         | `mov 0xcf0(%rax), %r15`                  | Load `current->fs` (struct fs_struct)
+
+2. Trace Verification (REAL DATA)
+   We attached a kprobe to `path_init` at offset **314** (0x13a) using `trace_offset_proof.ko`.
+   
+   If the branch condition (`dfd != -100`) were true, the CPU would jump from offset +308 to offset +442 (`0x45ca`), SKIPPING offset +314.
+   
+   However, the `dmesg` logs conclusively show execution at offset +314:
+   [17288.590763] [PROOF] path_init+314 EXECUTION DETECTED! pid=53879 comm=demo_dup_names
+   [17288.590767] [PROOF] This proves we entered the AT_FDCWD branch.
+
+3. Numerical Reconstruction
+   - Start: `0x4410`.
+   - Branch Decision: `0x4544` (Offset +308).
+   - Target if FALSE (Jump Taken): `0x45ca` (Offset +442).
+   - Target if TRUE (Fallthrough): `0x454a` (Offset +314).
+   - Observed Execution: Offset +314.
+   
+4. Conclusion
+   We have axiomatically proved, using binary offsets and runtime verification, that the kernel executed the instruction at offset +314.
+   This confirms the `AT_FDCWD` branch was taken and `nd->path` was populated from `current->fs->pwd`.
+
+5. Source Code Mapping (The GDB Proof)
+   We mapped the offset back to the C source line using `gdb`:
+   Command: `gdb fs/namei.o -ex "list *path_init+314"`
+   Output:
+   ```
+   0x454a is in path_init (fs/namei.c:2577).
+   2576            if (nd->dfd == AT_FDCWD) {
+   2577                    if (flags & LOOKUP_RCU) {
+   2578                            struct fs_struct *fs = current->fs;
+   ```
+   This proves that offset +314 executes the code *inside* the check for `AT_FDCWD`.
