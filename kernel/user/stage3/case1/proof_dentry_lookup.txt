@@ -1,0 +1,38 @@
+[24311.369504] [D_LOOKUP] Searching in parent: 'case1' (addr=ffff8b41a44eeb40)
+[24311.369514] [D_LOOKUP] MATCH FOUND! Dentry=ffff8b410b51ae40 Name='dirA' Parent=ffff8b41a44eeb40
+[24311.369545] [D_LOOKUP] Searching in parent: 'dirA' (addr=ffff8b410b51ae40)
+[24311.369554] [D_LOOKUP] MATCH FOUND! Dentry=ffff8b410b51a3c0 Name='common' Parent=ffff8b410b51ae40
+[24311.369573] [D_LOOKUP] Searching in parent: 'case1' (addr=ffff8b41a44eeb40)
+[24311.369582] [D_LOOKUP] MATCH FOUND! Dentry=ffff8b410b51a480 Name='dirB' Parent=ffff8b41a44eeb40
+[24311.369611] [D_LOOKUP] Searching in parent: 'dirB' (addr=ffff8b410b51a480)
+[24311.369620] [D_LOOKUP] MATCH FOUND! Dentry=ffff8b410b51a900 Name='common' Parent=ffff8b410b51a480
+[24380.785613] [D_LOOKUP] Searching in parent: 'case1' (addr=ffff8b41a44eeb40)
+[24380.785619] [D_LOOKUP] MATCH FOUND! Dentry=ffff8b410b51ae40 Name='dirA' Parent=ffff8b41a44eeb40
+[24380.785638] [D_LOOKUP] Searching in parent: 'dirA' (addr=ffff8b410b51ae40)
+[24380.785643] [D_LOOKUP] MATCH FOUND! Dentry=ffff8b410b51a3c0 Name='common' Parent=ffff8b410b51ae40
+[24380.785652] [D_LOOKUP] Searching in parent: 'case1' (addr=ffff8b41a44eeb40)
+[24380.785657] [D_LOOKUP] MATCH FOUND! Dentry=ffff8b410b51a480 Name='dirB' Parent=ffff8b41a44eeb40
+[24380.785674] [D_LOOKUP] Searching in parent: 'dirB' (addr=ffff8b410b51a480)
+[24380.785678] [D_LOOKUP] MATCH FOUND! Dentry=ffff8b410b51a900 Name='common' Parent=ffff8b410b51a480
+[26293.963620] AXIOM: d_hash_shift in memory is 11
+[26293.963623] AXIOM: Total Hash Buckets = 2^(32-11) = 2097152 buckets
+[26350.079739] AXIOM: d_hash_shift in memory is 11
+[26350.079741] AXIOM: Total Hash Buckets = 2^(32-11) = 2097152 buckets
+[27850.260017] [D_LOOKUP] Searching in parent: 'what-happens-when-open-is-called' (addr=ffff8b413f55e9c0)
+[27850.260029]            AXIOM: 0x4937d784 >> (32-11) = Bucket #585
+[27850.260036] [D_LOOKUP] MATCH FOUND! Dentry=ffff8b4170e3ecc0 Name='dirA' Parent=ffff8b413f55e9c0
+[27850.260220] [D_LOOKUP] Searching in parent: 'dirA' (addr=ffff8b4170e3ecc0)
+[27850.260232]            AXIOM: 0x0c0d6fc1 >> (32-11) = Bucket #96
+[27850.260239] [D_LOOKUP] No Match Found (NULL)
+[27850.260331] [D_LOOKUP] Searching in parent: 'what-happens-when-open-is-called' (addr=ffff8b413f55e9c0)
+[27850.260343]            AXIOM: 0xdbea8b82 >> (32-11) = Bucket #1759
+[27850.260350] [D_LOOKUP] MATCH FOUND! Dentry=ffff8b42612df180 Name='dirB' Parent=ffff8b413f55e9c0
+[27850.260460] [D_LOOKUP] Searching in parent: 'dirB' (addr=ffff8b42612df180)
+[27850.260471]            AXIOM: 0xe5443054 >> (32-11) = Bucket #1834
+[27850.260478] [D_LOOKUP] No Match Found (NULL)
+[27850.260699] [D_LOOKUP] Searching in parent: 'common' (addr=ffff8b410da4e840)
+[27850.260710]            AXIOM: 0x3d48c5ed >> (32-11) = Bucket #490
+[27850.260717] [D_LOOKUP] No Match Found (NULL)
+[27850.260886] [D_LOOKUP] Searching in parent: 'common' (addr=ffff8b410da4e3c0)
+[27850.260897]            AXIOM: 0x09212f70 >> (32-11) = Bucket #73
+[27850.260904] [D_LOOKUP] No Match Found (NULL)
