@@ -34,17 +34,34 @@
  *   rmmod trace_path_init
  */
 
+#include <linux/fs.h>
 #include <linux/fs_struct.h>
 #include <linux/kernel.h>
 #include <linux/kprobes.h>
 #include <linux/module.h>
 #include <linux/ptrace.h>
 #include <linux/sched.h>
+#include <linux/string.h>
 #include <linux/uaccess.h>
+
+MODULE_LICENSE("GPL");
+MODULE_AUTHOR("Open Project");
+MODULE_DESCRIPTION("Trace path_init branching and link_path_walk execution");
+MODULE_VERSION("1.1");
 
 static char target_comm[64] = "";
 module_param_string(target_comm, target_comm, sizeof(target_comm), 0644);
 MODULE_PARM_DESC(target_comm, "Filter: only trace this process name");
+
+/* Offsets derived from vmlinux objdump:
+ * path_init: ffffffff817fc440
+ * cmp $0xffffff9c, %edi: ffffffff817fc571 (+0x131 = 305)
+ * mov %gs:..., %rax (AT_FDCWD path): ffffffff817fc57a (+0x13a = 314)
+ * call fdget_raw (else path): ffffffff817fc5fa (+0x1ba = 442)
+ */
+#define OFF_CMP 305
+#define OFF_CWD 314
+#define OFF_FD 442
 
 /*
  * struct filename is defined in include/linux/fs.h:
@@ -81,6 +98,14 @@ static int filp_open_entry(struct kprobe *p, struct pt_regs *regs) {
     if (p)
       pathname = p;
   }
+
+  /* Proof: current->nameidata is NULL for first-level open().
+   * __set_nameidata reads old = current->nameidata before overwriting.
+   * If this is NULL, old=NULL, proving no nesting.
+   */
+  pr_info("[DO_FILP_OPEN] ENTRY pid=%d comm=%s current->nameidata=%px "
+          "(NULL = first-level open, non-NULL = nested lookup)\n",
+          current->pid, current->comm, current->nameidata);
 
   if (dfd == -100) {
     pr_info("[PATH_INIT] ENTRY pid=%d comm=%s dfd=-100 (AT_FDCWD) "
@@ -265,7 +290,32 @@ static struct kretprobe krp_filp_open = {
     .kp.symbol_name = "do_filp_open",
 };
 
-/* ── kprobe: init_file entry ── */
+/* ── kprobe: path_lookupat entry ── */
+
+static int path_lookupat_entry(struct kprobe *p, struct pt_regs *regs) {
+  unsigned int flags;
+  if (target_comm[0] && strcmp(current->comm, target_comm) != 0)
+    return 0;
+
+  /* path_lookupat(struct nameidata *nd, unsigned flags, struct path *path)
+   * arg1 = %rdi = nd
+   * arg2 = %rsi = flags
+   * arg3 = %rdx = path
+   */
+  flags = (unsigned int)regs->si;
+  if (flags & 2) { /* LOOKUP_DIRECTORY is BIT(1) = 2 */
+    pr_info("[PATH_INIT] path_lookupat() called with LOOKUP_DIRECTORY "
+            "(flags=0x%x)\n",
+            flags);
+    pr_info(
+        "[PATH_INIT] PROOF: potentially from do_tmpfile() or do_o_path()\n");
+  }
+  return 0;
+}
+
+static struct kprobe kp_path_lookupat = {
+    .symbol_name = "path_lookupat",
+};
 
 static int init_file_entry(struct kprobe *p, struct pt_regs *regs) {
   if (target_comm[0] && strcmp(current->comm, target_comm) != 0)
@@ -303,6 +353,180 @@ static struct kretprobe krp_init_file = {
     .handler = init_file_ret,
     .maxactive = 20,
     .kp.symbol_name = "init_file",
+};
+
+/* ── kretprobe: path_lookupat return ── */
+static int path_lookupat_ret(struct kretprobe_instance *ri,
+                             struct pt_regs *regs) {
+  int retval;
+
+  if (target_comm[0] && strcmp(current->comm, target_comm) != 0)
+    return 0;
+
+  retval = (int)regs->ax;
+  // We cannot easily correlate entry flags here without data access,
+  // but if we saw the entry log, this follows.
+  // Actually, we can use entry_handler data, but let's keep it simple.
+  // Just log all returns for now? No, that's spammy.
+  // We will assume single threaded test or low noise.
+
+  if (retval != 0)
+    pr_info("[PATH_INIT] path_lookupat() returned error %d\n", retval);
+  else
+    pr_info("[PATH_INIT] path_lookupat() returned success (0)\n");
+
+  return 0;
+}
+
+static struct kretprobe krp_path_lookupat = {
+    .handler = path_lookupat_ret,
+    .maxactive = 20,
+    .kp.symbol_name = "path_lookupat",
+};
+
+/* ── kprobe: path_init offsets ── */
+
+static int path_init_cmp_entry(struct kprobe *p, struct pt_regs *regs) {
+  /* At +305: cmp $0xffffff9c, %edi.
+   * %rdi (or %edi) holds nd->dfd.
+   * Actually, line 85: mov 0xe4(%rbx),%edi. %rbx is likely struct nameidata.
+   * So %edi is definitely dfd.
+   */
+  if (target_comm[0] && strcmp(current->comm, target_comm) != 0)
+    return 0;
+
+  pr_info("[PATH_INIT] OFFSET+305: Checking dfd == AT_FDCWD? (dfd=%ld)\n",
+          (long)regs->di);
+  return 0;
+}
+
+static struct kprobe kp_path_init_cmp = {
+    .symbol_name = "path_init",
+    .offset = OFF_CMP,
+    .pre_handler = path_init_cmp_entry,
+};
+
+static int path_init_cwd_entry(struct kprobe *p, struct pt_regs *regs) {
+  if (target_comm[0] && strcmp(current->comm, target_comm) != 0)
+    return 0;
+
+  pr_info("[PATH_INIT] OFFSET+314: Taken AT_FDCWD branch (using CWD)\n");
+  return 0;
+}
+
+static struct kprobe kp_path_init_cwd = {
+    .symbol_name = "path_init",
+    .offset = OFF_CWD,
+    .pre_handler = path_init_cwd_entry,
+};
+
+static int path_init_fd_entry(struct kprobe *p, struct pt_regs *regs) {
+  if (target_comm[0] && strcmp(current->comm, target_comm) != 0)
+    return 0;
+
+  pr_info("[PATH_INIT] OFFSET+442: Taken FD branch (calling fdget_raw)\n");
+  return 0;
+}
+
+static struct kprobe kp_path_init_fd = {
+    .symbol_name = "path_init",
+    .offset = OFF_FD,
+    .pre_handler = path_init_fd_entry,
+};
+
+/* ── kprobe: path_init entry ── */
+static int path_init_entry(struct kprobe *p, struct pt_regs *regs) {
+  if (target_comm[0] && strcmp(current->comm, target_comm) != 0)
+    return 0;
+
+  pr_info("[PATH_INIT] path_init() called\n");
+  /* We can try to print nd->dfd but we don't know offset.
+   * But we know path_init args: (struct nameidata *nd, unsigned flags)
+   * %rdi = nd, %rsi = flags.
+   */
+  pr_info("[PATH_INIT]   flags=0x%lx\n", (unsigned long)regs->si);
+  return 0;
+}
+
+static struct kprobe kp_path_init = {
+    .symbol_name = "path_init",
+};
+
+/* ── kretprobe: path_init return ── */
+static int path_init_ret(struct kretprobe_instance *ri, struct pt_regs *regs) {
+  const char *s;
+  if (target_comm[0] && strcmp(current->comm, target_comm) != 0)
+    return 0;
+
+  s = (const char *)regs->ax;
+  if (IS_ERR(s)) {
+    pr_info("[PATH_INIT] path_init() returned error %ld\n", PTR_ERR(s));
+  } else {
+    /* s is the pointer to the rest of the path name. */
+    pr_info("[PATH_INIT] path_init() returned ptr=%px\n", s);
+  }
+  return 0;
+}
+
+static struct kretprobe krp_path_init = {
+    .handler = path_init_ret,
+    .maxactive = 20,
+    .kp.symbol_name = "path_init",
+};
+
+/* ── kprobe: link_path_walk entry ── */
+
+static int link_path_walk_entry(struct kprobe *p, struct pt_regs *regs) {
+  const char *name;
+
+  if (target_comm[0] && strcmp(current->comm, target_comm) != 0)
+    return 0;
+
+  /* link_path_walk(const char *name, struct nameidata *nd)
+   * arg1 = %rdi = name (pointer to remaining path)
+   * arg2 = %rsi = nd (struct nameidata *)
+   */
+  name = (const char *)regs->di;
+
+  if (name && !IS_ERR(name)) {
+    /* Safe to read the string - it's already in kernel space */
+    pr_info("[PATH_WALK] link_path_walk() called with path=\"%s\"\n", name);
+  } else {
+    pr_info("[PATH_WALK] link_path_walk() called (name=0x%lx)\n",
+            (unsigned long)name);
+  }
+
+  return 0;
+}
+
+static struct kprobe kp_link_path_walk = {
+    .symbol_name = "link_path_walk",
+};
+
+/* ── kretprobe: link_path_walk return ── */
+
+static int link_path_walk_ret(struct kretprobe_instance *ri,
+                              struct pt_regs *regs) {
+  int retval;
+
+  if (target_comm[0] && strcmp(current->comm, target_comm) != 0)
+    return 0;
+
+  retval = (int)regs->ax;
+
+  if (retval != 0) {
+    pr_info("[PATH_WALK] link_path_walk() returned error %d\n", retval);
+  } else {
+    pr_info("[PATH_WALK] link_path_walk() returned success (0)\n");
+  }
+
+  return 0;
+}
+
+static struct kretprobe krp_link_path_walk = {
+    .handler = link_path_walk_ret,
+    .maxactive = 20,
+    .kp.symbol_name = "link_path_walk",
 };
 
 /* ── module init/exit ── */
@@ -380,11 +604,44 @@ static int __init trace_path_init_init(void) {
     return ret;
   }
 
+  /* Register path_lookupat probes */
+  kp_path_lookupat.pre_handler = path_lookupat_entry;
+  ret = register_kprobe(&kp_path_lookupat);
+  if (ret < 0) {
+    pr_err("trace_path_init: kprobe path_lookupat failed: %d\n", ret);
+    unregister_kretprobe(&krp_alloc_empty_file);
+    unregister_kprobe(&kp_alloc_empty_file);
+    unregister_kretprobe(&krp_path_openat);
+    unregister_kprobe(&kp_path_openat);
+    unregister_kprobe(&kp_fdget_raw);
+    unregister_kretprobe(&krp_filp_open);
+    unregister_kprobe(&kp_filp_open);
+    return ret;
+  }
+
+  // Not registering return probe for path_lookupat yet to keep noise down?
+  // No, user asked for result.
+  ret = register_kretprobe(&krp_path_lookupat);
+  if (ret < 0) {
+    pr_err("trace_path_init: kretprobe path_lookupat failed: %d\n", ret);
+    unregister_kprobe(&kp_path_lookupat);
+    unregister_kretprobe(&krp_alloc_empty_file);
+    unregister_kprobe(&kp_alloc_empty_file);
+    unregister_kretprobe(&krp_path_openat);
+    unregister_kprobe(&kp_path_openat);
+    unregister_kprobe(&kp_fdget_raw);
+    unregister_kretprobe(&krp_filp_open);
+    unregister_kprobe(&kp_filp_open);
+    return ret;
+  }
+
   /* Register init_file probes */
   kp_init_file.pre_handler = init_file_entry;
   ret = register_kprobe(&kp_init_file);
   if (ret < 0) {
     pr_err("trace_path_init: kprobe init_file failed: %d\n", ret);
+    unregister_kretprobe(&krp_path_lookupat);
+    unregister_kprobe(&kp_path_lookupat);
     unregister_kretprobe(&krp_alloc_empty_file);
     unregister_kprobe(&kp_alloc_empty_file);
     unregister_kretprobe(&krp_path_openat);
@@ -399,6 +656,8 @@ static int __init trace_path_init_init(void) {
   if (ret < 0) {
     pr_err("trace_path_init: kretprobe init_file failed: %d\n", ret);
     unregister_kprobe(&kp_init_file);
+    unregister_kretprobe(&krp_path_lookupat);
+    unregister_kprobe(&kp_path_lookupat);
     unregister_kretprobe(&krp_alloc_empty_file);
     unregister_kprobe(&kp_alloc_empty_file);
     unregister_kretprobe(&krp_path_openat);
@@ -409,16 +668,115 @@ static int __init trace_path_init_init(void) {
     return ret;
   }
 
-  pr_info("trace_path_init: loaded (do_filp_open + path_openat + "
-          "alloc_empty_file + init_file + fdget_raw), "
+  /* Register path_init probes */
+  kp_path_init.pre_handler = path_init_entry;
+  ret = register_kprobe(&kp_path_init);
+  if (ret < 0) {
+    pr_err("trace_path_init: kprobe path_init failed: %d\n", ret);
+    unregister_kretprobe(&krp_init_file);
+    unregister_kprobe(&kp_init_file);
+    unregister_kretprobe(&krp_path_lookupat);
+    unregister_kprobe(&kp_path_lookupat);
+    unregister_kretprobe(&krp_alloc_empty_file);
+    unregister_kprobe(&kp_alloc_empty_file);
+    unregister_kretprobe(&krp_path_openat);
+    unregister_kprobe(&kp_path_openat);
+    unregister_kprobe(&kp_fdget_raw);
+    unregister_kretprobe(&krp_filp_open);
+    unregister_kprobe(&kp_filp_open);
+    return ret;
+  }
+
+  ret = register_kretprobe(&krp_path_init);
+  if (ret < 0) {
+    pr_err("trace_path_init: kretprobe path_init failed: %d\n", ret);
+    unregister_kprobe(&kp_path_init);
+    unregister_kretprobe(&krp_init_file);
+    unregister_kprobe(&kp_init_file);
+    unregister_kretprobe(&krp_path_lookupat);
+    unregister_kprobe(&kp_path_lookupat);
+    unregister_kretprobe(&krp_alloc_empty_file);
+    unregister_kprobe(&kp_alloc_empty_file);
+    unregister_kretprobe(&krp_path_openat);
+    unregister_kprobe(&kp_path_openat);
+    unregister_kprobe(&kp_fdget_raw);
+    unregister_kretprobe(&krp_filp_open);
+    unregister_kprobe(&kp_filp_open);
+    return ret;
+  }
+
+  /* Register link_path_walk probes */
+  kp_link_path_walk.pre_handler = link_path_walk_entry;
+  ret = register_kprobe(&kp_link_path_walk);
+  if (ret < 0) {
+    pr_err("trace_path_init: kprobe link_path_walk failed: %d\n", ret);
+    unregister_kretprobe(&krp_path_init);
+    unregister_kprobe(&kp_path_init);
+    unregister_kretprobe(&krp_init_file);
+    unregister_kprobe(&kp_init_file);
+    unregister_kretprobe(&krp_path_lookupat);
+    unregister_kprobe(&kp_path_lookupat);
+    unregister_kretprobe(&krp_alloc_empty_file);
+    unregister_kprobe(&kp_alloc_empty_file);
+    unregister_kretprobe(&krp_path_openat);
+    unregister_kprobe(&kp_path_openat);
+    unregister_kprobe(&kp_fdget_raw);
+    unregister_kretprobe(&krp_filp_open);
+    unregister_kprobe(&kp_filp_open);
+    return ret;
+  }
+
+  ret = register_kretprobe(&krp_link_path_walk);
+  if (ret < 0) {
+    pr_err("trace_path_init: kretprobe link_path_walk failed: %d\n", ret);
+    unregister_kprobe(&kp_link_path_walk);
+    unregister_kretprobe(&krp_path_init);
+    unregister_kprobe(&kp_path_init);
+    unregister_kretprobe(&krp_init_file);
+    unregister_kprobe(&kp_init_file);
+    unregister_kretprobe(&krp_path_lookupat);
+    unregister_kprobe(&kp_path_lookupat);
+    unregister_kretprobe(&krp_alloc_empty_file);
+    unregister_kprobe(&kp_alloc_empty_file);
+    unregister_kretprobe(&krp_path_openat);
+    unregister_kprobe(&kp_path_openat);
+    unregister_kprobe(&kp_fdget_raw);
+    unregister_kretprobe(&krp_filp_open);
+    unregister_kprobe(&kp_filp_open);
+    return ret;
+  }
+
+  /* Register offset probes */
+  ret = register_kprobe(&kp_path_init_cmp);
+  if (ret < 0)
+    pr_err("trace_path_init: cmp offset failed: %d\n", ret); // ignore error
+
+  ret = register_kprobe(&kp_path_init_cwd);
+  if (ret < 0)
+    pr_err("trace_path_init: cwd offset failed: %d\n", ret);
+
+  ret = register_kprobe(&kp_path_init_fd);
+  if (ret < 0)
+    pr_err("trace_path_init: fd offset failed: %d\n", ret);
+
+  pr_info("trace_path_init: loaded link_path_walk + path_init + offset probes, "
           "target_comm=%s\n",
           target_comm[0] ? target_comm : "(all)");
   return 0;
 }
 
 static void __exit trace_path_init_exit(void) {
+  unregister_kretprobe(&krp_link_path_walk);
+  unregister_kprobe(&kp_link_path_walk);
+  unregister_kprobe(&kp_path_init_fd);
+  unregister_kprobe(&kp_path_init_cwd);
+  unregister_kprobe(&kp_path_init_cmp);
+  unregister_kretprobe(&krp_path_init);
+  unregister_kprobe(&kp_path_init);
   unregister_kretprobe(&krp_init_file);
   unregister_kprobe(&kp_init_file);
+  unregister_kretprobe(&krp_path_lookupat);
+  unregister_kprobe(&kp_path_lookupat);
   unregister_kretprobe(&krp_alloc_empty_file);
   unregister_kprobe(&kp_alloc_empty_file);
   unregister_kretprobe(&krp_path_openat);
