@@ -112,8 +112,8 @@ static int filp_open_entry(struct kprobe *p, struct pt_regs *regs) {
             "pathname=\"%s\"\n",
             current->pid, current->comm, pathname);
     pr_info("[PATH_INIT] BRANCH: AT_FDCWD → path_init will use "
-            "current->fs->pwd = \"%s\"\n",
-            current->fs->pwd.dentry->d_name.name);
+            "current->fs->pwd dentry=0x%px name=\"%s\"\n",
+            current->fs->pwd.dentry, current->fs->pwd.dentry->d_name.name);
     pr_info("[PATH_INIT] CODE: namei.c:2576 if (nd->dfd == AT_FDCWD) → TRUE → "
             "line 2578: fs = current->fs; nd->path = fs->pwd\n");
   } else {
@@ -123,9 +123,10 @@ static int filp_open_entry(struct kprobe *p, struct pt_regs *regs) {
     pr_info("[PATH_INIT] BRANCH: FD_LOOKUP → path_init will look up fd %d in "
             "fd table (ignoring pwd)\n",
             dfd);
-    pr_info("[PATH_INIT] BRANCH: current->fs->pwd = \"%s\" (IGNORED — kernel "
+    pr_info("[PATH_INIT] BRANCH: current->fs->pwd dentry=0x%px name=\"%s\" "
+            "(IGNORED — kernel "
             "uses fd %d instead)\n",
-            current->fs->pwd.dentry->d_name.name, dfd);
+            current->fs->pwd.dentry, current->fs->pwd.dentry->d_name.name, dfd);
     pr_info("[PATH_INIT] CODE: namei.c:2576 if (nd->dfd == AT_FDCWD) → FALSE → "
             "line 2593: fd_raw(nd->dfd) → fd_file(f)->f_path\n");
   }

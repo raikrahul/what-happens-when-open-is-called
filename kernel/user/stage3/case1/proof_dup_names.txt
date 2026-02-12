@@ -1,0 +1,17 @@
+Proof: Differentiating Identical Directory Names
+
+We created two directories with the same name "common":
+1. ./dirA/common
+2. ./dirB/common
+
+We ran `demo_dup_names` which cd'd into each and called open("file.txt").
+
+Trace Results:
+[16380.752898] [PATH_INIT] BRANCH: AT_FDCWD → path_init will use current->fs->pwd dentry=0xffff8b410b51a3c0 name="common"
+[16380.753157] [PATH_INIT] BRANCH: AT_FDCWD → path_init will use current->fs->pwd dentry=0xffff8b410b51a900 name="common"
+
+Analysis:
+- Both log entries show `name="common"`.
+- However, the `dentry` pointer addresses are **DIFFERENT** (`...a3c0` vs `...a900`).
+- This proves that the kernel distinguishes directories by their unique `struct dentry` object in memory, not by their string name.
+- `path_init` initializes `nd->path` with the specific dentry pointer of the current working directory, ensuring the subsequent path walk starts at the correct location.

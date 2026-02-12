@@ -1,0 +1,25 @@
+Log: Phase - Tracing init_file and path_init
+
+1. alloc_empty_file Analysis:
+   - Confirmed calling sequence: path_openat -> alloc_empty_file -> init_file.
+   - Confirmed return 0 (success) from init_file in normal case.
+   - Reserved FD (e.g. 3) happens BEFORE alloc_empty_file.
+   - Linkage (fd -> file) happens AFTER path_openat returns.
+
+2. Generated Trace Files:
+   - trace_pseudo_debugger_alloc_complete.txt: Covers open() -> alloc_empty_file() -> return struct file*.
+   - trace_pseudo_debugger_path_init_complete.txt: Extends the trace through path_init(), showing how the start point is determined.
+
+3. path_init Analysis:
+   - Validated that `nd` input is mostly uninitialized except for `dfd` and `name`.
+   - Explained how `current->fs` is accessed to get PWD or Root.
+
+4. Proof of Distinct Identity (Duplicate Names):
+   - Created `demo_dup_names.c` to resolve paths in two different directories both named "common".
+   - Modified `trace_path_init.c` to log `current->fs->pwd.dentry` pointer address.
+   - Result: Logs confirm identical string names ("common") but DISTINCT dentry pointer addresses.
+   - Conclusion: The kernel uses memory objects (dentries) to distinguish paths, not strings.
+
+5. Documentation:
+   - Updated `worksheet_probed_functions.md` with new findings.
+   - Created `proof_dup_names.txt` with the log evidence.

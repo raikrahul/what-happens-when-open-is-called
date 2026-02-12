@@ -1,0 +1,57 @@
+# Pseudo-Debugger Trace: open() -> alloc_empty_file() -> path_openat()
+
+#1. Call. sys_open("usr/lib/file.txt", O_RDONLY). Values: filename="usr/lib/file.txt", flags=0. Data: User syscall. Work: Transition to kernel mode (entry_SYSCALL_64). Errors: None. Real value: N/A. Real data: rax=-38 (ENOSYS before). Caller Line Number: User Space. Current Line Number: arch/x86/entry/syscall_64.c.
+
+#2. Call. do_sys_openat2(AT_FDCWD, "usr/lib/file.txt", &op). Values: dfd=-100, filename="...", op={flags=0...}. Data: args struct. Work: Build open flags, call do_filp_open. Errors: None. Real value: N/A. Real data: struct open_how pop. Caller Line Number: fs/open.c:1205. Current Line Number: fs/open.c:1420.
+
+#3. Call. get_unused_fd_flags(how->flags). Values: flags=0. Data: Reserve FD in table. Work: Find first available slot in fdt. Errors: None. Real value: 3. Real data: fd=3 (reserved, points to NULL file). Caller Line Number: fs/open.c:1435. Current Line Number: fs/file.c.
+
+#4. Call. do_filp_open(dfd, pathname, &op). Values: dfd=-100, pathname=struct filename*(0xffff8ea...), op=0xffff... Data: op->open_flag=0. Work: Main open logic entry. Errors: None. Real value: N/A. Real data: current->nameidata=NULL. Caller Line Number: fs/open.c:1437. Current Line Number: fs/namei.c:4073.
+
+#5. Call. set_nameidata(&nd, dfd, pathname, NULL). Values: nd=stack_addr, dfd=-100, root=NULL. Data: Initialize nd (garbage stack). Work: Sets nd->dfd, nd->name, nd->stack=internal[]. Errors: None. Real value: void. Real data: nd.root=GARBAGE. Caller Line Number: fs/namei.c:4080. Current Line Number: fs/namei.c:661.
+
+#6. Call. path_openat(&nd, op, flags). Values: nd=stack_addr, op=..., flags=0. Data: Path walking logic. Work: Allocate file object, then walk path. Errors: None. Real value: struct file*. Real data: pending. Caller Line Number: fs/namei.c:4081. Current Line Number: fs/namei.c:4034.
+
+#7. Call. alloc_empty_file(op->open_flag, current_cred()). Values: flags=0, cred=current_cred(). Data: 0x0 (O_RDONLY). Work: Allocate struct file from slab. Errors: None. Real value: struct file*. Real data: pending. Caller Line Number: fs/namei.c:4040. Current Line Number: fs/file_table.c:218.
+
+#8. Check. if (unlikely(get_nr_files() >= max_files)). Values: nr_files=1200, max_files=100000. Data: false. Work: Check resource limits. Errors: None. Real value: false. Real data: 1200 < 100000. Caller Line Number: fs/file_table.c:218. Current Line Number: fs/file_table.c:227.
+
+#9. Call. kmem_cache_alloc(filp_cachep, GFP_KERNEL). Values: cache=filp_cachep, flags=GFP_KERNEL. Data: Allocate memory. Work: Slab allocation. Errors: None. Real value: 0xffff8ea7c88fd0c0. Real data: (start of struct file, garbage content). Caller Line Number: fs/file_table.c:237. Current Line Number: mm/slab.c.
+
+#10. Check. if (unlikely(!f)). Values: f=0xffff8ea7c88fd0c0. Data: Check allocation success. Work: Verify pointer. Errors: None. Real value: false. Real data: Valid ptr. Caller Line Number: fs/file_table.c:237. Current Line Number: fs/file_table.c:238.
+
+#11. Call. init_file(f, flags, cred). Values: f=0xffff8ea7c88fd0c0, flags=0, cred=current_cred(). Data: 0xffff8ea7c88fd0c0 (garbage). Work: Initialize struct file fields. Errors: None. Real value: 0 (success). Real data: Valid file object. Caller Line Number: fs/file_table.c:241. Current Line Number: fs/file_table.c:154.
+
+#12. Step. f->f_cred = get_cred(cred). Values: f->f_cred=GARBAGE -> Valid Cred. Data: Assign credentials. Work: Increment refcount on creds. Errors: None. Real value: 0xffff8ea68d7a16c0. Real data: struct cred*. Caller Line Number: fs/file_table.c:154. Current Line Number: fs/file_table.c:158.
+
+#13. Step. security_file_alloc(f). Values: f. Data: LSM hooks. Work: Allocate security blob (SELinux/AppArmor). Errors: None. Real value: 0. Real data: struct file_security*. Caller Line Number: fs/file_table.c:158. Current Line Number: fs/file_table.c:159.
+
+#14. Step. spin_lock_init(&f->f_lock). Values: &f->f_lock. Data: Initialize spinlock. Work: Set lock state to UNLOCKED (0). Errors: None. Real value: void. Real data: f->f_lock = { raw_lock = { { val = 0 } } }. Caller Line Number: fs/file_table.c:165. Current Line Number: include/linux/spinlock.h.
+
+#15. Step. mutex_init(&f->f_pos_lock). Values: &f->f_pos_lock. Data: Initialize mutex. Work: Set mutex state to UNLOCKED. Errors: None. Real value: void. Real data: f->f_pos_lock = { count = 1, wait_lock = 0... }. Caller Line Number: fs/file_table.c:173. Current Line Number: include/linux/mutex.h.
+
+#16. Step. memset(&f->f_path, 0, sizeof(f->f_path)). Values: dest=&f_path, val=0, size=16. Data: Clear path. Work: Set f_path.mnt=NULL, f_path.dentry=NULL. Errors: None. Real value: void. Real data: f->f_path = { mnt=NULL, dentry=NULL }. Caller Line Number: fs/file_table.c:174. Current Line Number: fs/file_table.c:174.
+
+#17. Step. memset(&f->f_ra, 0, sizeof(f->f_ra)). Values: dest=&f_ra, val=0, size=32. Data: Clear readahead state. Work: Zero out readahead. Errors: None. Real value: void. Real data: f->f_ra = { start=0, size=0... }. Caller Line Number: fs/file_table.c:175. Current Line Number: fs/file_table.c:175.
+
+#18. Step. f->f_flags = flags. Values: flags=0. Data: Set flags. Work: Store open flags. Errors: None. Real value: 0. Real data: f->f_flags = 0x0. Caller Line Number: fs/file_table.c:177. Current Line Number: fs/file_table.c:177.
+
+#19. Step. f->f_mode = OPEN_FMODE(flags). Values: flags=0. Data: Set mode (permissions). Work: Calculate FMODE_READ, FMODE_WRITE, etc. Errors: None. Real value: 0x1 (FMODE_READ). Real data: f->f_mode = 0x1. Caller Line Number: fs/file_table.c:178. Current Line Number: fs/file_table.c:178.
+
+#20. Step. file_ref_init(&f->f_ref, 1). Values: &f_ref. Data: Init refcount. Work: Set f_count = 1. Errors: None. Real value: void. Real data: f->f_count = 1. Caller Line Number: fs/file_table.c:199. Current Line Number: include/linux/fs.h.
+
+#21. Step. file_set_fsnotify_mode(f, FMODE_NONOTIFY_PERM). Values: f, NONOTIFY. Data: Disable permission checks. Work: Optimization (no antivirus unless mandated). Errors: None. Real value: void. Real data: f->f_mode |= FMODE_NONOTIFY_PERM. Caller Line Number: fs/file_table.c:204. Current Line Number: fs/file_table.c:204.
+
+#22. Return. init_file(). Values: 0. Data: Success. Work: Return control to alloc_empty_file. Errors: None. Real value: 0. Real data: Success. Caller Line Number: fs/file_table.c:205. Current Line Number: fs/file_table.c:241.
+
+#23. Check. if (unlikely(error)). Values: error=0. Data: Check init failure. Work: Branch. Errors: None. Real value: false. Real data: Success. Caller Line Number: fs/file_table.c:242. Current Line Number: fs/file_table.c:242.
+
+#24. Step. percpu_counter_inc(&nr_files). Values: &nr_files. Data: Increment global file count. Work: Update system stats. Errors: None. Real value: void. Real data: nr_files++. Caller Line Number: fs/file_table.c:247. Current Line Number: lib/percpu_counter.c.
+
+#25. Return. alloc_empty_file(). Values: f=0xffff8ea7c88fd0c0. Data: Return valid file object. Work: Return to path_openat. Errors: None. Real value: 0xffff8ea7c88fd0c0. Real data: Valid file. Caller Line Number: fs/file_table.c:249. Current Line Number: fs/namei.c:4040.
+
+#26. Check. if (IS_ERR(file)). Values: file=0xffff8ea7c88fd0c0. Data: Check allocation failure. Work: Branch logic. Errors: None. Real value: false. Real data: Valid pointer. Caller Line Number: fs/namei.c:4040. Current Line Number: fs/namei.c:4041.
+
+#27. Check. if (unlikely(file->f_mode & FMODE_PATH)). Values: file->f_mode=0x1. Data: Check if O_PATH was used. Work: Branch logic. Errors: None. Real value: false. Real data: FMODE_READ only. Caller Line Number: fs/namei.c:4043. Current Line Number: fs/namei.c:4043.
+
+#28. Call. path_init(&nd, flags). Values: nd=stack_addr, flags=0. Data: Start path walking. Work: Determine start point (CWD or Root or DF). Errors: None. Real value: "usr/lib/file.txt". Real data: Remaining name. Caller Line Number: fs/namei.c:4049. Current Line Number: fs/namei.c:2560.

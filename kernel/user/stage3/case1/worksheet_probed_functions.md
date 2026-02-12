@@ -370,6 +370,12 @@ depth = 0  →  slots in use = 0  →  garbage in internal[] never read
 - `stack = internal` means "the array is right here inside me"
 - If depth exceeds 2: `nd_alloc_stack()` → `kmalloc` → `stack` points to heap
 
+#2. Call. do_sys_openat2(AT_FDCWD, "usr/lib/file.txt", &op). Values: dfd=-100, filename="...", op={flags=0...}. Data: args struct. Work: Build open flags, call do_filp_open. Errors: None. Real value: N/A. Real data: struct open_how pop. Caller Line Number: fs/open.c:1205. Current Line Number: fs/open.c:1230.
+
+#2b. Call. get_unused_fd_flags(how->flags). Values: flags. Data: Reserve FD in table. Work: Find first available slot in fdt. Errors: None. Real value: 3. Real data: fd=3 (reserved, points to NULL file). Caller Line Number: fs/open.c:1435. Current Line Number: fs/file.c.
+
+#3. Call. do_filp_open(dfd, pathname, &op). Values: dfd=-100, pathname=struct filename*(0xffff8ea...), op=0xffff... Data: op->open_flag=0. Work: Main open logic entry. Errors: None. Real value: N/A. Real data: current->nameidata=NULL. Caller Line Number: fs/open.c:1255. Current Line Number: fs/namei.c:4073.
+
 ### The `saved` field / recursive lookups / `current->nameidata`
 
 - **`saved`**: Used to chain `nameidata` structs when the kernel performs a **nested lookup** (e.g., an `exec` or specialized driver call triggers an open while another open is in progress).
@@ -383,6 +389,47 @@ depth = 0  →  slots in use = 0  →  garbage in internal[] never read
 - **`p->name`** (`struct filename *`): The full kernel object (refcounted).
 - **`p->pathname`** (`const char *`): The actual string pointer inside that object.
 - **Thread Safety**: `nd` is a **stack-local variable**. Each thread has its own stack. `current->nameidata` is per-task. There is **zero race condition** risk for `nd` itself.
+
+### `alloc_empty_file` (fs/file_table.c)
+
+- **Purpose**: Allocates a raw `struct file` object from `filp_cachep`.
+- **Called by**: `path_openat` (early, before path walk).
+- **Key Logic**:
+  1. Checks global file limit (`max_files`).
+  2. Allocates memory via `kmem_cache_alloc`.
+  3. Calls `init_file` to set credentials and flags.
+- **The "Mount Warning" Explained**:
+  - The returned file is **floating** (not attached to a mount yet).
+  - If the file is for **writing**, the kernel must eventually increment `mnt->mnt_writers` on the target mount.
+  - Since `alloc_empty_file` doesn't know the target mount yet, the **caller** is responsible for this increment later (in `do_dentry_open`).
+  - Failure to do so leads to "imbalanced writer count" warnings at close (`fput`).
+
+### File Descriptor vs struct file Timing
+
+- **FD Reservation**: The integer `fd` (e.g. 3) is reserved **before** `struct file` is created.
+  - Location: `do_sys_openat2` calls `get_unused_fd_flags`.
+  - State: The slot in the FD table is marked "busy" but points to `NULL`.
+- **struct file Creation**: Happened in `path_openat` -> `alloc_empty_file`.
+- **Linkage**: The connection `frame->fd[3] = file` happens **after** `path_openat` returns successfully.
+  - Location: `fd_install(fd, f)`.
+
+### `path_init` (fs/namei.c)
+
+- **Purpose**: Determines the **Starting Point** (`nd->path`) for the path walk.
+- **Inputs**: `nd` (garbage except `dfd`), path string `s`.
+- **Logic**:
+  1.  **Absolute Path** (`/`): Ignores `dfd`. Starts at `current->fs->root`.
+  2.  **Relative Path** (`usr/lib/...`):
+      -   **If `AT_FDCWD`**: Starts at `current->fs->pwd` (Process Working Directory).
+      -   **If FD > 0**: Starts at the path pointed to by that file descriptor (`fd_file(dfd)->f_path`).
+-   **Output**: `nd->path` is populated with a valid `{mnt, dentry}` pair.
+-   **Proof of Distinct Identity**:
+    -   We demonstrated with `demo_dup_names` that two directories with identical names ("common") have **different dentry pointers** in kernel memory.
+    -   The kernel distinguishes them solely by address/mount, not by string.
+    -   See `proof_dup_names.txt` for logs showing pointer differences.
+
+---
+
 
 ---
 
