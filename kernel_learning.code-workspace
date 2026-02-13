@@ -1,0 +1,48 @@
+{
+	"folders": [
+		{
+			"path": "."
+		},
+		{
+			"name": "Linux-6.17-Source",
+			"path": "/usr/src/linux-hwe-6.17-6.17.0"
+		}
+	],
+	"settings": {
+		"files.exclude": {
+			"**/.git": true,
+			"**/.svn": true,
+			"**/.hg": true,
+			"**/CVS": true,
+			"**/.DS_Store": true,
+			"**/Thumbs.db": true,
+			"arch/*": true,
+			"!arch/x86": true,
+			"tools": true,
+			"samples": true,
+			"Documentation": true,
+			"drivers": true,
+			"sound": true,
+			"net": true,
+			"firmware": true
+		},
+		"search.exclude": {
+			"**/node_modules": true,
+			"**/bower_components": true,
+			"**/*.o": true,
+			"**/*.ko": true,
+			"**/*.cmd": true
+		},
+		"C_Cpp.default.compileCommands": "/home/r/Desktop/kernel_compile_commands_6.17.json",
+		"C_Cpp.default.intelliSenseMode": "linux-gcc-x64",
+		"C_Cpp.intelliSenseEngine": "Disabled",
+		"clangd.arguments": [
+			"--compile-commands-dir=/home/r/Desktop/",
+			"--background-index",
+			"--clang-tidy",
+			"--completion-style=detailed",
+			"--header-insertion=never"
+		],
+		"editor.lineNumbers": "off"
+	}
+}

@@ -1,0 +1,84 @@
+# Stage 3 Case 1: Probing Kernel Path Functions
+
+## Objective
+To axiomatically prove how the Linux kernel handles path resolution for different `open()` flags, specifically focusing on `O_TMPFILE`, `O_PATH`, and standard opens. We aim to trace the execution flow through `path_openat`, `do_tmpfile`, `do_o_path`, `path_lookupat`, and `path_init` down to instruction-level offsets.
+
+## Steps Taken
+
+### 1. Creation of User-Space Demo Programs
+Created three scenarios to trigger different kernel paths:
+- `demo_at_fdcwd`: Normal open using `AT_FDCWD`.
+- `demo_o_path`: Open using a directory file descriptor opened with `O_PATH`.
+- `demo_o_tmpfile`: Creation of an unlinked temporary file using `O_TMPFILE`.
+
+### 2. Implementation of Kernel Trace Driver (`trace_path_init`)
+Developed a kprobe-based driver to monitor:
+- `do_filp_open` (entry/return)
+- `path_openat` (entry/return)
+- `alloc_empty_file` (entry/return)
+- `init_file` (entry/return)
+- `path_lookupat` (entry/return)
+- `fdget_raw` (monitors the 'else' branch in `path_init`)
+- `path_init` (entry/return)
+
+### 3. Proof of Functional Dispatch in `path_openat`
+Verified that `path_openat` acts as a dispatcher:
+- `O_TMPFILE` calls `do_tmpfile`.
+- `O_PATH` calls `do_o_path`.
+- Normal open proceeds to direct path walking via `path_init` and `link_path_walk`.
+
+### 4. Axiomatic Verification of `path_lookupat` Usage
+Proved that:
+- `do_tmpfile` calls `path_lookupat` with `LOOKUP_DIRECTORY`.
+- `do_o_path` calls `path_lookupat`.
+- Normal opens **do not** call `path_lookupat`, they use `path_init` directly.
+
+### 5. Instruction-Level Offset Discovery for `path_init`
+Extracted the running kernel image (`vmlinux`) and disassembled `path_init` to find logical branch offsets:
+- **Offset +305 (+0x131)**: `if (nd->dfd == AT_FDCWD)` check.
+- **Offset +314 (+0x13a)**: Taken branch for `AT_FDCWD` (using `current->fs->pwd`).
+- **Offset +442 (+0x1ba)**: Taken branch for specific FD lookup (calling `fdget_raw()`).
+
+### 6. Verification of `path_init` Internal Flow
+Ran traces confirming that:
+- Normal opens trigger the +305 and +314 offsets.
+- `O_PATH` relative opens trigger the +305 and +442 offsets, followed immediately by `fdget_raw`.
+
+## List of Proofs
+- `proof_normal_open.txt`: Trace of standard file creation.
+- `proof_check_opath.txt`: Trace showing `path_lookupat` triggered by `O_PATH`.
+- `proof_path_init_normal.txt`: Trace of `path_init` entry/return for normal open.
+- `proof_path_init_opath.txt`: Trace of `path_lookupat` calling `path_init`.
+- `proof_path_init_offsets.txt`: Instruction-level trace of `AT_FDCWD` logic.
+- `proof_path_init_fd_offset.txt`: Instruction-level trace of FD lookup logic.
+- `trace_debug_o_tmpfile.txt`: Consolidated analysis of open flag branching.
+- `trace_debug_path_init.txt`: Detailed breakdown of `path_init` assembly and offsets.
+
+## Current Task: Tracing `link_path_walk`
+Next, we performed instruction-level ptrace of `link_path_walk` (fs/namei.c).
+
+### 7. Instruction-Level Offset Discovery for `link_path_walk`
+Address (vmlinux): `ffffffff817fe220`. Range: 688 bytes.
+- **Offset +0**: Entry. Variables: `name` (%rdi), `nd` (%rsi).
+- **Offset +96 (+0x60)**: Loop start (`for(;;)`). Variables: `depth` (%r13d).
+- **Offset +159 (+0x9f)**: After `hash_name`. Variables: `new_name` (%rax), `lastword` (stack @ -0x38).
+- **Offset +327 (+0x147)**: After `walk_component`. Variables: `link` (%rax).
+
+### 8. Verification of `link_path_walk` Loop
+Ran `demo_short` and captured `proof_lpw_trace.txt`.
+Confirmed:
+- **Component Traversal**: `etc`, `local`, `bin`, etc. are hashed and walked.
+- **Short Variable Capture**: `lastword` captures `.` (0x2e) and `..` (0x2e2e) directly.
+- **Symbolic Link Resolution**: `link` return value shows the target path for symlinks like `/usr/local/cuda` -> `/etc/alternatives/cuda`.
+- **Recursion/Depth**: `depth` variable increments correctly when following symlinks.
+
+## List of Proofs
+- `proof_normal_open.txt`: Trace of standard file creation.
+- `proof_check_opath.txt`: Trace showing `path_lookupat` triggered by `O_PATH`.
+- `proof_path_init_normal.txt`: Trace of `path_init` entry/return for normal open.
+- `proof_path_init_opath.txt`: Trace of `path_lookupat` calling `path_init`.
+- `proof_path_init_offsets.txt`: Instruction-level trace of `AT_FDCWD` logic.
+- `proof_path_init_fd_offset.txt`: Instruction-level trace of FD lookup logic.
+- `proof_lpw_trace.txt`: Instruction-level variable trace of `link_path_walk`.
+- `trace_debug_path_init.txt`: Detailed breakdown of `path_init` assembly and offsets.
+- `link_path_walk.asm`: Disassembly used for offset mapping.

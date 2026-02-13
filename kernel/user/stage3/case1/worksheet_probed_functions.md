@@ -422,7 +422,23 @@ depth = 0  →  slots in use = 0  →  garbage in internal[] never read
   2.  **Relative Path** (`usr/lib/...`):
       -   **If `AT_FDCWD`**: Starts at `current->fs->pwd` (Process Working Directory).
       -   **If FD > 0**: Starts at the path pointed to by that file descriptor (`fd_file(dfd)->f_path`).
--   **Output**: `nd->path` is populated with a valid `{mnt, dentry}` pair.
+- **Return Value**:
+  - **Relative Path**: Returns the original string `s` exactly (e.g., `"usr/lib/file.txt"`).
+  - **Absolute Path**: Returns the string *after* any leading slashes (e.g., `"usr/lib/file.txt"` for path `"/usr/lib/file.txt"`).
+- **Outcome**: Populates `nd->path` with a valid, pinned `{mnt, dentry}` pair (e.g., pointing to your CWD directory record).
+- **Nuance**: Note that `set_nameidata` initializes `nd->path` (Current Position), but `path_init` explicitly clears `nd->root` (Search Boundary) at Line 2565 to remove stack garbage for normal lookups where the root wasn't preset.
+
+### `link_path_walk` (fs/namei.c)
+
+- **Purpose**: Iterates over path components (e.g., "usr", "lib") and resolves each one.
+- **Inputs**: `name` (the remaining string from `path_init`), `nd` (search context).
+- **Core Loop**:
+  1.  **Component Extraction**: Uses `hash_name` to find the next component.
+  2.  **Resolution**: Calls `walk_component` to find the dentry for that component.
+  3.  **Iteration**: Continues until no more slashes remain.
+- **Tracing Tasks**:
+  - Prove the string components ("usr", "lib") are parsed correctly.
+  - Show the transition from one dentry to the next.
 -   **Proof of Distinct Identity**:
     -   We demonstrated with `demo_dup_names` that two directories with identical names ("common") have **different dentry pointers** in kernel memory.
     -   The kernel distinguishes them solely by address/mount, not by string.

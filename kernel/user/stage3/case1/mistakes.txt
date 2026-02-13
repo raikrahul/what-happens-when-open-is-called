@@ -1,0 +1,184 @@
+MISTAKE LOG — trace_lpw_v2.c Kernel Panic
+===========================================
+Date: 2026-02-12
+Driver: trace_lpw_v2.c (trace_lpw_v2.ko)
+Symptom: Full laptop crash (kernel panic) upon running demo_short with the module loaded.
+
+ROOT CAUSE
+----------
+1. struct nameidata is PRIVATE to fs/namei.c (not exported in any public header).
+2. struct nameidata has __randomize_layout annotation.
+   This means the compiler RANDOMIZES field positions at kernel build time.
+3. In trace_lpw_v2.c we defined a fake `struct my_nameidata` by copying the
+   field declarations from source code. We assumed the fields would be at
+   the same byte offsets as written in the C definition.
+4. Because __randomize_layout shuffled the fields, our fake struct had WRONG
+   offsets. Accessing nd->path.dentry through the wrong offset returned a
+   garbage pointer.
+5. The probe handler then called get_dname(nd->path.dentry), which
+   dereferenced the garbage pointer. This triggered a page fault inside a
+   kprobe handler (interrupt context) → unrecoverable kernel panic.
+
+WHAT WAS WRONG (specific lines)
+--------------------------------
+In kp_lpw_entry():
+    struct my_nameidata *nd = (struct my_nameidata *)regs->si;
+    get_dname(nd->path.dentry)  // CRASH: nd->path.dentry is at wrong offset
+    nd->flags                   // CRASH: wrong offset
+
+In kp_may_lookup_call():
+    nd->inode->i_mode           // DOUBLE DEREF through garbage: guaranteed crash
+
+In kp_hash_name_call():
+    Printing nd->last.name      // Wrong offset
+
+In kp_walk_component_call():
+    nd->last.name               // Wrong offset
+    nd->path.dentry             // Wrong offset, crash
+
+WHAT WAS SAFE (trace_lpw.c v1)
+-------------------------------
+The v1 driver only printed:
+    - regs->di, regs->si  (raw register values, no dereference)
+    - (char*)regs->r12    (name pointer, points to valid kernel string)
+    - (int)regs->r13      (depth integer, no dereference)
+    - regs->ax            (return value, no dereference)
+These are direct CPU register reads — no struct layout assumption needed.
+This driver worked correctly and never crashed.
+
+LESSON
+------
+1. NEVER define a fake copy of a __randomize_layout struct.
+2. NEVER dereference pointers read from struct fields in a kprobe handler
+   unless the offset is verified from the RUNNING kernel (not source code).
+3. For __randomize_layout structs, get real offsets using:
+   a. pahole (requires BTF or DWARF debug info)
+   b. Disassembly (objdump) — read what offset the compiler actually used
+   c. /sys/kernel/btf/vmlinux (if available)
+4. The SAFE approach is to only print raw register values. If you need
+   struct fields, read them at verified byte offsets using
+   copy_from_kernel_nofault().
+
+HOW TO GET THE REAL OFFSETS
+---------------------------
+Method 1: pahole (if debug info available)
+    pahole -C nameidata /usr/lib/debug/boot/vmlinux-$(uname -r)
+    This prints every field with its ACTUAL byte offset.
+
+Method 2: BTF (if /sys/kernel/btf/vmlinux exists)
+    bpftool btf dump file /sys/kernel/btf/vmlinux format c | grep -A 30 "struct nameidata"
+
+Method 3: objdump of vmlinux (always works)
+    Look at link_path_walk disassembly.
+    At known source lines, identify which offset from %rbx (nd pointer)
+    the compiler used. For example:
+        mov 0x38(%rsi),%edx   → nd->flags is at offset 0x38
+        mov 0x8(%rbx),%rdi    → nd->path.dentry is at offset 0x8
+    Map each instruction to the source line to find each field offset.
+
+Method 4: /proc/kcore + gdb (needs root)
+    Can read live kernel memory and interpret structures.
+
+RECOVERY PLAN
+-------------
+1. Use objdump disassembly (already have link_path_walk.asm) to find real
+   offsets of nd->path.dentry, nd->inode, nd->flags, nd->last.name.
+2. In the driver, read fields at these VERIFIED byte offsets using
+   copy_from_kernel_nofault() instead of C struct access.
+3. Test with a throwaway process first (not demo_short) to verify safety.
+
+VERIFIED OFFSETS (from pahole -C nameidata /sys/kernel/btf/vmlinux)
+===================================================================
+NOTE: On THIS kernel (6.17.0-14-generic), __randomize_layout did NOT
+scramble the fields. The BTF/pahole output matches the source order.
+This means our fake struct SHOULD have worked — but we cannot rely on
+this being true across kernel versions or builds.
+
+struct nameidata (size: 240 bytes, 4 cachelines):
+  offset   0 (0x00): path.mnt             [struct vfsmount *]   (8 bytes)
+  offset   8 (0x08): path.dentry          [struct dentry *]     (8 bytes)
+  offset  16 (0x10): last.hash_len        [u64]                 (8 bytes)
+  offset  24 (0x18): last.name            [const char *]        (8 bytes)
+  offset  32 (0x20): root.mnt             [struct vfsmount *]   (8 bytes)
+  offset  40 (0x28): root.dentry          [struct dentry *]     (8 bytes)
+  offset  48 (0x30): inode                [struct inode *]       (8 bytes)
+  offset  56 (0x38): flags                [unsigned int]         (4 bytes)
+  offset  60 (0x3c): state                [unsigned int]         (4 bytes)
+  offset  80 (0x50): last_type            [int]                  (4 bytes)
+  offset  84 (0x54): depth                [unsigned int]         (4 bytes)
+  offset  96 (0x60): stack                [struct saved *]       (8 bytes)
+  offset 200 (0xc8): name                 [struct filename *]    (8 bytes)
+  offset 208 (0xd0): pathname             [const char *]         (8 bytes)
+  offset 228 (0xe4): dfd                  [int]                  (4 bytes)
+  offset 232 (0xe8): dir_vfsuid           [vfsuid_t]             (4 bytes)
+  offset 236 (0xec): dir_mode             [umode_t]              (2 bytes)
+
+DISASSEMBLY CROSS-CHECK (link_path_walk.asm):
+  mov 0x38(%rsi),%edx       → nd->flags at offset 0x38 = 56  ✓ matches
+  movl $0x1,0x50(%rsi)      → nd->last_type at offset 0x50 = 80  ✓ matches
+  mov (%rbx),%rax           → nd->path.mnt at offset 0x00    ✓ matches
+  mov 0x30(%rbx),%rsi       → nd->inode at offset 0x30 = 48  ✓ matches
+  mov 0x18(%rax),%r14       → path.mnt->mnt_idmap at 0x18    (vfsmount field)
+  mov 0x8(%rbx),%rdi        → nd->path.dentry at 0x08 = 8    ✓ matches
+  andl $0xfffffffb,0x3c     → nd->state at 0x3c = 60         ✓ matches
+  movl $0x0,0x50(%rbx)      → nd->last_type at 0x50 = 80     ✓ matches
+  mov 0x60(%rbx),%rax       → nd->stack at offset 0x60 = 96  ✓ matches
+
+WHY IT CRASHED DESPITE CORRECT ORDER
+=====================================
+The crash was likely caused by my_vfsuid_t having incorrect size.
+In the real kernel, vfsuid_t might be a typedef to a different size
+than what we defined. If ANY field was wrong in size, all subsequent
+fields shift, and pointer reads become garbage.
+
+Additionally, 'struct saved' has size 48 bytes (from pahole), and
+internal[2] = 96 bytes. If we got the saved struct wrong, the
+stack/filename/pathname pointers would all be at wrong offsets.
+
+SAFE APPROACH FOR NEXT ATTEMPT
+===============================
+Use pahole offsets with copy_from_kernel_nofault():
+    void *nd = (void*)regs->si;
+    struct dentry *dentry;
+    copy_from_kernel_nofault(&dentry, nd + 8, 8);   // path.dentry
+    struct inode *inode;
+    copy_from_kernel_nofault(&inode, nd + 48, 8);    // inode
+    unsigned int flags;
+    copy_from_kernel_nofault(&flags, nd + 56, 4);    // flags
+This way each read is protected against page faults.
+
+ACTUAL CRASH EVIDENCE (from journalctl -b -1 -k)
+==================================================
+Last log line before crash:
+  #272.Call [link_path_walk]. Data [glibc-hwcaps/x86-64-v3/libc.so.6]
+  BUG: kernel NULL pointer dereference, address: 0000000000000410
+  #PF: supervisor read access in kernel mode
+  #PF: error_code(0x0000) - not-present page
+
+The address 0x410 = 0x0 + 0x410 = NULL pointer + large offset.
+This confirms the handler read a NULL or near-NULL pointer from
+the wrong register, added a struct field offset, and tried to
+read from the result. Classic NULL dereference through wrong
+struct interpretation.
+
+The kp_may_lookup handler was probing at an instruction offset
+inside link_path_walk. At that specific instruction, %rsi did
+NOT contain the nd pointer — it held something else (possibly
+the idmap or a temporary value). Casting %rsi to
+struct my_nameidata* and reading nd->inode->i_mode caused:
+  Step 1: Read nd->inode at offset 0x30 from a non-nd pointer → got NULL
+  Step 2: Read NULL->i_mode at offset 0x410 (inode field offset) → CRASH
+
+CRASH DUMP INFRASTRUCTURE INSTALLED
+=====================================
+1. linux-crashdump, kdump-tools, crash, makedumpfile, kexec-tools installed
+2. /etc/default/grub: GRUB_CMDLINE_LINUX_DEFAULT="quiet splash crashkernel=512M"
+3. update-grub done
+4. USE_KDUMP=1 in /etc/default/kdump-tools
+5. KDUMP_COREDIR="/var/crash" — dumps will land here
+6. Persistent journald: /var/log/journal created
+7. REBOOT REQUIRED to activate crashkernel reservation
+8. After reboot: verify with cat /sys/kernel/kexec_crash_loaded → should be 1
+9. After next crash: dump in /var/crash/YYYYMMDDHHMMSS/
+   Analyze with: sudo crash /usr/lib/debug/boot/vmlinux-$(uname -r) /var/crash/*/dump.*
+

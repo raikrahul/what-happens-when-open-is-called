@@ -1,0 +1,39 @@
+{
+    "folders": [
+        {
+            "path": "."
+        },
+        {
+            "path": "/usr/src/linux-hwe-6.17-6.17.0"
+        }
+    ],
+    "settings": {
+        "files.associations": {
+            "*.c": "c",
+            "*.h": "c",
+            "*.S": "c"
+        },
+        "editor.minimap.enabled": false,
+        "workbench.editor.openSideBySideDirection": "right",
+        "files.exclude": {
+            "**/.git": true,
+            "**/.svn": true,
+            "**/.hg": true,
+            "**/CVS": true,
+            "**/.DS_Store": true,
+            "**/Thumbs.db": true,
+            "arch/*": true,
+            "!arch/x86": true,
+            "tools": true,
+            "samples": true,
+            "Documentation": true,
+            "drivers": true,
+            "sound": true,
+            "net": true,
+            "firmware": true,
+            "scripts": true,
+            "certs": true,
+            "crypto": true
+        }
+    }
+}

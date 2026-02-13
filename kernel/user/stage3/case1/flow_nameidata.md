@@ -285,7 +285,7 @@ Enters the for(;;) loop:
 path_openat handles the final component "file.txt":
 - Looks it up in lib_dentry
 - Opens the inode
-- Allocates struct file (alloc_empty_file)
+- *Note: struct file was allocated earlier in path_openat (by alloc_empty_file)*
 - init_file fills f_path, f_inode, f_op, f_mode
 - Returns struct file * to do_filp_open
 

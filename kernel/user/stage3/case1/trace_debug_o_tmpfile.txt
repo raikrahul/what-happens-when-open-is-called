@@ -1,0 +1,86 @@
+
+#1. Call. path_openat(nd, op, flags). Values: nd=..., op->open_flag=0x418002, flags=0x103 (estimated). Data: O_TMPFILE | O_DIRECTORY | O_LARGEFILE | O_RDWR. Work: Start of openat path. Errors: None. Real value: struct file alloc. Real data: ?. Caller Line Number: 4034 (fs/namei.c).
+
+#2. Call. alloc_empty_file(op->open_flag, current_cred()). Values: flags=0x418002. Data: 0x418002 (O_TMPFILE|...). Work: Allocate empty file object. Errors: None. Real value: 0x418002. Real data: struct cred* = 0xffff8ea68d7a16c0. Caller Line Number: 4040 (fs/namei.c). Current Line Number: 218 (fs/file_table.c).
+
+#3. Call. init_file(f, flags, cred). Values: f=0xffff8ea7c88fd0c0, flags=0x418002. Data: Initializing file fields. Work: Set f_flags, f_cred, etc. Errors: None. Real value: 0. Real data: Success. Caller Line Number: 228 (fs/file_table.c). Current Line Number: 154 (fs/file_table.c).
+
+#4. Return. init_file. Values: 0. Data: Success. Work: File initialized. Errors: None. Real value: 0. Real data: 0. Caller Line Number: 154 (fs/file_table.c). Last Call Line: 228.
+
+#5. Return. alloc_empty_file. Values: struct file* = 0xffff8ea7c88fd0c0. Data: Valid file pointer. Work: Returning allocated file. Errors: None. Real value: 0xffff8ea7c88fd0c0. Real data: 0xffff8ea7c88fd0c0. Caller Line Number: 236 (fs/file_table.c). Last Call Line: 4040.
+
+#6. Check. inside path_openat. Values: file->f_flags & __O_TMPFILE. Data: 0x418242 & 0x400000. Work: Checking if O_TMPFILE is set. Errors: None. Real value: True. Real data: 0x400000. Caller Line Number: 4044 (fs/namei.c).
+
+#7. Call. do_tmpfile(nd, flags, op, file). Values: nd=..., flags=0x101 (LOOKUP_FOLLOW?), op=..., file=0xffff8ea7c88fd0c0. Data: Handle O_TMPFILE creation. Work: Create temp file. Errors: None. Real value: ?. Real data: ?. Caller Line Number: 4045 (fs/namei.c). Current Line Number: 3999 (fs/namei.c).
+
+#8. Call. path_lookupat(nd, flags | LOOKUP_DIRECTORY, &path). Values: flags=0x103 (LOOKUP_FOLLOW | LOOKUP_DIRECTORY). Data: Find the directory to creating temp file in. Work: Path resolution. Errors: None. Real value: ?. Real data: ".". Caller Line Number: 4004 (fs/namei.c). Current Line Number: 2576 (fs/namei.c path_init?).
+
+#9. Probe. path_lookupat entry. Values: flags=0x103. Data: LOOKUP_DIRECTORY set (Bit 1). Work: Probed call. Errors: None. Real value: 0x103. Real data: LOOKUP_DIRECTORY. Caller Line Number: 4004 (fs/namei.c).
+
+#10. Return. path_lookupat. Values: 0. Data: Success. Work: Valid path found (current working directory). Errors: None. Real value: 0. Real data: 0. Caller Line Number: 4004 (fs/namei.c).
+
+#11. Check. inside do_tmpfile. Values: error. Data: 0. Work: Check if lookup failed. Errors: None. Real value: 0. Real data: 0. Caller Line Number: 4006 (fs/namei.c).
+
+#12. Call. mnt_want_write(path.mnt). Values: path.mnt. Data: Request write access to mount. Work: Check read-only fs. Errors: None. Real value: 0. Real data: Success. Caller Line Number: 4008 (fs/namei.c).
+
+#13. Return. mnt_want_write. Values: 0. Data: Write access granted. Work: Done. Errors: None. Real value: 0. Real data: 0. Caller Line Number: 4008.
+
+#14. Call. vfs_tmpfile(mnt_idmap(path.mnt), &path, file, op->mode). Values: path=".", file=0xffff8ea7c88fd0c0. Data: Create inode. Work: Call filesystem specific tmpfile method. Errors: None. Real value: 0. Real data: Success. Caller Line Number: 4011 (fs/namei.c).
+
+#15. Return. vfs_tmpfile. Values: 0. Data: File created (unlinked). Work: Done. Errors: None. Real value: 0. Real data: 0. Caller Line Number: 4011.
+
+#16. Call. audit_inode(nd->name, file->f_path.dentry, 0). Values: name, dentry. Data: Audit the creation. Work: Audit logging. Errors: None. Real value: void. Real data: void. Caller Line Number: 4014 (fs/namei.c).
+
+#17. Call. mnt_drop_write(path.mnt). Values: path.mnt. Data: Release write access. Work: Decrement write count. Errors: None. Real value: void. Real data: void. Caller Line Number: 4016 (fs/namei.c).
+
+#18. Call. path_put(&path). Values: path. Data: Release path reference. Work: Decrement refcount. Errors: None. Real value: void. Real data: void. Caller Line Number: 4018 (fs/namei.c).
+
+#19. Return. do_tmpfile. Values: 0. Data: Success. Work: Done. Errors: None. Real value: 0. Real data: 0. Caller Line Number: 4019 (fs/namei.c).
+
+#20. Check. inside path_openat. Values: !error. Data: !0 = 1. Work: Check success. Errors: None. Real value: True. Real data: 1. Caller Line Number: 4057 (fs/namei.c).
+
+#21. Check. inside path_openat. Values: file->f_mode & FMODE_OPENED. Data: Checked by vfs_tmpfile?. Work: Ensure file is opened. Errors: None. Real value: True (0x...2...). Real data: ?. Caller Line Number: 4058 (fs/namei.c).
+
+
+#22. Return. path_openat. Values: file=0xffff8ea7c88fd0c0. Data: Success. Work: Return file pointer. Errors: None. Real value: 0xffff8ea7c88fd0c0. Real data: struct file*. Caller Line Number: 4059 (fs/namei.c).
+
+============================================================
+=== O_PATH TRACE (demo_o_path_dir) ===
+============================================================
+
+#1. Call. path_openat(nd, op, flags). Values: flags=0x210000 (O_PATH | ...). Data: O_PATH set. Work: Check O_PATH flag. Errors: None. Real value: True. Caller Line Number: 4034 (fs/namei.c).
+
+#2. Check. inside path_openat. Values: file->f_flags & O_PATH. Data: 0x210000 & 0x200000. Work: Branch to do_o_path. Errors: None. Real value: True. Caller Line Number: 4046 (fs/namei.c).
+
+#3. Call. do_o_path(nd, flags, file). Values: flags=0x200000. Data: Handle O_PATH. Work: Lookup path without opening. Errors: None. Real value: ?. Caller Line Number: 4047. Current Line Number: 4022 (fs/namei.c).
+
+#4. Call. path_lookupat(nd, flags, &path). Values: flags=0x103 (LOOKUP_DIRECTORY|...). Data: Find the object. Work: Resolve path "demo_dir". Errors: None. Real value: ?. Caller Line Number: 4025 (fs/namei.c).
+
+#5. Probe. path_lookupat entry. Values: flags=0x103. Data: LOOKUP_DIRECTORY set. Work: Probed call. Errors: None. Real value: 0x103. Real data: LOOKUP_DIRECTORY. Caller Line Number: 4025.
+
+#6. Return. path_lookupat. Values: 0. Data: Success. Work: Path found "demo_dir". Errors: None. Real value: 0.
+
+#7. Return. do_o_path. Values: 0. Data: Success. Work: Done. Errors: None. Real value: 0.
+
+#8. Return. path_openat. Values: file=.... Data: Success. Work: Return file pointer. Errors: None. Real value: struct file*.
+
+============================================================
+=== NORMAL OPEN TRACE (demo_at_fdcwd) ===
+============================================================
+
+#1. Call. path_openat(nd, op, flags). Values: flags=0x8000 (O_RDONLY|...). Data: Normal open. Work: Check flags. Errors: None. Real value: ?. Caller Line Number: 4034 (fs/namei.c).
+
+#2. Check. inside path_openat. Values: file->f_flags & __O_TMPFILE. Data: False. Work: Skip. Errors: None. Real value: False. Caller Line Number: 4044.
+
+#3. Check. inside path_openat. Values: file->f_flags & O_PATH. Data: False. Work: Skip. Errors: None. Real value: False. Caller Line Number: 4046.
+
+#4. Branch. else block. Values: path_init(). Data: Normal path walk. Work: Start walking. Errors: None. Real value: ?. Caller Line Number: 4048 (fs/namei.c).
+
+#5. Call. path_init(nd, flags). Values: flags. Data: Initialize walk. Work: Set up start point (AT_FDCWD -> pwd). Errors: None. Real value: path string. Caller Line Number: 4049.
+
+#6. Call. link_path_walk(s, nd). Values: s="test_fdcwd.txt". Data: Walk components. Work: Consume path. Errors: None. Real value: 0. Caller Line Number: 4050.
+
+#7. Call. do_open(nd, file, op). Values: file, op. Data: Finish opening bits. Work: Call vfs_open if needed. Errors: None. Real value: 0. Caller Line Number: 4054.
+
+#8. Return. path_openat. Values: file=.... Data: Success. Work: Return file pointer. Errors: None. Real value: struct file*.
+

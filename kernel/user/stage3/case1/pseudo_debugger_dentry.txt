@@ -1,0 +1,30 @@
+/*
+ * pseudo_debugger_dentry.txt
+ * -----------------------------------------------------------------------------
+ * TARGET: Resolving "dirA" while standing in "case1" folder.
+ * -----------------------------------------------------------------------------
+ */
+
+#1. Call: link_path_walk(name="dirA/common/file.txt", nd). Values: nd->path.dentry=0xffff8b41a44eeb40. Data: "case1" folder. Work: Entry point for path resolution loop. Errors: None. Real value: 0xffff8b41a44eeb40. Real data: case1 address. Caller: openat syscall via path_lookupat. Line: 2288 (fs/namei.c).
+
+#2. Call: hash_name(nd->path.dentry, "dirA"). Values: parent=0xffff8b41a44eeb40, name="dirA". Data: "dirA" string. Work: Calculating salted hash. Salt = 0xffff8b41a44eeb40. Work: Mixing 4 bytes of "dirA" with 8 bytes of parent address. Errors: None. Real value: 0x4937d784. Real data: Salted Hash for dirA. Resumed: link_path_walk. Line: 2296 (fs/namei.c).
+
+#3. Call: walk_component(nd, flags=0). Values: nd->last.name="dirA", nd->last.hash=0x4937d784. Data: target qstr. Work: Initializing component lookup. Errors: None. Real value: 0. Real data: Success status. Resumed: link_path_walk. Line: 2309 (fs/namei.c).
+
+#4. Call: lookup_fast(nd, &path). Values: parent=0xffff8b41a44eeb40, hash=0x4937d784. Data: Briefcase target. Work: Attempting RCU-safe dentry cache lookup. Errors: None. Real value: 1. Real data: Fast path found. Resumed: walk_component. Line: 2125 (fs/namei.c).
+
+#5. Call: __d_lookup_rcu(parent=0xffff8b41a44eeb40, name="dirA", ...). Values: hash=0x4937d784. Data: 32-bit salted index. Work: Entering the global hash table lookup. Errors: None. Real value: 0xffff8b4170e3ecc0. Real data: dirA dentry address. Resumed: lookup_fast. Line: 2275 (fs/dcache.c).
+
+#6. Call: d_hash(0x4937d784). Values: hash=0x4937d784, d_hash_shift=11. Data: mask=0x1FFFFF. Work: Calculating bucket index via bit shift. Calculation: 0x4937d784 >> 21 = 585. Errors: None. Real value: 585. Real data: Bucket ID. Resumed: __d_lookup_rcu. Line: 2364 (fs/dcache.c).
+
+#7. Loop Iteration #1. Values: dentry=0xffff888800000100 (Candidate Stranger). Data: Candidate from Bucket #585. Work: Checking parent pointer. Check: 0xffff888800000100->d_parent (0xffff7777...) == parent (0xffff8b41a44eeb40). Fail: Wrong Neighborhood. Status: continue. Line: 2307 (fs/dcache.c).
+
+#8. Loop Iteration #2. Values: dentry=0xffff8b4170e3ecc0 (Target dirA). Data: Candidate from Bucket #585. Work: First Check (Parent). Check: 0xffff8b4170e3ecc0->d_parent (0xffff8b41a44eeb40) == parent (0xffff8b41a44eeb40). Pass: Correct Neighborhood. Line: 2307 (fs/dcache.c).
+
+#9. Work. Values: dentry=0xffff8b4170e3ecc0. Data: State flags. Work: Second Check (Validity). Check: d_unhashed(dentry). Result: Valid. Pass. Line: 2308 (fs/dcache.c).
+
+#10. Work. Values: dentry->d_name.hash_len=0x4937d784 (Validating full hash). Data: 32-bit numerical verification. Work: Third Check (Hash ID). Check: 0x4937d784 == 0x4937d784. Pass: Mathematical Match. Line: 2309 (fs/dcache.c).
+
+#11. Work. Values: dentry->d_name.name="dirA". Data: Text comparison. Work: Fourth Check (Identity). Check: memcmp("dirA", "dirA"). Pass: Identity Verified. Line: 2311 (fs/dcache.c).
+
+#12. Step Done. Values: dentry=0xffff8b4170e3ecc0. Data: Success return. Work: Assigning found dentry to briefcase. Status: Component Resolved. Real value: FOUND. Real data: dirA is ready for step_into. Resumed: lookup_fast. Line: 2314 (fs/dcache.c).

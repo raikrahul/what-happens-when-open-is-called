@@ -28,3 +28,5 @@ Log: Phase - Tracing init_file and path_init
 8. Source Mapping: Confirmed offset +314 maps to fs/namei.c:2577 inside AT_FDCWD block via GDB.
 9. addr2line Proof: Verified offset 0x454a maps to fs/namei.c:2578 using addr2line. Created proof_addr2line.txt.
 10. Replication Script: Developed reproduce_path_init_proof.sh for cross-system verification.
+11. Ultimate Proof System: Developed ultimate_kcore_proof.sh using /proc/kcore for direct memory verification.
+12. Nuance Discovery: Verified that set_nameidata clears nd->path (Current Position) while path_init clears nd->root (Absolute boundary) to remove stack garbage for normal lookups.

@@ -34,3 +34,5 @@ modules.order
 *.swp
 *.swo
 *~
+kernel/user/stage3/case1/vmlinux
+kernel/user/stage3/case1/vmlinux.dump

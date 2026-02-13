@@ -1,0 +1,1046 @@
+{
+	"auto_complete":
+	{
+		"selected_items":
+		[
+		]
+	},
+	"buffers":
+	[
+		{
+			"contents": "/*\n * vfs_depth_probe.c — Safe VFS depth tracing using verified offsets\n *\n * This module traces link_path_walk and walk_component safely by using\n * hardcoded byte offsets verified via pahole/BTF, rather than relying on\n * struct definitions that are subject to __randomize_layout.\n *\n * Verified offsets for kernel 6.17.0-14-generic:\n *   offset 0x08: path.dentry      [struct dentry *]\n *   offset 0x18: last.name        [const char *]\n *   offset 0x30: inode            [struct inode *]\n *   offset 0x38: flags            [unsigned int]\n *   offset 0x54: depth            [unsigned int]\n */\n\n#include <linux/dcache.h>\n#include <linux/fs.h>\n#include <linux/kernel.h>\n#include <linux/kprobes.h>\n#include <linux/module.h>\n#include <linux/uaccess.h>\n\nMODULE_LICENSE(\"GPL\");\nMODULE_DESCRIPTION(\"Safe VFS depth probe using verified offsets\");\n\nstatic char target_comm[TASK_COMM_LEN] = \"\";\nmodule_param_string(target_comm, target_comm, sizeof(target_comm), 0644);\n\n/* Verified byte offsets from pahole/BTF analysis */\n#define OFF_PATH_DENTRY  0x08   /* nd->path.dentry */\n#define OFF_LAST_NAME    0x18   /* nd->last.name */\n#define OFF_INODE        0x30   /* nd->inode */\n#define OFF_FLAGS        0x38   /* nd->flags */\n#define OFF_DEPTH        0x54   /* nd->depth */\n\n/* Safe field extraction using copy_from_kernel_nofault */\nstatic inline int safe_read_ptr(void *dst, void *src)\n{\n    return copy_from_kernel_nofault(dst, src, sizeof(void *));\n}\n\nstatic inline int safe_read_u32(void *dst, void *src)\n{\n    return copy_from_kernel_nofault(dst, src, sizeof(u32));\n}\n\n/* Get dentry name safely - just print pointer, don't dereference string\n * strncpy_from_kernel_nofault not exported in 6.17, so we just show pointer */\nstatic const char *get_dentry_name(struct dentry *d)\n{\n    if (!d)\n        return \"NULL\";\n    return \"(ptr)\";  /* Safe - no string dereference */\n}\n\nstatic int handler_link_path_walk(struct kprobe *p, struct pt_regs *regs)\n{\n    void *nd = (void *)regs->si;\n    struct dentry *parent = NULL;\n    const char *target = NULL;\n    u32 flags = 0, depth = 0;\n    u32 salt = 0; \n\n    \n    /* Filter by process name if specified */\n    if (target_comm[0] && strcmp(current->comm, target_comm) != 0)\n        return 0;\n    \n    /* Safely read nd->path.dentry at offset 0x08 */\n    if (safe_read_ptr(&parent, nd + OFF_PATH_DENTRY) != 0)\n        parent = NULL;\n    \n    /* Safely read nd->last.name at offset 0x18 */\n    if (safe_read_ptr((void *)&target, nd + OFF_LAST_NAME) != 0)\n        target = NULL;\n    \n    /* Safely read nd->flags at offset 0x38 */\n    safe_read_u32(&flags, nd + OFF_FLAGS);\n    \n    /* Safely read nd->depth at offset 0x54 */\n    safe_read_u32(&depth, nd + OFF_DEPTH);\n    \n    safe_read_u32(&salt, (void*)parent + 32 );\n    u32 h = salt; \n    while ( target && *target) {\n        \n    }\n    pr_info(\"[LPW] Parent=%s Target=%s flags=0x%x depth=%u\\n\",\n            get_dentry_name(parent),\n            target ? target : \"NULL\",\n            flags, depth);\n    \n    return 0;\n}\n\nstatic int handler_walk_component(struct kprobe *p, struct pt_regs *regs)\n{\n    void *nd = (void *)regs->di;\n    struct dentry *parent = NULL;\n    const char *target = NULL;\n    u32 depth = 0;\n    int wc_flags = (int)regs->si;\n    \n    /* Filter by process name if specified */\n    if (target_comm[0] && strcmp(current->comm, target_comm) != 0)\n        return 0;\n    \n    /* Safely read nd->path.dentry at offset 0x08 */\n    if (safe_read_ptr(&parent, nd + OFF_PATH_DENTRY) != 0)\n        parent = NULL;\n    \n    /* Safely read nd->last.name at offset 0x18 */\n    if (safe_read_ptr((void *)&target, nd + OFF_LAST_NAME) != 0)\n        target = NULL;\n    \n    /* Safely read nd->depth at offset 0x54 */\n    safe_read_u32(&depth, nd + OFF_DEPTH);\n    \n    pr_info(\"[WC]  Parent=%s Target=%s wc_flags=0x%x depth=%u\\n\",\n            get_dentry_name(parent),\n            target ? target : \"NULL\",\n            wc_flags, depth);\n    \n    return 0;\n}\n\nstatic struct kprobe kp_link_path = {\n    .symbol_name = \"link_path_walk\",\n    .pre_handler = handler_link_path_walk,\n};\n\nstatic struct kprobe kp_walk_comp = {\n    .symbol_name = \"walk_component\",\n    .pre_handler = handler_walk_component,\n};\n\nstatic int __init vfs_depth_init(void)\n{\n    int ret;\n    \n    ret = register_kprobe(&kp_link_path);\n    if (ret < 0) {\n        pr_err(\"vfs_depth_probe: failed to register link_path_walk probe: %d\\n\", ret);\n        return ret;\n    }\n    \n    ret = register_kprobe(&kp_walk_comp);\n    if (ret < 0) {\n        unregister_kprobe(&kp_link_path);\n        pr_err(\"vfs_depth_probe: failed to register walk_component probe: %d\\n\", ret);\n        return ret;\n    }\n    \n    pr_info(\"vfs_depth_probe: loaded. target_comm=%s\\n\", \n            target_comm[0] ? target_comm : \"(all)\");\n    return 0;\n}\n\nstatic void __exit vfs_depth_exit(void)\n{\n    unregister_kprobe(&kp_walk_comp);\n    unregister_kprobe(&kp_link_path);\n    pr_info(\"vfs_depth_probe: unloaded\\n\");\n}\n\nmodule_init(vfs_depth_init);\nmodule_exit(vfs_depth_exit);\n",
+			"file": "kernel/drivers/stage3/case1/vfs_depth_probe.c",
+			"file_size": 4870,
+			"file_write_time": 134153912599109952,
+			"settings":
+			{
+				"buffer_size": 5002,
+				"encoding": "UTF-8",
+				"line_ending": "Unix"
+			},
+			"undo_stack":
+			[
+				[
+					273,
+					1,
+					"sequence",
+					{
+						"commands":
+						[
+							[
+								"nv_vi_o",
+								{
+									"count": 1,
+									"mode": "mode_internal_normal",
+									"register": "\""
+								}
+							],
+							[
+								"insert",
+								{
+									"characters": "u"
+								}
+							],
+							[
+								"insert",
+								{
+									"characters": "3"
+								}
+							],
+							[
+								"insert",
+								{
+									"characters": "2"
+								}
+							],
+							[
+								"insert",
+								{
+									"characters": " "
+								}
+							],
+							[
+								"insert",
+								{
+									"characters": "s"
+								}
+							],
+							[
+								"insert",
+								{
+									"characters": "al"
+								}
+							],
+							[
+								"insert",
+								{
+									"characters": "t"
+								}
+							],
+							[
+								"insert",
+								{
+									"characters": " ="
+								}
+							],
+							[
+								"insert",
+								{
+									"characters": " 0;"
+								}
+							],
+							[
+								"insert",
+								{
+									"characters": " "
+								}
+							],
+							[
+								"insert",
+								{
+									"characters": "\n"
+								}
+							]
+						]
+					},
+					"EQAAABcIAAAAAAAAGAgAAAAAAAAAAAAAGAgAAAAAAAAcCAAAAAAAAAAAAAAcCAAAAAAAAB0IAAAAAAAAAAAAAB0IAAAAAAAAHggAAAAAAAAAAAAAHggAAAAAAAAfCAAAAAAAAAAAAAAfCAAAAAAAACAIAAAAAAAAAAAAACAIAAAAAAAAIQgAAAAAAAAAAAAAIQgAAAAAAAAiCAAAAAAAAAAAAAAiCAAAAAAAACMIAAAAAAAAAAAAACMIAAAAAAAAJAgAAAAAAAAAAAAAJAgAAAAAAAAlCAAAAAAAAAAAAAAlCAAAAAAAACYIAAAAAAAAAAAAACYIAAAAAAAAJwgAAAAAAAAAAAAAJwgAAAAAAAAoCAAAAAAAAAAAAAAoCAAAAAAAACkIAAAAAAAAAAAAACkIAAAAAAAAKggAAAAAAAAAAAAAKggAAAAAAAAvCAAAAAAAAAAAAAA",
+					"AQAAAAAAAAABAAAAFggAAAAAAAAWCAAAAAAAAAAAAAAAAPC/"
+				],
+				[
+					289,
+					1,
+					"nv_vi_o",
+					{
+						"count": 1,
+						"mode": "mode_internal_normal",
+						"register": "\""
+					},
+					"AgAAAJYKAAAAAAAAlwoAAAAAAAAAAAAAlwoAAAAAAACbCgAAAAAAAAAAAAA",
+					"AQAAAAAAAAABAAAAlQoAAAAAAACVCgAAAAAAAAAAAAAAAPC/"
+				],
+				[
+					292,
+					1,
+					"insert",
+					{
+						"characters": "s"
+					},
+					"AgAAAJsKAAAAAAAAnAoAAAAAAAAAAAAAKwgAAAAAAAArCAAAAAAAAAQAAAAgICAg",
+					"AQAAAAAAAAABAAAAmwoAAAAAAACbCgAAAAAAAAAAAAAAAPC/"
+				],
+				[
+					294,
+					1,
+					"insert",
+					{
+						"characters": "afge"
+					},
+					"BAAAAJgKAAAAAAAAmQoAAAAAAAAAAAAAmQoAAAAAAACaCgAAAAAAAAAAAACaCgAAAAAAAJsKAAAAAAAAAAAAAJsKAAAAAAAAnAoAAAAAAAAAAAAA",
+					"AQAAAAAAAAABAAAAmAoAAAAAAACYCgAAAAAAAAAAAAAAAPC/"
+				],
+				[
+					295,
+					2,
+					"left_delete",
+					null,
+					"AgAAAJsKAAAAAAAAmwoAAAAAAAABAAAAZZoKAAAAAAAAmgoAAAAAAAABAAAAZw",
+					"AQAAAAAAAAABAAAAnAoAAAAAAACcCgAAAAAAAAAAAAAAAPC/"
+				],
+				[
+					296,
+					1,
+					"insert",
+					{
+						"characters": "e"
+					},
+					"AQAAAJoKAAAAAAAAmwoAAAAAAAAAAAAA",
+					"AQAAAAAAAAABAAAAmgoAAAAAAACaCgAAAAAAAAAAAAAAAPC/"
+				],
+				[
+					298,
+					1,
+					"insert",
+					{
+						"characters": "_"
+					},
+					"AQAAAJsKAAAAAAAAnAoAAAAAAAAAAAAA",
+					"AQAAAAAAAAABAAAAmwoAAAAAAACbCgAAAAAAAAAAAAAAAPC/"
+				],
+				[
+					300,
+					1,
+					"insert",
+					{
+						"characters": "r"
+					},
+					"AQAAAJwKAAAAAAAAnQoAAAAAAAAAAAAA",
+					"AQAAAAAAAAABAAAAnAoAAAAAAACcCgAAAAAAAAAAAAAAAPC/"
+				],
+				[
+					302,
+					1,
+					"insert",
+					{
+						"characters": "ead_"
+					},
+					"BAAAAJ0KAAAAAAAAngoAAAAAAAAAAAAAngoAAAAAAACfCgAAAAAAAAAAAACfCgAAAAAAAKAKAAAAAAAAAAAAAKAKAAAAAAAAoQoAAAAAAAAAAAAA",
+					"AQAAAAAAAAABAAAAnQoAAAAAAACdCgAAAAAAAAAAAAAAAPC/"
+				],
+				[
+					304,
+					1,
+					"insert",
+					{
+						"characters": "u"
+					},
+					"AQAAAKEKAAAAAAAAogoAAAAAAAAAAAAA",
+					"AQAAAAAAAAABAAAAoQoAAAAAAAChCgAAAAAAAAAAAAAAAPC/"
+				],
+				[
+					306,
+					1,
+					"insert",
+					{
+						"characters": "3"
+					},
+					"AQAAAKIKAAAAAAAAowoAAAAAAAAAAAAA",
+					"AQAAAAAAAAABAAAAogoAAAAAAACiCgAAAAAAAAAAAAAAAPC/"
+				],
+				[
+					308,
+					1,
+					"insert",
+					{
+						"characters": "2"
+					},
+					"AQAAAKMKAAAAAAAApAoAAAAAAAAAAAAA",
+					"AQAAAAAAAAABAAAAowoAAAAAAACjCgAAAAAAAAAAAAAAAPC/"
+				],
+				[
+					310,
+					1,
+					"insert_snippet",
+					{
+						"contents": "($0)"
+					},
+					"AQAAAKQKAAAAAAAApgoAAAAAAAAAAAAA",
+					"AQAAAAAAAAABAAAApAoAAAAAAACkCgAAAAAAAAAAAAAAAPC/"
+				],
+				[
+					312,
+					1,
+					"insert",
+					{
+						"characters": "&"
+					},
+					"AQAAAKUKAAAAAAAApgoAAAAAAAAAAAAA",
+					"AQAAAAAAAAABAAAApQoAAAAAAAClCgAAAAAAAAAAAAAAAPC/"
+				],
+				[
+					314,
+					1,
+					"insert",
+					{
+						"characters": "s"
+					},
+					"AQAAAKYKAAAAAAAApwoAAAAAAAAAAAAA",
+					"AQAAAAAAAAABAAAApgoAAAAAAACmCgAAAAAAAAAAAAAAAPC/"
+				],
+				[
+					316,
+					1,
+					"insert",
+					{
+						"characters": "alem"
+					},
+					"BAAAAKcKAAAAAAAAqAoAAAAAAAAAAAAAqAoAAAAAAACpCgAAAAAAAAAAAACpCgAAAAAAAKoKAAAAAAAAAAAAAKoKAAAAAAAAqwoAAAAAAAAAAAAA",
+					"AQAAAAAAAAABAAAApwoAAAAAAACnCgAAAAAAAAAAAAAAAPC/"
+				],
+				[
+					317,
+					2,
+					"left_delete",
+					null,
+					"AgAAAKoKAAAAAAAAqgoAAAAAAAABAAAAbakKAAAAAAAAqQoAAAAAAAABAAAAZQ",
+					"AQAAAAAAAAABAAAAqwoAAAAAAACrCgAAAAAAAAAAAAAAAPC/"
+				],
+				[
+					318,
+					1,
+					"insert",
+					{
+						"characters": "t,"
+					},
+					"AgAAAKkKAAAAAAAAqgoAAAAAAAAAAAAAqgoAAAAAAACrCgAAAAAAAAAAAAA",
+					"AQAAAAAAAAABAAAAqQoAAAAAAACpCgAAAAAAAAAAAAAAAPC/"
+				],
+				[
+					319,
+					1,
+					"insert",
+					{
+						"characters": " "
+					},
+					"AQAAAKsKAAAAAAAArAoAAAAAAAAAAAAA",
+					"AQAAAAAAAAABAAAAqwoAAAAAAACrCgAAAAAAAAAAAAAAAPC/"
+				],
+				[
+					321,
+					1,
+					"insert_snippet",
+					{
+						"contents": "($0)"
+					},
+					"AQAAAKwKAAAAAAAArgoAAAAAAAAAAAAA",
+					"AQAAAAAAAAABAAAArAoAAAAAAACsCgAAAAAAAAAAAAAAAPC/"
+				],
+				[
+					323,
+					1,
+					"insert",
+					{
+						"characters": "void*"
+					},
+					"BQAAAK0KAAAAAAAArgoAAAAAAAAAAAAArgoAAAAAAACvCgAAAAAAAAAAAACvCgAAAAAAALAKAAAAAAAAAAAAALAKAAAAAAAAsQoAAAAAAAAAAAAAsQoAAAAAAACyCgAAAAAAAAAAAAA",
+					"AQAAAAAAAAABAAAArQoAAAAAAACtCgAAAAAAAAAAAAAAAPC/"
+				],
+				[
+					326,
+					1,
+					"insert",
+					{
+						"characters": "parent"
+					},
+					"BgAAALMKAAAAAAAAtAoAAAAAAAAAAAAAtAoAAAAAAAC1CgAAAAAAAAAAAAC1CgAAAAAAALYKAAAAAAAAAAAAALYKAAAAAAAAtwoAAAAAAAAAAAAAtwoAAAAAAAC4CgAAAAAAAAAAAAC4CgAAAAAAALkKAAAAAAAAAAAAAA",
+					"AQAAAAAAAAABAAAAswoAAAAAAACzCgAAAAAAAAAAAAAAAPC/"
+				],
+				[
+					328,
+					1,
+					"insert",
+					{
+						"characters": " "
+					},
+					"AQAAALkKAAAAAAAAugoAAAAAAAAAAAAA",
+					"AQAAAAAAAAABAAAAuQoAAAAAAAC5CgAAAAAAAAAAAAAAAPC/"
+				],
+				[
+					330,
+					1,
+					"insert",
+					{
+						"characters": "+"
+					},
+					"AQAAALoKAAAAAAAAuwoAAAAAAAAAAAAA",
+					"AQAAAAAAAAABAAAAugoAAAAAAAC6CgAAAAAAAAAAAAAAAPC/"
+				],
+				[
+					331,
+					1,
+					"insert",
+					{
+						"characters": " 32"
+					},
+					"AwAAALsKAAAAAAAAvAoAAAAAAAAAAAAAvAoAAAAAAAC9CgAAAAAAAAAAAAC9CgAAAAAAAL4KAAAAAAAAAAAAAA",
+					"AQAAAAAAAAABAAAAuwoAAAAAAAC7CgAAAAAAAAAAAAAAAPC/"
+				],
+				[
+					332,
+					1,
+					"insert",
+					{
+						"characters": " "
+					},
+					"AQAAAL4KAAAAAAAAvwoAAAAAAAAAAAAA",
+					"AQAAAAAAAAABAAAAvgoAAAAAAAC+CgAAAAAAAAAAAAAAAPC/"
+				],
+				[
+					335,
+					1,
+					"insert",
+					{
+						"characters": ";"
+					},
+					"AQAAAMAKAAAAAAAAwQoAAAAAAAAAAAAA",
+					"AQAAAAAAAAABAAAAwAoAAAAAAADACgAAAAAAAAAAAAAAAPC/"
+				],
+				[
+					337,
+					1,
+					"insert",
+					{
+						"characters": "\n"
+					},
+					"AQAAAMEKAAAAAAAAxgoAAAAAAAAAAAAA",
+					"AQAAAAAAAAABAAAAwQoAAAAAAADBCgAAAAAAAAAAAAAAAPC/"
+				],
+				[
+					340,
+					1,
+					"insert",
+					{
+						"characters": "u"
+					},
+					"AQAAAMYKAAAAAAAAxwoAAAAAAAAAAAAA",
+					"AQAAAAAAAAABAAAAxgoAAAAAAADGCgAAAAAAAAAAAAAAAPC/"
+				],
+				[
+					342,
+					1,
+					"insert",
+					{
+						"characters": "3"
+					},
+					"AQAAAMcKAAAAAAAAyAoAAAAAAAAAAAAA",
+					"AQAAAAAAAAABAAAAxwoAAAAAAADHCgAAAAAAAAAAAAAAAPC/"
+				],
+				[
+					344,
+					1,
+					"insert",
+					{
+						"characters": "2"
+					},
+					"AQAAAMgKAAAAAAAAyQoAAAAAAAAAAAAA",
+					"AQAAAAAAAAABAAAAyAoAAAAAAADICgAAAAAAAAAAAAAAAPC/"
+				],
+				[
+					346,
+					1,
+					"insert",
+					{
+						"characters": " "
+					},
+					"AQAAAMkKAAAAAAAAygoAAAAAAAAAAAAA",
+					"AQAAAAAAAAABAAAAyQoAAAAAAADJCgAAAAAAAAAAAAAAAPC/"
+				],
+				[
+					348,
+					1,
+					"insert",
+					{
+						"characters": "h"
+					},
+					"AQAAAMoKAAAAAAAAywoAAAAAAAAAAAAA",
+					"AQAAAAAAAAABAAAAygoAAAAAAADKCgAAAAAAAAAAAAAAAPC/"
+				],
+				[
+					349,
+					1,
+					"insert",
+					{
+						"characters": " ="
+					},
+					"AgAAAMsKAAAAAAAAzAoAAAAAAAAAAAAAzAoAAAAAAADNCgAAAAAAAAAAAAA",
+					"AQAAAAAAAAABAAAAywoAAAAAAADLCgAAAAAAAAAAAAAAAPC/"
+				],
+				[
+					350,
+					1,
+					"insert",
+					{
+						"characters": " salt;"
+					},
+					"BgAAAM0KAAAAAAAAzgoAAAAAAAAAAAAAzgoAAAAAAADPCgAAAAAAAAAAAADPCgAAAAAAANAKAAAAAAAAAAAAANAKAAAAAAAA0QoAAAAAAAAAAAAA0QoAAAAAAADSCgAAAAAAAAAAAADSCgAAAAAAANMKAAAAAAAAAAAAAA",
+					"AQAAAAAAAAABAAAAzQoAAAAAAADNCgAAAAAAAAAAAAAAAPC/"
+				],
+				[
+					351,
+					1,
+					"insert",
+					{
+						"characters": " "
+					},
+					"AQAAANMKAAAAAAAA1AoAAAAAAAAAAAAA",
+					"AQAAAAAAAAABAAAA0woAAAAAAADTCgAAAAAAAAAAAAAAAPC/"
+				],
+				[
+					352,
+					1,
+					"insert",
+					{
+						"characters": "\n"
+					},
+					"AQAAANQKAAAAAAAA2QoAAAAAAAAAAAAA",
+					"AQAAAAAAAAABAAAA1AoAAAAAAADUCgAAAAAAAAAAAAAAAPC/"
+				],
+				[
+					355,
+					1,
+					"insert",
+					{
+						"characters": "w"
+					},
+					"AQAAANkKAAAAAAAA2goAAAAAAAAAAAAA",
+					"AQAAAAAAAAABAAAA2QoAAAAAAADZCgAAAAAAAAAAAAAAAPC/"
+				],
+				[
+					357,
+					1,
+					"insert",
+					{
+						"characters": "hile"
+					},
+					"BAAAANoKAAAAAAAA2woAAAAAAAAAAAAA2woAAAAAAADcCgAAAAAAAAAAAADcCgAAAAAAAN0KAAAAAAAAAAAAAN0KAAAAAAAA3goAAAAAAAAAAAAA",
+					"AQAAAAAAAAABAAAA2goAAAAAAADaCgAAAAAAAAAAAAAAAPC/"
+				],
+				[
+					358,
+					1,
+					"insert",
+					{
+						"characters": " "
+					},
+					"AQAAAN4KAAAAAAAA3woAAAAAAAAAAAAA",
+					"AQAAAAAAAAABAAAA3goAAAAAAADeCgAAAAAAAAAAAAAAAPC/"
+				],
+				[
+					359,
+					1,
+					"insert_snippet",
+					{
+						"contents": "($0)"
+					},
+					"AQAAAN8KAAAAAAAA4QoAAAAAAAAAAAAA",
+					"AQAAAAAAAAABAAAA3woAAAAAAADfCgAAAAAAAAAAAAAAAPC/"
+				],
+				[
+					360,
+					1,
+					"insert",
+					{
+						"characters": " "
+					},
+					"AQAAAOAKAAAAAAAA4QoAAAAAAAAAAAAA",
+					"AQAAAAAAAAABAAAA4AoAAAAAAADgCgAAAAAAAAAAAAAAAPC/"
+				],
+				[
+					362,
+					1,
+					"insert",
+					{
+						"characters": "t"
+					},
+					"AQAAAOEKAAAAAAAA4goAAAAAAAAAAAAA",
+					"AQAAAAAAAAABAAAA4QoAAAAAAADhCgAAAAAAAAAAAAAAAPC/"
+				],
+				[
+					364,
+					1,
+					"insert",
+					{
+						"characters": "a"
+					},
+					"AQAAAOIKAAAAAAAA4woAAAAAAAAAAAAA",
+					"AQAAAAAAAAABAAAA4goAAAAAAADiCgAAAAAAAAAAAAAAAPC/"
+				],
+				[
+					366,
+					1,
+					"insert",
+					{
+						"characters": "r"
+					},
+					"AQAAAOMKAAAAAAAA5AoAAAAAAAAAAAAA",
+					"AQAAAAAAAAABAAAA4woAAAAAAADjCgAAAAAAAAAAAAAAAPC/"
+				],
+				[
+					368,
+					1,
+					"insert",
+					{
+						"characters": "gr"
+					},
+					"AgAAAOQKAAAAAAAA5QoAAAAAAAAAAAAA5QoAAAAAAADmCgAAAAAAAAAAAAA",
+					"AQAAAAAAAAABAAAA5AoAAAAAAADkCgAAAAAAAAAAAAAAAPC/"
+				],
+				[
+					369,
+					2,
+					"left_delete",
+					null,
+					"AgAAAOUKAAAAAAAA5QoAAAAAAAABAAAAcuQKAAAAAAAA5AoAAAAAAAABAAAAZw",
+					"AQAAAAAAAAABAAAA5goAAAAAAADmCgAAAAAAAAAAAAAAAPC/"
+				],
+				[
+					370,
+					1,
+					"insert",
+					{
+						"characters": "get"
+					},
+					"AwAAAOQKAAAAAAAA5QoAAAAAAAAAAAAA5QoAAAAAAADmCgAAAAAAAAAAAADmCgAAAAAAAOcKAAAAAAAAAAAAAA",
+					"AQAAAAAAAAABAAAA5AoAAAAAAADkCgAAAAAAAAAAAAAAAPC/"
+				],
+				[
+					371,
+					1,
+					"insert",
+					{
+						"characters": " "
+					},
+					"AQAAAOcKAAAAAAAA6AoAAAAAAAAAAAAA",
+					"AQAAAAAAAAABAAAA5woAAAAAAADnCgAAAAAAAAAAAAAAAPC/"
+				],
+				[
+					373,
+					1,
+					"insert",
+					{
+						"characters": "&&"
+					},
+					"AgAAAOgKAAAAAAAA6QoAAAAAAAAAAAAA6QoAAAAAAADqCgAAAAAAAAAAAAA",
+					"AQAAAAAAAAABAAAA6AoAAAAAAADoCgAAAAAAAAAAAAAAAPC/"
+				],
+				[
+					374,
+					1,
+					"insert",
+					{
+						"characters": " *"
+					},
+					"AgAAAOoKAAAAAAAA6woAAAAAAAAAAAAA6woAAAAAAADsCgAAAAAAAAAAAAA",
+					"AQAAAAAAAAABAAAA6goAAAAAAADqCgAAAAAAAAAAAAAAAPC/"
+				],
+				[
+					376,
+					1,
+					"insert",
+					{
+						"characters": "target"
+					},
+					"BgAAAOwKAAAAAAAA7QoAAAAAAAAAAAAA7QoAAAAAAADuCgAAAAAAAAAAAADuCgAAAAAAAO8KAAAAAAAAAAAAAO8KAAAAAAAA8AoAAAAAAAAAAAAA8AoAAAAAAADxCgAAAAAAAAAAAADxCgAAAAAAAPIKAAAAAAAAAAAAAA",
+					"AQAAAAAAAAABAAAA7AoAAAAAAADsCgAAAAAAAAAAAAAAAPC/"
+				],
+				[
+					379,
+					1,
+					"insert",
+					{
+						"characters": " "
+					},
+					"AQAAAPMKAAAAAAAA9AoAAAAAAAAAAAAA",
+					"AQAAAAAAAAABAAAA8woAAAAAAADzCgAAAAAAAAAAAAAAAPC/"
+				],
+				[
+					381,
+					1,
+					"insert_snippet",
+					{
+						"contents": "{$0}"
+					},
+					"AQAAAPQKAAAAAAAA9goAAAAAAAAAAAAA",
+					"AQAAAAAAAAABAAAA9AoAAAAAAAD0CgAAAAAAAAAAAAAAAPC/"
+				],
+				[
+					383,
+					1,
+					"run_macro_file",
+					{
+						"file": "res://Packages/Default/Add Line in Braces.sublime-macro"
+					},
+					"BAAAAPUKAAAAAAAA+goAAAAAAAAAAAAA+goAAAAAAAD/CgAAAAAAAAAAAAD2CgAAAAAAAPYKAAAAAAAABAAAACAgICD2CgAAAAAAAP4KAAAAAAAAAAAAAA",
+					"AQAAAAAAAAABAAAA9QoAAAAAAAD1CgAAAAAAAAAAAAAAAPC/"
+				]
+			]
+		}
+	],
+	"build_system": "",
+	"build_system_choices":
+	[
+	],
+	"build_varint": "",
+	"command_palette":
+	{
+		"height": 0.0,
+		"last_filter": "",
+		"selected_items":
+		[
+			[
+				"distrac",
+				"View: Toggle Distraction Free"
+			],
+			[
+				"color theme",
+				"UI: Select Color Scheme"
+			],
+			[
+				"theme",
+				"UI: Select Theme"
+			]
+		],
+		"width": 0.0
+	},
+	"console":
+	{
+		"height": 0.0,
+		"history":
+		[
+		]
+	},
+	"distraction_free":
+	{
+		"menu_visible": true,
+		"show_minimap": false,
+		"show_open_files": false,
+		"show_tabs": false,
+		"side_bar_visible": false,
+		"status_bar_visible": false
+	},
+	"expanded_folders":
+	[
+		"/home/r/Desktop/what-happens-when-open-is-called",
+		"/home/r/Desktop/what-happens-when-open-is-called/kernel",
+		"/home/r/Desktop/what-happens-when-open-is-called/kernel/user",
+		"/home/r/Desktop/what-happens-when-open-is-called/kernel/user/stage3",
+		"/home/r/Desktop/what-happens-when-open-is-called/kernel/user/stage3/case1"
+	],
+	"file_history":
+	[
+		"/home/r/Desktop/what-happens-when-open-is-called/kernel/user/stage3/case1/demo_dup_names.c",
+		"/home/r/Desktop/what-happens-when-open-is-called/kernel/drivers/stage3/case1/vfs_depth_probe.c",
+		"/home/r/Desktop/linux-sysprog-buildroot/assignment8/aesd-char-driver/aesd-circular-buffer.h",
+		"/home/r/Desktop/linux-sysprog-buildroot/assignment8/aesd-char-driver/aesdchar.h",
+		"/home/r/Desktop/linux-sysprog-buildroot/assignment9/aesd-char-driver/main.c",
+		"/home/r/Desktop/linux-sysprog-buildroot/assignment8/aesd-char-driver/main.c",
+		"/home/r/Desktop/linux-sysprog-buildroot/acc_mode_lab/acc_mode_driver.c",
+		"/home/r/Desktop/linux-sysprog-buildroot/assignment8/,",
+		"/home/r/Desktop/socket_project/socket.c",
+		"/home/r/Desktop/socket-product/exam/fragment_exam.c",
+		"/home/r/Desktop/socket-product/exam/driver/open_probe_exercise.c",
+		"/home/r/Desktop/socket-product/exam/open_probe_exercise.c",
+		"/home/r/Desktop/server/investigation/check_consts.c",
+		"/home/r/Desktop/server/investigation/caller_probe.mod.c",
+		"/home/r/Desktop/server/investigation/caller_probe.c",
+		"/home/r/Desktop/server/investigation/02_probe_syscalls.c",
+		"/home/r/Desktop/server/investigation/linkage_probe.mod.c",
+		"/home/r/Desktop/stock_exchange/src/main.rs",
+		"/home/r/Desktop/server/main.c",
+		"/home/r/Desktop/linux-sysprog-buildroot/,",
+		"/home/r/Desktop/linux-sysprog-buildroot/assignment7/part1/assignment-3-part-1/aesd-char-driver/aesd-circular-buffer.c",
+		"/home/r/Desktop/linux-sysprog-buildroot/assignment7/part1/assignment-3-part-1/aesd-char-driver/aesd-circular-buffer.h"
+	],
+	"find":
+	{
+		"height": 63.0
+	},
+	"find_in_files":
+	{
+		"height": 0.0,
+		"where_history":
+		[
+		]
+	},
+	"find_state":
+	{
+		"case_sensitive": false,
+		"find_history":
+		[
+		],
+		"highlight": true,
+		"in_selection": false,
+		"preserve_case": false,
+		"regex": false,
+		"replace_history":
+		[
+		],
+		"reverse": false,
+		"scrollbar_highlights": true,
+		"show_context": true,
+		"use_buffer2": true,
+		"use_gitignore": true,
+		"whole_word": false,
+		"wrap": true
+	},
+	"groups":
+	[
+		{
+			"sheets":
+			[
+				{
+					"buffer": 0,
+					"file": "kernel/drivers/stage3/case1/vfs_depth_probe.c",
+					"selected": true,
+					"semi_transient": false,
+					"settings":
+					{
+						"buffer_size": 5002,
+						"regions":
+						{
+						},
+						"selection":
+						[
+							[
+								2814,
+								2814
+							]
+						],
+						"settings":
+						{
+							"auto_complete_triggers":
+							[
+								{
+									"characters": "<",
+									"selector": "text.html, text.xml"
+								},
+								{
+									"rhs_empty": true,
+									"selector": "punctuation.accessor"
+								},
+								{
+									"characters": ".<>:\"/*",
+									"selector": "punctuation.accessor | (meta.preprocessor.include string - punctuation.definition.string.end)",
+									"server": "clangd"
+								}
+							],
+							"bracket_highlighter.busy": false,
+							"bracket_highlighter.locations":
+							{
+								"close":
+								{
+									"1":
+									[
+										2819,
+										2820
+									]
+								},
+								"icon":
+								{
+									"1":
+									[
+										"Packages/BracketHighlighter/icons/curly_bracket.png",
+										"region.purplish"
+									]
+								},
+								"open":
+								{
+									"1":
+									[
+										2804,
+										2805
+									]
+								},
+								"unmatched":
+								{
+								}
+							},
+							"bracket_highlighter.regions":
+							[
+								"bh_angle",
+								"bh_angle_center",
+								"bh_angle_open",
+								"bh_angle_close",
+								"bh_angle_content",
+								"bh_c_define",
+								"bh_c_define_center",
+								"bh_c_define_open",
+								"bh_c_define_close",
+								"bh_c_define_content",
+								"bh_curly",
+								"bh_curly_center",
+								"bh_curly_open",
+								"bh_curly_close",
+								"bh_curly_content",
+								"bh_default",
+								"bh_default_center",
+								"bh_default_open",
+								"bh_default_close",
+								"bh_default_content",
+								"bh_double_quote",
+								"bh_double_quote_center",
+								"bh_double_quote_open",
+								"bh_double_quote_close",
+								"bh_double_quote_content",
+								"bh_regex",
+								"bh_regex_center",
+								"bh_regex_open",
+								"bh_regex_close",
+								"bh_regex_content",
+								"bh_round",
+								"bh_round_center",
+								"bh_round_open",
+								"bh_round_close",
+								"bh_round_content",
+								"bh_single_quote",
+								"bh_single_quote_center",
+								"bh_single_quote_open",
+								"bh_single_quote_close",
+								"bh_single_quote_content",
+								"bh_square",
+								"bh_square_center",
+								"bh_square_open",
+								"bh_square_close",
+								"bh_square_content",
+								"bh_tag",
+								"bh_tag_center",
+								"bh_tag_open",
+								"bh_tag_close",
+								"bh_tag_content",
+								"bh_unmatched",
+								"bh_unmatched_center",
+								"bh_unmatched_open",
+								"bh_unmatched_close",
+								"bh_unmatched_content"
+							],
+							"color_helper.scan":
+							{
+								"allow_scanning": false,
+								"color_class":
+								[
+									{
+										"class": "css-level-4",
+										"scopes": ""
+									}
+								],
+								"color_trigger": "(?xi)\n(?:\n    \\b(?<![-#&$])(?:\n        color\\((?!\\s*-)|(?:hsla?|(?:ok)?(?:lch|lab)|hwb|rgba?)\\(\n) |\n\\b(?<![-#&$])[\\w]{3,}(?![(-])\\b|(?<![&])\\#)\n",
+								"current_ext": ".c",
+								"current_syntax": "C++/C",
+								"enabled": true,
+								"last_updated": 1770917773.64,
+								"scanning": "-comment"
+							},
+							"git_gutter_is_enabled": true,
+							"highlight_line": true,
+							"lsp_active": true,
+							"lsp_uri": "file:///home/r/Desktop/what-happens-when-open-is-called/kernel/drivers/stage3/case1/vfs_depth_probe.c",
+							"show_definitions": false,
+							"syntax": "Packages/C++/C.sublime-syntax",
+							"tab_size": 4,
+							"translate_tabs_to_spaces": true
+						},
+						"translation.x": 0.0,
+						"translation.y": 2501.0,
+						"zoom_level": 1.0
+					},
+					"stack_index": 0,
+					"stack_multiselect": false,
+					"type": "text"
+				}
+			]
+		}
+	],
+	"incremental_find":
+	{
+		"height": 63.0
+	},
+	"input":
+	{
+		"height": 61.0
+	},
+	"layout":
+	{
+		"cells":
+		[
+			[
+				0,
+				0,
+				1,
+				1
+			]
+		],
+		"cols":
+		[
+			0.0,
+			1.0
+		],
+		"rows":
+		[
+			0.0,
+			1.0
+		]
+	},
+	"menu_visible": true,
+	"output.LSP Log Panel":
+	{
+		"height": 0.0,
+		"history":
+		[
+		]
+	},
+	"output.diagnostics":
+	{
+		"height": 0.0,
+		"history":
+		[
+		]
+	},
+	"output.find_results":
+	{
+		"height": 0.0,
+		"history":
+		[
+		]
+	},
+	"output.mdpopups":
+	{
+		"height": 0.0,
+		"history":
+		[
+		]
+	},
+	"pinned_build_system": "",
+	"project": "stage3-vfs-trace.sublime-project",
+	"replace":
+	{
+		"height": 122.0
+	},
+	"save_all_on_build": true,
+	"select_file":
+	{
+		"height": 0.0,
+		"last_filter": "",
+		"selected_items":
+		[
+			[
+				"vfs_dept",
+				"Stage3-VFS-Trace/kernel/drivers/stage3/case1/vfs_depth_probe.c"
+			],
+			[
+				"p",
+				"linkage_probe.mod.c"
+			],
+			[
+				"probes",
+				"02_probe_syscalls.c"
+			],
+			[
+				"check",
+				"check_consts.c"
+			]
+		],
+		"width": 0.0
+	},
+	"select_project":
+	{
+		"height": 0.0,
+		"last_filter": "",
+		"selected_items":
+		[
+		],
+		"width": 0.0
+	},
+	"select_symbol":
+	{
+		"height": 0.0,
+		"last_filter": "",
+		"selected_items":
+		[
+		],
+		"width": 0.0
+	},
+	"selected_group": 0,
+	"settings":
+	{
+		"_vintageous_reset_during_init": true,
+		"lsp_show_inlay_hints": false
+	},
+	"show_minimap": true,
+	"show_open_files": true,
+	"show_tabs": true,
+	"side_bar_visible": true,
+	"side_bar_width": 50.0,
+	"status_bar_visible": true,
+	"template_settings":
+	{
+	}
+}

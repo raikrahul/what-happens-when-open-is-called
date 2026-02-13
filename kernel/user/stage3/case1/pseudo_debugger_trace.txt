@@ -1,0 +1,56 @@
+/*
+ * -----------------------------------------------------------------------------
+ * VFS DEPTH TRACE: Resolving "target_file.txt" inside "mission_dir"
+ * -----------------------------------------------------------------------------
+ * DATA STRUCTURES:
+ * 
+ * [nd (nameidata)]
+ * +0x00: path.dentry → [0xffff8b41a44eeb40] (mission_dir)
+ * +0x08: path.mnt    → [0xffff...]
+ * +0x10: root.dentry → [0xffff...]
+ * 
+ * [Target qstr]
+ * name: "target_file.txt"
+ * len:  15
+ * 
+ * [dentry cache bucket #585]
+ * [0x100] → dentry_A (Parent=0xAAAA, Name="dirA")
+ * [0x180] → dentry_B (Parent=0xffff8b41a44eeb40, Name="target_file.txt")
+ * -----------------------------------------------------------------------------
+ */
+
+#1.Call link_path_walk(name="target_file.txt", nd). Values nd=0xffff8b41... Data "mission_dir" Work Entry status=0 Errors 0 Real value 0xffff8b41a44eeb40 Real data mission_dir Caller path_openat Line 2288 (fs/namei.c)
+
+#2.Call hash_name(parent=0xffff8b41a44eeb40, name="target_file.txt"). Values hash=0 Data N/A Work Initializing seed with parent address salt Work Salt=0xffff8b41a44eeb40 Errors 0 Real value 0xffff8b41a44eeb40 Real data start_hash Resumed link_path_walk Line 2296 (fs/namei.c)
+
+#3.Call partial_name_hash(c='t', hash=0xffff8b41a44eeb40). Values hash→0x... Data iter₁ Work Mixing char 't' (0x74) into salted seed. Calculation hash=(hash ^ c) * 0x01000193 Errors 0 Real value 0x... Real data hash₁ Resumed hash_name Line 15 (fs/namei.c)
+
+#4.Call walk_component(nd, flags=0). Values nd->last.name="target_file.txt" Data nd->last.hash=0xTARGET Work Transition to lookup logic Errors 0 Real value 0 Real data SUCCESS Resumed link_path_walk Line 2309 (fs/namei.c)
+
+#5.Call lookup_fast(nd, &path). Values parent=0xffff8b41a44eeb40 Data hash=0xTARGET Work Entering RCU hotpath Errors 0 Real value 1 Real data HIT Resumed walk_component Line 2125 (fs/namei.c)
+
+#6.Call __d_lookup_rcu(parent=0xffff8b41a44eeb40, name="target_file.txt", ...). Values hash=0xTARGET Data bucket_index Work hash >> (32-11) → 585 Errors 0 Real value 0xffff8b4170e3ecc0 Real data dentry_B_address Resumed lookup_fast Line 2275 (fs/dcache.c)
+
+#7.Loop Iteration #1. Values dentry=0x100 (Candidate A) Data Parent=0xAAAA Work 0xAAAA == 0xffff8b41a44eba0 → NO MATCH Status continue Line 2307 (fs/dcache.c)
+
+#8.Loop Iteration #2. Values dentry=0x180 (Candidate B) Data Parent=0xffff8b41a44eba0 Work 0xffff8b41a44eba0 == 0xffff8b41a44eba0 → MATCH Status proceed Line 2307 (fs/dcache.c)
+
+#9.Call d_unhashed(dentry). Values dentry=0x180 Data flags=0 Work checking validity bit Errors 0 Real value 0 Real data VALID Resumed __d_lookup_rcu Line 2308 (fs/dcache.c)
+
+#10.Work Check Hash. Values dentry->d_name.hash_len=0xTARGET Data 15-byte string Work 0xTARGET == 0xTARGET → MATCH Status proceed Line 2309 (fs/dcache.c)
+
+#11.Call memcmp(dentry->d_name.name, "target_file.txt", 15). Values dentry->d_name.name="target_file.txt" Data identity check Work char-by-char comparison Errors 0 Real value 0 Real data IDENTICAL Resumed __d_lookup_rcu Line 2311 (fs/dcache.c)
+
+#12.Step Done. Values dentry=0xffff8b4170e3ecc0 Data success Work 업데이트(updating) briefcase with target address Real value FOUND Real data 0xffff8b4170e3ecc0 Resumed lookup_fast Line 2314 (fs/dcache.c)
+
+/*
+ * -----------------------------------------------------------------------------
+ * 00 - FAILURE PREDICTIONS
+ * -----------------------------------------------------------------------------
+ * 1. Incorrect Register Extraction: %rdi ↔ %rsi swap → nd pointer null → crash ✗
+ * 2. Offset Miscalculation: dentry at +8 instead of +0 → d_parent check fails → search never terminates → soft lockup ✗
+ * 3. Salt Omission: hashing "target" without parent seed → Hash=0xABCD → Bucket=123 → No Match Found → ✗
+ * 4. Length Bypass: comparing 4-byte "file" with 15-byte "target_file.txt" → false positive → memcmp crash ✗
+ * 5. Endianness Flip: reading 0x4937d784 as 0x84d73749 → index jump to wrong bucket → empty search → ✗
+ * -----------------------------------------------------------------------------
+ */
