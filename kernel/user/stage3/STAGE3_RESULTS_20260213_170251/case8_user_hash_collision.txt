@@ -1,0 +1,5 @@
+--- OUTPUT ---
+Created collision_alpha.txt
+Created collision_beta.txt
+Created collision_gamma.txt
+--- END OUTPUT (exit code: 0) ---

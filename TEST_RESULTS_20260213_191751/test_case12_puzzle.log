@@ -1,0 +1,31 @@
+TEST 4: Case 12 - Harder Puzzle
+================================
+Driver: driver_puzzle_probe.ko
+Test Program: user_puzzle
+Status: PASSED WITH OUTPUT
+
+Test Output:
+Initial access (dir_A)...
+Moving across parents: dir_A -> dir_B...
+Final access (dir_B)...
+
+Kernel Messages:
+PUZZLE_LOOKUP: Comm=user_puzzle Name='puzzle_target.txt' Hash=0x58bf7e6f Salt(Parent)=ffff8c77fbecf3c0
+PUZZLE_LOOKUP: Comm=user_puzzle Name='puzzle_target.txt' Hash=0x58bf7e6f Salt(Parent)=ffff8c77fbecf3c0
+PUZZLE_LOOKUP: Comm=user_puzzle Name='puzzle_target.txt' Hash=0x58bf7e6f Salt(Parent)=ffff8c77fbecf3c0
+PUZZLE_MOVE: Dentry=ffff8c7938811600 OldParent=ffff8c77fbecf3c0 NewParent=ffff8c77cc5783c0
+PUZZLE_MOVE: OldHash=0x58bf7e6f NewHash=0x198e92ad
+PUZZLE_LOOKUP: Comm=user_puzzle Name='puzzle_target.txt' Hash=0x198e92ad Salt(Parent)=ffff8c77cc5783c0
+
+Key Observations:
+1. Initial lookups in dir_A (parent=ffff8c77fbecf3c0) with hash 0x58bf7e6f
+2. d_move called: dentry moved from dir_A to dir_B
+3. After move:
+   - Old parent: ffff8c77fbecf3c0 (dir_A)
+   - New parent: ffff8c77cc5783c0 (dir_B)
+   - Hash changed: 0x58bf7e6f -> 0x198e92ad (due to different parent salt!)
+4. Final lookup in dir_B shows new hash
+
+This demonstrates that dentry hashes are parent-dependent (salted).
+
+Result: Driver functional - excellent trace of dentry migration

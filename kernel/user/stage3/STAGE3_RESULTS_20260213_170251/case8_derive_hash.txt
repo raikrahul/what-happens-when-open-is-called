@@ -1,0 +1,6 @@
+--- OUTPUT ---
+Word: 0x6e6f697461657263 -> x:0x8828281349a9cac9 y:0x066003c2fe3c90d0
+Word: 0x325f666f6f72705f -> x:0x30ff102c949095ed y:0x0f8f939a3776b3fc
+Word: 0x7478742e37373937 -> x:0xc14921d30f9ec36e y:0x430b146a168ba76a
+Fold: 0x1c1080d1
+--- END OUTPUT (exit code: 0) ---

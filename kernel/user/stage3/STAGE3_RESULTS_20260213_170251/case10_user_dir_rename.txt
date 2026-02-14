@@ -1,0 +1,4 @@
+--- OUTPUT ---
+Renaming directory dir_old to dir_new...
+Directory rename successful.
+--- END OUTPUT (exit code: 0) ---

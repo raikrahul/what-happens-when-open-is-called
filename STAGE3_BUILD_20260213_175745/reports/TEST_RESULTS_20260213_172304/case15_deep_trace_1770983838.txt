@@ -1,0 +1,44 @@
+============================================
+CASE 15: Deep Trace
+Timestamp: Fri Feb 13 05:27:18 PM IST 2026
+============================================
+
+total 36
+drwxrwxr-x  2 r r   4096 Feb 13 16:44 .
+drwxrwxr-x 18 r r   4096 Feb 13 17:04 ..
+-rw-rw-r--  1 r r   4664 Feb 13 16:34 case15_deep_planning.md
+-rw-rw-r--  1 r r   4257 Feb 13 16:59 driver_deep_trace.c
+-rw-rw-r--  1 r r      0 Feb 13 16:44 driver_deep_trace.ko
+-rw-rw-r--  1 r r      0 Feb 13 16:44 .driver_deep_trace.ko.cmd
+-rw-rw-r--  1 r r      0 Feb 13 16:44 driver_deep_trace.mod
+-rw-rw-r--  1 r r      0 Feb 13 16:44 driver_deep_trace.mod.c
+-rw-rw-r--  1 r r      0 Feb 13 16:44 .driver_deep_trace.mod.cmd
+-rw-rw-r--  1 r r      0 Feb 13 16:44 driver_deep_trace.mod.o
+-rw-rw-r--  1 r r      0 Feb 13 16:44 .driver_deep_trace.mod.o.cmd
+-rw-rw-r--  1 r r 195552 Feb 13 16:44 driver_deep_trace.o
+-rw-rw-r--  1 r r      0 Feb 13 16:44 .driver_deep_trace.o.cmd
+-rw-rw-r--  1 r r    167 Feb 13 16:43 Makefile
+-rw-rw-r--  1 r r      0 Feb 13 16:44 .module-common.o
+-rw-rw-r--  1 r r      0 Feb 13 16:44 ..module-common.o.cmd
+-rw-rw-r--  1 r r      0 Feb 13 16:44 modules.order
+-rw-rw-r--  1 r r      0 Feb 13 16:44 .modules.order.cmd
+-rw-rw-r--  1 r r      0 Feb 13 16:44 Module.symvers
+-rw-rw-r--  1 r r      0 Feb 13 16:44 .Module.symvers.cmd
+-rwxrwxr-x  1 r r      0 Feb 13 16:44 user_deep_create
+-rw-rw-r--  1 r r    374 Feb 13 16:43 user_deep_create.c
+-rwxrwxr-x  1 r r      0 Feb 13 16:44 user_deep_open
+-rw-rw-r--  1 r r    269 Feb 13 16:43 user_deep_open.c
+
+=== Loading driver ===
+insmod exit code: 1
+
+=== Running user_deep_open ===
+Exit code: 0
+
+=== Running user_deep_create ===
+Exit code: 0
+
+=== Capturing dmesg ===
+
+=== Unloading driver ===
+rmmod exit code: 1

@@ -1,0 +1,15 @@
+============================================
+Test: case6_symlink_loop
+Command: gcc -o case6_symlink_loop_test case6_symlink_loop.c
+Timestamp: 2026-02-13T17:24:22+05:30
+============================================
+
+=== COMPILATION ===
+Compilation: SUCCESS
+
+=== EXECUTION ===
+open: No such file or directory
+Case 6: Opening self-looping symlink '/tmp/link_a'
+
+=== EXIT CODE ===
+Exit code: 0

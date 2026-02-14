@@ -1,0 +1,153 @@
+===============================================
+STAGE 3 COMPARATIVE ANALYSIS - IMPLEMENTATION
+Completed: $(date)
+===============================================
+
+OBJECTIVE:
+Compare VFS kernel path for:
+1. File creation (O_CREAT)
+2. Opening existing file (cache hit)
+
+FILES CREATED:
+--------------
+
+User Programs (2):
+  ✓ user_create.c (1.6K) - Creates file with O_CREAT
+  ✓ user_create (18K) - Compiled binary
+  ✓ user_open.c (1.8K) - Opens existing file
+  ✓ user_open (19K) - Compiled binary
+
+Kernel Driver (1):
+  ✓ driver_comparative.c (5.5K) - VFS probe driver
+  ✓ driver_comparative.ko (351K) - Compiled module
+  ✓ Probes 21 VFS functions
+
+Build System:
+  ✓ Makefile - Builds userspace + kernel
+  ✓ analyze.sh - Automated testing script
+
+Documentation:
+  ✓ PLAN.md - Detailed implementation plan
+  ✓ README.md - Usage instructions
+  ✓ IMPLEMENTATION_SUMMARY.txt - This file
+
+PROBED FUNCTIONS (21 total):
+----------------------------
+
+Entry Points (2):
+  - do_sys_openat2
+  - do_filp_open
+
+Path Resolution (3):
+  - path_openat
+  - path_init
+  - link_path_walk
+
+Lookup Stage (3):
+  - open_last_lookups
+  - lookup_open
+  - lookup_fast
+
+Dentry Operations (6):
+  - __d_lookup_rcu (FAST LOOKUP)
+  - d_lookup
+  - d_alloc (ALLOCATION - Creation only)
+  - d_alloc_parallel
+  - d_instantiate (LINKING - Creation only)
+  - d_revalidate (VALIDATION - Open only)
+
+Filesystem Operations (3):
+  - vfs_create (CREATE - Creation only)
+  - vfs_open
+  - do_dentry_open
+
+File Allocation (2):
+  - alloc_empty_file
+  - init_file
+
+Hash Operations (1):
+  - full_name_hash
+
+KEY DIFFERENCES TO OBSERVE:
+---------------------------
+
+Scenario A (Creation):
+  + d_alloc() - Allocates new dentry
+  + vfs_create() - Calls filesystem create
+  + d_instantiate() - Links dentry to inode
+  - No cache hit
+
+Scenario B (Open Existing):
+  + __d_lookup_rcu() - Fast RCU lookup (cache hit)
+  + d_revalidate() - Validates existing dentry
+  - No d_alloc/vfs_create/d_instantiate
+
+USAGE:
+------
+
+1. Automated Testing:
+   chmod +x analyze.sh
+   ./analyze.sh
+
+2. Manual Testing - Creation:
+   sudo dmesg -C
+   sudo insmod driver_comparative.ko target_comm="user_create"
+   ./user_create test_file.txt
+   sudo rmmod driver_comparative
+   dmesg | grep PROBE
+
+3. Manual Testing - Open:
+   sudo dmesg -C
+   sudo insmod driver_comparative.ko target_comm="user_open"
+   ./user_open test_file.txt
+   sudo rmmod driver_comparative
+   dmesg | grep PROBE
+
+EXPECTED OUTPUT:
+----------------
+
+Scenario A logs should show:
+  [D_ALLOC] Allocating NEW dentry (CREATION PATH)
+  [VFS_CREATE] Calling filesystem create (CREATION PATH)
+  [D_INSTANTIATE] Linking dentry to inode (CREATION PATH)
+
+Scenario B logs should show:
+  [D_LOOKUP_RCU] Fast RCU lookup (CACHE HIT PATH)
+  [D_REVALIDATE] Validating dentry (LOOKUP PATH)
+
+HASH/SALT ANALYSIS:
+-------------------
+
+Both scenarios:
+  - Compute filename hash via full_name_hash()
+  - Use same parent directory salt
+  - Hash values should MATCH for same filename
+
+Difference:
+  - Creation: Hash during d_alloc() for NEW dentry
+  - Open: Hash during __d_lookup_rcu() to FIND dentry
+
+SAFETY NOTES:
+-------------
+
+- Driver filters by process name (user_create/user_open)
+- No copy_from_user() in probe handlers (atomic context safe)
+- Test one scenario at a time
+- Keep crash capture ready (see KERNEL_CRASH_CAPTURE_GUIDE.md)
+
+BUILD STATUS:
+-------------
+
+✓ User programs compiled successfully
+✓ Kernel driver compiled successfully (351K)
+✓ All documentation complete
+✓ Ready for testing
+
+NEXT STEPS:
+-----------
+
+1. Run: ./analyze.sh
+2. Review: results/analysis.txt
+3. Compare function paths
+4. Document findings
+

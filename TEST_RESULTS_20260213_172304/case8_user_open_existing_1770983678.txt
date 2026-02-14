@@ -1,0 +1,11 @@
+============================================
+Test: case8_user_open_existing
+Command: gcc -o user_open_existing_test user_open_existing.c
+Timestamp: 2026-02-13T17:24:38+05:30
+============================================
+
+=== COMPILATION ===
+Compilation: SUCCESS
+
+=== EXECUTION ===
+open(O_RDONLY): No such file or directory

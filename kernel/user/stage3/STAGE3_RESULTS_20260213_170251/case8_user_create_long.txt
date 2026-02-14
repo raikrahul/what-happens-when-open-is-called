@@ -1,0 +1,3 @@
+--- OUTPUT ---
+Successfully created long named file
+--- END OUTPUT (exit code: 0) ---

@@ -1,0 +1,104 @@
+CRITICAL CORRECTION - SYSCALL ANALYSIS REPORT
+================================================================================
+Timestamp: 2026-02-13 21:30:00 IST
+Status: ERROR CORRECTED
+================================================================================
+
+MISTAKE ACKNOWLEDGED
+--------------------
+I incorrectly stated that the first kernel function called is `do_sys_open`.
+
+This was WRONG because:
+1. Modern glibc `open()` wrapper uses the `openat` syscall (257), NOT the legacy `open` syscall (2)
+2. The kernel entry point for syscall 257 is `do_sys_openat2()`, not `do_sys_open()`
+3. That's why our kprobe on `do_sys_open` never fired - we probed a function that's not in the call path!
+
+PROOF FROM COMPILATION
+----------------------
+Assembly output from static compilation:
+  467032:	b8 01 01 00 00       	mov    $0x101,%eax  # Load syscall number 257
+  467037:	0f 05                	syscall             # Execute syscall
+
+Syscall number 0x101 = 257 = __NR_openat
+
+CORRECT KERNEL CALL SEQUENCE FOR SYSCALL 257 (openat)
+-----------------------------------------------------
+1. Syscall 257 triggered from userspace
+   ↓
+2. Entry point: `do_sys_openat2()` (fs/open.c)
+   - Handles openat2 syscall semantics
+   - Calls `build_open_flags()` to process flags
+   - Calls `do_filp_open()`
+   ↓
+3. `do_filp_open()` (fs/namei.c)
+   - Sets up nameidata structure
+   - Calls `path_openat()`
+   ↓
+4. `path_openat()` (fs/namei.c)
+   - Allocates file structure
+   - Initializes path walk
+   - Calls `link_path_walk()`
+   ↓
+5. `link_path_walk()` (fs/namei.c)
+   - Resolves each path component
+   - Calls `walk_component()`
+   - Calls `lookup_fast()` or `lookup_slow()`
+   ↓
+6. `lookup_open()` (fs/namei.c) - THE DIVERGENCE POINT
+   - Checks if dentry->d_inode exists
+   - IF EXISTS: Returns immediately (fast path for open)
+   - IF NOT EXISTS: Continues to creation functions
+   ↓
+7. IF FILE DOESN'T EXIST (Creation path):
+   - `vfs_create()` - filesystem-specific creation
+   - `d_alloc()` - allocate new dentry
+   - `d_instantiate()` - link dentry to new inode
+   ↓
+8. `fd_install()` - Install file descriptor in fd table
+   ↓
+9. Return to userspace
+
+WHAT WE OBSERVED IN TRACES
+--------------------------
+Since we probed `do_sys_open` instead of `do_sys_openat2`:
+- First traced function: `path_openat` (step 4)
+- Missing: `do_sys_openat2` and `do_filp_open` (steps 2-3)
+- Then: `link_path_walk`, `lookup_open`, etc. (steps 5-6)
+
+WHY THE PROBE ON do_sys_open FAILED
+-----------------------------------
+1. Function exists in kernel: ✓ (confirmed in /proc/kallsyms)
+2. But it's the entry point for syscall 2 (legacy open)
+3. Our code uses syscall 257 (openat)
+4. Different syscall = different kernel entry point
+5. kprobe on `do_sys_open` never fires because that path isn't taken
+
+LESSON LEARNED
+--------------
+ALWAYS verify which syscall is actually being used:
+- Check with `strace` 
+- Or disassemble the binary
+- Or check glibc implementation
+- Don't assume `open()` → `sys_open` (legacy)
+- Modern glibc: `open()` → `openat(AT_FDCWD, ...)` syscall
+
+CORRECTED ANSWER
+----------------
+Q: What is the first function called in the kernel?
+A: `do_sys_openat2()` (for syscall 257)
+
+Q: What is the second function?
+A: `do_filp_open()` 
+
+Q: What did we actually trace first?
+A: `path_openat()` (because we missed the first two with wrong probe)
+
+APOLOGY
+-------
+I apologize for the confusion. The error was in assuming the syscall
+path without verification. The compilation and disassembly prove the
+correct path is through `do_sys_openat2()`, not `do_sys_open()`.
+
+================================================================================
+END OF CORRECTION REPORT
+================================================================================

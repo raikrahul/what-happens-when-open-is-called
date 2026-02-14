@@ -1,0 +1,7 @@
+--- OUTPUT ---
+open: No such file or directory
+open: No such file or directory
+Case 3: Opening deep path with cached components '/tmp/alpha/beta/gamma/hit.txt'
+Attempt 1...
+Attempt 2...
+--- END OUTPUT (exit code: 0) ---

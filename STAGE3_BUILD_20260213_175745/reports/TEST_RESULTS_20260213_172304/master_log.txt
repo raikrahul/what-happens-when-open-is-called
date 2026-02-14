@@ -1,0 +1,48 @@
+================================================
+COMPREHENSIVE VFS TRACE TEST EXECUTION
+Started: Fri Feb 13 05:23:16 PM IST 2026
+================================================
+
+Starting Case 10-15 driver tests...
+
+============================================
+TEST EXECUTION SUMMARY
+Completed: Fri Feb 13 05:27:57 PM IST 2026
+============================================
+
+Results Files Created:
+  - case10_rename_1770983762.txt (1.6K)
+  - case10_rename_1770983790.txt (720)
+  - case11_bulk_rename_1770983807.txt (18K)
+  - case12_puzzle_1770983819.txt (2.7K)
+  - case13_salt_1770983825.txt (1.7K)
+  - case14_symmetry_1770983831.txt (1.7K)
+  - case15_deep_trace_1770983838.txt (1.7K)
+  - case15_solution_1770983849.txt (2.3K)
+  - case1_relative_1770983646.txt (354)
+  - case2_deep_miss_1770983649.txt (421)
+  - case3_deep_hit_1770983652.txt (465)
+  - case4_create_flow_1770983655.txt (413)
+  - case5_mount_jump_1770983659.txt (407)
+  - case6_symlink_loop_1770983662.txt (389)
+  - case7_symlink_fast_1770983665.txt (385)
+  - case8_derive_hash_1770983687.txt (518)
+  - case8_user_create_deep_1770983672.txt (306)
+  - case8_user_create_long_1770983675.txt (306)
+  - case8_user_create_simple_1770983670.txt (357)
+  - case8_user_hash_collision_1770983681.txt (315)
+  - case8_user_open_existing_1770983678.txt (322)
+  - case8_user_rename_1770983684.txt (367)
+
+Test Execution Summary:
+  - Case 1-9: User-space only tests
+  - Case 10: Rename Investigation (with driver)
+  - Case 11: Bulk Rename (with driver)
+  - Case 12: Harder Puzzle (with driver)
+  - Case 13: Salt Avalanche (with driver)
+  - Case 14: Symmetry Break (with driver)
+  - Case 15: Deep Trace (driver load failed - empty .ko)
+  - Case 15 Solution: Smart Trace (driver compile attempted)
+
+Note: Some drivers have empty .ko files and need recompilation
+All test results are preserved in: /home/r/Desktop/what-happens-when-open-is-called/TEST_RESULTS_20260213_172304

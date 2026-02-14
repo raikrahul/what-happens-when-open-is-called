@@ -1,0 +1,6 @@
+--- OUTPUT ---
+--- Initial Access ---
+Renaming directory bulk_old to bulk_new...
+--- Final Access ---
+Done.
+--- END OUTPUT (exit code: 0) ---

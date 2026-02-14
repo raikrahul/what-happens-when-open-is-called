@@ -1,0 +1,33 @@
+============================================
+CASE 10: Rename Investigation
+Timestamp: Fri Feb 13 05:26:02 PM IST 2026
+============================================
+
+Files in directory:
+total 980
+drwxrwxr-x  3 r r   4096 Feb 13 17:02 .
+drwxrwxr-x 18 r r   4096 Feb 13 17:04 ..
+-rw-rw-r--  1 r r    405 Feb 13 15:33 case10_symbolic_proof_0words.md
+drwxrwxr-x  2 r r   4096 Feb 13 17:02 dir_new
+-rw-rw-r--  1 r r   1315 Feb 13 15:33 driver_dir_rename_probe.c
+-rw-rw-r--  1 r r 343352 Feb 13 15:33 driver_dir_rename_probe.ko
+-rw-rw-r--  1 r r    280 Feb 13 15:33 .driver_dir_rename_probe.ko.cmd
+-rw-rw-r--  1 r r     28 Feb 13 15:33 driver_dir_rename_probe.mod
+-rw-rw-r--  1 r r   1220 Feb 13 15:33 driver_dir_rename_probe.mod.c
+-rw-rw-r--  1 r r    149 Feb 13 15:33 .driver_dir_rename_probe.mod.cmd
+-rw-rw-r--  1 r r 152440 Feb 13 15:33 driver_dir_rename_probe.mod.o
+-rw-rw-r--  1 r r  69699 Feb 13 15:33 .driver_dir_rename_probe.mod.o.cmd
+-rw-rw-r--  1 r r 181544 Feb 13 15:33 driver_dir_rename_probe.o
+-rw-rw-r--  1 r r  77872 Feb 13 15:33 .driver_dir_rename_probe.o.cmd
+-rw-rw-r--  1 r r    173 Feb 13 15:33 Makefile
+-rw-rw-r--  1 r r  12728 Feb 13 15:33 .module-common.o
+-rw-rw-r--  1 r r  71006 Feb 13 15:33 ..module-common.o.cmd
+-rw-rw-r--  1 r r     26 Feb 13 15:33 modules.order
+-rw-rw-r--  1 r r     83 Feb 13 15:33 .modules.order.cmd
+-rw-rw-r--  1 r r      0 Feb 13 15:33 Module.symvers
+-rw-rw-r--  1 r r    207 Feb 13 15:33 .Module.symvers.cmd
+-rwxrwxr-x  1 r r  16144 Feb 13 15:33 user_dir_rename
+-rw-rw-r--  1 r r    444 Feb 13 15:33 user_dir_rename.c
+
+Compiling user_dir_rename.c...
+Exit code: 0

@@ -1,0 +1,46 @@
+============================================
+CASE 15: Deep Trace Solution (Smart Trace)
+Timestamp: Fri Feb 13 05:27:29 PM IST 2026
+============================================
+
+total 20
+drwxrwxr-x  2 r r  4096 Feb 13 17:04 .
+drwxrwxr-x 18 r r  4096 Feb 13 17:04 ..
+-rw-rw-r--  1 r r  1792 Feb 13 17:04 crash_diagnosis_0words.md
+-rw-rw-r--  1 r r  2620 Feb 13 17:04 driver_smart_trace.c
+-rw-rw-r--  1 r r     0 Feb 13 17:04 driver_smart_trace.ko
+-rw-rw-r--  1 r r     0 Feb 13 17:04 .driver_smart_trace.ko.cmd
+-rw-rw-r--  1 r r     0 Feb 13 17:04 driver_smart_trace.mod
+-rw-rw-r--  1 r r     0 Feb 13 17:04 driver_smart_trace.mod.c
+-rw-rw-r--  1 r r     0 Feb 13 17:04 .driver_smart_trace.mod.cmd
+-rw-rw-r--  1 r r     0 Feb 13 17:04 driver_smart_trace.mod.o
+-rw-rw-r--  1 r r     0 Feb 13 17:04 .driver_smart_trace.mod.o.cmd
+-rw-rw-r--  1 r r 53952 Feb 13 17:04 driver_smart_trace.o
+-rw-rw-r--  1 r r     0 Feb 13 17:04 .driver_smart_trace.o.cmd
+-rw-rw-r--  1 r r   168 Feb 13 17:04 Makefile
+-rw-rw-r--  1 r r     0 Feb 13 17:04 .module-common.o
+-rw-rw-r--  1 r r     0 Feb 13 17:04 ..module-common.o.cmd
+-rw-rw-r--  1 r r     0 Feb 13 17:04 modules.order
+-rw-rw-r--  1 r r     0 Feb 13 17:04 .modules.order.cmd
+-rw-rw-r--  1 r r     0 Feb 13 17:04 Module.symvers
+-rw-rw-r--  1 r r     0 Feb 13 17:04 .Module.symvers.cmd
+-rwxrwxr-x  1 r r     0 Feb 13 17:04 user_deep_create
+-rwxrwxr-x  1 r r     0 Feb 13 17:04 user_deep_open
+
+Note: driver_smart_trace.ko is 0 bytes - needs compilation
+
+=== Attempting to compile driver ===
+make -C /lib/modules/6.17.0-14-generic/build M=/home/r/Desktop/what-happens-when-open-is-called/kernel/user/stage3/case15_deep_trace_solution modules
+make[1]: Entering directory '/usr/src/linux-headers-6.17.0-14-generic'
+make[2]: Entering directory '/home/r/Desktop/what-happens-when-open-is-called/kernel/user/stage3/case15_deep_trace_solution'
+  CC [M]  driver_smart_trace.o
+  MODPOST Module.symvers
+  CC [M]  driver_smart_trace.mod.o
+  CC [M]  .module-common.o
+  LD [M]  driver_smart_trace.ko
+  BTF [M] driver_smart_trace.ko
+make[2]: Leaving directory '/home/r/Desktop/what-happens-when-open-is-called/kernel/user/stage3/case15_deep_trace_solution'
+make[1]: Leaving directory '/usr/src/linux-headers-6.17.0-14-generic'
+Make exit code: 0
+
+-rw-rw-r-- 1 r r 216192 Feb 13 17:27 driver_smart_trace.ko

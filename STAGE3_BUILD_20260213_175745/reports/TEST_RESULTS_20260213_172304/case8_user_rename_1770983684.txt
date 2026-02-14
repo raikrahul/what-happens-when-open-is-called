@@ -1,0 +1,15 @@
+============================================
+Test: case8_user_rename
+Command: gcc -o user_rename_test user_rename.c
+Timestamp: 2026-02-13T17:24:44+05:30
+============================================
+
+=== COMPILATION ===
+Compilation: SUCCESS
+
+=== EXECUTION ===
+Renaming rename_proof_old.txt to rename_proof_new.txt...
+Rename successful.
+
+=== EXIT CODE ===
+Exit code: 0

@@ -1,0 +1,237 @@
+============================================
+STAGE 3 COMPREHENSIVE BUILD
+Started: Fri Feb 13 05:57:49 PM IST 2026
+============================================
+
+=== Compiling Case 10: Rename Investigation ===
+make -C /lib/modules/6.17.0-14-generic/build M=/home/r/Desktop/what-happens-when-open-is-called/kernel/user/stage3/case10_rename_investigation clean
+make[1]: Entering directory '/usr/src/linux-headers-6.17.0-14-generic'
+make[2]: Entering directory '/home/r/Desktop/what-happens-when-open-is-called/kernel/user/stage3/case10_rename_investigation'
+  CLEAN   Module.symvers
+make[2]: Leaving directory '/home/r/Desktop/what-happens-when-open-is-called/kernel/user/stage3/case10_rename_investigation'
+make -C /lib/modules/6.17.0-14-generic/build M=/home/r/Desktop/what-happens-when-open-is-called/kernel/user/stage3/case10_rename_investigation modules
+make[1]: Entering directory '/usr/src/linux-headers-6.17.0-14-generic'
+make[2]: Entering directory '/home/r/Desktop/what-happens-when-open-is-called/kernel/user/stage3/case10_rename_investigation'
+  CC [M]  driver_dir_rename_probe.o
+  MODPOST Module.symvers
+  CC [M]  driver_dir_rename_probe.mod.o
+  CC [M]  .module-common.o
+  LD [M]  driver_dir_rename_probe.ko
+  BTF [M] driver_dir_rename_probe.ko
+make[2]: Leaving directory '/home/r/Desktop/what-happens-when-open-is-called/kernel/user/stage3/case10_rename_investigation'
+make[1]: Leaving directory '/usr/src/linux-headers-6.17.0-14-generic'
+✓ Case 10: driver_dir_rename_probe.ko compiled successfully (343352 bytes)
+
+=== Compiling Case 11: Bulk Rename ===
+make -C /lib/modules/6.17.0-14-generic/build M=/home/r/Desktop/what-happens-when-open-is-called/kernel/user/stage3/case11_bulk_rename clean
+make[1]: Entering directory '/usr/src/linux-headers-6.17.0-14-generic'
+make[2]: Entering directory '/home/r/Desktop/what-happens-when-open-is-called/kernel/user/stage3/case11_bulk_rename'
+make -C /lib/modules/6.17.0-14-generic/build M=/home/r/Desktop/what-happens-when-open-is-called/kernel/user/stage3/case11_bulk_rename modules
+make[1]: Entering directory '/usr/src/linux-headers-6.17.0-14-generic'
+make[2]: Entering directory '/home/r/Desktop/what-happens-when-open-is-called/kernel/user/stage3/case11_bulk_rename'
+make[2]: Leaving directory '/home/r/Desktop/what-happens-when-open-is-called/kernel/user/stage3/case11_bulk_rename'
+make[1]: Leaving directory '/usr/src/linux-headers-6.17.0-14-generic'
+✓ Case 11: driver_bulk_rename_probe.ko compiled successfully (341064 bytes)
+
+=== Compiling Case 12: Harder Puzzle ===
+make -C /lib/modules/6.17.0-14-generic/build M=/home/r/Desktop/what-happens-when-open-is-called/kernel/user/stage3/case12_harder_puzzle clean
+make[1]: Entering directory '/usr/src/linux-headers-6.17.0-14-generic'
+make[2]: Entering directory '/home/r/Desktop/what-happens-when-open-is-called/kernel/user/stage3/case12_harder_puzzle'
+make -C /lib/modules/6.17.0-14-generic/build M=/home/r/Desktop/what-happens-when-open-is-called/kernel/user/stage3/case12_harder_puzzle modules
+make[1]: Entering directory '/usr/src/linux-headers-6.17.0-14-generic'
+make[2]: Entering directory '/home/r/Desktop/what-happens-when-open-is-called/kernel/user/stage3/case12_harder_puzzle'
+make[2]: Leaving directory '/home/r/Desktop/what-happens-when-open-is-called/kernel/user/stage3/case12_harder_puzzle'
+make[1]: Leaving directory '/usr/src/linux-headers-6.17.0-14-generic'
+✓ Case 12: driver_puzzle_probe.ko compiled successfully (343184 bytes)
+
+=== Compiling Case 13: Salt Avalanche ===
+make -C /lib/modules/6.17.0-14-generic/build M=/home/r/Desktop/what-happens-when-open-is-called/kernel/user/stage3/case13_salt_avalanche clean
+make[1]: Entering directory '/usr/src/linux-headers-6.17.0-14-generic'
+make[2]: Entering directory '/home/r/Desktop/what-happens-when-open-is-called/kernel/user/stage3/case13_salt_avalanche'
+make -C /lib/modules/6.17.0-14-generic/build M=/home/r/Desktop/what-happens-when-open-is-called/kernel/user/stage3/case13_salt_avalanche modules
+make[1]: Entering directory '/usr/src/linux-headers-6.17.0-14-generic'
+make[2]: Entering directory '/home/r/Desktop/what-happens-when-open-is-called/kernel/user/stage3/case13_salt_avalanche'
+make[2]: Leaving directory '/home/r/Desktop/what-happens-when-open-is-called/kernel/user/stage3/case13_salt_avalanche'
+make[1]: Leaving directory '/usr/src/linux-headers-6.17.0-14-generic'
+✓ Case 13: driver_salt_avalanche.ko compiled successfully (194680 bytes)
+
+=== Compiling Case 14: Symmetry Break ===
+make -C /lib/modules/6.17.0-14-generic/build M=/home/r/Desktop/what-happens-when-open-is-called/kernel/user/stage3/case14_symmetry_break clean
+make[1]: Entering directory '/usr/src/linux-headers-6.17.0-14-generic'
+make[2]: Entering directory '/home/r/Desktop/what-happens-when-open-is-called/kernel/user/stage3/case14_symmetry_break'
+make -C /lib/modules/6.17.0-14-generic/build M=/home/r/Desktop/what-happens-when-open-is-called/kernel/user/stage3/case14_symmetry_break modules
+make[1]: Entering directory '/usr/src/linux-headers-6.17.0-14-generic'
+make[2]: Entering directory '/home/r/Desktop/what-happens-when-open-is-called/kernel/user/stage3/case14_symmetry_break'
+make[2]: Leaving directory '/home/r/Desktop/what-happens-when-open-is-called/kernel/user/stage3/case14_symmetry_break'
+make[1]: Leaving directory '/usr/src/linux-headers-6.17.0-14-generic'
+✓ Case 14: driver_symmetry_break.ko compiled successfully (194544 bytes)
+
+=== Compiling Case 15: Deep Trace ===
+make -C /lib/modules/6.17.0-14-generic/build M=/home/r/Desktop/what-happens-when-open-is-called/kernel/user/stage3/case15_deep_trace clean
+make[1]: Entering directory '/usr/src/linux-headers-6.17.0-14-generic'
+make[2]: Entering directory '/home/r/Desktop/what-happens-when-open-is-called/kernel/user/stage3/case15_deep_trace'
+make -C /lib/modules/6.17.0-14-generic/build M=/home/r/Desktop/what-happens-when-open-is-called/kernel/user/stage3/case15_deep_trace modules
+make[1]: Entering directory '/usr/src/linux-headers-6.17.0-14-generic'
+make[2]: Entering directory '/home/r/Desktop/what-happens-when-open-is-called/kernel/user/stage3/case15_deep_trace'
+make[2]: Leaving directory '/home/r/Desktop/what-happens-when-open-is-called/kernel/user/stage3/case15_deep_trace'
+make[1]: Leaving directory '/usr/src/linux-headers-6.17.0-14-generic'
+✓ Case 15: driver_deep_trace.ko compiled successfully (357504 bytes)
+
+=== Compiling Case 15 Solution: Smart Trace ===
+make -C /lib/modules/6.17.0-14-generic/build M=/home/r/Desktop/what-happens-when-open-is-called/kernel/user/stage3/case15_deep_trace_solution clean
+make[1]: Entering directory '/usr/src/linux-headers-6.17.0-14-generic'
+make[2]: Entering directory '/home/r/Desktop/what-happens-when-open-is-called/kernel/user/stage3/case15_deep_trace_solution'
+make -C /lib/modules/6.17.0-14-generic/build M=/home/r/Desktop/what-happens-when-open-is-called/kernel/user/stage3/case15_deep_trace_solution modules
+make[1]: Entering directory '/usr/src/linux-headers-6.17.0-14-generic'
+make[2]: Entering directory '/home/r/Desktop/what-happens-when-open-is-called/kernel/user/stage3/case15_deep_trace_solution'
+make[2]: Leaving directory '/home/r/Desktop/what-happens-when-open-is-called/kernel/user/stage3/case15_deep_trace_solution'
+make[1]: Leaving directory '/usr/src/linux-headers-6.17.0-14-generic'
+✓ Case 15 Solution: driver_smart_trace.ko compiled successfully (213432 bytes)
+
+=== Compiling Case 8: Creation Proof ===
+make -C /lib/modules/6.17.0-14-generic/build M=/home/r/Desktop/what-happens-when-open-is-called/kernel/user/stage3/case8_creation_proof clean
+make[1]: Entering directory '/usr/src/linux-headers-6.17.0-14-generic'
+make[2]: Entering directory '/home/r/Desktop/what-happens-when-open-is-called/kernel/user/stage3/case8_creation_proof'
+make -C /lib/modules/6.17.0-14-generic/build M=/home/r/Desktop/what-happens-when-open-is-called/kernel/user/stage3/case8_creation_proof modules
+make[1]: Entering directory '/usr/src/linux-headers-6.17.0-14-generic'
+make[2]: Entering directory '/home/r/Desktop/what-happens-when-open-is-called/kernel/user/stage3/case8_creation_proof'
+make[2]: Leaving directory '/home/r/Desktop/what-happens-when-open-is-called/kernel/user/stage3/case8_creation_proof'
+make[1]: Leaving directory '/usr/src/linux-headers-6.17.0-14-generic'
+✓ Case 8: driver_collision_probe.ko compiled successfully (340520 bytes)
+✓ Case 8: driver_creation_probe.ko compiled successfully (342368 bytes)
+✓ Case 8: driver_lookup_probe.ko compiled successfully (341072 bytes)
+✓ Case 8: driver_rename_probe.ko compiled successfully (341304 bytes)
+✓ Case 8: driver_salt_probe.ko compiled successfully (341864 bytes)
+
+=== Compiling Case 8: Creation Proof (Pre-compiled) ===
+✓ Case 8: driver_collision_probe.ko already compiled (340520 bytes)
+✓ Case 8: driver_creation_probe.ko already compiled (342368 bytes)
+✓ Case 8: driver_lookup_probe.ko already compiled (341072 bytes)
+✓ Case 8: driver_rename_probe.ko already compiled (341304 bytes)
+✓ Case 8: driver_salt_probe.ko already compiled (341864 bytes)
+
+============================================
+USER SPACE PROGRAMS COMPILATION
+============================================
+
+=== Compiling Case 1: case1_relative ===
+✓ case1_relative.out compiled
+
+=== Compiling Case 1: demo_at_fdcwd ===
+✓ demo_at_fdcwd.out compiled
+
+=== Compiling Case 1: demo_o_path ===
+✓ demo_o_path.out compiled
+
+=== Compiling Case 1: demo_o_tmpfile ===
+✓ demo_o_tmpfile.out compiled
+
+=== Compiling Case 1: demo_thread_safety ===
+✓ demo_thread_safety.out compiled
+
+=== Compiling Case 1: demo_toctou ===
+✓ demo_toctou.out compiled
+
+=== Case 1: Basic Open Demos ===
+✓ case1_relative/case1_relative.out
+✓ demo_at_fdcwd/demo_at_fdcwd.out
+✓ demo_o_path/demo_o_path.out
+✓ demo_o_path/demo_o_path_dir.out
+✓ demo_o_tmpfile/demo_o_tmpfile.out
+✓ demo_thread_safety/demo_thread_safety.out
+✓ demo_toctou/demo_toctou.out
+
+=== Cases 2-7: Path Tests ===
+  Compiling case2_deep_miss...
+  ✓ case2_deep_miss/case2_deep_miss.out
+  Compiling case3_deep_hit...
+  ✓ case3_deep_hit/case3_deep_hit.out
+  Compiling case4_create_flow...
+  ✓ case4_create_flow/case4_create_flow.out
+  Compiling case5_mount_jump...
+  ✓ case5_mount_jump/case5_mount_jump.out
+  Compiling case6_symlink_loop...
+  ✓ case6_symlink_loop/case6_symlink_loop.out
+  Compiling case7_symlink_fast...
+  ✓ case7_symlink_fast/case7_symlink_fast.out
+
+=== Case 8: Creation Proof ===
+  ✓ case8/user_create_deep.out
+  ✓ case8/user_create_long.out
+  ✓ case8/user_create_simple.out
+  ✓ case8/user_hash_collision.out
+  ✓ case8/user_open_existing.out
+  ✓ case8/user_rename.out
+derive_hash.c: In function ‘main’:
+derive_hash.c:36:27: warning: format ‘%llx’ expects argument of type ‘long long unsigned int’, but argument 2 has type ‘u64’ {aka ‘long unsigned int’} [-Wformat=]
+   36 |     printf("Word: 0x%016llx -> x:0x%016llx y:0x%016llx\n", a, x, y);
+      |                     ~~~~~~^                                ~
+      |                           |                                |
+      |                           long long unsigned int           u64 {aka long unsigned int}
+      |                     %016lx
+derive_hash.c:36:42: warning: format ‘%llx’ expects argument of type ‘long long unsigned int’, but argument 3 has type ‘u64’ {aka ‘long unsigned int’} [-Wformat=]
+   36 |     printf("Word: 0x%016llx -> x:0x%016llx y:0x%016llx\n", a, x, y);
+      |                                    ~~~~~~^                    ~
+      |                                          |                    |
+      |                                          |                    u64 {aka long unsigned int}
+      |                                          long long unsigned int
+      |                                    %016lx
+derive_hash.c:36:54: warning: format ‘%llx’ expects argument of type ‘long long unsigned int’, but argument 4 has type ‘u64’ {aka ‘long unsigned int’} [-Wformat=]
+   36 |     printf("Word: 0x%016llx -> x:0x%016llx y:0x%016llx\n", a, x, y);
+      |                                                ~~~~~~^           ~
+      |                                                      |           |
+      |                                                      |           u64 {aka long unsigned int}
+      |                                                      long long unsigned int
+      |                                                %016lx
+  ✓ case8/derive_hash.out
+
+=== Cases 10-15: Driver Tests ===
+  Compiling case10_rename_investigation...
+  ✓ case10_rename_investigation/user_dir_rename.out
+  Compiling case11_bulk_rename...
+  ✓ case11_bulk_rename/user_bulk_rename.out
+  Compiling case12_harder_puzzle...
+  ✓ case12_harder_puzzle/user_puzzle.out
+  Compiling case13_salt_avalanche...
+  ✓ case13_salt_avalanche/user_salt_avalanche.out
+  Compiling case14_symmetry_break...
+  ✓ case14_symmetry_break/user_symmetry_break.out
+  Compiling case15_deep_trace...
+  ✓ case15_deep_trace/user_deep_create.out
+  ✓ case15_deep_trace/user_deep_open.out
+  Compiling case15_deep_trace_solution...
+
+=== Case 1: Additional Programs ===
+  ✓ case1/case6_symlink_loop.out
+  ✓ case1/case7_symlink_fast.out
+  ✓ case1/dcache_loop_analysis.out
+dcache.c:18:10: fatal error: linux/ratelimit.h: No such file or directory
+   18 | #include <linux/ratelimit.h>
+      |          ^~~~~~~~~~~~~~~~~~~
+compilation terminated.
+open.c:9:10: fatal error: linux/mm.h: No such file or directory
+    9 | #include <linux/mm.h>
+      |          ^~~~~~~~~~~~
+compilation terminated.
+namei.c:18:10: fatal error: linux/init.h: No such file or directory
+   18 | #include <linux/init.h>
+      |          ^~~~~~~~~~~~~~
+compilation terminated.
+  ✓ case1/test_vfs_trace.out
+  ✓ case1/vfs_trigger.out
+  ✓ case1/manual_dentry_check.out
+  ✓ case1/demo_dup_names.out
+
+============================================
+COMPILATION COMPLETE
+Finished: Fri Feb 13 06:00:24 PM IST 2026
+============================================
+
+BUILD SUMMARY:
+--------------
+Kernel Modules:
+  Total:  12
+
+User Programs:
+  Total:  32
+

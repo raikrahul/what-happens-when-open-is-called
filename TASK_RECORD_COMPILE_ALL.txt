@@ -1,0 +1,38 @@
+TASK RECORD - TIMESTAMP: 2026-02-13 19:45:00
+=================================================================
+
+OBJECTIVE: Compile all kernel drivers and userspace programs with comprehensive logging
+
+REQUIREMENTS:
+1. Create a log file with timestamps for every compilation
+2. Compile each driver (.ko files) individually with logging
+3. Compile each userspace program (.out files) individually with logging  
+4. Call 'sync' to filesystem after EVERY compilation operation
+5. Track statistics: total compiled, success count, failure count
+6. Log file format: COMPREHENSIVE_BUILD_LOG_YYYYMMDD_HHMMSS.txt
+
+DIRECTORY STRUCTURE TO COMPILE:
+- kernel/user/stage3/case8_creation_proof/ (drivers + userspace)
+- kernel/user/stage3/case10_rename_investigation/ (drivers + userspace)
+- kernel/user/stage3/case11_bulk_rename/ (drivers + userspace)
+- kernel/user/stage3/case12_harder_puzzle/ (drivers + userspace)
+- kernel/user/stage3/case13_salt_avalanche/ (drivers + userspace)
+- kernel/user/stage3/case14_symmetry_break/ (drivers + userspace)
+- kernel/user/stage3/case15_deep_trace/ (drivers + userspace)
+- kernel/user/stage3/case15_deep_trace_solution/ (drivers)
+- kernel/user/stage3/case1/ (userspace demos)
+- kernel/drivers/stage3/case1/ (drivers including trace_path_init/)
+- kernel/drivers/offset_audit/ (drivers)
+- kernel/drivers/trace_do_filp_open/ (drivers)
+- kernel/drivers/arg2_filename/ (drivers)
+- kernel/drivers/arg3_flags/ (drivers)
+- kernel/proofs/ (userspace)
+- kernel/demos/ (userspace)
+
+LOG FORMAT:
+[YYYY-MM-DD HH:MM:SS.mmm] <message>
+
+SUCCESS INDICATOR: ✓ SUCCESS: <filename>
+FAILURE INDICATOR: ✗ FAILED: <filename>
+
+END OF TASK RECORD

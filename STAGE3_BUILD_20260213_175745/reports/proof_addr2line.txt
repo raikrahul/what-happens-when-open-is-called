@@ -1,0 +1,44 @@
+Proof of Branch Execution via addr2line (Numerical Reconstruction)
+
+The objective is to prove using physical instruction addresses and tool-based mapping that the kernel executed the 'AT_FDCWD' branch inside path_init.
+
+1. Static Binary Data (from objdump -d fs/namei.o)
+-----------------------------------------------
+Function: path_init
+Start Address: 0x4410
+
+Address | Instruction                   | Literal Value | Dec Offset | Description
+--------|-------------------------------|---------------|------------|-----------------------
+0x4541  | cmp $0xffffff9c,%edi          | -100          | +305       | check if dfd == AT_FDCWD
+0x4544  | jne 0x45ca                    | target: 0x45ca| +308       | jump away if not equal
+0x454a  | mov %gs:0x0(%rip),%rax        | -             | +314       | get current (START OF BRANCH)
+
+2. Tool-Based Verification (addr2line)
+------------------------------------
+We map the instruction at 0x454a back to the original C source.
+Command: addr2line -e fs/namei.o 0x454a -f -p -i
+Output: path_init at /usr/src/linux-hwe-6.17-6.17.0/fs/namei.c:2578
+
+3. Source Code Context (fs/namei.c)
+---------------------------------
+2576:    if (nd->dfd == AT_FDCWD) {
+2577:        if (flags & LOOKUP_RCU) {
+2578:            struct fs_struct *fs = current->fs;  <-- MAPS TO 0x454a
+
+4. Live Runtime Observation (kprobe)
+----------------------------------
+We placed a probe on path_init at offset +314 (0x13a).
+Observation: Execution of 'demo_dup_names' triggered the probe handler.
+Data: [17288.590763] [PROOF] path_init+314 EXECUTION DETECTED!
+
+5. Arithmetic Proof
+-----------------
+- A jump occurs if the comparison fails.
+- Comparison failed = Jump to 0x45ca (+442).
+- Comparison passed = Continue to 0x454a (+314).
+- The CPU was observed at +314.
+- 314 < 442. 
+- NO abstraction: The CPU pointer was literally 0xffffffff8b3fc57a (Base + 314).
+
+Numerical Conclusion:
+The instruction stream flowed precisely through the AT_FDCWD block because the CPU arrived at the address 0x454a, which is exclusively part of that branch's implementation.

@@ -1,0 +1,15 @@
+============================================
+Test: case2_deep_miss
+Command: gcc -o case2_deep_miss_test case2_deep_miss.c
+Timestamp: 2026-02-13T17:24:09+05:30
+============================================
+
+=== COMPILATION ===
+Compilation: SUCCESS
+
+=== EXECUTION ===
+Case 2: Opening deep path with missing components '/tmp/alpha/beta/gamma/nonexistent.txt'
+Success: Received expected ENOENT
+
+=== EXIT CODE ===
+Exit code: 0

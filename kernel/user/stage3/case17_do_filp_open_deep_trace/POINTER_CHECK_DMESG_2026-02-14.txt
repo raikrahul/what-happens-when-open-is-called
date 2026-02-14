@@ -1,0 +1,8 @@
+[48967.788098] [PTRCHK] init target_dentry_addr=ffff89900a337480
+[48967.788104] [PTRCHK] read qword0 rc=0 value=0x40000
+[48967.788107] [PTRCHK] read d_parent rc=0 value=ffff899181570c00 self_eq=0
+[48967.788109] [PTRCHK] read d_inode rc=0 value=0000000000000000
+[48967.788111] [PTRCHK] read d_name.len rc=0 value=30
+[48967.788113] [PTRCHK] read d_name.hash rc=0 value=0x4101d47
+[48967.788115] [PTRCHK] read d_name.name rc=0 value=ffff89900a3374b8
+[48967.788117] [PTRCHK] read name bytes rc=0 ncopy=30 text=missing_case17_raw_syscall.txt

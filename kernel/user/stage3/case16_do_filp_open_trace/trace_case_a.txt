@@ -1,0 +1,38 @@
+[ 5929.253305] Kretprobe Registered at do_filp_open: ffffffffb90006e0
+[ 5929.325523] Fprobe Registered at do_filp_open
+[ 5929.329077] FPROBE_ENTRY: comm=user_trigger_mi pid=40417 dfd=4294967196 pathname_ptr=ffff898e881d1000
+[ 5929.329093] KRETPROBE_ENTRY: comm=user_trigger_mi pid=40417 dfd=4294967196 pathname_ptr=ffff898e881d1000
+[ 5929.329111] KRETPROBE_RET: comm=user_trigger_mi pid=40417 rax=fffffffffffffffe duration=0
+[ 5929.329119] FPROBE_RET: comm=user_trigger_mi pid=40417 rax=fffffffffffffffe
+[ 5929.329135] FPROBE_ENTRY: comm=user_trigger_mi pid=40417 dfd=4294967196 pathname_ptr=ffff898e881d1000
+[ 5929.329142] KRETPROBE_ENTRY: comm=user_trigger_mi pid=40417 dfd=4294967196 pathname_ptr=ffff898e881d1000
+[ 5929.329155] KRETPROBE_RET: comm=user_trigger_mi pid=40417 rax=fffffffffffffffe duration=0
+[ 5929.329162] FPROBE_RET: comm=user_trigger_mi pid=40417 rax=fffffffffffffffe
+[ 5929.329176] FPROBE_ENTRY: comm=user_trigger_mi pid=40417 dfd=4294967196 pathname_ptr=ffff898e881d1000
+[ 5929.329183] KRETPROBE_ENTRY: comm=user_trigger_mi pid=40417 dfd=4294967196 pathname_ptr=ffff898e881d1000
+[ 5929.329196] KRETPROBE_RET: comm=user_trigger_mi pid=40417 rax=fffffffffffffffe duration=0
+[ 5929.329203] FPROBE_RET: comm=user_trigger_mi pid=40417 rax=fffffffffffffffe
+[ 5929.329221] FPROBE_ENTRY: comm=user_trigger_mi pid=40417 dfd=4294967196 pathname_ptr=ffff898e881d1000
+[ 5929.329228] KRETPROBE_ENTRY: comm=user_trigger_mi pid=40417 dfd=4294967196 pathname_ptr=ffff898e881d1000
+[ 5929.329237] KRETPROBE_RET: comm=user_trigger_mi pid=40417 rax=fffffffffffffffe duration=0
+[ 5929.329244] FPROBE_RET: comm=user_trigger_mi pid=40417 rax=fffffffffffffffe
+[ 5929.329252] FPROBE_ENTRY: comm=user_trigger_mi pid=40417 dfd=4294967196 pathname_ptr=ffff898e881d1000
+[ 5929.329259] KRETPROBE_ENTRY: comm=user_trigger_mi pid=40417 dfd=4294967196 pathname_ptr=ffff898e881d1000
+[ 5929.329267] KRETPROBE_RET: comm=user_trigger_mi pid=40417 rax=fffffffffffffffe duration=0
+[ 5929.329274] FPROBE_RET: comm=user_trigger_mi pid=40417 rax=fffffffffffffffe
+[ 5929.329282] FPROBE_ENTRY: comm=user_trigger_mi pid=40417 dfd=4294967196 pathname_ptr=ffff898e881d1000
+[ 5929.329289] KRETPROBE_ENTRY: comm=user_trigger_mi pid=40417 dfd=4294967196 pathname_ptr=ffff898e881d1000
+[ 5929.329297] KRETPROBE_RET: comm=user_trigger_mi pid=40417 rax=fffffffffffffffe duration=0
+[ 5929.329304] FPROBE_RET: comm=user_trigger_mi pid=40417 rax=fffffffffffffffe
+[ 5929.329313] FPROBE_ENTRY: comm=user_trigger_mi pid=40417 dfd=4294967196 pathname_ptr=ffff898e881d1000
+[ 5929.329320] KRETPROBE_ENTRY: comm=user_trigger_mi pid=40417 dfd=4294967196 pathname_ptr=ffff898e881d1000
+[ 5929.329332] KRETPROBE_RET: comm=user_trigger_mi pid=40417 rax=ffff898e833acf00 duration=0
+[ 5929.329338] FPROBE_RET: comm=user_trigger_mi pid=40417 rax=ffff898e833acf00
+[ 5929.329386] FPROBE_ENTRY: comm=user_trigger_mi pid=40417 dfd=4294967196 pathname_ptr=ffff898e881d1000
+[ 5929.329393] KRETPROBE_ENTRY: comm=user_trigger_mi pid=40417 dfd=4294967196 pathname_ptr=ffff898e881d1000
+[ 5929.329406] KRETPROBE_RET: comm=user_trigger_mi pid=40417 rax=ffff898e833ac3c0 duration=0
+[ 5929.329413] FPROBE_RET: comm=user_trigger_mi pid=40417 rax=ffff898e833ac3c0
+[ 5929.329943] FPROBE_ENTRY: comm=user_trigger_mi pid=40417 dfd=4294967196 pathname_ptr=ffff898e881d1000
+[ 5929.329953] KRETPROBE_ENTRY: comm=user_trigger_mi pid=40417 dfd=4294967196 pathname_ptr=ffff898e881d1000
+[ 5929.329981] KRETPROBE_RET: comm=user_trigger_mi pid=40417 rax=fffffffffffffffe duration=0
+[ 5929.329988] FPROBE_RET: comm=user_trigger_mi pid=40417 rax=fffffffffffffffe

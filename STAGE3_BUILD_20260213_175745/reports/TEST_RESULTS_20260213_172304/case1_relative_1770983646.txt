@@ -1,0 +1,14 @@
+============================================
+Test: case1_relative
+Command: gcc -o case1_relative_test case1_relative.c
+Timestamp: 2026-02-13T17:24:06+05:30
+============================================
+
+=== COMPILATION ===
+Compilation: SUCCESS
+
+=== EXECUTION ===
+fd=3 path_addr=0x5885919aa010 path="some_relative_file.txt"
+
+=== EXIT CODE ===
+Exit code: 0

@@ -1,0 +1,5 @@
+--- OUTPUT ---
+Case 4: O_CREAT metamorphosis flow '/tmp/new_creation_file.txt'
+Created: fd=3. Sleeping 5s...
+Re-opened: fd=3
+--- END OUTPUT (exit code: 0) ---

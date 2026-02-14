@@ -1,0 +1,34 @@
+[ 5254.466500] [A.00000273] 00000005253901530544 link_path_walk ENTRY create_test_fil 34398:path=0x%px path=0xffff8a4d40dfe020
+[ 5254.466512] [A.00000279] 00000005253901544771 link_path_walk EXIT create_test_fil 34398:ret=%ld ret=0
+[ 5254.466520] [A.00000282] 00000005253901553097 link_path_walk ENTRY create_test_fil 34398:path=0x%px path=0xfffffffffffffffe
+[ 5254.466526] [A.00000285] 00000005253901560161 link_path_walk EXIT create_test_fil 34398:ret=%ld ret=4294967294
+[ 5254.466541] [A.00000288] 00000005253901574919 path_openat ENTRY create_test_fil 34398: 
+[ 5254.466549] [A.00000289] 00000005253901582383 link_path_walk ENTRY create_test_fil 34398:path=0x%px path=0xffff8a4d40dfe020
+[ 5254.466555] [A.00000291] 00000005253901589336 link_path_walk EXIT create_test_fil 34398:ret=%ld ret=0
+[ 5254.466565] [A.00000295] 00000005253901598884 path_openat EXIT create_test_fil 34398: 
+[ 5254.466571] [A.00000298] 00000005253901605056 fd_install ENTRY create_test_fil 34398:fd=%d fd=3
+[ 5254.466607] [A.00000312] 00000005253901641095 path_openat ENTRY create_test_fil 34398: 
+[ 5254.466614] [A.00000316] 00000005253901648299 link_path_walk ENTRY create_test_fil 34398:path=0x%px path=0xffff8a4d40dfe020
+[ 5254.466622] [A.00000319] 00000005253901656254 link_path_walk EXIT create_test_fil 34398:ret=%ld ret=0
+[ 5254.466630] [A.00000324] 00000005253901664179 path_openat EXIT create_test_fil 34398: 
+[ 5254.466636] [A.00000327] 00000005253901670150 fd_install ENTRY create_test_fil 34398:fd=%d fd=3
+[ 5254.467057] [A.00000444] 00000005253902089089 path_openat ENTRY create_test_fil 34398: 
+[ 5254.467069] [A.00000450] 00000005253902101893 link_path_walk ENTRY create_test_fil 34398:path=0x%px path=0xffff8a4d40dfe020
+[ 5254.467079] [A.00000454] 00000005253902112022 link_path_walk EXIT create_test_fil 34398:ret=%ld ret=0
+[ 5254.467088] [A.00000459] 00000005253902121681 link_path_walk ENTRY create_test_fil 34398:path=0x%px path=0xffff8a4d4f33a7a9
+[ 5254.467099] [A.00000465] 00000005253902132040 link_path_walk EXIT create_test_fil 34398:ret=%ld ret=0
+[ 5254.467110] [A.00000471] 00000005253902143683 path_openat EXIT create_test_fil 34398: 
+[ 5254.467118] [A.00000474] 00000005253902151548 fd_install ENTRY create_test_fil 34398:fd=%d fd=3
+[ 5254.467200] [A.00000507] 00000005253902233163 link_path_walk ENTRY create_test_fil 34398:path=0x%px path=0xffff8a4d40dfe020
+[ 5254.467207] [A.00000513] 00000005253902241188 link_path_walk EXIT create_test_fil 34398:ret=%ld ret=0
+[ 5254.467229] [A.00000522] 00000005253902263271 link_path_walk ENTRY create_test_fil 34398:path=0x%px path=0xfffffffffffffffe
+[ 5254.467236] [A.00000528] 00000005253902269743 link_path_walk EXIT create_test_fil 34398:ret=%ld ret=4294967294
+[ 5254.467246] [A.00000531] 00000005253902280403 path_openat ENTRY create_test_fil 34398: 
+[ 5254.467254] [A.00000535] 00000005253902287647 link_path_walk ENTRY create_test_fil 34398:path=0x%px path=0xffff8a4d40dfe020
+[ 5254.467260] [A.00000537] 00000005253902294520 link_path_walk EXIT create_test_fil 34398:ret=%ld ret=0
+[ 5254.467269] [A.00000538] 00000005253902302034 lookup_open ENTRY create_test_fil 34398:dentry=0x%px inode=0x%px %s dentry=0xffff8a4f2a977cc0 inode=0xffff8a4d6d4dfe40 EXISTS
+[ 5254.467316] [A.00000545] 00000005253902349936 lookup_open EXIT create_test_fil 34398:ret=0x%px ret=0xffff8a4f360469c0
+[ 5254.467336] [A.00000548] 00000005253902369854 path_openat EXIT create_test_fil 34398: 
+[ 5254.467342] [A.00000549] 00000005253902376055 fd_install ENTRY create_test_fil 34398:fd=%d fd=3
+[ 5254.467397] [A.00000556] 00000005253902430189 link_path_walk ENTRY create_test_fil 34398:path=0x%px path=0xffff8a4d40dfe020
+[ 5254.467403] [A.00000563] 00000005253902437472 link_path_walk EXIT create_test_fil 34398:ret=%ld ret=0

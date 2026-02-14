@@ -1,0 +1,3 @@
+obj-m += offset_prober.o
+all:
+	make -C /lib/modules/$(uname -r)/build M=$(PWD) modules

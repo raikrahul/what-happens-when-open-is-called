@@ -1,0 +1,3 @@
+--- OUTPUT ---
+Successfully created creation_proof_7298.txt
+--- END OUTPUT (exit code: 0) ---

@@ -1,0 +1,36 @@
+{
+	"folders": [
+		{
+			"name": "Project (Local)",
+			"path": "."
+		},
+		{
+			"name": "Kernel VFS Sources (Reference)",
+			"path": "/usr/src/linux-source-6.8.0/fs"
+		},
+		{
+			"name": "Kernel Headers (System)",
+			"path": "/usr/src/linux-headers-6.17.0-14-generic/include"
+		}
+	],
+	"settings": {
+		"files.exclude": {
+			"**/.git": true,
+			"**/.DS_Store": true,
+			"**/built-in.a": true,
+			"**/*.o": true,
+			"**/*.ko": true,
+			"**/*.mod.c": true
+		},
+		"search.exclude": {
+			"**/drivers/gpu/**": true,
+			"**/drivers/net/**": true,
+			"**/arch/[^x]*": true
+		},
+		"editor.stickyScroll.enabled": true,
+		"editor.stickyScroll.maxLineCount": 5,
+		"breadcrumbs.enabled": true,
+		"editor.guides.bracketPairs": true,
+		"C_Cpp.default.intelliSenseMode": "linux-gcc-x64"
+	}
+}

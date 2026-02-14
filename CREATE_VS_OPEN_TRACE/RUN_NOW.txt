@@ -1,0 +1,77 @@
+MANUAL EXECUTION REQUIRED - COPY AND PASTE THESE COMMANDS
+=========================================================
+Timestamp: $(date '+%Y-%m-%d %H:%M:%S')
+
+STEP-BY-STEP EXECUTION:
+======================
+
+STEP 1: Navigate to project directory
+cd /home/r/Desktop/what-happens-when-open-is-called/CREATE_VS_OPEN_TRACE
+
+STEP 2: Run the automated test script
+sudo ./run_full_test.sh
+
+OR RUN MANUAL STEPS:
+====================
+
+PHASE 1: FILE CREATION PATH TEST
+--------------------------------
+
+# Clear kernel log
+sudo dmesg -C
+
+# Load Driver A (File Creation Path)
+cd /home/r/Desktop/what-happens-when-open-is-called/CREATE_VS_OPEN_TRACE/drivers
+sudo insmod trace_create_path.ko
+
+# Create a file (triggers creation path)
+cd ../userspace
+./create_test_file
+
+# Capture traces (in another terminal or note the output)
+sudo dmesg | grep "\[A\." > ../results/creation_trace_$(date +%Y%m%d_%H%M%S).log
+
+# Unload Driver A
+cd ../drivers
+sudo rmmod trace_create_path
+
+PHASE 2: FILE OPEN PATH TEST
+----------------------------
+
+# Clear kernel log
+sudo dmesg -C
+
+# Load Driver B (File Open Path)
+sudo insmod trace_open_path.ko
+
+# Open the created file (triggers open path)
+cd ../userspace
+./open_existing_file /tmp/test_create_$(date +%Y%m%d)*.txt
+
+# Capture traces
+sudo dmesg | grep "\[B\." > ../results/open_trace_$(date +%Y%m%d_%H%M%S).log
+
+# Unload Driver B
+cd ../drivers
+sudo rmmod trace_open_path
+
+VIEW RESULTS:
+=============
+
+# View creation traces
+cat /home/r/Desktop/what-happens-when-open-is-called/CREATE_VS_OPEN_TRACE/results/creation_trace_*.log
+
+# View open traces  
+cat /home/r/Desktop/what-happens-when-open-is-called/CREATE_VS_OPEN_TRACE/results/open_trace_*.log
+
+# Check what functions were called in each path
+echo "=== Creation Path Functions ==="
+grep -oP '\[A\.\d+\].*?\s+\K\w+' results/creation_trace_*.log | sort | uniq -c | sort -rn
+
+echo "=== Open Path Functions ==="
+grep -oP '\[B\.\d+\].*?\s+\K\w+' results/open_trace_*.log | sort | uniq -c | sort -rn
+
+QUICK COMMAND (COPY ALL AT ONCE):
+=================================
+cd /home/r/Desktop/what-happens-when-open-is-called/CREATE_VS_OPEN_TRACE && sudo ./run_full_test.sh
+

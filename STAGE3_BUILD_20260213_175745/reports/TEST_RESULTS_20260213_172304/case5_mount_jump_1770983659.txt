@@ -1,0 +1,15 @@
+============================================
+Test: case5_mount_jump
+Command: gcc -o case5_mount_jump_test case5_mount_jump.c
+Timestamp: 2026-02-13T17:24:19+05:30
+============================================
+
+=== COMPILATION ===
+Compilation: SUCCESS
+
+=== EXECUTION ===
+open: No such file or directory
+Case 5: Opening file across mount boundary '/tmp/mnt_stage3/loop_file.txt'
+
+=== EXIT CODE ===
+Exit code: 0

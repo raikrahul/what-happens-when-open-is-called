@@ -1,0 +1,140 @@
+PLANNING SESSION LOG - 2026-02-13
+==================================
+
+Session Start: 19:25 IST
+Status: COMPREHENSIVE PLANNING PHASE - NO CODE WRITTEN YET
+
+OBJECTIVE
+---------
+Create new test case to prove and document:
+1. Code path when file does NOT exist (creation)
+2. Code path when file EXISTS (opening)
+3. Intersection (common elements) of both paths
+4. Uncommon elements (unique to each path)
+5. Exact divergence point where paths split
+
+KERNEL SOURCE ANALYSIS COMPLETED
+---------------------------------
+
+Analyzed Files:
+✓ /usr/src/linux-hwe-6.17-6.17.0/fs/namei.c (path resolution)
+✓ /usr/src/linux-hwe-6.17-6.17.0/fs/dcache.c (dentry cache)
+✓ /usr/src/linux-hwe-6.17-6.17.0/include/linux/stringhash.h (hash functions)
+
+Key Findings:
+
+1. ENTRY POINT: do_filp_open() → path_openat() → link_path_walk() → open_last_lookups()
+
+2. DIVERGENCE POINT: lookup_open() in namei.c at line 3654
+   ```c
+   if (dentry->d_inode) {
+       // FILE EXISTS - returns immediately
+       return dentry;
+   }
+   // FILE NOT EXISTS - continues to creation logic
+   ```
+
+3. CREATION PATH (File Not Exists):
+   - d_alloc() or d_alloc_parallel() - allocates new dentry
+   - vfs_create() - filesystem-specific creation
+   - d_instantiate() - links dentry to inode
+   - may_o_create() - permission checks
+   - dir_inode->i_op->lookup() - verifies doesn't exist
+
+4. OPENING PATH (File Exists):
+   - __d_lookup_rcu() - fast RCU lookup (returns dentry)
+   - d_revalidate() - validates dentry still valid
+   - lookup_fast() - high-level fast lookup
+   - Returns immediately from lookup_open()
+
+5. COMMON PATH (Intersection):
+   - do_filp_open()
+   - path_openat()
+   - link_path_walk()
+   - lookup_open() entry point
+   - d_lookup() attempt
+   - full_name_hash() calculation
+
+6. HASH CALCULATION:
+   - Uses full_name_hash(parent_dentry, name, len)
+   - Parent dentry pointer used as SALT
+   - Same filename in different directories = different hash
+
+PLANNING DOCUMENT CREATED
+--------------------------
+File: /home/r/Desktop/what-happens-when-open-is-called/PLANNING_PHASE_20260213/COMPREHENSIVE_PLAN.md
+
+Sections Completed:
+✓ Task decomposition with grilling questions
+✓ Kernel source analysis
+✓ Path divergence analysis
+✓ Implementation strategy
+✓ Risk assessment
+✓ Verification criteria
+✓ Open questions requiring clarification
+
+CRITICAL QUESTIONS IDENTIFIED
+-------------------------------
+
+BEFORE WRITING ANY CODE, need answers to:
+
+1. "Prove the path" - Function calls, data flow, or both?
+2. "Intersection" - Shared functions, data, or both?
+3. "Uncommon things" - Function differences or state differences?
+4. "Where paths diverge" - Line number, function, or branch?
+5. "Verify hash matches" - Parse kernel logs or compute in userspace?
+6. Which drivers crashed before? (Need dmesg logs)
+7. How many test iterations needed?
+8. Output format preference? (logs, diagrams, JSON)
+
+KNOWN CRASH VULNERABILITIES
+-----------------------------
+
+From Previous Analysis (Case 8-15 drivers):
+- driver_rename_probe.c: NULL pointer dereference at lines 19-22
+- driver_dir_rename_probe.c: NULL pointer at lines 23-27
+- driver_puzzle_probe.c: NULL pointer at line 24
+
+ROOT CAUSE: Direct access to dentry->d_name.name without NULL checks
+
+MANDATORY FIX FOR ALL NEW DRIVERS:
+```c
+static const char *safe_dname(struct dentry *d) {
+    if (!d || !d->d_name.name)
+        return "(null)";
+    return d->d_name.name;
+}
+```
+
+ESTIMATED TIMELINE
+------------------
+
+Phase 1: Clarification - 30 min (waiting for user)
+Phase 2: Implementation - 2-3 hours
+Phase 3: Testing - 1-2 hours
+Phase 4: Documentation - 1 hour
+Total: 5-7 hours
+
+FILES CREATED
+-------------
+
+1. /home/r/Desktop/what-happens-when-open-is-called/PLANNING_PHASE_20260213/COMPREHENSIVE_PLAN.md
+   - Complete analysis and planning document
+   - All questions and risks documented
+   - Implementation strategy outlined
+
+2. This log file (progress_planning_20260213.txt)
+
+NEXT ACTIONS
+------------
+
+1. WAIT FOR: User to answer questions in Section 8.1 of plan
+2. CONFIRM: Understanding of requirements
+3. PROCEED: To implementation phase only after clarification
+
+STATUS: AWAITING USER CLARIFICATION
+------------------------------------
+
+Session End: 19:30 IST
+No code written yet - following "plan from inside out" methodology
+All findings logged for future reference

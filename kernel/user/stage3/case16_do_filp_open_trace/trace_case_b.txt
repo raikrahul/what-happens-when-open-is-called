@@ -1,0 +1,42 @@
+[ 5938.675239] Kretprobe Registered at do_filp_open: ffffffffb90006e0
+[ 5938.745298] Fprobe Registered at do_filp_open
+[ 5938.748213] FPROBE_ENTRY: comm=user_trigger_ex pid=40487 dfd=4294967196 pathname_ptr=ffff898e99619000
+[ 5938.748221] KRETPROBE_ENTRY: comm=user_trigger_ex pid=40487 dfd=4294967196 pathname_ptr=ffff898e99619000
+[ 5938.748230] KRETPROBE_RET: comm=user_trigger_ex pid=40487 rax=fffffffffffffffe duration=0
+[ 5938.748233] FPROBE_RET: comm=user_trigger_ex pid=40487 rax=fffffffffffffffe
+[ 5938.748238] FPROBE_ENTRY: comm=user_trigger_ex pid=40487 dfd=4294967196 pathname_ptr=ffff898e99619000
+[ 5938.748241] KRETPROBE_ENTRY: comm=user_trigger_ex pid=40487 dfd=4294967196 pathname_ptr=ffff898e99619000
+[ 5938.748245] KRETPROBE_RET: comm=user_trigger_ex pid=40487 rax=fffffffffffffffe duration=0
+[ 5938.748248] FPROBE_RET: comm=user_trigger_ex pid=40487 rax=fffffffffffffffe
+[ 5938.748253] FPROBE_ENTRY: comm=user_trigger_ex pid=40487 dfd=4294967196 pathname_ptr=ffff898e99619000
+[ 5938.748255] KRETPROBE_ENTRY: comm=user_trigger_ex pid=40487 dfd=4294967196 pathname_ptr=ffff898e99619000
+[ 5938.748260] KRETPROBE_RET: comm=user_trigger_ex pid=40487 rax=fffffffffffffffe duration=0
+[ 5938.748262] FPROBE_RET: comm=user_trigger_ex pid=40487 rax=fffffffffffffffe
+[ 5938.748269] FPROBE_ENTRY: comm=user_trigger_ex pid=40487 dfd=4294967196 pathname_ptr=ffff898e99619000
+[ 5938.748271] KRETPROBE_ENTRY: comm=user_trigger_ex pid=40487 dfd=4294967196 pathname_ptr=ffff898e99619000
+[ 5938.748274] KRETPROBE_RET: comm=user_trigger_ex pid=40487 rax=fffffffffffffffe duration=0
+[ 5938.748277] FPROBE_RET: comm=user_trigger_ex pid=40487 rax=fffffffffffffffe
+[ 5938.748279] FPROBE_ENTRY: comm=user_trigger_ex pid=40487 dfd=4294967196 pathname_ptr=ffff898e99619000
+[ 5938.748282] KRETPROBE_ENTRY: comm=user_trigger_ex pid=40487 dfd=4294967196 pathname_ptr=ffff898e99619000
+[ 5938.748285] KRETPROBE_RET: comm=user_trigger_ex pid=40487 rax=fffffffffffffffe duration=0
+[ 5938.748287] FPROBE_RET: comm=user_trigger_ex pid=40487 rax=fffffffffffffffe
+[ 5938.748290] FPROBE_ENTRY: comm=user_trigger_ex pid=40487 dfd=4294967196 pathname_ptr=ffff898e99619000
+[ 5938.748292] KRETPROBE_ENTRY: comm=user_trigger_ex pid=40487 dfd=4294967196 pathname_ptr=ffff898e99619000
+[ 5938.748296] KRETPROBE_RET: comm=user_trigger_ex pid=40487 rax=fffffffffffffffe duration=0
+[ 5938.748298] FPROBE_RET: comm=user_trigger_ex pid=40487 rax=fffffffffffffffe
+[ 5938.748301] FPROBE_ENTRY: comm=user_trigger_ex pid=40487 dfd=4294967196 pathname_ptr=ffff898e99619000
+[ 5938.748303] KRETPROBE_ENTRY: comm=user_trigger_ex pid=40487 dfd=4294967196 pathname_ptr=ffff898e99619000
+[ 5938.748308] KRETPROBE_RET: comm=user_trigger_ex pid=40487 rax=ffff898e8fd7f9c0 duration=0
+[ 5938.748310] FPROBE_RET: comm=user_trigger_ex pid=40487 rax=ffff898e8fd7f9c0
+[ 5938.748339] FPROBE_ENTRY: comm=user_trigger_ex pid=40487 dfd=4294967196 pathname_ptr=ffff898e99619000
+[ 5938.748342] KRETPROBE_ENTRY: comm=user_trigger_ex pid=40487 dfd=4294967196 pathname_ptr=ffff898e99619000
+[ 5938.748346] KRETPROBE_RET: comm=user_trigger_ex pid=40487 rax=ffff898e8fd7f900 duration=0
+[ 5938.748349] FPROBE_RET: comm=user_trigger_ex pid=40487 rax=ffff898e8fd7f900
+[ 5938.748527] FPROBE_ENTRY: comm=user_trigger_ex pid=40487 dfd=4294967196 pathname_ptr=ffff898e99619000
+[ 5938.748531] KRETPROBE_ENTRY: comm=user_trigger_ex pid=40487 dfd=4294967196 pathname_ptr=ffff898e99619000
+[ 5938.748584] KRETPROBE_RET: comm=user_trigger_ex pid=40487 rax=ffff898e8fd7f9c0 duration=0
+[ 5938.748587] FPROBE_RET: comm=user_trigger_ex pid=40487 rax=ffff898e8fd7f9c0
+[ 5938.748636] FPROBE_ENTRY: comm=user_trigger_ex pid=40487 dfd=4294967196 pathname_ptr=ffff898e99619000
+[ 5938.748640] KRETPROBE_ENTRY: comm=user_trigger_ex pid=40487 dfd=4294967196 pathname_ptr=ffff898e99619000
+[ 5938.748645] KRETPROBE_RET: comm=user_trigger_ex pid=40487 rax=ffff898e8fd7f9c0 duration=0
+[ 5938.748648] FPROBE_RET: comm=user_trigger_ex pid=40487 rax=ffff898e8fd7f9c0

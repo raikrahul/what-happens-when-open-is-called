@@ -1,0 +1,82 @@
+FULL FUNCTION TRACE LOG - CASE17 MISSING FILE PATH
+===================================================
+Context
+- Userspace trigger file: kernel/user/stage3/case17_do_filp_open_deep_trace/user_trigger.c
+- Missing target path: /home/r/Desktop/what-happens-when-open-is-called/kernel/user/stage3/case17_do_filp_open_deep_trace/missing_case17_filp.txt
+- Running kernel branch analyzed: /usr/src/linux-hwe-6.17-6.17.0
+- Primary kernel files: fs/open.c, fs/namei.c, fs/dcache.c, fs/file_table.c
+- Concrete numeric values in this flow: AT_FDCWD=-100, ENOENT=2, kernel error return=-2, userspace fd=-1
+
+Problem Statement (Original)
+- Prove the missing-file open path in detail and show where dentry is looked up/allocated, where negative dentry is detected, and where final -ENOENT is produced even though dentry logic ran.
+
+Trace Format Rule Used
+- Each step line contains: StepId, Event(CALL/RESUME/DONE), Function, Caller line, Current line, Real values, Work, Reason.
+
+Step Trace
+#1.CALL.Function=main/open Caller=kernel/user/stage3/case17_do_filp_open_deep_trace/user_trigger.c:18 Current=kernel/user/stage3/case17_do_filp_open_deep_trace/user_trigger.c:18 Values={filename="/home/r/Desktop/what-happens-when-open-is-called/kernel/user/stage3/case17_do_filp_open_deep_trace/missing_case17_filp.txt", flags=O_RDONLY(0)} Work=userspace invokes open() on random missing name Why=trigger ENOENT path.
+#2.CALL.Function=do_sys_openat2 Caller=/usr/src/linux-hwe-6.17-6.17.0/fs/open.c:1452 Current=/usr/src/linux-hwe-6.17-6.17.0/fs/open.c:1420 Values={dfd=-100, filename=user_ptr, how.flags=0, how.mode=0} Work=kernel open syscall entry Why=begin VFS open pipeline.
+#3.DONE.Function=build_open_flags Caller=/usr/src/linux-hwe-6.17-6.17.0/fs/open.c:1427 Current=/usr/src/linux-hwe-6.17-6.17.0/fs/open.c:1427-1429 Values={op=open_flags parsed from O_RDONLY} Work=validate/normalize flags Why=reject invalid combinations early.
+#4.DONE.Function=getname Caller=/usr/src/linux-hwe-6.17-6.17.0/fs/open.c:1431 Current=/usr/src/linux-hwe-6.17-6.17.0/fs/open.c:1431-1433 Values={tmp=struct filename* holding same absolute path string} Work=copy pathname into kernel object Why=safe kernel-side path parsing.
+#5.DONE.Function=get_unused_fd_flags Caller=/usr/src/linux-hwe-6.17-6.17.0/fs/open.c:1435 Current=/usr/src/linux-hwe-6.17-6.17.0/fs/open.c:1435 Values={fd=temporary reserved slot (non-negative)} Work=reserve fd index before open completes Why=common open path contract.
+#6.CALL.Function=do_filp_open Caller=/usr/src/linux-hwe-6.17-6.17.0/fs/open.c:1437 Current=/usr/src/linux-hwe-6.17-6.17.0/fs/namei.c:4073 Values={dfd=-100, pathname=tmp, op=lookup flags} Work=path walk + final lookup/open Why=produce struct file* or ERR_PTR.
+#7.DONE.Function=set_nameidata Caller=/usr/src/linux-hwe-6.17-6.17.0/fs/namei.c:4080 Current=/usr/src/linux-hwe-6.17-6.17.0/fs/namei.c:4080 Values={nd initialized, nd.dfd=-100, nd.name points to filename} Work=prepare nameidata context Why=path walker state container.
+#8.CALL.Function=path_openat Caller=/usr/src/linux-hwe-6.17-6.17.0/fs/namei.c:4081 Current=/usr/src/linux-hwe-6.17-6.17.0/fs/namei.c:4034 Values={flags include LOOKUP_RCU on first attempt} Work=actual open engine Why=resolve/open in one routine.
+#9.DONE.Function=alloc_empty_file Caller=/usr/src/linux-hwe-6.17-6.17.0/fs/namei.c:4040 Current=/usr/src/linux-hwe-6.17-6.17.0/fs/namei.c:4040-4042 Values={file=temp struct file shell allocated} Work=create temporary file object Why=needed for open pipeline state even before success.
+#10.CALL.Function=path_init Caller=/usr/src/linux-hwe-6.17-6.17.0/fs/namei.c:4049 Current=/usr/src/linux-hwe-6.17-6.17.0/fs/namei.c:4049 Values={nd.path initialized to cwd because dfd=-100} Work=seed path traversal Why=compute starting mount+dentry.
+#11.CALL.Function=loop(link_path_walk + open_last_lookups) Caller=/usr/src/linux-hwe-6.17-6.17.0/fs/namei.c:4050-4051 Current=/usr/src/linux-hwe-6.17-6.17.0/fs/namei.c:4050-4052 Values={s from path_init, nd.last expected final basename=missing_case17_filp.txt} Work=walk and resolve last component Why=split traversal and final open lookup logic.
+#12.CALL.Function=open_last_lookups Caller=/usr/src/linux-hwe-6.17-6.17.0/fs/namei.c:4051 Current=/usr/src/linux-hwe-6.17-6.17.0/fs/namei.c:3768 Values={open_flag=O_RDONLY(0), got_write=false} Work=final component resolution Why=bridge to lookup_open.
+#13.CALL.Function=lookup_fast_for_open Caller=/usr/src/linux-hwe-6.17-6.17.0/fs/namei.c:3786 Current=/usr/src/linux-hwe-6.17-6.17.0/fs/namei.c:3786 Values={nd.last="missing_case17_filp.txt"} Work=fast dcache attempt Why=quick hit path if present.
+#14.DONE.Function=lookup_fast_for_open Caller=/usr/src/linux-hwe-6.17-6.17.0/fs/namei.c:3786 Current=/usr/src/linux-hwe-6.17-6.17.0/fs/namei.c:3790-3791 Values={dentry likely NULL on first random miss} Work=no fast hit Why=random name not yet cached.
+#15.CALL.Function=lookup_open Caller=/usr/src/linux-hwe-6.17-6.17.0/fs/namei.c:3815 Current=/usr/src/linux-hwe-6.17-6.17.0/fs/namei.c:3618 Values={dir=nd.path.dentry(parent directory), open_flag=0, file=temp file object} Work=definitive lookup/open preparation Why=must resolve basename with sync semantics.
+#16.DONE.Function=d_lookup->(__d_lookup) Caller=/usr/src/linux-hwe-6.17-6.17.0/fs/namei.c:3635 Current=/usr/src/linux-hwe-6.17-6.17.0/fs/dcache.c:2332-2343 then 2362-2416 Values={parent=dir, name=nd.last, hash=name->hash, result=NULL on first miss} Work=search dcache hash bucket + linked-list entry compare Why=check existing entry before allocation.
+#17.DONE.Function=if(!dentry) branch taken Caller=/usr/src/linux-hwe-6.17-6.17.0/fs/namei.c:3637 Current=/usr/src/linux-hwe-6.17-6.17.0/fs/namei.c:3637 Values={condition true because dentry==NULL} Work=enter allocation path Why=cache miss requires dentry candidate.
+#18.CALL.Function=d_alloc_parallel Caller=/usr/src/linux-hwe-6.17-6.17.0/fs/namei.c:3638 Current=/usr/src/linux-hwe-6.17-6.17.0/fs/dcache.c:2542 Values={parent=dir, name=&nd.last, wq=&wq} Work=allocate or race-resolve in-lookup dentry Why=parallel-safe dentry creation.
+#19.DONE.Function=__d_alloc/new init inside d_alloc_parallel Caller=/usr/src/linux-hwe-6.17-6.17.0/fs/dcache.c:2549 Current=/usr/src/linux-hwe-6.17-6.17.0/fs/dcache.c:2553-2562 Values={new!=NULL, new->d_flags|=DCACHE_PAR_LOOKUP, new->d_parent=parent} Work=create actual dentry object candidate Why=materialize lookup object for missing name.
+#20.DONE.Function=d_alloc_parallel race recheck Caller=/usr/src/linux-hwe-6.17-6.17.0/fs/dcache.c:2568 Current=/usr/src/linux-hwe-6.17-6.17.0/fs/dcache.c:2568-2615 Values={checks __d_lookup_rcu and in_lookup_hash list for same name/hash/parent} Work=avoid duplicates under concurrency Why=another thread might have inserted same dentry.
+#21.DONE.Function=d_alloc_parallel return Caller=/usr/src/linux-hwe-6.17-6.17.0/fs/namei.c:3638 Current=/usr/src/linux-hwe-6.17-6.17.0/fs/dcache.c:2616+ Values={returns valid dentry ptr in normal miss; IS_ERR only on allocation/internal failure e.g. -ENOMEM} Work=provide dentry to lookup_open Why=continue lookup pipeline.
+#22.DONE.Function=IS_ERR(dentry) check Caller=/usr/src/linux-hwe-6.17-6.17.0/fs/namei.c:3639 Current=/usr/src/linux-hwe-6.17-6.17.0/fs/namei.c:3639-3640 Values={false in normal missing-file case, true only hard failures} Work=early hard-error exit guard Why=missing-file ENOENT is not this branch.
+#23.RESUME.Function=for(;;) in lookup_open Caller=/usr/src/linux-hwe-6.17-6.17.0/fs/namei.c:3636 Current=/usr/src/linux-hwe-6.17-6.17.0/fs/namei.c:3642-3653 Values={d_in_lookup(dentry) state checked} Work=sync with lookup-in-progress rules Why=prevent stale/incomplete dentry usage.
+#24.DONE.Function=positive dentry check Caller=/usr/src/linux-hwe-6.17-6.17.0/fs/namei.c:3654 Current=/usr/src/linux-hwe-6.17-6.17.0/fs/namei.c:3654-3657 Values={if dentry->d_inode exists then would return positive hit; missing case continues} Work=short-circuit for existing file Why=avoid extra operations.
+#25.DONE.Function=open_flag/create logic Caller=/usr/src/linux-hwe-6.17-6.17.0/fs/namei.c:3671-3685 Current=/usr/src/linux-hwe-6.17-6.17.0/fs/namei.c:3671-3685 Values={open_flag remains read-only, no O_CREAT path} Work=prepare mode/create decisions Why=correct semantics for create vs open.
+#26.CALL.Function=atomic_open dispatch condition Caller=/usr/src/linux-hwe-6.17-6.17.0/fs/namei.c:3686 Current=/usr/src/linux-hwe-6.17-6.17.0/fs/namei.c:3686-3687 Values={dir_inode->i_op->atomic_open non-NULL on filesystems that implement it} Work=filesystem-specific atomic lookup/open Why=race-safe single FS op.
+#27.CALL.Function=atomic_open Caller=/usr/src/linux-hwe-6.17-6.17.0/fs/namei.c:3687 Current=/usr/src/linux-hwe-6.17-6.17.0/fs/namei.c:3563 Values={nd,dentry,file,open_flag,mode} Work=invoke fs atomic_open and normalize result Why=determine opened/lookup-only/error outcome.
+#28.DONE.Function=atomic_open pre-call setup Caller=/usr/src/linux-hwe-6.17-6.17.0/fs/namei.c:3574 Current=/usr/src/linux-hwe-6.17-6.17.0/fs/namei.c:3574-3577 Values={file->f_path.dentry=DENTRY_NOT_SET sentinel, file->f_path.mnt=nd->path.mnt} Work=initialize file path for FS callback Why=FS may fill dentry/open state.
+#29.CALL.Function=dir->i_op->atomic_open Caller=/usr/src/linux-hwe-6.17-6.17.0/fs/namei.c:3576 Current=/usr/src/linux-hwe-6.17-6.17.0/fs/namei.c:3576 Values={parent dir inode op table from actual mounted filesystem} Work=filesystem does atomic lookup/open Why=correct FS-specific semantics.
+#30.DONE.Function=d_lookup_done Caller=/usr/src/linux-hwe-6.17-6.17.0/fs/namei.c:3578 Current=/usr/src/linux-hwe-6.17-6.17.0/fs/namei.c:3578 Values={lookup completion marker for dentry} Work=clear lookup-in-progress coordination Why=unblock waiters and stabilize state.
+#31.DONE.Function=negative check in atomic_open Caller=/usr/src/linux-hwe-6.17-6.17.0/fs/namei.c:3592 Current=/usr/src/linux-hwe-6.17-6.17.0/fs/namei.c:3592 Values={d_is_negative(dentry)==true equivalent to d_inode==NULL} Work=detect missing file object Why=no inode attached for that name.
+#32.DONE.Function=set ENOENT in atomic_open Caller=/usr/src/linux-hwe-6.17-6.17.0/fs/namei.c:3593 Current=/usr/src/linux-hwe-6.17-6.17.0/fs/namei.c:3593 Values={error=-ENOENT=-2} Work=convert negative dentry to missing-file error Why=VFS return contract.
+#33.DONE.Function=atomic_open error return Caller=/usr/src/linux-hwe-6.17-6.17.0/fs/namei.c:3596-3599 Current=/usr/src/linux-hwe-6.17-6.17.0/fs/namei.c:3600 Values={returns ERR_PTR(-2), may dput(dentry) on error path} Work=propagate failure Why=lookup/open did not produce opened file.
+#34.RESUME.Function=lookup_open after atomic_open Caller=/usr/src/linux-hwe-6.17-6.17.0/fs/namei.c:3687 Current=/usr/src/linux-hwe-6.17-6.17.0/fs/namei.c:3688-3690 Values={returns dentry as ERR_PTR(-2)} Work=bubble error to caller Why=lookup_open contract returns dentry or ERR_PTR.
+#35.RESUME.Function=open_last_lookups error branch Caller=/usr/src/linux-hwe-6.17-6.17.0/fs/namei.c:3815 Current=/usr/src/linux-hwe-6.17-6.17.0/fs/namei.c:3830-3831 Values={IS_ERR(dentry)=true} Work=return ERR_CAST(dentry) Why=stop open path on error.
+#36.RESUME.Function=path_openat failure path Caller=/usr/src/linux-hwe-6.17-6.17.0/fs/namei.c:4051 Current=/usr/src/linux-hwe-6.17-6.17.0/fs/namei.c:4063 Values={error=-2, file=temp struct file} Work=fput_close(file) cleanup Why=temp file shell must be released.
+#37.CALL.Function=fput_close Caller=/usr/src/linux-hwe-6.17-6.17.0/fs/namei.c:4063 Current=/usr/src/linux-hwe-6.17-6.17.0/fs/file_table.c:582 Values={file ref is last reference in this path} Work=optimized final put Why=open failed before install.
+#38.DONE.Function=__fput_deferred enqueue Caller=/usr/src/linux-hwe-6.17-6.17.0/fs/file_table.c:585 Current=/usr/src/linux-hwe-6.17-6.17.0/fs/file_table.c:585 Values={deferred cleanup path selected} Work=schedule actual __fput later via task_work/workqueue Why=non-blocking cleanup style.
+#39.DONE.Function=path_openat return Caller=/usr/src/linux-hwe-6.17-6.17.0/fs/namei.c:4070 Current=/usr/src/linux-hwe-6.17-6.17.0/fs/namei.c:4070 Values={filp=ERR_PTR(-2)} Work=return failure to do_filp_open Why=open attempt failed.
+#40.RESUME.Function=do_filp_open fallback checks Caller=/usr/src/linux-hwe-6.17-6.17.0/fs/namei.c:4081 Current=/usr/src/linux-hwe-6.17-6.17.0/fs/namei.c:4082-4085 Values={filp is not -ECHILD and not -ESTALE in this path} Work=no retry path used Why=direct ENOENT outcome.
+#41.DONE.Function=do_filp_open return Caller=/usr/src/linux-hwe-6.17-6.17.0/fs/namei.c:4087 Current=/usr/src/linux-hwe-6.17-6.17.0/fs/namei.c:4087 Values={returns ERR_PTR(-2)} Work=propagate to do_sys_openat2 Why=final VFS open result.
+#42.RESUME.Function=do_sys_openat2 error branch Caller=/usr/src/linux-hwe-6.17-6.17.0/fs/open.c:1437 Current=/usr/src/linux-hwe-6.17-6.17.0/fs/open.c:1438-1440 Values={IS_ERR(f)=true, put_unused_fd(fd), fd=PTR_ERR(f)=-2} Work=release reserved fd slot and map filp error to syscall int return Why=no fd should leak.
+#43.DONE.Function=do_sys_openat2 return Caller=/usr/src/linux-hwe-6.17-6.17.0/fs/open.c:1446 Current=/usr/src/linux-hwe-6.17-6.17.0/fs/open.c:1446 Values={return=-2} Work=return kernel error number Why=syscall API expects negative errno in kernel side.
+#44.DONE.Function=userspace open result mapping Caller=libc wrapper invoked by user_trigger.c:18 Current=kernel/user/stage3/case17_do_filp_open_deep_trace/user_trigger.c:19-21 Values={fd=-1, errno=2, strerror="No such file or directory"} Work=POSIX userspace error presentation Why=kernel -2 maps to errno 2.
+
+Key Clarifications
+- Why d_lookup can return NULL: it is a cache lookup only; first random name usually not cached.
+- Why d_alloc_parallel after NULL: creates/race-resolves dentry candidate so filesystem lookup can proceed safely.
+- Is IS_ERR(dentry) from d_alloc_parallel expected for missing file: NO; ENOENT is semantic missing-file result later, IS_ERR here is hard failure (e.g., -ENOMEM).
+- Where missing-file decision is made in this path: atomic_open negative check at fs/namei.c:3592 then error=-ENOENT at 3593.
+
+Compact pstree-style summary
+open("missing_case17_filp.txt", O_RDONLY)
+└─ do_sys_openat2(-100,...)
+   └─ do_filp_open(...)
+      └─ path_openat(...)
+         └─ open_last_lookups(...)
+            └─ lookup_open(...)
+               ├─ d_lookup(...) -> NULL
+               ├─ d_alloc_parallel(...) -> valid dentry candidate
+               └─ atomic_open(...)
+                  └─ d_is_negative(dentry) -> true -> -ENOENT
+         └─ fput_close(temp_file)
+      └─ ERR_PTR(-2)
+   └─ put_unused_fd(...), return -2
+└─ userspace sees fd=-1, errno=2

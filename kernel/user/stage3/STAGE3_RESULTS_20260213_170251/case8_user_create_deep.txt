@@ -1,0 +1,3 @@
+--- OUTPUT ---
+Successfully created deep file in subdir
+--- END OUTPUT (exit code: 0) ---

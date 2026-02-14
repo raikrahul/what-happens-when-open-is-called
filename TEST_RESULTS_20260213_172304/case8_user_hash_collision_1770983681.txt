@@ -1,0 +1,13 @@
+============================================
+Test: case8_user_hash_collision
+Command: gcc -o user_hash_collision_test user_hash_collision.c
+Timestamp: 2026-02-13T17:24:41+05:30
+============================================
+
+=== COMPILATION ===
+Compilation: SUCCESS
+
+=== EXECUTION ===
+
+=== EXIT CODE ===
+Exit code: 0

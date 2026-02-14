@@ -1,0 +1,128 @@
+TEST EXECUTION LOG - FILE CREATION VS OPEN PATH
+================================================================================
+Timestamp: 2026-02-13 20:15:00 IST
+Test ID: CREATE_VS_OPEN_TRACE_TEST_001
+================================================================================
+
+PHASE 1: PRE-TEST SETUP
+-----------------------
+[2026-02-13 20:15:00] Starting test execution
+[2026-02-13 20:15:00] Current directory: /home/r/Desktop/what-happens-when-open-is-called/CREATE_VS_OPEN_TRACE
+[2026-02-13 20:15:00] Kernel version: $(uname -r)
+[2026-02-13 20:15:00] Available drivers:
+PHASE 1: Clear dmesg buffer
+[2026-02-13 20:45:12] dmesg cleared
+
+[2026-02-13 20:15:30] SUDO PERMISSION REQUIRED
+[2026-02-13 20:15:30] Cannot execute sudo commands in automated mode
+[2026-02-13 20:15:30] User needs to run test commands manually
+
+MANUAL TEST COMMANDS:
+=====================
+
+STEP 1: Clear dmesg buffer
+$ sudo dmesg -C
+
+STEP 2: Load Driver A (Creation Path)
+$ cd /home/r/Desktop/what-happens-when-open-is-called/CREATE_VS_OPEN_TRACE/drivers
+$ sudo insmod trace_create_path.ko
+
+STEP 3: Run file creation test
+$ cd ../userspace
+$ ./create_test_file
+
+STEP 4: Capture creation path traces
+$ sudo dmesg | grep "\[A\." > ../logs/creation_trace.log
+
+STEP 5: Unload Driver A
+$ sudo rmmod trace_create_path
+
+STEP 6: Clear dmesg again
+$ sudo dmesg -C
+
+STEP 7: Load Driver B (Open Path)
+$ cd ../drivers
+$ sudo insmod trace_open_path.ko
+
+STEP 8: Run file open test
+$ cd ../userspace
+$ ./open_existing_file /tmp/test_create_YYYYMMDD_HHMMSS.txt
+(Use the actual filename from STEP 3)
+
+STEP 9: Capture open path traces  
+$ sudo dmesg | grep "\[B\." > ../logs/open_trace.log
+
+STEP 10: Unload Driver B
+$ sudo rmmod trace_open_path
+
+STEP 11: Generate analysis
+$ cd ..
+$ ./analyze_traces.sh
+
+
+[2026-02-13 20:16:30] Test infrastructure created
+[2026-02-13 20:16:30] Directories created:
+  - logs/
+  - results/
+[2026-02-13 20:16:30] Test script created: run_full_test.sh
+
+READY FOR MANUAL TESTING
+========================
+
+To run the complete test, execute:
+
+  cd /home/r/Desktop/what-happens-when-open-is-called/CREATE_VS_OPEN_TRACE
+  sudo ./run_full_test.sh
+
+This will:
+1. Load Driver A (creation path tracer)
+2. Run create_test_file to create a file
+3. Capture all creation path traces
+4. Unload Driver A
+5. Load Driver B (open path tracer)
+6. Run open_existing_file to open the created file
+7. Capture all open path traces
+8. Unload Driver B
+9. Generate comparison analysis
+10. Save all results to results/ directory
+
+ALTERNATIVE: Step-by-step manual testing
+========================================
+
+If you prefer to run tests step by step:
+
+STEP 1 - File Creation Path:
+  sudo dmesg -C
+  cd drivers && sudo insmod trace_create_path.ko
+  cd ../userspace && ./create_test_file
+  sudo dmesg | grep "\[A\." > ../results/creation_trace.log
+  cd ../drivers && sudo rmmod trace_create_path
+
+STEP 2 - File Open Path:
+  sudo dmesg -C
+  sudo insmod trace_open_path.ko
+  cd ../userspace && ./open_existing_file /tmp/test_create_YYYYMMDD_HHMMSS.txt
+  sudo dmesg | grep "\[B\." > ../results/open_trace.log
+  cd ../drivers && sudo rmmod trace_open_path
+
+EXPECTED RESULTS:
+================
+
+File Creation Path (Driver A) should show:
+- do_sys_openat2 ENTRY with O_CREAT flag
+- link_path_walk resolving path components
+- lookup_open with dentry->d_inode = NULL (file doesn't exist)
+- vfs_create actually creating the file
+- d_alloc allocating new dentry
+- d_instantiate linking dentry to inode
+- fd_install installing file descriptor
+
+File Open Path (Driver B) should show:
+- do_sys_openat2 ENTRY without O_CREAT flag
+- link_path_walk resolving path components
+- lookup_open with dentry->d_inode != NULL (file exists)
+- may_open permission check
+- finish_open linking to existing dentry
+- fd_install installing file descriptor
+- NO vfs_create, d_alloc, or d_instantiate calls
+

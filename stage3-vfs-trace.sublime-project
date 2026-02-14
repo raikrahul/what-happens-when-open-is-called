@@ -1,124 +1,16 @@
 {
-    "folders": [
-        {
-            "path": ".",
-            "name": "Stage3-VFS-Trace"
-        },
-        {
-            "path": "/usr/src/linux-hwe-6.17-6.17.0",
-            "name": "Linux-6.17-Source"
-        }
-    ],
-    "settings": {
-        "default_line_ending": "unix",
-        "ensure_newline_at_eof_on_save": true,
-        "tab_size": 4,
-        "translate_tabs_to_spaces": true,
-        "trim_trailing_white_space_on_save": true,
-        "rulers": [80, 120],
-        "word_wrap": false,
-        "draw_white_space": "selection",
-        "show_line_endings": false,
-        "folder_exclude_patterns": [
-            ".git",
-            ".svn",
-            "__pycache__",
-            "*.egg-info",
-            ".pytest_cache",
-            "node_modules",
-            "arch/alpha",
-            "arch/arc",
-            "arch/arm",
-            "arch/arm64",
-            "arch/csky",
-            "arch/hexagon",
-            "arch/ia64",
-            "arch/loongarch",
-            "arch/m68k",
-            "arch/microblaze",
-            "arch/mips",
-            "arch/nios2",
-            "arch/openrisc",
-            "arch/parisc",
-            "arch/powerpc",
-            "arch/riscv",
-            "arch/s390",
-            "arch/sh",
-            "arch/sparc",
-            "arch/um",
-            "arch/xtensa",
-            "tools",
-            "samples",
-            "Documentation",
-            "sound",
-            "firmware",
-            "certs"
-        ],
-        "file_exclude_patterns": [
-            "*.pyc",
-            "*.pyo",
-            "*.exe",
-            "*.dll",
-            "*.obj",
-            "*.o",
-            "*.ko",
-            "*.mod",
-            "*.mod.c",
-            "*.cmd",
-            "*.order",
-            "*.symvers",
-            "*.a",
-            "*.so",
-            "*.out",
-            "*.class",
-            "*.DS_Store",
-            "Thumbs.db"
-        ],
-        "index_files": true,
-        "index_exclude_patterns": [
-            "*.log",
-            "*.tmp",
-            "*.o",
-            "*.ko",
-            "*.mod.c"
-        ]
-    },
-    "build_systems": [
-        {
-            "name": "Build VFS Module",
-            "working_dir": "$project_path/kernel/drivers/stage3/case1",
-            "cmd": ["make", "clean", "&&", "make"],
-            "shell": true,
-            "syntax": "Packages/Makefile/Makefile.sublime-syntax",
-            "variants": [
-                {
-                    "name": "Clean",
-                    "cmd": ["make", "clean"]
-                },
-                {
-                    "name": "Load Module",
-                    "cmd": ["sudo", "insmod", "vfs_depth_probe.ko", "target_comm=demo_short"]
-                },
-                {
-                    "name": "Unload Module",
-                    "cmd": ["sudo", "rmmod", "vfs_depth_probe"]
-                }
-            ]
-        },
-        {
-            "name": "Check Kernel Log",
-            "cmd": ["dmesg", "|", "tail", "-50"],
-            "shell": true
-        }
-    ],
-    "debugger_configurations": [
-        {
-            "name": "Attach to Kernel (qemu)",
-            "type": "gdb",
-            "request": "attach",
-            "target": "localhost:1234",
-            "remote": true,
-            "cwd": "$project_path"
-        }
-    ]
+	"folders": [
+		{
+			"path": "/usr/src/linux-source-6.8.0/fs",
+			"name": "REAL KERNEL VFS (Source)"
+		},
+		{
+			"path": "/usr/src/linux-headers-6.17.0-14-generic/include",
+			"name": "REAL KERNEL HEADERS (System)"
+		},
+		{
+			"path": "/home/r/Desktop/what-happens-when-open-is-called",
+			"name": "Project (Local)"
+		}
+	]
 }

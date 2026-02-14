@@ -1,0 +1,28 @@
+TEST 3: Case 11 - Bulk Rename
+==============================
+Driver: driver_bulk_rename_probe.ko
+Test Program: user_bulk_rename
+Status: PASSED WITH OUTPUT
+
+Test Output:
+--- Initial Access ---
+Renaming directory bulk_old to bulk_new...
+--- Final Access ---
+Done.
+
+Kernel Messages (PROBE_BULK_CHILD):
+- Successfully traced 10 file lookups (child_0.txt through child_9.txt)
+- Each lookup showed:
+  * Comm: user_bulk_renam (truncated process name)
+  * PID: 10254
+  * Name: child_X.txt
+  * Hash: Unique hash for each file
+  * Parent: ffff8c77f78aae40 (consistent parent dentry)
+
+Observations:
+- Driver successfully probes __d_lookup_rcu during rename operations
+- No NULL pointer crashes occurred
+- All 10 child files were detected with unique hashes
+- Parent dentry remained constant (ffff8c77f78aae40) showing directory consistency
+
+Result: Driver functional and producing expected trace output

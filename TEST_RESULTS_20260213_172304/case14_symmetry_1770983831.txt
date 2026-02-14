@@ -1,0 +1,41 @@
+============================================
+CASE 14: Symmetry Break
+Timestamp: Fri Feb 13 05:27:11 PM IST 2026
+============================================
+
+total 696
+drwxrwxr-x  4 r r   4096 Feb 13 17:02 .
+drwxrwxr-x 18 r r   4096 Feb 13 17:04 ..
+-rw-rw-r--  1 r r   3259 Feb 13 16:28 case14_symbolic_proof_0words.md
+drwxrwxr-x  2 r r   4096 Feb 13 17:02 dir_1
+drwxrwxr-x  2 r r   4096 Feb 13 17:02 dir_2
+-rw-rw-r--  1 r r    843 Feb 13 16:27 driver_symmetry_break.c
+-rw-rw-r--  1 r r 194544 Feb 13 16:27 driver_symmetry_break.ko
+-rw-rw-r--  1 r r    272 Feb 13 16:27 .driver_symmetry_break.ko.cmd
+-rw-rw-r--  1 r r     26 Feb 13 16:27 driver_symmetry_break.mod
+-rw-rw-r--  1 r r   1144 Feb 13 16:27 driver_symmetry_break.mod.c
+-rw-rw-r--  1 r r    143 Feb 13 16:27 .driver_symmetry_break.mod.cmd
+-rw-rw-r--  1 r r 152360 Feb 13 16:27 driver_symmetry_break.mod.o
+-rw-rw-r--  1 r r  69669 Feb 13 16:27 .driver_symmetry_break.mod.o.cmd
+-rw-rw-r--  1 r r  32904 Feb 13 16:27 driver_symmetry_break.o
+-rw-rw-r--  1 r r  77842 Feb 13 16:27 .driver_symmetry_break.o.cmd
+-rw-rw-r--  1 r r    171 Feb 13 16:27 Makefile
+-rw-rw-r--  1 r r  12712 Feb 13 16:27 .module-common.o
+-rw-rw-r--  1 r r  71006 Feb 13 16:27 ..module-common.o.cmd
+-rw-rw-r--  1 r r     24 Feb 13 16:27 modules.order
+-rw-rw-r--  1 r r     81 Feb 13 16:27 .modules.order.cmd
+-rw-rw-r--  1 r r      0 Feb 13 16:27 Module.symvers
+-rw-rw-r--  1 r r    207 Feb 13 16:27 .Module.symvers.cmd
+-rwxrwxr-x  1 r r  16056 Feb 13 17:02 user_symmetry_break
+-rw-rw-r--  1 r r    460 Feb 13 16:27 user_symmetry_break.c
+
+=== Loading driver ===
+insmod exit code: 0
+
+=== Running user_symmetry_break ===
+Exit code: 0
+
+=== Capturing dmesg ===
+
+=== Unloading driver ===
+rmmod exit code: 0

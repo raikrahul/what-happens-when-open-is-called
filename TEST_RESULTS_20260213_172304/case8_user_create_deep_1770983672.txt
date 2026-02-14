@@ -1,0 +1,11 @@
+============================================
+Test: case8_user_create_deep
+Command: gcc -o user_create_deep_test user_create_deep.c
+Timestamp: 2026-02-13T17:24:32+05:30
+============================================
+
+=== COMPILATION ===
+Compilation: SUCCESS
+
+=== EXECUTION ===
+open(O_CREAT_DEEP): File exists

@@ -67,3 +67,10 @@
 - RUN_LOG_MISSING_CASE17_WITH_DALLOC.txt
 - CONTAINER_OF_STRUGGLE_REPORT.md
 
+
+10) [2026-02-15] Worksheet added
+- File: worksheet_lingering_dentry_proof.md
+- Purpose: hand-fill proof chain for missing-file open + dentry allocation + post-exit pointer readability.
+- Input logs referenced:
+  - DMESG_CAPTURE_2026-02-14_CASE17.txt
+  - POINTER_CHECK_DMESG_2026-02-14.txt

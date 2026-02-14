@@ -1,0 +1,5 @@
+[ 7819.872167] PROBE_CREATION: Drivers loaded (parallel + alloc)
+[ 7819.875488] PROBE_CREATION [d_alloc_parallel]: Comm=user_create_sim PID=27977
+[ 7819.875500] PROBE_CREATION [d_alloc_parallel]: Parent=ffff888893e6e180 Dentry=0000000000000000
+[ 7819.875505] PROBE_CREATION [d_alloc_parallel]: qstr_ptr=ffffca6bdbd8f9d0 name_ptr=ffff8886d0200020
+[ 7819.875510] PROBE_CREATION [d_alloc_parallel]: Name='creation_proof_27977.txt' Hash=0x1c1080d1

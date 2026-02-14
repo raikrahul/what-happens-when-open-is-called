@@ -1,0 +1,250 @@
+============================================
+CASE 11: Bulk Rename
+Timestamp: Fri Feb 13 05:26:47 PM IST 2026
+============================================
+
+Files in directory:
+total 980
+drwxrwxr-x  4 r r   4096 Feb 13 17:02 .
+drwxrwxr-x 18 r r   4096 Feb 13 17:04 ..
+drwxrwxr-x  2 r r   4096 Feb 13 15:34 bulk_new
+drwxrwxr-x  2 r r   4096 Feb 13 17:02 bulk_old
+-rw-rw-r--  1 r r    473 Feb 13 15:35 case11_symbolic_proof_0words.md
+-rw-rw-r--  1 r r    983 Feb 13 15:34 driver_bulk_rename_probe.c
+-rw-rw-r--  1 r r 341064 Feb 13 15:34 driver_bulk_rename_probe.ko
+-rw-rw-r--  1 r r    284 Feb 13 15:34 .driver_bulk_rename_probe.ko.cmd
+-rw-rw-r--  1 r r     29 Feb 13 15:34 driver_bulk_rename_probe.mod
+-rw-rw-r--  1 r r   1220 Feb 13 15:34 driver_bulk_rename_probe.mod.c
+-rw-rw-r--  1 r r    152 Feb 13 15:34 .driver_bulk_rename_probe.mod.cmd
+-rw-rw-r--  1 r r 152424 Feb 13 15:34 driver_bulk_rename_probe.mod.o
+-rw-rw-r--  1 r r  69714 Feb 13 15:34 .driver_bulk_rename_probe.mod.o.cmd
+-rw-rw-r--  1 r r 179288 Feb 13 15:34 driver_bulk_rename_probe.o
+-rw-rw-r--  1 r r  77887 Feb 13 15:34 .driver_bulk_rename_probe.o.cmd
+-rw-rw-r--  1 r r    174 Feb 13 15:34 Makefile
+-rw-rw-r--  1 r r  12712 Feb 13 15:34 .module-common.o
+-rw-rw-r--  1 r r  71006 Feb 13 15:34 ..module-common.o.cmd
+-rw-rw-r--  1 r r     27 Feb 13 15:34 modules.order
+-rw-rw-r--  1 r r     84 Feb 13 15:34 .modules.order.cmd
+-rw-rw-r--  1 r r      0 Feb 13 15:34 Module.symvers
+-rw-rw-r--  1 r r    207 Feb 13 15:34 .Module.symvers.cmd
+-rwxrwxr-x  1 r r  16256 Feb 13 15:34 user_bulk_rename
+-rw-rw-r--  1 r r    750 Feb 13 15:34 user_bulk_rename.c
+
+=== Loading driver ===
+insmod exit code: 0
+
+=== Running user_bulk_rename ===
+--- Initial Access ---
+Renaming directory bulk_old to bulk_new...
+--- Final Access ---
+Done.
+Exit code: 0
+
+=== Capturing dmesg ===
+[  687.456272] PROBE_BULK_CHILD: Comm=user_bulk_renam PID=6100
+[  687.456279] PROBE_BULK_CHILD: Name='child_0.txt' Hash=0x0c198481 Parent=ffff8ce03ca5a840
+[  687.456289] PROBE_BULK_CHILD: Comm=user_bulk_renam PID=6100
+[  687.456291] PROBE_BULK_CHILD: Name='child_1.txt' Hash=0x7b045019 Parent=ffff8ce03ca5a840
+[  687.456298] PROBE_BULK_CHILD: Comm=user_bulk_renam PID=6100
+[  687.456301] PROBE_BULK_CHILD: Name='child_2.txt' Hash=0x41cf1bb0 Parent=ffff8ce03ca5a840
+[  687.456308] PROBE_BULK_CHILD: Comm=user_bulk_renam PID=6100
+[  687.456310] PROBE_BULK_CHILD: Name='child_3.txt' Hash=0x3d3f6b33 Parent=ffff8ce03ca5a840
+[  687.456318] PROBE_BULK_CHILD: Comm=user_bulk_renam PID=6100
+[  687.456320] PROBE_BULK_CHILD: Name='child_4.txt' Hash=0xfc2a36ca Parent=ffff8ce03ca5a840
+[  687.456346] PROBE_BULK_CHILD: Comm=user_bulk_renam PID=6100
+[  687.456349] PROBE_BULK_CHILD: Name='child_5.txt' Hash=0xb1a50262 Parent=ffff8ce03ca5a840
+[  687.456356] PROBE_BULK_CHILD: Comm=user_bulk_renam PID=6100
+[  687.456358] PROBE_BULK_CHILD: Name='child_6.txt' Hash=0x3dafcdfa Parent=ffff8ce03ca5a840
+[  687.456365] PROBE_BULK_CHILD: Comm=user_bulk_renam PID=6100
+[  687.456367] PROBE_BULK_CHILD: Name='child_7.txt' Hash=0x2be515a6 Parent=ffff8ce03ca5a840
+[  687.456373] PROBE_BULK_CHILD: Comm=user_bulk_renam PID=6100
+[  687.456374] PROBE_BULK_CHILD: Name='child_8.txt' Hash=0xf15fe13e Parent=ffff8ce03ca5a840
+[  687.456381] PROBE_BULK_CHILD: Comm=user_bulk_renam PID=6100
+[  687.456383] PROBE_BULK_CHILD: Name='child_9.txt' Hash=0x295934b6 Parent=ffff8ce03ca5a840
+[  687.456390] PROBE_BULK_CHILD: Comm=user_bulk_renam PID=6100
+[  687.456392] PROBE_BULK_CHILD: Name='child_10.txt' Hash=0xb0df77c4 Parent=ffff8ce03ca5a840
+[  687.456398] PROBE_BULK_CHILD: Comm=user_bulk_renam PID=6100
+[  687.456400] PROBE_BULK_CHILD: Name='child_11.txt' Hash=0xaa4bccea Parent=ffff8ce03ca5a840
+[  687.456406] PROBE_BULK_CHILD: Comm=user_bulk_renam PID=6100
+[  687.456407] PROBE_BULK_CHILD: Name='child_12.txt' Hash=0x77b3a160 Parent=ffff8ce03ca5a840
+[  687.456413] PROBE_BULK_CHILD: Comm=user_bulk_renam PID=6100
+[  687.456416] PROBE_BULK_CHILD: Name='child_13.txt' Hash=0xfdb66389 Parent=ffff8ce03ca5a840
+[  687.456426] PROBE_BULK_CHILD: Comm=user_bulk_renam PID=6100
+[  687.456429] PROBE_BULK_CHILD: Name='child_14.txt' Hash=0xfdec048e Parent=ffff8ce03ca5a840
+[  687.456436] PROBE_BULK_CHILD: Comm=user_bulk_renam PID=6100
+[  687.456438] PROBE_BULK_CHILD: Name='child_15.txt' Hash=0x9db52379 Parent=ffff8ce03ca5a840
+[  687.456446] PROBE_BULK_CHILD: Comm=user_bulk_renam PID=6100
+[  687.456448] PROBE_BULK_CHILD: Name='child_16.txt' Hash=0xce81d3ef Parent=ffff8ce03ca5a840
+[  687.456455] PROBE_BULK_CHILD: Comm=user_bulk_renam PID=6100
+[  687.456457] PROBE_BULK_CHILD: Name='child_17.txt' Hash=0x7d83a557 Parent=ffff8ce03ca5a840
+[  687.456464] PROBE_BULK_CHILD: Comm=user_bulk_renam PID=6100
+[  687.456466] PROBE_BULK_CHILD: Name='child_18.txt' Hash=0x85d1f910 Parent=ffff8ce03ca5a840
+[  687.456473] PROBE_BULK_CHILD: Comm=user_bulk_renam PID=6100
+[  687.456475] PROBE_BULK_CHILD: Name='child_19.txt' Hash=0xd9a6a327 Parent=ffff8ce03ca5a840
+[  687.456482] PROBE_BULK_CHILD: Comm=user_bulk_renam PID=6100
+[  687.456484] PROBE_BULK_CHILD: Name='child_20.txt' Hash=0xc0477a36 Parent=ffff8ce03ca5a840
+[  687.456491] PROBE_BULK_CHILD: Comm=user_bulk_renam PID=6100
+[  687.456494] PROBE_BULK_CHILD: Name='child_21.txt' Hash=0x5e5b90ac Parent=ffff8ce03ca5a840
+[  687.456500] PROBE_BULK_CHILD: Comm=user_bulk_renam PID=6100
+[  687.456502] PROBE_BULK_CHILD: Name='child_22.txt' Hash=0xc32ba3d2 Parent=ffff8ce03ca5a840
+[  687.456509] PROBE_BULK_CHILD: Comm=user_bulk_renam PID=6100
+[  687.456511] PROBE_BULK_CHILD: Name='child_23.txt' Hash=0x9b638845 Parent=ffff8ce03ca5a840
+[  687.456516] PROBE_BULK_CHILD: Comm=user_bulk_renam PID=6100
+[  687.456519] PROBE_BULK_CHILD: Name='child_24.txt' Hash=0x8ea40700 Parent=ffff8ce03ca5a840
+[  687.456525] PROBE_BULK_CHILD: Comm=user_bulk_renam PID=6100
+[  687.456527] PROBE_BULK_CHILD: Name='child_25.txt' Hash=0xdb34e73a Parent=ffff8ce03ca5a840
+[  687.456538] PROBE_BULK_CHILD: Comm=user_bulk_renam PID=6100
+[  687.456540] PROBE_BULK_CHILD: Name='child_26.txt' Hash=0xd479d660 Parent=ffff8ce03ca5a840
+[  687.456545] PROBE_BULK_CHILD: Comm=user_bulk_renam PID=6100
+[  687.456547] PROBE_BULK_CHILD: Name='child_27.txt' Hash=0x85836918 Parent=ffff8ce03ca5a840
+[  687.456553] PROBE_BULK_CHILD: Comm=user_bulk_renam PID=6100
+[  687.456555] PROBE_BULK_CHILD: Name='child_28.txt' Hash=0x66b75c7c Parent=ffff8ce03ca5a840
+[  687.456562] PROBE_BULK_CHILD: Comm=user_bulk_renam PID=6100
+[  687.456564] PROBE_BULK_CHILD: Name='child_29.txt' Hash=0xc1d3c7e3 Parent=ffff8ce03ca5a840
+[  687.456570] PROBE_BULK_CHILD: Comm=user_bulk_renam PID=6100
+[  687.456572] PROBE_BULK_CHILD: Name='child_30.txt' Hash=0xbd628bae Parent=ffff8ce03ca5a840
+[  687.456578] PROBE_BULK_CHILD: Comm=user_bulk_renam PID=6100
+[  687.456581] PROBE_BULK_CHILD: Name='child_31.txt' Hash=0xe8d6a224 Parent=ffff8ce03ca5a840
+[  687.456587] PROBE_BULK_CHILD: Comm=user_bulk_renam PID=6100
+[  687.456589] PROBE_BULK_CHILD: Name='child_32.txt' Hash=0xfac6fb2a Parent=ffff8ce03ca5a840
+[  687.456595] PROBE_BULK_CHILD: Comm=user_bulk_renam PID=6100
+[  687.456597] PROBE_BULK_CHILD: Name='child_33.txt' Hash=0x38117ea3 Parent=ffff8ce03ca5a840
+[  687.456604] PROBE_BULK_CHILD: Comm=user_bulk_renam PID=6100
+[  687.456606] PROBE_BULK_CHILD: Name='child_34.txt' Hash=0xc0ff5e58 Parent=ffff8ce03ca5a840
+[  687.456612] PROBE_BULK_CHILD: Comm=user_bulk_renam PID=6100
+[  687.456613] PROBE_BULK_CHILD: Name='child_35.txt' Hash=0x92d03e93 Parent=ffff8ce03ca5a840
+[  687.456619] PROBE_BULK_CHILD: Comm=user_bulk_renam PID=6100
+[  687.456620] PROBE_BULK_CHILD: Name='child_36.txt' Hash=0xdbba6bc3 Parent=ffff8ce03ca5a840
+[  687.456626] PROBE_BULK_CHILD: Comm=user_bulk_renam PID=6100
+[  687.456627] PROBE_BULK_CHILD: Name='child_37.txt' Hash=0x38d3fe7c Parent=ffff8ce03ca5a840
+[  687.456633] PROBE_BULK_CHILD: Comm=user_bulk_renam PID=6100
+[  687.456635] PROBE_BULK_CHILD: Name='child_38.txt' Hash=0x536552da Parent=ffff8ce03ca5a840
+[  687.456640] PROBE_BULK_CHILD: Comm=user_bulk_renam PID=6100
+[  687.456642] PROBE_BULK_CHILD: Name='child_39.txt' Hash=0x1941be41 Parent=ffff8ce03ca5a840
+[  687.456647] PROBE_BULK_CHILD: Comm=user_bulk_renam PID=6100
+[  687.456649] PROBE_BULK_CHILD: Name='child_40.txt' Hash=0x7ae24f6f Parent=ffff8ce03ca5a840
+[  687.456654] PROBE_BULK_CHILD: Comm=user_bulk_renam PID=6100
+[  687.456656] PROBE_BULK_CHILD: Name='child_41.txt' Hash=0x18f665e6 Parent=ffff8ce03ca5a840
+[  687.456661] PROBE_BULK_CHILD: Comm=user_bulk_renam PID=6100
+[  687.456663] PROBE_BULK_CHILD: Name='child_42.txt' Hash=0x02c6beec Parent=ffff8ce03ca5a840
+[  687.456669] PROBE_BULK_CHILD: Comm=user_bulk_renam PID=6100
+[  687.456670] PROBE_BULK_CHILD: Name='child_43.txt' Hash=0x1d9ea360 Parent=ffff8ce03ca5a840
+[  687.456676] PROBE_BULK_CHILD: Comm=user_bulk_renam PID=6100
+[  687.456677] PROBE_BULK_CHILD: Name='child_44.txt' Hash=0x88ff221a Parent=ffff8ce03ca5a840
+[  687.456683] PROBE_BULK_CHILD: Comm=user_bulk_renam PID=6100
+[  687.456685] PROBE_BULK_CHILD: Name='child_45.txt' Hash=0x1d700255 Parent=ffff8ce03ca5a840
+[  687.456690] PROBE_BULK_CHILD: Comm=user_bulk_renam PID=6100
+[  687.456692] PROBE_BULK_CHILD: Name='child_46.txt' Hash=0xc93a2f85 Parent=ffff8ce03ca5a840
+[  687.456697] PROBE_BULK_CHILD: Comm=user_bulk_renam PID=6100
+[  687.456699] PROBE_BULK_CHILD: Name='child_47.txt' Hash=0xfce3c23d Parent=ffff8ce03ca5a840
+[  687.456704] PROBE_BULK_CHILD: Comm=user_bulk_renam PID=6100
+[  687.456706] PROBE_BULK_CHILD: Name='child_48.txt' Hash=0x61127796 Parent=ffff8ce03ca5a840
+[  687.456711] PROBE_BULK_CHILD: Comm=user_bulk_renam PID=6100
+[  687.456713] PROBE_BULK_CHILD: Name='child_49.txt' Hash=0xf98ee2fd Parent=ffff8ce03ca5a840
+[  687.456718] PROBE_BULK_CHILD: Comm=user_bulk_renam PID=6100
+[  687.456720] PROBE_BULK_CHILD: Name='child_50.txt' Hash=0x7222e4d2 Parent=ffff8ce03ca5a840
+[  687.456726] PROBE_BULK_CHILD: Comm=user_bulk_renam PID=6100
+[  687.456727] PROBE_BULK_CHILD: Name='child_51.txt' Hash=0x6036fb49 Parent=ffff8ce03ca5a840
+[  687.456733] PROBE_BULK_CHILD: Comm=user_bulk_renam PID=6100
+[  687.456735] PROBE_BULK_CHILD: Name='child_52.txt' Hash=0xf5bc9259 Parent=ffff8ce03ca5a840
+[  687.456740] PROBE_BULK_CHILD: Comm=user_bulk_renam PID=6100
+[  687.456742] PROBE_BULK_CHILD: Name='child_53.txt' Hash=0x2dc715d3 Parent=ffff8ce03ca5a840
+[  687.456747] PROBE_BULK_CHILD: Comm=user_bulk_renam PID=6100
+[  687.456749] PROBE_BULK_CHILD: Name='child_54.txt' Hash=0xffe4f588 Parent=ffff8ce03ca5a840
+[  687.456754] PROBE_BULK_CHILD: Comm=user_bulk_renam PID=6100
+[  687.456756] PROBE_BULK_CHILD: Name='child_55.txt' Hash=0xd455d5c2 Parent=ffff8ce03ca5a840
+[  687.456761] PROBE_BULK_CHILD: Comm=user_bulk_renam PID=6100
+[  687.456763] PROBE_BULK_CHILD: Name='child_56.txt' Hash=0x570ac4e8 Parent=ffff8ce03ca5a840
+[  687.456768] PROBE_BULK_CHILD: Comm=user_bulk_renam PID=6100
+[  687.456770] PROBE_BULK_CHILD: Name='child_57.txt' Hash=0xb81457a0 Parent=ffff8ce03ca5a840
+[  687.456775] PROBE_BULK_CHILD: Comm=user_bulk_renam PID=6100
+[  687.456777] PROBE_BULK_CHILD: Name='child_58.txt' Hash=0x491aea09 Parent=ffff8ce03ca5a840
+[  687.456782] PROBE_BULK_CHILD: Comm=user_bulk_renam PID=6100
+[  687.456784] PROBE_BULK_CHILD: Name='child_59.txt' Hash=0x54375570 Parent=ffff8ce03ca5a840
+[  687.456789] PROBE_BULK_CHILD: Comm=user_bulk_renam PID=6100
+[  687.456791] PROBE_BULK_CHILD: Name='child_60.txt' Hash=0xfcc2a894 Parent=ffff8ce03ca5a840
+[  687.456796] PROBE_BULK_CHILD: Comm=user_bulk_renam PID=6100
+[  687.456798] PROBE_BULK_CHILD: Name='child_61.txt' Hash=0xd836bf0b Parent=ffff8ce03ca5a840
+[  687.456803] PROBE_BULK_CHILD: Comm=user_bulk_renam PID=6100
+[  687.456805] PROBE_BULK_CHILD: Name='child_62.txt' Hash=0xb9cc561b Parent=ffff8ce03ca5a840
+[  687.456810] PROBE_BULK_CHILD: Comm=user_bulk_renam PID=6100
+[  687.456812] PROBE_BULK_CHILD: Name='child_63.txt' Hash=0xd7443a8f Parent=ffff8ce03ca5a840
+[  687.456817] PROBE_BULK_CHILD: Comm=user_bulk_renam PID=6100
+[  687.456819] PROBE_BULK_CHILD: Name='child_64.txt' Hash=0xc004b949 Parent=ffff8ce03ca5a840
+[  687.456824] PROBE_BULK_CHILD: Comm=user_bulk_renam PID=6100
+[  687.456826] PROBE_BULK_CHILD: Name='child_65.txt' Hash=0xd1d59984 Parent=ffff8ce03ca5a840
+[  687.456831] PROBE_BULK_CHILD: Comm=user_bulk_renam PID=6100
+[  687.456833] PROBE_BULK_CHILD: Name='child_66.txt' Hash=0xcb1a88aa Parent=ffff8ce03ca5a840
+[  687.456838] PROBE_BULK_CHILD: Comm=user_bulk_renam PID=6100
+[  687.456840] PROBE_BULK_CHILD: Name='child_67.txt' Hash=0xb6e41b62 Parent=ffff8ce03ca5a840
+[  687.456845] PROBE_BULK_CHILD: Comm=user_bulk_renam PID=6100
+[  687.456847] PROBE_BULK_CHILD: Name='child_68.txt' Hash=0xa2980ec5 Parent=ffff8ce03ca5a840
+[  687.456852] PROBE_BULK_CHILD: Comm=user_bulk_renam PID=6100
+[  687.456854] PROBE_BULK_CHILD: Name='child_69.txt' Hash=0xb8747a2c Parent=ffff8ce03ca5a840
+[  687.456859] PROBE_BULK_CHILD: Comm=user_bulk_renam PID=6100
+[  687.456861] PROBE_BULK_CHILD: Name='child_70.txt' Hash=0xf1e2b236 Parent=ffff8ce03ca5a840
+[  687.456866] PROBE_BULK_CHILD: Comm=user_bulk_renam PID=6100
+[  687.456868] PROBE_BULK_CHILD: Name='child_71.txt' Hash=0x1966c8ad Parent=ffff8ce03ca5a840
+[  687.456873] PROBE_BULK_CHILD: Comm=user_bulk_renam PID=6100
+[  687.456875] PROBE_BULK_CHILD: Name='child_72.txt' Hash=0x32819dc8 Parent=ffff8ce03ca5a840
+[  687.456880] PROBE_BULK_CHILD: Comm=user_bulk_renam PID=6100
+[  687.456882] PROBE_BULK_CHILD: Name='child_73.txt' Hash=0xad2c2141 Parent=ffff8ce03ca5a840
+[  687.456887] PROBE_BULK_CHILD: Comm=user_bulk_renam PID=6100
+[  687.456889] PROBE_BULK_CHILD: Name='child_74.txt' Hash=0xb8ba00f6 Parent=ffff8ce03ca5a840
+[  687.456894] PROBE_BULK_CHILD: Comm=user_bulk_renam PID=6100
+[  687.456896] PROBE_BULK_CHILD: Name='child_75.txt' Hash=0x4d2ae131 Parent=ffff8ce03ca5a840
+[  687.456901] PROBE_BULK_CHILD: Comm=user_bulk_renam PID=6100
+[  687.456903] PROBE_BULK_CHILD: Name='child_76.txt' Hash=0x48f50e61 Parent=ffff8ce03ca5a840
+[  687.456908] PROBE_BULK_CHILD: Comm=user_bulk_renam PID=6100
+[  687.456910] PROBE_BULK_CHILD: Name='child_77.txt' Hash=0x2c9ea119 Parent=ffff8ce03ca5a840
+[  687.456917] PROBE_BULK_CHILD: Comm=user_bulk_renam PID=6100
+[  687.456919] PROBE_BULK_CHILD: Name='child_78.txt' Hash=0x809ff577 Parent=ffff8ce03ca5a840
+[  687.456924] PROBE_BULK_CHILD: Comm=user_bulk_renam PID=6100
+[  687.456926] PROBE_BULK_CHILD: Name='child_79.txt' Hash=0x891c60de Parent=ffff8ce03ca5a840
+[  687.456931] PROBE_BULK_CHILD: Comm=user_bulk_renam PID=6100
+[  687.456933] PROBE_BULK_CHILD: Name='child_80.txt' Hash=0xf23885a4 Parent=ffff8ce03ca5a840
+[  687.456938] PROBE_BULK_CHILD: Comm=user_bulk_renam PID=6100
+[  687.456940] PROBE_BULK_CHILD: Name='child_81.txt' Hash=0xd04c9c1a Parent=ffff8ce03ca5a840
+[  687.456945] PROBE_BULK_CHILD: Comm=user_bulk_renam PID=6100
+[  687.456947] PROBE_BULK_CHILD: Name='child_82.txt' Hash=0xb4277135 Parent=ffff8ce03ca5a840
+[  687.456952] PROBE_BULK_CHILD: Comm=user_bulk_renam PID=6100
+[  687.456954] PROBE_BULK_CHILD: Name='child_83.txt' Hash=0x0eff55a9 Parent=ffff8ce03ca5a840
+[  687.456959] PROBE_BULK_CHILD: Comm=user_bulk_renam PID=6100
+[  687.456961] PROBE_BULK_CHILD: Name='child_84.txt' Hash=0x7f9fd463 Parent=ffff8ce03ca5a840
+[  687.456967] PROBE_BULK_CHILD: Comm=user_bulk_renam PID=6100
+[  687.456968] PROBE_BULK_CHILD: Name='child_85.txt' Hash=0x5410b49e Parent=ffff8ce03ca5a840
+[  687.456974] PROBE_BULK_CHILD: Comm=user_bulk_renam PID=6100
+[  687.456976] PROBE_BULK_CHILD: Name='child_86.txt' Hash=0x466ae1cf Parent=ffff8ce03ca5a840
+[  687.456981] PROBE_BULK_CHILD: Comm=user_bulk_renam PID=6100
+[  687.456983] PROBE_BULK_CHILD: Name='child_87.txt' Hash=0xf7747487 Parent=ffff8ce03ca5a840
+[  687.456988] PROBE_BULK_CHILD: Comm=user_bulk_renam PID=6100
+[  687.456989] PROBE_BULK_CHILD: Name='child_88.txt' Hash=0xa7b329e0 Parent=ffff8ce03ca5a840
+[  687.456995] PROBE_BULK_CHILD: Comm=user_bulk_renam PID=6100
+[  687.456996] PROBE_BULK_CHILD: Name='child_89.txt' Hash=0x341f9547 Parent=ffff8ce03ca5a840
+[  687.457002] PROBE_BULK_CHILD: Comm=user_bulk_renam PID=6100
+[  687.457004] PROBE_BULK_CHILD: Name='child_90.txt' Hash=0xa1daccab Parent=ffff8ce03ca5a840
+[  687.457009] PROBE_BULK_CHILD: Comm=user_bulk_renam PID=6100
+[  687.457011] PROBE_BULK_CHILD: Name='child_91.txt' Hash=0x2f579f31 Parent=ffff8ce03ca5a840
+[  687.457016] PROBE_BULK_CHILD: Comm=user_bulk_renam PID=6100
+[  687.457018] PROBE_BULK_CHILD: Name='child_92.txt' Hash=0xf4df73a7 Parent=ffff8ce03ca5a840
+[  687.457023] PROBE_BULK_CHILD: Comm=user_bulk_renam PID=6100
+[  687.457025] PROBE_BULK_CHILD: Name='child_93.txt' Hash=0x9432b330 Parent=ffff8ce03ca5a840
+[  687.457030] PROBE_BULK_CHILD: Comm=user_bulk_renam PID=6100
+[  687.457032] PROBE_BULK_CHILD: Name='child_94.txt' Hash=0xb7065eb5 Parent=ffff8ce03ca5a840
+[  687.457037] PROBE_BULK_CHILD: Comm=user_bulk_renam PID=6100
+[  687.457039] PROBE_BULK_CHILD: Name='child_95.txt' Hash=0xeadffb00 Parent=ffff8ce03ca5a840
+[  687.457044] PROBE_BULK_CHILD: Comm=user_bulk_renam PID=6100
+[  687.457046] PROBE_BULK_CHILD: Name='child_96.txt' Hash=0x7348c076 Parent=ffff8ce03ca5a840
+[  687.457051] PROBE_BULK_CHILD: Comm=user_bulk_renam PID=6100
+[  687.457054] PROBE_BULK_CHILD: Name='child_97.txt' Hash=0xe69efa3e Parent=ffff8ce03ca5a840
+[  687.457060] PROBE_BULK_CHILD: Comm=user_bulk_renam PID=6100
+[  687.457062] PROBE_BULK_CHILD: Name='child_98.txt' Hash=0xd18f4377 Parent=ffff8ce03ca5a840
+[  687.457068] PROBE_BULK_CHILD: Comm=user_bulk_renam PID=6100
+[  687.457070] PROBE_BULK_CHILD: Name='child_99.txt' Hash=0x5eb2756e Parent=ffff8ce03ca5a840
+[  687.457106] PROBE_BULK_CHILD: Comm=user_bulk_renam PID=6100
+[  687.457108] PROBE_BULK_CHILD: Name='child_50.txt' Hash=0x7222e4d2 Parent=ffff8ce03ca5a840
+[  687.457133] PROBE_BULK_CHILD: Comm=user_bulk_renam PID=6100
+[  687.457135] PROBE_BULK_CHILD: Name='child_50.txt' Hash=0x10bb6387 Parent=ffff8ce03ca59840
+
+=== Unloading driver ===
+rmmod exit code: 0

@@ -1,0 +1,185 @@
+════════════════════════════════════════════════════════════
+CASE: case8 | PROGRAM: user_create_simple
+DESCRIPTION: Simple file creation with O_CREAT | O_EXCL
+TIMESTAMP: Fri Feb 13 05:02:51 PM IST 2026
+
+  ▶️  Running: ./user_create_simple
+Successfully created creation_proof_7298.txt
+  Exit code: 0
+
+════════════════════════════════════════════════════════════
+CASE: case8 | PROGRAM: user_create_deep
+DESCRIPTION: Deep path creation test
+TIMESTAMP: Fri Feb 13 05:02:51 PM IST 2026
+
+  ▶️  Running: ./user_create_deep
+Successfully created deep file in subdir
+  Exit code: 0
+
+════════════════════════════════════════════════════════════
+CASE: case8 | PROGRAM: user_create_long
+DESCRIPTION: Long filename creation test
+TIMESTAMP: Fri Feb 13 05:02:51 PM IST 2026
+
+  ▶️  Running: ./user_create_long
+Successfully created long named file
+  Exit code: 0
+
+════════════════════════════════════════════════════════════
+CASE: case8 | PROGRAM: user_open_existing
+DESCRIPTION: Opening an existing file
+TIMESTAMP: Fri Feb 13 05:02:51 PM IST 2026
+
+  ▶️  Running: ./user_open_existing
+open(O_RDONLY): No such file or directory
+  Exit code: 1
+
+════════════════════════════════════════════════════════════
+CASE: case8 | PROGRAM: user_hash_collision
+DESCRIPTION: Hash collision detection test
+TIMESTAMP: Fri Feb 13 05:02:51 PM IST 2026
+
+  ▶️  Running: ./user_hash_collision
+Created collision_alpha.txt
+Created collision_beta.txt
+Created collision_gamma.txt
+  Exit code: 0
+
+════════════════════════════════════════════════════════════
+CASE: case8 | PROGRAM: user_rename
+DESCRIPTION: File rename operation test
+TIMESTAMP: Fri Feb 13 05:02:51 PM IST 2026
+
+  ▶️  Running: ./user_rename
+Renaming rename_proof_old.txt to rename_proof_new.txt...
+Rename successful.
+  Exit code: 0
+
+════════════════════════════════════════════════════════════
+CASE: case8 | PROGRAM: derive_hash
+DESCRIPTION: Derive and display hash computation
+TIMESTAMP: Fri Feb 13 05:02:52 PM IST 2026
+
+  ▶️  Running: ./derive_hash
+Word: 0x6e6f697461657263 -> x:0x8828281349a9cac9 y:0x066003c2fe3c90d0
+Word: 0x325f666f6f72705f -> x:0x30ff102c949095ed y:0x0f8f939a3776b3fc
+Word: 0x7478742e37373937 -> x:0xc14921d30f9ec36e y:0x430b146a168ba76a
+Fold: 0x1c1080d1
+  Exit code: 0
+
+════════════════════════════════════════════════════════════
+CASE: case10 | PROGRAM: user_dir_rename
+DESCRIPTION: Directory rename operations
+TIMESTAMP: Fri Feb 13 05:02:52 PM IST 2026
+
+  ▶️  Running: ./user_dir_rename
+Renaming directory dir_old to dir_new...
+Directory rename successful.
+  Exit code: 0
+
+════════════════════════════════════════════════════════════
+CASE: case11 | PROGRAM: user_bulk_rename
+DESCRIPTION: Bulk rename stress test
+TIMESTAMP: Fri Feb 13 05:02:52 PM IST 2026
+
+  ▶️  Running: ./user_bulk_rename
+--- Initial Access ---
+Renaming directory bulk_old to bulk_new...
+--- Final Access ---
+Done.
+  Exit code: 0
+
+════════════════════════════════════════════════════════════
+CASE: case12 | PROGRAM: user_puzzle
+DESCRIPTION: Harder puzzle challenge
+TIMESTAMP: Fri Feb 13 05:02:52 PM IST 2026
+
+  ▶️  Running: ./user_puzzle
+Initial access (dir_A)...
+Moving across parents: dir_A -> dir_B...
+Final access (dir_B)...
+  Exit code: 0
+
+════════════════════════════════════════════════════════════
+CASE: case12 | PROGRAM: puzzle_verify
+DESCRIPTION: Puzzle verification
+TIMESTAMP: Fri Feb 13 05:02:52 PM IST 2026
+
+  ⚠️  Program not found, attempting to compile...
+  ▶️  Running: ./puzzle_verify
+Target A: 0xd3f3bc9f
+Target B: 0xdf3bc4e9
+  Exit code: 0
+
+════════════════════════════════════════════════════════════
+CASE: case13 | PROGRAM: user_salt_avalanche
+DESCRIPTION: Salt avalanche hash demonstration
+TIMESTAMP: Fri Feb 13 05:02:52 PM IST 2026
+
+  ▶️  Running: ./user_salt_avalanche
+  Exit code: 0
+
+════════════════════════════════════════════════════════════
+CASE: case14 | PROGRAM: user_symmetry_break
+DESCRIPTION: Symmetry breaking test
+TIMESTAMP: Fri Feb 13 05:02:52 PM IST 2026
+
+  ▶️  Running: ./user_symmetry_break
+  Exit code: 0
+
+════════════════════════════════════════════════════════════
+CASE: case15 | PROGRAM: user_deep_open
+DESCRIPTION: Deep trace: open existing file
+TIMESTAMP: Fri Feb 13 05:02:52 PM IST 2026
+
+  ▶️  Running: ./user_deep_open
+  Exit code: 0
+
+════════════════════════════════════════════════════════════
+CASE: case15 | PROGRAM: user_deep_create
+DESCRIPTION: Deep trace: create new file
+TIMESTAMP: Fri Feb 13 05:02:52 PM IST 2026
+
+  ▶️  Running: ./user_deep_create
+  Exit code: 0
+
+════════════════════════════════════════════════════════════
+CASE: case2 | PROGRAM: case2_deep_miss
+DESCRIPTION: Deep miss - cache miss scenario
+TIMESTAMP: Fri Feb 13 05:02:52 PM IST 2026
+
+  ⚠️  Program not found, attempting to compile...
+  ▶️  Running: ./case2_deep_miss
+Case 2: Opening deep path with missing components '/tmp/alpha/beta/gamma/nonexistent.txt'
+Success: Received expected ENOENT
+  Exit code: 0
+
+════════════════════════════════════════════════════════════
+CASE: case3 | PROGRAM: case3_deep_hit
+DESCRIPTION: Deep hit - cache hit scenario
+TIMESTAMP: Fri Feb 13 05:02:52 PM IST 2026
+
+  ⚠️  Program not found, attempting to compile...
+  ▶️  Running: ./case3_deep_hit
+open: No such file or directory
+open: No such file or directory
+Case 3: Opening deep path with cached components '/tmp/alpha/beta/gamma/hit.txt'
+Attempt 1...
+Attempt 2...
+  Exit code: 0
+
+════════════════════════════════════════════════════════════
+CASE: case4 | PROGRAM: case4_create_flow
+DESCRIPTION: File creation flow
+TIMESTAMP: Fri Feb 13 05:02:52 PM IST 2026
+
+  ⚠️  Program not found, attempting to compile...
+  ▶️  Running: ./case4_create_flow
+Case 4: O_CREAT metamorphosis flow '/tmp/new_creation_file.txt'
+Created: fd=3. Sleeping 5s...
+Re-opened: fd=3
+  Exit code: 0
+
+════════════════════════════════════════════════════════════
+CASE: case5 | PROGRAM: case5_mount_jump
+DESCRIPTION: Mount point traversal

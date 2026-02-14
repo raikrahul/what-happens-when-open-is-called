@@ -1,0 +1,4 @@
+--- OUTPUT ---
+Case 2: Opening deep path with missing components '/tmp/alpha/beta/gamma/nonexistent.txt'
+Success: Received expected ENOENT
+--- END OUTPUT (exit code: 0) ---

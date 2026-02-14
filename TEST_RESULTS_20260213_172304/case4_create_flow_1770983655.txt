@@ -1,0 +1,16 @@
+============================================
+Test: case4_create_flow
+Command: gcc -o case4_create_flow_test case4_create_flow.c
+Timestamp: 2026-02-13T17:24:15+05:30
+============================================
+
+=== COMPILATION ===
+Compilation: SUCCESS
+
+=== EXECUTION ===
+Case 4: O_CREAT metamorphosis flow '/tmp/new_creation_file.txt'
+Created: fd=3. Sleeping 5s...
+Re-opened: fd=3
+
+=== EXIT CODE ===
+Exit code: 0

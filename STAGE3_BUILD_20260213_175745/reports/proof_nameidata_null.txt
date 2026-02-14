@@ -1,0 +1,43 @@
+[ 8729.254825] [DO_FILP_OPEN] ENTRY pid=32606 comm=demo_short current->nameidata=0000000000000000 (NULL = first-level open, non-NULL = nested lookup)
+[ 8729.254827] [PATH_INIT] ENTRY pid=32606 comm=demo_short dfd=-100 (AT_FDCWD) pathname="/usr/local/cuda/lib64/glibc-hwcaps/x86-64-v3/libc.so.6"
+[ 8729.254830] [PATH_INIT] BRANCH: AT_FDCWD → path_init will use current->fs->pwd = "case1"
+--
+[ 8729.254879] [DO_FILP_OPEN] ENTRY pid=32606 comm=demo_short current->nameidata=0000000000000000 (NULL = first-level open, non-NULL = nested lookup)
+[ 8729.254881] [PATH_INIT] ENTRY pid=32606 comm=demo_short dfd=-100 (AT_FDCWD) pathname="/usr/local/cuda/lib64/glibc-hwcaps/x86-64-v2/libc.so.6"
+[ 8729.254884] [PATH_INIT] BRANCH: AT_FDCWD → path_init will use current->fs->pwd = "case1"
+--
+[ 8729.254927] [DO_FILP_OPEN] ENTRY pid=32606 comm=demo_short current->nameidata=0000000000000000 (NULL = first-level open, non-NULL = nested lookup)
+[ 8729.254930] [PATH_INIT] ENTRY pid=32606 comm=demo_short dfd=-100 (AT_FDCWD) pathname="/usr/local/cuda/lib64/libc.so.6"
+[ 8729.254932] [PATH_INIT] BRANCH: AT_FDCWD → path_init will use current->fs->pwd = "case1"
+--
+[ 8729.254984] [DO_FILP_OPEN] ENTRY pid=32606 comm=demo_short current->nameidata=0000000000000000 (NULL = first-level open, non-NULL = nested lookup)
+[ 8729.254986] [PATH_INIT] ENTRY pid=32606 comm=demo_short dfd=-100 (AT_FDCWD) pathname="glibc-hwcaps/x86-64-v3/libc.so.6"
+[ 8729.254988] [PATH_INIT] BRANCH: AT_FDCWD → path_init will use current->fs->pwd = "case1"
+--
+[ 8729.255023] [DO_FILP_OPEN] ENTRY pid=32606 comm=demo_short current->nameidata=0000000000000000 (NULL = first-level open, non-NULL = nested lookup)
+[ 8729.255025] [PATH_INIT] ENTRY pid=32606 comm=demo_short dfd=-100 (AT_FDCWD) pathname="glibc-hwcaps/x86-64-v2/libc.so.6"
+[ 8729.255027] [PATH_INIT] BRANCH: AT_FDCWD → path_init will use current->fs->pwd = "case1"
+--
+[ 8729.255059] [DO_FILP_OPEN] ENTRY pid=32606 comm=demo_short current->nameidata=0000000000000000 (NULL = first-level open, non-NULL = nested lookup)
+[ 8729.255061] [PATH_INIT] ENTRY pid=32606 comm=demo_short dfd=-100 (AT_FDCWD) pathname="libc.so.6"
+[ 8729.255063] [PATH_INIT] BRANCH: AT_FDCWD → path_init will use current->fs->pwd = "case1"
+--
+[ 8729.255099] [DO_FILP_OPEN] ENTRY pid=32606 comm=demo_short current->nameidata=0000000000000000 (NULL = first-level open, non-NULL = nested lookup)
+[ 8729.255101] [PATH_INIT] ENTRY pid=32606 comm=demo_short dfd=-100 (AT_FDCWD) pathname="/etc/ld.so.cache"
+[ 8729.255103] [PATH_INIT] BRANCH: AT_FDCWD → path_init will use current->fs->pwd = "case1"
+--
+[ 8729.255155] [DO_FILP_OPEN] ENTRY pid=32606 comm=demo_short current->nameidata=0000000000000000 (NULL = first-level open, non-NULL = nested lookup)
+[ 8729.255157] [PATH_INIT] ENTRY pid=32606 comm=demo_short dfd=-100 (AT_FDCWD) pathname="/lib/x86_64-linux-gnu/libc.so.6"
+[ 8729.255159] [PATH_INIT] BRANCH: AT_FDCWD → path_init will use current->fs->pwd = "case1"
+--
+[ 8729.255435] [DO_FILP_OPEN] ENTRY pid=32606 comm=demo_short current->nameidata=0000000000000000 (NULL = first-level open, non-NULL = nested lookup)
+[ 8729.255438] [PATH_INIT] ENTRY pid=32606 comm=demo_short dfd=-100 (AT_FDCWD) pathname="test_fdcwd.txt"
+[ 8729.255440] [PATH_INIT] BRANCH: AT_FDCWD → path_init will use current->fs->pwd = "case1"
+--
+[ 8729.255573] [DO_FILP_OPEN] ENTRY pid=32606 comm=demo_short current->nameidata=0000000000000000 (NULL = first-level open, non-NULL = nested lookup)
+[ 8729.255575] [PATH_INIT] ENTRY pid=32606 comm=demo_short dfd=-100 (AT_FDCWD) pathname="test_fdcwd_2.txt"
+[ 8729.255578] [PATH_INIT] BRANCH: AT_FDCWD → path_init will use current->fs->pwd = "case1"
+--
+[ 8729.255641] [DO_FILP_OPEN] ENTRY pid=32606 comm=demo_short current->nameidata=0000000000000000 (NULL = first-level open, non-NULL = nested lookup)
+[ 8729.255644] [PATH_INIT] ENTRY pid=32606 comm=demo_short dfd=-100 (AT_FDCWD) pathname="test_fdcwd_3.txt"
+[ 8729.255647] [PATH_INIT] BRANCH: AT_FDCWD → path_init will use current->fs->pwd = "case1"

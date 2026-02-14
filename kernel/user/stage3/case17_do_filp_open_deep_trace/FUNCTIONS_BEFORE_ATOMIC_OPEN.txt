@@ -1,0 +1,68 @@
+Functions Involved Before `atomic_open` (Missing File Case)
+==========================================================
+Kernel tree: /usr/src/linux-hwe-6.17-6.17.0
+
+Ordered call chain up to (but not including) atomic_open:
+
+1. do_sys_openat2
+   - file: fs/open.c
+   - line: 1420
+   - key call: do_filp_open(...) at line 1437
+
+2. do_filp_open
+   - file: fs/namei.c
+   - line: 4073
+   - key call: path_openat(...) at line 4081
+
+3. path_openat
+   - file: fs/namei.c
+   - line: 4034
+   - key calls:
+     - path_init(...) at line 4049
+     - link_path_walk(...) at line 4050
+     - open_last_lookups(...) at line 4051
+
+4. open_last_lookups
+   - file: fs/namei.c
+   - line: 3768
+   - key calls:
+     - lookup_fast_for_open(...) at line 3786
+     - lookup_open(...) at line 3815
+
+5. lookup_open
+   - file: fs/namei.c
+   - line: 3618
+   - key calls/checks before atomic_open:
+     - d_lookup(dir, &nd->last) at line 3635
+     - d_alloc_parallel(dir, &nd->last, &wq) at line 3638 (if d_lookup miss)
+     - d_in_lookup(dentry) check at line 3642
+     - d_revalidate(...) at line 3645
+     - positive check dentry->d_inode at line 3654
+
+6. d_lookup
+   - file: fs/dcache.c
+   - line: 2332
+   - key call: __d_lookup(parent, name) at line 2339
+
+7. __d_lookup
+   - file: fs/dcache.c
+   - line: 2362
+   - hash/list match operations:
+     - d_hash(hash) at line 2365
+     - hlist_bl_for_each_entry_rcu(...) at line 2392
+     - hash compare at line 2394
+     - parent compare at line 2398
+     - name compare d_same_name(...) at line 2403
+
+8. d_alloc_parallel (miss path)
+   - file: fs/dcache.c
+   - line: 2542
+   - key work before returning dentry:
+     - __d_alloc(parent->d_sb, name) at line 2549
+     - __d_lookup_rcu(parent, name, &d_seq) at line 2568
+     - in-lookup hash list scan hlist_bl_for_each_entry(...) at line 2606
+     - name compare d_same_name(...) at line 2611
+
+Point where atomic_open starts (next step):
+- lookup_open checks dir_inode->i_op->atomic_open at fs/namei.c:3686
+- then calls atomic_open(...) at fs/namei.c:3687

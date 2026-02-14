@@ -1,0 +1,16 @@
+
+TRACE COMPARISON ANALYSIS
+=========================
+Generated: Fri Feb 13 09:01:55 PM IST 2026
+
+FILE CREATION PATH (Driver A):
+-------------------------------
+Total trace entries: 0
+
+Functions called:
+
+FILE OPEN PATH (Driver B):
+---------------------------
+Total trace entries: 0
+
+Functions called:

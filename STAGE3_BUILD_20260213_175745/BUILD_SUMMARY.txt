@@ -1,0 +1,123 @@
+===============================================
+STAGE 3 BUILD SUMMARY
+Completed: $(date)
+===============================================
+
+DIRECTORY STRUCTURE:
+-------------------
+STAGE3_BUILD_20260213_175745/
+├── *.ko                    # Kernel modules (drivers)
+├── *.out                   # User space programs
+├── reports/                # All collected reports
+│   ├── TEST_RESULTS_*/     # Previous test results
+│   ├── proof_*.txt/md      # Proof documents
+│   └── ...
+├── compilation_log.txt     # Full build log
+├── BUILD_SUMMARY.txt       # This file
+└── KERNEL_CRASH_CAPTURE_GUIDE.md  # How to capture crashes
+
+KERNEL MODULES COMPILED:
+------------------------
+-rw-rw-r-- 1 r r 334K Feb 13 17:58 /home/r/Desktop/what-happens-when-open-is-called/STAGE3_BUILD_20260213_175745/driver_bulk_rename_probe.ko
+-rw-rw-r-- 1 r r 333K Feb 13 17:59 /home/r/Desktop/what-happens-when-open-is-called/STAGE3_BUILD_20260213_175745/driver_collision_probe.ko
+-rw-rw-r-- 1 r r 335K Feb 13 17:59 /home/r/Desktop/what-happens-when-open-is-called/STAGE3_BUILD_20260213_175745/driver_creation_probe.ko
+-rw-rw-r-- 1 r r 350K Feb 13 17:58 /home/r/Desktop/what-happens-when-open-is-called/STAGE3_BUILD_20260213_175745/driver_deep_trace.ko
+-rw-rw-r-- 1 r r 336K Feb 13 17:57 /home/r/Desktop/what-happens-when-open-is-called/STAGE3_BUILD_20260213_175745/driver_dir_rename_probe.ko
+-rw-rw-r-- 1 r r 334K Feb 13 17:59 /home/r/Desktop/what-happens-when-open-is-called/STAGE3_BUILD_20260213_175745/driver_lookup_probe.ko
+-rw-rw-r-- 1 r r 336K Feb 13 17:58 /home/r/Desktop/what-happens-when-open-is-called/STAGE3_BUILD_20260213_175745/driver_puzzle_probe.ko
+-rw-rw-r-- 1 r r 334K Feb 13 17:59 /home/r/Desktop/what-happens-when-open-is-called/STAGE3_BUILD_20260213_175745/driver_rename_probe.ko
+-rw-rw-r-- 1 r r 191K Feb 13 17:58 /home/r/Desktop/what-happens-when-open-is-called/STAGE3_BUILD_20260213_175745/driver_salt_avalanche.ko
+-rw-rw-r-- 1 r r 334K Feb 13 17:59 /home/r/Desktop/what-happens-when-open-is-called/STAGE3_BUILD_20260213_175745/driver_salt_probe.ko
+-rw-rw-r-- 1 r r 209K Feb 13 17:58 /home/r/Desktop/what-happens-when-open-is-called/STAGE3_BUILD_20260213_175745/driver_smart_trace.ko
+-rw-rw-r-- 1 r r 190K Feb 13 17:58 /home/r/Desktop/what-happens-when-open-is-called/STAGE3_BUILD_20260213_175745/driver_symmetry_break.ko
+
+USER PROGRAMS COMPILED:
+-----------------------
+-rwxrwxr-x 1 r r 16K Feb 13 17:59 /home/r/Desktop/what-happens-when-open-is-called/STAGE3_BUILD_20260213_175745/case1_relative.out
+-rwxrwxr-x 1 r r 16K Feb 13 17:59 /home/r/Desktop/what-happens-when-open-is-called/STAGE3_BUILD_20260213_175745/case2_deep_miss.out
+-rwxrwxr-x 1 r r 16K Feb 13 17:59 /home/r/Desktop/what-happens-when-open-is-called/STAGE3_BUILD_20260213_175745/case3_deep_hit.out
+-rwxrwxr-x 1 r r 16K Feb 13 17:59 /home/r/Desktop/what-happens-when-open-is-called/STAGE3_BUILD_20260213_175745/case4_create_flow.out
+-rwxrwxr-x 1 r r 16K Feb 13 17:59 /home/r/Desktop/what-happens-when-open-is-called/STAGE3_BUILD_20260213_175745/case5_mount_jump.out
+-rwxrwxr-x 1 r r 16K Feb 13 18:00 /home/r/Desktop/what-happens-when-open-is-called/STAGE3_BUILD_20260213_175745/case6_symlink_loop.out
+-rwxrwxr-x 1 r r 16K Feb 13 18:00 /home/r/Desktop/what-happens-when-open-is-called/STAGE3_BUILD_20260213_175745/case7_symlink_fast.out
+-rwxrwxr-x 1 r r 16K Feb 13 18:00 /home/r/Desktop/what-happens-when-open-is-called/STAGE3_BUILD_20260213_175745/dcache_loop_analysis.out
+-rwxrwxr-x 1 r r 16K Feb 13 17:59 /home/r/Desktop/what-happens-when-open-is-called/STAGE3_BUILD_20260213_175745/demo_at_fdcwd.out
+-rwxrwxr-x 1 r r 16K Feb 13 18:00 /home/r/Desktop/what-happens-when-open-is-called/STAGE3_BUILD_20260213_175745/demo_dup_names.out
+-rwxrwxr-x 1 r r 17K Feb 13 17:59 /home/r/Desktop/what-happens-when-open-is-called/STAGE3_BUILD_20260213_175745/demo_o_path_dir.out
+-rwxrwxr-x 1 r r 16K Feb 13 17:59 /home/r/Desktop/what-happens-when-open-is-called/STAGE3_BUILD_20260213_175745/demo_o_path.out
+-rwxrwxr-x 1 r r 16K Feb 13 17:59 /home/r/Desktop/what-happens-when-open-is-called/STAGE3_BUILD_20260213_175745/demo_o_tmpfile.out
+-rwxrwxr-x 1 r r 17K Feb 13 17:59 /home/r/Desktop/what-happens-when-open-is-called/STAGE3_BUILD_20260213_175745/demo_thread_safety.out
+-rwxrwxr-x 1 r r 17K Feb 13 17:59 /home/r/Desktop/what-happens-when-open-is-called/STAGE3_BUILD_20260213_175745/demo_toctou.out
+-rwxrwxr-x 1 r r 16K Feb 13 17:59 /home/r/Desktop/what-happens-when-open-is-called/STAGE3_BUILD_20260213_175745/derive_hash.out
+-rwxrwxr-x 1 r r 16K Feb 13 18:00 /home/r/Desktop/what-happens-when-open-is-called/STAGE3_BUILD_20260213_175745/manual_dentry_check.out
+-rwxrwxr-x 1 r r 16K Feb 13 18:00 /home/r/Desktop/what-happens-when-open-is-called/STAGE3_BUILD_20260213_175745/test_vfs_trace.out
+-rwxrwxr-x 1 r r 16K Feb 13 18:00 /home/r/Desktop/what-happens-when-open-is-called/STAGE3_BUILD_20260213_175745/user_bulk_rename.out
+-rwxrwxr-x 1 r r 16K Feb 13 17:59 /home/r/Desktop/what-happens-when-open-is-called/STAGE3_BUILD_20260213_175745/user_create_deep.out
+-rwxrwxr-x 1 r r 16K Feb 13 17:59 /home/r/Desktop/what-happens-when-open-is-called/STAGE3_BUILD_20260213_175745/user_create_long.out
+-rwxrwxr-x 1 r r 16K Feb 13 17:59 /home/r/Desktop/what-happens-when-open-is-called/STAGE3_BUILD_20260213_175745/user_create_simple.out
+-rwxrwxr-x 1 r r 16K Feb 13 18:00 /home/r/Desktop/what-happens-when-open-is-called/STAGE3_BUILD_20260213_175745/user_deep_create.out
+-rwxrwxr-x 1 r r 16K Feb 13 18:00 /home/r/Desktop/what-happens-when-open-is-called/STAGE3_BUILD_20260213_175745/user_deep_open.out
+-rwxrwxr-x 1 r r 16K Feb 13 18:00 /home/r/Desktop/what-happens-when-open-is-called/STAGE3_BUILD_20260213_175745/user_dir_rename.out
+-rwxrwxr-x 1 r r 16K Feb 13 17:59 /home/r/Desktop/what-happens-when-open-is-called/STAGE3_BUILD_20260213_175745/user_hash_collision.out
+-rwxrwxr-x 1 r r 16K Feb 13 17:59 /home/r/Desktop/what-happens-when-open-is-called/STAGE3_BUILD_20260213_175745/user_open_existing.out
+-rwxrwxr-x 1 r r 16K Feb 13 18:00 /home/r/Desktop/what-happens-when-open-is-called/STAGE3_BUILD_20260213_175745/user_puzzle.out
+-rwxrwxr-x 1 r r 16K Feb 13 17:59 /home/r/Desktop/what-happens-when-open-is-called/STAGE3_BUILD_20260213_175745/user_rename.out
+-rwxrwxr-x 1 r r 16K Feb 13 18:00 /home/r/Desktop/what-happens-when-open-is-called/STAGE3_BUILD_20260213_175745/user_salt_avalanche.out
+-rwxrwxr-x 1 r r 16K Feb 13 18:00 /home/r/Desktop/what-happens-when-open-is-called/STAGE3_BUILD_20260213_175745/user_symmetry_break.out
+-rwxrwxr-x 1 r r 16K Feb 13 18:00 /home/r/Desktop/what-happens-when-open-is-called/STAGE3_BUILD_20260213_175745/vfs_trigger.out
+
+REPORTS COLLECTED:
+------------------
+arg2_filename_report.md
+arg3_flags_report.md
+proof_addr2line.txt
+proof_case1_relative.txt
+proof_check_opath.txt
+proof_demo_at_fdcwd.txt
+proof_demo_o_path_dir.txt
+proof_demo_o_path.txt
+proof_demo_o_tmpfile.txt
+proof_demo_thread_safety.txt
+proof_demo_toctou.txt
+proof_dentry_lookup.txt
+proof_dup_names.txt
+proof_hash_consistency.md
+proof_lifecycle.md
+proof_lpw_loop.txt
+proof_lpw_loop_v2.txt
+proof_lpw_safe_demo_short.txt
+proof_lpw_trace.txt
+proof_nameidata_null.txt
+proof_non_circular.txt
+proof_normal_open.txt
+proof_o_creat.md
+proof_of_permission_flow.md
+proof_of_trace.md
+proof_o_path_dir.txt
+proof_o_path.txt
+proof_o_tmpfile.txt
+proof_path_init_fd_offset.txt
+proof_path_init_instruction_trace.txt
+proof_path_init_normal.txt
+proof_path_init_offsets.txt
+proof_path_init_opath.txt
+proof_path_lookupat.txt
+proof_puzzle_trace.txt
+proof_wrapper.md
+TEST_RESULTS_20260213_172304
+trace_report.md
+
+NEXT STEPS:
+-----------
+1. Read KERNEL_CRASH_CAPTURE_GUIDE.md to setup crash logging
+2. Test drivers one at a time
+3. Use netconsole or serial console to capture crashes
+4. Save crash logs to reports/ directory
+
+CRITICAL FIX APPLIED:
+---------------------
+Fixed copy_from_user() in kprobe handlers (case15 drivers):
+- copy_from_user() CANNOT be used in atomic context (kprobes)
+- Caused kernel panic when module loaded
+- Fixed to use kernel-space pointers directly
+

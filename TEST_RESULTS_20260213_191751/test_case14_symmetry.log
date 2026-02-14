@@ -1,0 +1,12 @@
+TEST 2: Case 14 - Symmetry Break
+=================================
+Driver: driver_symmetry_break.ko
+Test Program: user_symmetry_break
+Status: PASSED (no crash)
+
+Kernel Messages:
+- Module loaded successfully
+- No probe output (test may not have triggered full_name_hash with "break_" prefix)
+- Module unloaded successfully
+
+Result: Driver functional

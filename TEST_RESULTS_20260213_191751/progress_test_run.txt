@@ -1,0 +1,92 @@
+STAGE 3 COMPREHENSIVE DRIVER TEST RUN
+=====================================
+
+Test Run ID: TEST_RESULTS_20260213_191751
+Date: 2026-02-13
+Kernel: $(uname -r)
+Kdump Status: ACTIVE (crash dumps will be captured to /var/crash)
+
+COMPILATION STATUS
+==================
+
+Phase 1: Driver Compilation
+---------------------------
+
+✓ Case 8 (creation_proof):
+  - driver_creation_probe.ko
+  - driver_lookup_probe.ko
+  - driver_salt_probe.ko
+  - driver_collision_probe.ko
+  - driver_rename_probe.ko
+  Status: COMPILED SUCCESSFULLY
+
+✓ Case 10 (rename_investigation):
+  - driver_dir_rename_probe.ko
+  Status: COMPILED SUCCESSFULLY
+
+✓ Case 11 (bulk_rename):
+  - driver_bulk_rename_probe.ko
+  Status: COMPILED SUCCESSFULLY
+
+✓ Case 12 (harder_puzzle):
+  - driver_puzzle_probe.ko
+  Status: COMPILED SUCCESSFULLY
+
+✓ Case 13 (salt_avalanche):
+  - driver_salt_avalanche.ko
+  Status: COMPILED SUCCESSFULLY
+
+✓ Case 14 (symmetry_break):
+  - driver_symmetry_break.ko
+  Status: COMPILED SUCCESSFULLY
+
+✓ Case 15 (deep_trace):
+  - driver_deep_trace.ko
+  Status: COMPILED SUCCESSFULLY
+
+✓ Case 15 Solution (deep_trace_solution):
+  - driver_smart_trace.ko
+  Status: COMPILED SUCCESSFULLY
+
+Phase 2: Userspace Program Compilation
+--------------------------------------
+
+✓ Case 8:
+  - user_create_simple
+  - user_create_deep
+  - user_create_long
+  - user_hash_collision
+  - user_open_existing
+  - user_rename
+  - derive_hash
+  Status: COMPILED SUCCESSFULLY
+
+✓ Case 10:
+  - user_dir_rename
+  Status: COMPILED SUCCESSFULLY
+
+✓ Case 11:
+  - user_bulk_rename
+  Status: COMPILED SUCCESSFULLY
+
+✓ Case 12:
+  - user_puzzle
+  - puzzle_verify
+  Status: COMPILED WITH WARNINGS
+
+✓ Case 13:
+  - user_salt_avalanche
+  Status: COMPILED SUCCESSFULLY
+
+✓ Case 14:
+  - user_symmetry_break
+  Status: COMPILED SUCCESSFULLY
+
+✓ Case 15:
+  - user_deep_create
+  - user_deep_open
+  Status: COMPILED SUCCESSFULLY
+
+TEST EXECUTION RESULTS
+======================
+

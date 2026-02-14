@@ -1,0 +1,256 @@
+[2026-02-13 19:42:10.060] === COMPREHENSIVE BUILD SESSION START ===
+[2026-02-13 19:42:10.064] Working Directory: /home/r/Desktop/what-happens-when-open-is-called
+[2026-02-13 19:42:10.069] Kernel: 6.17.0-14-generic
+
+========================================
+
+[2026-02-13 19:42:10.097] STAGE 3 - CASE 8: Creation Proof
+[2026-02-13 19:42:10.100] Location: kernel/user/stage3/case8_creation_proof/
+[2026-02-13 19:42:10.102] Compiling: user_create_simple.c
+[2026-02-13 19:42:10.221] ✓ SUCCESS: user_create_simple.out
+[2026-02-13 19:42:10.228] Compiling: user_create_deep.c
+[2026-02-13 19:42:10.293] ✓ SUCCESS: user_create_deep.out
+[2026-02-13 19:42:10.302] Compiling: user_create_long.c
+[2026-02-13 19:42:10.356] ✓ SUCCESS: user_create_long.out
+[2026-02-13 19:42:10.364] Compiling: user_open_existing.c
+[2026-02-13 19:42:10.417] ✓ SUCCESS: user_open_existing.out
+[2026-02-13 19:42:10.426] Compiling: user_hash_collision.c
+[2026-02-13 19:42:10.504] ✓ SUCCESS: user_hash_collision.out
+[2026-02-13 19:42:10.511] Compiling: user_rename.c
+[2026-02-13 19:42:10.570] ✓ SUCCESS: user_rename.out
+[2026-02-13 19:42:10.576] Compiling: derive_hash.c
+derive_hash.c: In function ‘main’:
+derive_hash.c:36:27: warning: format ‘%llx’ expects argument of type ‘long long unsigned int’, but argument 2 has type ‘u64’ {aka ‘long unsigned int’} [-Wformat=]
+   36 |     printf("Word: 0x%016llx -> x:0x%016llx y:0x%016llx\n", a, x, y);
+      |                     ~~~~~~^                                ~
+      |                           |                                |
+      |                           long long unsigned int           u64 {aka long unsigned int}
+      |                     %016lx
+derive_hash.c:36:42: warning: format ‘%llx’ expects argument of type ‘long long unsigned int’, but argument 3 has type ‘u64’ {aka ‘long unsigned int’} [-Wformat=]
+   36 |     printf("Word: 0x%016llx -> x:0x%016llx y:0x%016llx\n", a, x, y);
+      |                                    ~~~~~~^                    ~
+      |                                          |                    |
+      |                                          |                    u64 {aka long unsigned int}
+      |                                          long long unsigned int
+      |                                    %016lx
+derive_hash.c:36:54: warning: format ‘%llx’ expects argument of type ‘long long unsigned int’, but argument 4 has type ‘u64’ {aka ‘long unsigned int’} [-Wformat=]
+   36 |     printf("Word: 0x%016llx -> x:0x%016llx y:0x%016llx\n", a, x, y);
+      |                                                ~~~~~~^           ~
+      |                                                      |           |
+      |                                                      |           u64 {aka long unsigned int}
+      |                                                      long long unsigned int
+      |                                                %016lx
+derive_hash.c:26:7: warning: unused variable ‘target_hash’ [-Wunused-variable]
+   26 |   u32 target_hash = 0x1c1080d1;
+      |       ^~~~~~~~~~~
+[2026-02-13 19:42:10.634] ✓ SUCCESS: derive_hash.out
+[2026-02-13 19:42:10.641] Compiling driver: driver_creation_probe.c
+make: Nothing to be done for 'driver_creation_probe.ko'.
+[2026-02-13 19:42:10.651] ✓ SUCCESS: driver_creation_probe.ko
+[2026-02-13 19:42:10.660] Compiling driver: driver_lookup_probe.c
+make: Nothing to be done for 'driver_lookup_probe.ko'.
+[2026-02-13 19:42:10.668] ✓ SUCCESS: driver_lookup_probe.ko
+[2026-02-13 19:42:10.678] Compiling driver: driver_salt_probe.c
+make: Nothing to be done for 'driver_salt_probe.ko'.
+[2026-02-13 19:42:10.686] ✓ SUCCESS: driver_salt_probe.ko
+[2026-02-13 19:42:10.693] Compiling driver: driver_collision_probe.c
+make: Nothing to be done for 'driver_collision_probe.ko'.
+[2026-02-13 19:42:10.702] ✓ SUCCESS: driver_collision_probe.ko
+[2026-02-13 19:42:10.709] Compiling driver: driver_rename_probe.c
+make: Nothing to be done for 'driver_rename_probe.ko'.
+[2026-02-13 19:42:10.717] ✓ SUCCESS: driver_rename_probe.ko
+
+========================================
+
+[2026-02-13 19:42:10.737] STAGE 3 - CASE 10: Rename Investigation
+[2026-02-13 19:42:10.739] Location: kernel/user/stage3/case10_rename_investigation/
+[2026-02-13 19:42:10.742] Compiling: user_dir_rename.c
+[2026-02-13 19:42:10.788] ✓ SUCCESS: user_dir_rename.out
+[2026-02-13 19:42:10.795] Compiling driver: driver_dir_rename_probe.c
+make: Nothing to be done for 'driver_dir_rename_probe.ko'.
+[2026-02-13 19:42:10.802] ✓ SUCCESS: driver_dir_rename_probe.ko
+
+========================================
+
+[2026-02-13 19:42:10.819] STAGE 3 - CASE 11: Bulk Rename
+[2026-02-13 19:42:10.822] Location: kernel/user/stage3/case11_bulk_rename/
+[2026-02-13 19:42:10.824] Compiling: user_bulk_rename.c
+[2026-02-13 19:42:10.882] ✓ SUCCESS: user_bulk_rename.out
+[2026-02-13 19:42:10.889] Compiling driver: driver_bulk_rename_probe.c
+make: Nothing to be done for 'driver_bulk_rename_probe.ko'.
+[2026-02-13 19:42:10.894] ✓ SUCCESS: driver_bulk_rename_probe.ko
+
+========================================
+
+[2026-02-13 19:42:10.909] STAGE 3 - CASE 12: Harder Puzzle
+[2026-02-13 19:42:10.912] Location: kernel/user/stage3/case12_harder_puzzle/
+[2026-02-13 19:42:10.914] Compiling: user_puzzle.c
+[2026-02-13 19:42:10.956] ✓ SUCCESS: user_puzzle.out
+[2026-02-13 19:42:10.962] Compiling: puzzle_verify.c
+puzzle_verify.c: In function ‘calculate’:
+puzzle_verify.c:26:7: warning: unused variable ‘len’ [-Wunused-variable]
+   26 |   int len = strlen(name);
+      |       ^~~
+[2026-02-13 19:42:11.005] ✓ SUCCESS: puzzle_verify.out
+[2026-02-13 19:42:11.012] Compiling driver: driver_puzzle_probe.c
+make: Nothing to be done for 'driver_puzzle_probe.ko'.
+[2026-02-13 19:42:11.016] ✓ SUCCESS: driver_puzzle_probe.ko
+
+========================================
+
+[2026-02-13 19:42:11.035] STAGE 3 - CASE 13: Salt Avalanche
+[2026-02-13 19:42:11.038] Location: kernel/user/stage3/case13_salt_avalanche/
+[2026-02-13 19:42:11.041] Compiling: user_salt_avalanche.c
+[2026-02-13 19:42:11.086] ✓ SUCCESS: user_salt_avalanche.out
+[2026-02-13 19:42:11.093] Compiling driver: driver_salt_avalanche.c
+make: Nothing to be done for 'driver_salt_avalanche.ko'.
+[2026-02-13 19:42:11.100] ✓ SUCCESS: driver_salt_avalanche.ko
+
+========================================
+
+[2026-02-13 19:42:11.113] STAGE 3 - CASE 14: Symmetry Break
+[2026-02-13 19:42:11.116] Location: kernel/user/stage3/case14_symmetry_break/
+[2026-02-13 19:42:11.118] Compiling: user_symmetry_break.c
+[2026-02-13 19:42:11.180] ✓ SUCCESS: user_symmetry_break.out
+[2026-02-13 19:42:11.189] Compiling driver: driver_symmetry_break.c
+make: Nothing to be done for 'driver_symmetry_break.ko'.
+[2026-02-13 19:42:11.195] ✓ SUCCESS: driver_symmetry_break.ko
+
+========================================
+
+[2026-02-13 19:42:11.210] STAGE 3 - CASE 15: Deep Trace
+[2026-02-13 19:42:11.212] Location: kernel/user/stage3/case15_deep_trace/
+[2026-02-13 19:42:11.215] Compiling: user_deep_create.c
+[2026-02-13 19:42:11.260] ✓ SUCCESS: user_deep_create.out
+[2026-02-13 19:42:11.266] Compiling: user_deep_open.c
+[2026-02-13 19:42:11.318] ✓ SUCCESS: user_deep_open.out
+[2026-02-13 19:42:11.327] Compiling driver: driver_deep_trace.c
+make: Nothing to be done for 'driver_deep_trace.ko'.
+[2026-02-13 19:42:11.335] ✓ SUCCESS: driver_deep_trace.ko
+
+========================================
+
+[2026-02-13 19:42:11.353] STAGE 3 - CASE 15 Solution: Smart Trace
+[2026-02-13 19:42:11.355] Location: kernel/user/stage3/case15_deep_trace_solution/
+[2026-02-13 19:42:11.357] Compiling driver: driver_smart_trace.c
+make: Nothing to be done for 'driver_smart_trace.ko'.
+[2026-02-13 19:42:11.362] ✓ SUCCESS: driver_smart_trace.ko
+
+========================================
+
+[2026-02-13 19:42:11.375] STAGE 3 - CASE 1: Basic Demos
+[2026-02-13 19:42:11.377] Location: kernel/user/stage3/case1/
+[2026-02-13 19:42:11.380] Compiling: case6_symlink_loop.c
+[2026-02-13 19:42:11.421] ✓ SUCCESS: case6_symlink_loop.out
+[2026-02-13 19:42:11.428] Compiling: case7_symlink_fast.c
+[2026-02-13 19:42:11.474] ✓ SUCCESS: case7_symlink_fast.out
+[2026-02-13 19:42:11.481] Compiling: demo_dup_names.c
+[2026-02-13 19:42:11.548] ✓ SUCCESS: demo_dup_names.out
+
+========================================
+
+[2026-02-13 19:42:11.569] STAGE 3 - CASE 1: Subdirectory Demos
+[2026-02-13 19:42:11.573] Compiling: demo_at_fdcwd/demo_at_fdcwd.c
+[2026-02-13 19:42:11.630] ✓ SUCCESS: demo_at_fdcwd.out
+[2026-02-13 19:42:11.639] Compiling: demo_o_path/demo_o_path.c
+[2026-02-13 19:42:11.706] ✓ SUCCESS: demo_o_path.out
+[2026-02-13 19:42:11.713] Compiling: demo_o_tmpfile/demo_o_tmpfile.c
+[2026-02-13 19:42:11.775] ✓ SUCCESS: demo_o_tmpfile.out
+
+========================================
+
+[2026-02-13 19:42:11.793] DRIVERS: Stage 3 Case 1
+[2026-02-13 19:42:11.796] Location: kernel/drivers/stage3/case1/
+[2026-02-13 19:42:11.799] Compiling driver: vfs_depth_probe.c
+make: Nothing to be done for 'vfs_depth_probe.ko'.
+[2026-02-13 19:42:11.808] ✓ SUCCESS: vfs_depth_probe.ko
+[2026-02-13 19:42:11.815] Compiling driver: trace_path_init/trace_path_init.c
+make: *** No rule to make target 'trace_path_init.ko'.  Stop.
+[2026-02-13 19:42:11.820] ✓ SUCCESS: trace_path_init.ko
+[2026-02-13 19:42:11.828] Compiling driver: trace_path_init/trace_d_lookup.c
+make: *** No rule to make target 'trace_d_lookup.ko'.  Stop.
+[2026-02-13 19:42:11.835] ✓ SUCCESS: trace_d_lookup.ko
+[2026-02-13 19:42:11.842] Compiling driver: trace_path_init/trace_lpw.c
+make: *** No rule to make target 'trace_lpw.ko'.  Stop.
+[2026-02-13 19:42:11.848] ✓ SUCCESS: trace_lpw.ko
+[2026-02-13 19:42:11.855] Compiling driver: trace_path_init/trace_lpw_v2.c
+make: *** No rule to make target 'trace_lpw_v2.ko'.  Stop.
+[2026-02-13 19:42:11.864] ✓ SUCCESS: trace_lpw_v2.ko
+[2026-02-13 19:42:11.872] Compiling driver: trace_path_init/trace_lpw_safe.c
+make: *** No rule to make target 'trace_lpw_safe.ko'.  Stop.
+[2026-02-13 19:42:11.878] ✓ SUCCESS: trace_lpw_safe.ko
+[2026-02-13 19:42:11.884] Compiling driver: trace_path_init/trace_lpw_v4.c
+make: *** No rule to make target 'trace_lpw_v4.ko'.  Stop.
+[2026-02-13 19:42:11.890] ✓ SUCCESS: trace_lpw_v4.ko
+[2026-02-13 19:42:11.896] Compiling driver: trace_path_init/trace_offset_proof.c
+make: *** No rule to make target 'trace_offset_proof.ko'.  Stop.
+[2026-02-13 19:42:11.903] ✓ SUCCESS: trace_offset_proof.ko
+[2026-02-13 19:42:11.911] Compiling driver: trace_do_sys_openat2/trace_do_sys_openat2.c
+make: *** No rule to make target 'trace_do_sys_openat2.ko'.  Stop.
+[2026-02-13 19:42:11.915] ✓ SUCCESS: trace_do_sys_openat2.ko
+
+========================================
+
+[2026-02-13 19:42:11.928] OTHER DRIVERS
+[2026-02-13 19:42:11.930] Compiling driver: offset_audit/offset_audit.c
+make: *** No rule to make target 'offset_audit.ko'.  Stop.
+[2026-02-13 19:42:11.935] ✓ SUCCESS: offset_audit.ko
+[2026-02-13 19:42:11.943] Compiling driver: trace_do_filp_open/trace_do_filp_open.c
+make: Nothing to be done for 'trace_do_filp_open.ko'.
+[2026-02-13 19:42:11.947] ✓ SUCCESS: trace_do_filp_open.ko
+[2026-02-13 19:42:11.954] Compiling driver: arg2_filename/trace_filename.c
+make: *** No rule to make target 'trace_filename.ko'.  Stop.
+[2026-02-13 19:42:11.960] ✓ SUCCESS: trace_filename.ko
+[2026-02-13 19:42:11.965] Compiling driver: arg3_flags/trace_flags.c
+make: *** No rule to make target 'trace_flags.ko'.  Stop.
+[2026-02-13 19:42:11.970] ✓ SUCCESS: trace_flags.ko
+
+========================================
+
+[2026-02-13 19:42:11.983] PROOFS AND DEMOS
+[2026-02-13 19:42:11.985] Location: kernel/proofs/ and kernel/demos/
+[2026-02-13 19:42:11.987] Compiling: proofs/00_register_dump.c
+[2026-02-13 19:42:12.030] ✓ SUCCESS: 00_register_dump.out
+[2026-02-13 19:42:12.038] Compiling: proofs/01_path_walk_simulator.c
+[2026-02-13 19:42:12.088] ✓ SUCCESS: 01_path_walk_simulator.out
+[2026-02-13 19:42:12.096] Compiling: proofs/02_empty_path_demo.c
+[2026-02-13 19:42:12.144] ✓ SUCCESS: 02_empty_path_demo.out
+[2026-02-13 19:42:12.150] Compiling: proofs/02_fd_exhaustion.c
+[2026-02-13 19:42:12.196] ✓ SUCCESS: 02_fd_exhaustion.out
+[2026-02-13 19:42:12.204] Compiling: proofs/03_trinity_stat_demo.c
+[2026-02-13 19:42:12.264] ✓ SUCCESS: 03_trinity_stat_demo.out
+[2026-02-13 19:42:12.271] Compiling: proofs/03_kernel_permission_simulation.c
+[2026-02-13 19:42:12.329] ✓ SUCCESS: 03_kernel_permission_simulation.out
+[2026-02-13 19:42:12.337] Compiling: proofs/04_benchmark_stat.c
+[2026-02-13 19:42:12.395] ✓ SUCCESS: 04_benchmark_stat.out
+[2026-02-13 19:42:12.403] Compiling: proofs/05_random_stat.c
+[2026-02-13 19:42:12.462] ✓ SUCCESS: 05_random_stat.out
+[2026-02-13 19:42:12.469] Compiling: proofs/06_null_pointer_puzzle.c
+06_null_pointer_puzzle.c: In function ‘main’:
+06_null_pointer_puzzle.c:34:5: warning: argument 2 null where non-null expected [-Wnonnull]
+   34 |     fstatat(fd, NULL, &st, AT_EMPTY_PATH);
+      |     ^~~~~~~
+In file included from 06_null_pointer_puzzle.c:6:
+/usr/include/x86_64-linux-gnu/sys/stat.h:264:12: note: in a call to function ‘fstatat’ declared ‘nonnull’
+  264 | extern int fstatat (int __fd, const char *__restrict __file,
+      |            ^~~~~~~
+[2026-02-13 19:42:12.527] ✓ SUCCESS: 06_null_pointer_puzzle.out
+[2026-02-13 19:42:12.536] Compiling: demos/enoent_demo.c
+[2026-02-13 19:42:12.582] ✓ SUCCESS: enoent_demo.out
+[2026-02-13 19:42:12.588] Compiling: demos/eacces_demo.c
+[2026-02-13 19:42:12.647] ✓ SUCCESS: eacces_demo.out
+[2026-02-13 19:42:12.655] Compiling: demos/emfile_demo.c
+[2026-02-13 19:42:12.709] ✓ SUCCESS: emfile_demo.out
+
+========================================
+
+[2026-02-13 19:42:12.728] === COMPREHENSIVE BUILD SESSION COMPLETE ===
+[2026-02-13 19:42:12.730] 
+[2026-02-13 19:42:12.733] STATISTICS:
+[2026-02-13 19:42:12.736]   Drivers:    25 / 25 succeeded (0 failed)
+[2026-02-13 19:42:12.741]   Userspace:  33 / 33 succeeded (0 failed)
+[2026-02-13 19:42:12.745]   Total:      58 / 58 succeeded
+[2026-02-13 19:42:12.748] 
+[2026-02-13 19:42:12.751] Log file: /home/r/Desktop/what-happens-when-open-is-called/COMPREHENSIVE_BUILD_LOG_20260213_194210.txt
+[2026-02-13 19:42:12.756] End time: 2026-02-13 19:42:12
+[2026-02-13 19:42:12.763] Filesystem sync complete

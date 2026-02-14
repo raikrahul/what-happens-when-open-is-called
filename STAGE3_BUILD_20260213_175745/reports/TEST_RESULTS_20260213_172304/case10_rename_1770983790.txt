@@ -1,0 +1,19 @@
+
+=== Loading driver ===
+insmod exit code: 0
+
+=== Running user_dir_rename ===
+Renaming directory dir_old to dir_new...
+Directory rename successful.
+Exit code: 0
+
+=== Capturing dmesg ===
+[  669.973459] driver_dir_rename_probe: module verification failed: signature and/or required key missing - tainting kernel
+[  669.991743] PROBE_DIR_RENAME: Comm=user_dir_rename PID=6048
+[  669.991750] PROBE_DIR_RENAME: Dentry=ffff8ce165413840 (Invariance Check)
+[  669.991753] PROBE_DIR_RENAME: IsDir=1
+[  669.991755] PROBE_DIR_RENAME: OLD: Name='dir_old' Hash=0x2ce48feb Parent=ffff8ce03ca4d540
+[  669.991757] PROBE_DIR_RENAME: NEW: Name='dir_new' Hash=0xb0232732 Parent=ffff8ce03ca4d540
+
+=== Unloading driver ===
+rmmod exit code: 0

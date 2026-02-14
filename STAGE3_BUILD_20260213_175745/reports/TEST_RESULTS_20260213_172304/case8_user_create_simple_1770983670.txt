@@ -1,0 +1,14 @@
+============================================
+Test: case8_user_create_simple
+Command: gcc -o user_create_simple_test user_create_simple.c
+Timestamp: 2026-02-13T17:24:30+05:30
+============================================
+
+=== COMPILATION ===
+Compilation: SUCCESS
+
+=== EXECUTION ===
+Successfully created creation_proof_5719.txt
+
+=== EXIT CODE ===
+Exit code: 0

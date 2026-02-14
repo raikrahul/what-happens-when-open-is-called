@@ -1,0 +1,58 @@
+============================================
+CASE 12: Harder Puzzle
+Timestamp: Fri Feb 13 05:26:59 PM IST 2026
+============================================
+
+total 1004
+drwxrwxr-x  4 r r   4096 Feb 13 17:02 .
+drwxrwxr-x 18 r r   4096 Feb 13 17:04 ..
+-rw-rw-r--  1 r r   5580 Feb 13 15:47 case12_symbolic_proof_0words.md
+drwxrwxr-x  2 r r   4096 Feb 13 17:02 dir_A
+drwxrwxr-x  2 r r   4096 Feb 13 17:02 dir_B
+-rw-rw-r--  1 r r   1550 Feb 13 15:46 driver_puzzle_probe.c
+-rw-rw-r--  1 r r 343184 Feb 13 15:46 driver_puzzle_probe.ko
+-rw-rw-r--  1 r r    264 Feb 13 15:46 .driver_puzzle_probe.ko.cmd
+-rw-rw-r--  1 r r     24 Feb 13 15:46 driver_puzzle_probe.mod
+-rw-rw-r--  1 r r   1220 Feb 13 15:46 driver_puzzle_probe.mod.c
+-rw-rw-r--  1 r r    137 Feb 13 15:46 .driver_puzzle_probe.mod.cmd
+-rw-rw-r--  1 r r 152416 Feb 13 15:46 driver_puzzle_probe.mod.o
+-rw-rw-r--  1 r r  69639 Feb 13 15:46 .driver_puzzle_probe.mod.o.cmd
+-rw-rw-r--  1 r r 181576 Feb 13 15:46 driver_puzzle_probe.o
+-rw-rw-r--  1 r r  77812 Feb 13 15:46 .driver_puzzle_probe.o.cmd
+-rw-rw-r--  1 r r    169 Feb 13 15:46 Makefile
+-rw-rw-r--  1 r r  12712 Feb 13 15:46 .module-common.o
+-rw-rw-r--  1 r r  71006 Feb 13 15:46 ..module-common.o.cmd
+-rw-rw-r--  1 r r     22 Feb 13 15:46 modules.order
+-rw-rw-r--  1 r r     79 Feb 13 15:46 .modules.order.cmd
+-rw-rw-r--  1 r r      0 Feb 13 15:46 Module.symvers
+-rw-rw-r--  1 r r    207 Feb 13 15:46 .Module.symvers.cmd
+-rwxrwxr-x  1 r r  16160 Feb 13 17:02 puzzle_verify
+-rw-rw-r--  1 r r   1171 Feb 13 15:47 puzzle_verify.c
+-rwxrwxr-x  1 r r  16136 Feb 13 17:02 user_puzzle
+-rw-rw-r--  1 r r    568 Feb 13 15:46 user_puzzle.c
+
+=== Loading driver ===
+insmod exit code: 0
+
+=== Running user_puzzle ===
+Initial access (dir_A)...
+Moving across parents: dir_A -> dir_B...
+Final access (dir_B)...
+Exit code: 0
+
+=== Running puzzle_verify ===
+Target A: 0xd3f3bc9f
+Target B: 0xdf3bc4e9
+Exit code: 0
+
+=== Capturing dmesg ===
+[  699.176126] PUZZLE_LOOKUP: Comm=user_puzzle Name='puzzle_target.txt' Hash=0x6d7956cc Salt(Parent)=ffff8ce03ca656c0
+[  699.176134] PUZZLE_LOOKUP: Comm=user_puzzle Name='puzzle_target.txt' Hash=0x6d7956cc Salt(Parent)=ffff8ce03ca656c0
+[  699.176193] PUZZLE_LOOKUP: Comm=user_puzzle Name='puzzle_target.txt' Hash=0x6d7956cc Salt(Parent)=ffff8ce03ca656c0
+[  699.176216] PUZZLE_MOVE: Dentry=ffff8ce16e3aa6c0 OldParent=ffff8ce03ca656c0 NewParent=ffff8ce03ca653c0
+[  699.176218] PUZZLE_MOVE: OldHash=0x6d7956cc NewHash=0xe2f1ba4e
+[  699.176232] PUZZLE_LOOKUP: Comm=user_puzzle Name='puzzle_target.txt' Hash=0xe2f1ba4e Salt(Parent)=ffff8ce03ca653c0
+[  699.176947] PUZZLE_LOOKUP: Comm=bash Name='puzzle_verify' Hash=0xf4f76851 Salt(Parent)=ffff8ce03ca4d000
+
+=== Unloading driver ===
+rmmod exit code: 0

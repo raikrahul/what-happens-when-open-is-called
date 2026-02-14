@@ -1,0 +1,3 @@
+[43036.607099] [C17] Loaded: __d_alloc only | target_comm=openat_raw target_name=missing_case17_raw_syscall
+[43036.609605] [C17][__d_alloc][ENTRY] pid=215735 tgid=215735 qstr_ptr=ffffcc9700793ba0 name_ptr=ffff898e8d77c083 len=30 hash=0x4101d47 name=missing_case17_raw_syscall.txt
+[43036.609622] [C17][__d_alloc][RET] pid=215735 tgid=215735 dentry=ffff898eb5493b40 inode=0000000000000000 unhashed=1 in_lookup=0 name.hash=0x4101d47 name.len=30 name_ptr=ffff898eb5493b78

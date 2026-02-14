@@ -1,0 +1,4 @@
+[ 6861.234472] PROBE_CREATION: Drivers loaded (parallel + alloc)
+[ 6861.236958] PROBE_CREATION [d_alloc_parallel]: Comm=user_create_dee PID=21729
+[ 6861.236965] PROBE_CREATION [d_alloc_parallel]: Parent=000000002808ff3f
+[ 6861.236968] PROBE_CREATION [d_alloc_parallel]: Name='creation_proof_deep.txt' Len=23 Hash=0xf588adc6

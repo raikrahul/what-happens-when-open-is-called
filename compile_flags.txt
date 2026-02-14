@@ -1,0 +1,10 @@
+-xc
+-nostdinc
+-I/usr/src/linux-headers-6.17.0-14-generic/include
+-I/usr/src/linux-headers-6.17.0-14-generic/arch/x86/include
+-I/usr/src/linux-headers-6.17.0-14-generic/arch/x86/include/generated
+-I/usr/src/linux-source-6.8.0/include
+-D__KERNEL__
+-DMODULE
+-Wno-unused-parameter
+-Wno-missing-field-initializers

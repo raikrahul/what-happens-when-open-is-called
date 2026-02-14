@@ -1,0 +1,1 @@
+[ 6861.387160] PROBE_CREATION: Drivers loaded (parallel + alloc)

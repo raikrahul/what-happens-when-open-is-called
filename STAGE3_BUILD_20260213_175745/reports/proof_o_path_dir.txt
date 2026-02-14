@@ -1,0 +1,155 @@
+[21397.601301] trace_path_init: loaded (do_filp_open + path_openat + alloc_empty_file + init_file + fdget_raw), target_comm=demo_o_path_dir
+[21397.606529] [PATH_INIT] ENTRY pid=79108 comm=demo_o_path_dir dfd=-100 (AT_FDCWD) pathname="/usr/local/cuda/lib64/glibc-hwcaps/x86-64-v3/libc.so.6"
+[21397.606543] [PATH_INIT] BRANCH: AT_FDCWD → path_init will use current->fs->pwd = "demo_o_path"
+[21397.606548] [PATH_INIT] CODE: namei.c:2576 if (nd->dfd == AT_FDCWD) → TRUE → line 2578: fs = current->fs; nd->path = fs->pwd
+[21397.606554] [PATH_INIT] path_openat() called (fs/namei.c) → calling path_init next...
+[21397.606559] [PATH_INIT] alloc_empty_file() called → allocating struct file
+[21397.606564] [PATH_INIT]   flags=0x8000, cred=0xffff8ea781f75a80
+[21397.606571] [PATH_INIT] init_file() called
+[21397.606575] [PATH_INIT]   f=0xffff8ea7a6843d80, flags=0x8000, cred=0xffff8ea781f75a80
+[21397.606583] [PATH_INIT] init_file() returned 0
+[21397.606588] [PATH_INIT] alloc_empty_file() returned new struct_file*=0xffff8ea7a6843d80
+[21397.606624] [PATH_INIT] path_openat() returned ERR(-2)
+[21397.606630] [PATH_INIT] RETURN pid=79108 comm=demo_o_path_dir result=ERR(-2)
+[21397.606648] [PATH_INIT] ENTRY pid=79108 comm=demo_o_path_dir dfd=-100 (AT_FDCWD) pathname="/usr/local/cuda/lib64/glibc-hwcaps/x86-64-v2/libc.so.6"
+[21397.606655] [PATH_INIT] BRANCH: AT_FDCWD → path_init will use current->fs->pwd = "demo_o_path"
+[21397.606660] [PATH_INIT] CODE: namei.c:2576 if (nd->dfd == AT_FDCWD) → TRUE → line 2578: fs = current->fs; nd->path = fs->pwd
+[21397.606665] [PATH_INIT] path_openat() called (fs/namei.c) → calling path_init next...
+[21397.606670] [PATH_INIT] alloc_empty_file() called → allocating struct file
+[21397.606674] [PATH_INIT]   flags=0x8000, cred=0xffff8ea781f75a80
+[21397.606680] [PATH_INIT] init_file() called
+[21397.606684] [PATH_INIT]   f=0xffff8ea7a6843d80, flags=0x8000, cred=0xffff8ea781f75a80
+[21397.606690] [PATH_INIT] init_file() returned 0
+[21397.606696] [PATH_INIT] alloc_empty_file() returned new struct_file*=0xffff8ea7a6843d80
+[21397.606707] [PATH_INIT] path_openat() returned ERR(-2)
+[21397.606712] [PATH_INIT] RETURN pid=79108 comm=demo_o_path_dir result=ERR(-2)
+[21397.606727] [PATH_INIT] ENTRY pid=79108 comm=demo_o_path_dir dfd=-100 (AT_FDCWD) pathname="/usr/local/cuda/lib64/libc.so.6"
+[21397.606733] [PATH_INIT] BRANCH: AT_FDCWD → path_init will use current->fs->pwd = "demo_o_path"
+[21397.606737] [PATH_INIT] CODE: namei.c:2576 if (nd->dfd == AT_FDCWD) → TRUE → line 2578: fs = current->fs; nd->path = fs->pwd
+[21397.606742] [PATH_INIT] path_openat() called (fs/namei.c) → calling path_init next...
+[21397.606748] [PATH_INIT] alloc_empty_file() called → allocating struct file
+[21397.606752] [PATH_INIT]   flags=0x8000, cred=0xffff8ea781f75a80
+[21397.606758] [PATH_INIT] init_file() called
+[21397.606763] [PATH_INIT]   f=0xffff8ea7a6843d80, flags=0x8000, cred=0xffff8ea781f75a80
+[21397.606769] [PATH_INIT] init_file() returned 0
+[21397.606775] [PATH_INIT] alloc_empty_file() returned new struct_file*=0xffff8ea7a6843d80
+[21397.606785] [PATH_INIT] path_openat() returned ERR(-2)
+[21397.606791] [PATH_INIT] RETURN pid=79108 comm=demo_o_path_dir result=ERR(-2)
+[21397.606809] [PATH_INIT] ENTRY pid=79108 comm=demo_o_path_dir dfd=-100 (AT_FDCWD) pathname="glibc-hwcaps/x86-64-v3/libc.so.6"
+[21397.606815] [PATH_INIT] BRANCH: AT_FDCWD → path_init will use current->fs->pwd = "demo_o_path"
+[21397.606820] [PATH_INIT] CODE: namei.c:2576 if (nd->dfd == AT_FDCWD) → TRUE → line 2578: fs = current->fs; nd->path = fs->pwd
+[21397.606825] [PATH_INIT] path_openat() called (fs/namei.c) → calling path_init next...
+[21397.606830] [PATH_INIT] alloc_empty_file() called → allocating struct file
+[21397.606834] [PATH_INIT]   flags=0x8000, cred=0xffff8ea781f75a80
+[21397.606840] [PATH_INIT] init_file() called
+[21397.606844] [PATH_INIT]   f=0xffff8ea7a6843d80, flags=0x8000, cred=0xffff8ea781f75a80
+[21397.606850] [PATH_INIT] init_file() returned 0
+[21397.606855] [PATH_INIT] alloc_empty_file() returned new struct_file*=0xffff8ea7a6843d80
+[21397.606862] [PATH_INIT] path_openat() returned ERR(-2)
+[21397.606867] [PATH_INIT] RETURN pid=79108 comm=demo_o_path_dir result=ERR(-2)
+[21397.606875] [PATH_INIT] ENTRY pid=79108 comm=demo_o_path_dir dfd=-100 (AT_FDCWD) pathname="glibc-hwcaps/x86-64-v2/libc.so.6"
+[21397.606881] [PATH_INIT] BRANCH: AT_FDCWD → path_init will use current->fs->pwd = "demo_o_path"
+[21397.606885] [PATH_INIT] CODE: namei.c:2576 if (nd->dfd == AT_FDCWD) → TRUE → line 2578: fs = current->fs; nd->path = fs->pwd
+[21397.606891] [PATH_INIT] path_openat() called (fs/namei.c) → calling path_init next...
+[21397.606896] [PATH_INIT] alloc_empty_file() called → allocating struct file
+[21397.606900] [PATH_INIT]   flags=0x8000, cred=0xffff8ea781f75a80
+[21397.606906] [PATH_INIT] init_file() called
+[21397.606910] [PATH_INIT]   f=0xffff8ea7a6843d80, flags=0x8000, cred=0xffff8ea781f75a80
+[21397.606916] [PATH_INIT] init_file() returned 0
+[21397.606921] [PATH_INIT] alloc_empty_file() returned new struct_file*=0xffff8ea7a6843d80
+[21397.606927] [PATH_INIT] path_openat() returned ERR(-2)
+[21397.606932] [PATH_INIT] RETURN pid=79108 comm=demo_o_path_dir result=ERR(-2)
+[21397.606940] [PATH_INIT] ENTRY pid=79108 comm=demo_o_path_dir dfd=-100 (AT_FDCWD) pathname="libc.so.6"
+[21397.606946] [PATH_INIT] BRANCH: AT_FDCWD → path_init will use current->fs->pwd = "demo_o_path"
+[21397.606951] [PATH_INIT] CODE: namei.c:2576 if (nd->dfd == AT_FDCWD) → TRUE → line 2578: fs = current->fs; nd->path = fs->pwd
+[21397.606956] [PATH_INIT] path_openat() called (fs/namei.c) → calling path_init next...
+[21397.606960] [PATH_INIT] alloc_empty_file() called → allocating struct file
+[21397.606965] [PATH_INIT]   flags=0x8000, cred=0xffff8ea781f75a80
+[21397.606970] [PATH_INIT] init_file() called
+[21397.606975] [PATH_INIT]   f=0xffff8ea7a6843d80, flags=0x8000, cred=0xffff8ea781f75a80
+[21397.606981] [PATH_INIT] init_file() returned 0
+[21397.606986] [PATH_INIT] alloc_empty_file() returned new struct_file*=0xffff8ea7a6843d80
+[21397.606992] [PATH_INIT] path_openat() returned ERR(-2)
+[21397.606997] [PATH_INIT] RETURN pid=79108 comm=demo_o_path_dir result=ERR(-2)
+[21397.607006] [PATH_INIT] ENTRY pid=79108 comm=demo_o_path_dir dfd=-100 (AT_FDCWD) pathname="/etc/ld.so.cache"
+[21397.607012] [PATH_INIT] BRANCH: AT_FDCWD → path_init will use current->fs->pwd = "demo_o_path"
+[21397.607017] [PATH_INIT] CODE: namei.c:2576 if (nd->dfd == AT_FDCWD) → TRUE → line 2578: fs = current->fs; nd->path = fs->pwd
+[21397.607022] [PATH_INIT] path_openat() called (fs/namei.c) → calling path_init next...
+[21397.607027] [PATH_INIT] alloc_empty_file() called → allocating struct file
+[21397.607031] [PATH_INIT]   flags=0x8000, cred=0xffff8ea781f75a80
+[21397.607037] [PATH_INIT] init_file() called
+[21397.607041] [PATH_INIT]   f=0xffff8ea7a6843d80, flags=0x8000, cred=0xffff8ea781f75a80
+[21397.607050] [PATH_INIT] init_file() returned 0
+[21397.607056] [PATH_INIT] alloc_empty_file() returned new struct_file*=0xffff8ea7a6843d80
+[21397.607068] [PATH_INIT] path_openat() returned struct_file*=0xffff8ea7a6843d80 (success)
+[21397.607075] [PATH_INIT] RETURN pid=79108 comm=demo_o_path_dir result=struct_file*=0xffff8ea7a6843d80 (success)
+[21397.607084] [PATH_INIT] FDGET_RAW pid=79108 comm=demo_o_path_dir fd=3
+[21397.607091] [PATH_INIT] PROOF: fdget_raw() called → path_init ELSE branch CONFIRMED (namei.c:2593)
+[21397.607097] [PATH_INIT] PROOF: kernel is looking up fd 3 in fd table, NOT using current->fs->pwd
+[21397.607148] [PATH_INIT] ENTRY pid=79108 comm=demo_o_path_dir dfd=-100 (AT_FDCWD) pathname="/lib/x86_64-linux-gnu/libc.so.6"
+[21397.607154] [PATH_INIT] BRANCH: AT_FDCWD → path_init will use current->fs->pwd = "demo_o_path"
+[21397.607159] [PATH_INIT] CODE: namei.c:2576 if (nd->dfd == AT_FDCWD) → TRUE → line 2578: fs = current->fs; nd->path = fs->pwd
+[21397.607164] [PATH_INIT] path_openat() called (fs/namei.c) → calling path_init next...
+[21397.607168] [PATH_INIT] alloc_empty_file() called → allocating struct file
+[21397.607173] [PATH_INIT]   flags=0x8000, cred=0xffff8ea781f75a80
+[21397.607179] [PATH_INIT] init_file() called
+[21397.607183] [PATH_INIT]   f=0xffff8ea7a6843c00, flags=0x8000, cred=0xffff8ea781f75a80
+[21397.607190] [PATH_INIT] init_file() returned 0
+[21397.607195] [PATH_INIT] alloc_empty_file() returned new struct_file*=0xffff8ea7a6843c00
+[21397.607205] [PATH_INIT] path_openat() returned struct_file*=0xffff8ea7a6843c00 (success)
+[21397.607210] [PATH_INIT] RETURN pid=79108 comm=demo_o_path_dir result=struct_file*=0xffff8ea7a6843c00 (success)
+[21397.607223] [PATH_INIT] FDGET_RAW pid=79108 comm=demo_o_path_dir fd=3
+[21397.607229] [PATH_INIT] PROOF: fdget_raw() called → path_init ELSE branch CONFIRMED (namei.c:2593)
+[21397.607233] [PATH_INIT] PROOF: kernel is looking up fd 3 in fd table, NOT using current->fs->pwd
+[21397.607797] [PATH_INIT] ENTRY pid=79108 comm=demo_o_path_dir dfd=-100 (AT_FDCWD) pathname="demo_dir/secret_file.txt"
+[21397.607806] [PATH_INIT] BRANCH: AT_FDCWD → path_init will use current->fs->pwd = "demo_o_path"
+[21397.607811] [PATH_INIT] CODE: namei.c:2576 if (nd->dfd == AT_FDCWD) → TRUE → line 2578: fs = current->fs; nd->path = fs->pwd
+[21397.607816] [PATH_INIT] path_openat() called (fs/namei.c) → calling path_init next...
+[21397.607822] [PATH_INIT] alloc_empty_file() called → allocating struct file
+[21397.607826] [PATH_INIT]   flags=0x8041, cred=0xffff8ea781f75a80
+[21397.607833] [PATH_INIT] init_file() called
+[21397.607837] [PATH_INIT]   f=0xffff8ea7a6843d80, flags=0x8041, cred=0xffff8ea781f75a80
+[21397.607844] [PATH_INIT] init_file() returned 0
+[21397.607849] [PATH_INIT] alloc_empty_file() returned new struct_file*=0xffff8ea7a6843d80
+[21397.607891] [PATH_INIT] path_openat() returned struct_file*=0xffff8ea7a6843d80 (success)
+[21397.607897] [PATH_INIT] RETURN pid=79108 comm=demo_o_path_dir result=struct_file*=0xffff8ea7a6843d80 (success)
+[21397.607931] [PATH_INIT] FDGET_RAW pid=79108 comm=demo_o_path_dir fd=1
+[21397.607939] [PATH_INIT] PROOF: fdget_raw() called → path_init ELSE branch CONFIRMED (namei.c:2593)
+[21397.607944] [PATH_INIT] PROOF: kernel is looking up fd 1 in fd table, NOT using current->fs->pwd
+[21397.608015] [PATH_INIT] ENTRY pid=79108 comm=demo_o_path_dir dfd=-100 (AT_FDCWD) pathname="demo_dir"
+[21397.608024] [PATH_INIT] BRANCH: AT_FDCWD → path_init will use current->fs->pwd = "demo_o_path"
+[21397.608031] [PATH_INIT] CODE: namei.c:2576 if (nd->dfd == AT_FDCWD) → TRUE → line 2578: fs = current->fs; nd->path = fs->pwd
+[21397.608038] [PATH_INIT] path_openat() called (fs/namei.c) → calling path_init next...
+[21397.608044] [PATH_INIT] alloc_empty_file() called → allocating struct file
+[21397.608050] [PATH_INIT]   flags=0x210000, cred=0xffff8ea781f75a80
+[21397.608057] [PATH_INIT] init_file() called
+[21397.608064] [PATH_INIT]   f=0xffff8ea7a6843d80, flags=0x210000, cred=0xffff8ea781f75a80
+[21397.608074] [PATH_INIT] init_file() returned 0
+[21397.608080] [PATH_INIT] alloc_empty_file() returned new struct_file*=0xffff8ea7a6843d80
+[21397.608087] [PATH_INIT] path_openat() returned struct_file*=0xffff8ea7a6843d80 (success)
+[21397.608093] [PATH_INIT] RETURN pid=79108 comm=demo_o_path_dir result=struct_file*=0xffff8ea7a6843d80 (success)
+[21397.608138] [PATH_INIT] FDGET_RAW pid=79108 comm=demo_o_path_dir fd=3
+[21397.608144] [PATH_INIT] PROOF: fdget_raw() called → path_init ELSE branch CONFIRMED (namei.c:2593)
+[21397.608148] [PATH_INIT] PROOF: kernel is looking up fd 3 in fd table, NOT using current->fs->pwd
+[21397.608154] [PATH_INIT] FDGET_RAW pid=79108 comm=demo_o_path_dir fd=3
+[21397.608159] [PATH_INIT] PROOF: fdget_raw() called → path_init ELSE branch CONFIRMED (namei.c:2593)
+[21397.608163] [PATH_INIT] PROOF: kernel is looking up fd 3 in fd table, NOT using current->fs->pwd
+[21397.608193] [PATH_INIT] ENTRY pid=79108 comm=demo_o_path_dir dfd=3 (fd lookup) pathname="secret_file.txt"
+[21397.608200] [PATH_INIT] BRANCH: FD_LOOKUP → path_init will look up fd 3 in fd table (ignoring pwd)
+[21397.608204] [PATH_INIT] BRANCH: current->fs->pwd = "demo_o_path" (IGNORED — kernel uses fd 3 instead)
+[21397.608210] [PATH_INIT] CODE: namei.c:2576 if (nd->dfd == AT_FDCWD) → FALSE → line 2593: fd_raw(nd->dfd) → fd_file(f)->f_path
+[21397.608215] [PATH_INIT] path_openat() called (fs/namei.c) → calling path_init next...
+[21397.608219] [PATH_INIT] alloc_empty_file() called → allocating struct file
+[21397.608223] [PATH_INIT]   flags=0x8000, cred=0xffff8ea781f75a80
+[21397.608229] [PATH_INIT] init_file() called
+[21397.608233] [PATH_INIT]   f=0xffff8ea7a6843180, flags=0x8000, cred=0xffff8ea781f75a80
+[21397.608239] [PATH_INIT] init_file() returned 0
+[21397.608243] [PATH_INIT] alloc_empty_file() returned new struct_file*=0xffff8ea7a6843180
+[21397.608248] [PATH_INIT] FDGET_RAW pid=79108 comm=demo_o_path_dir fd=3
+[21397.608253] [PATH_INIT] PROOF: fdget_raw() called → path_init ELSE branch CONFIRMED (namei.c:2593)
+[21397.608257] [PATH_INIT] PROOF: kernel is looking up fd 3 in fd table, NOT using current->fs->pwd
+[21397.608266] [PATH_INIT] path_openat() returned struct_file*=0xffff8ea7a6843180 (success)
+[21397.608272] [PATH_INIT] RETURN pid=79108 comm=demo_o_path_dir result=struct_file*=0xffff8ea7a6843180 (success)
+[21397.608294] [PATH_INIT] FDGET_RAW pid=79108 comm=demo_o_path_dir fd=3
+[21397.608300] [PATH_INIT] PROOF: fdget_raw() called → path_init ELSE branch CONFIRMED (namei.c:2593)
+[21397.608304] [PATH_INIT] PROOF: kernel is looking up fd 3 in fd table, NOT using current->fs->pwd

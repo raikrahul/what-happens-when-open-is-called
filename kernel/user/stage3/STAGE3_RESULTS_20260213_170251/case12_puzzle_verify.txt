@@ -1,0 +1,4 @@
+--- OUTPUT ---
+Target A: 0xd3f3bc9f
+Target B: 0xdf3bc4e9
+--- END OUTPUT (exit code: 0) ---

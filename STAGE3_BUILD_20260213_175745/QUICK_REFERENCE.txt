@@ -1,0 +1,92 @@
+# STAGE 3 BUILD - QUICK REFERENCE
+
+## Build Location
+`/home/r/Desktop/what-happens-when-open-is-called/STAGE3_BUILD_20260213_175745/`
+
+## What's Included
+
+### Kernel Drivers (14 modules):
+- driver_dir_rename_probe.ko (334K) - Case 10
+- driver_bulk_rename_probe.ko (334K) - Case 11  
+- driver_puzzle_probe.ko (336K) - Case 12
+- driver_salt_avalanche.ko (191K) - Case 13
+- driver_symmetry_break.ko (190K) - Case 14
+- driver_deep_trace.ko (350K) - Case 15
+- driver_smart_trace.ko (209K) - Case 15 Solution
+- driver_creation_probe.ko (335K) - Case 8
+- driver_collision_probe.ko (333K) - Case 8
+- driver_lookup_probe.ko (334K) - Case 8
+- driver_rename_probe.ko (336K) - Case 8
+- driver_salt_probe.ko (334K) - Case 8
+
+### User Programs (26 binaries):
+- case1_relative.out through case7_symlink_fast.out
+- All demo_*.out programs
+- All user_*.out test programs
+
+## Critical Documentation
+
+### KERNEL_CRASH_CAPTURE_GUIDE.md
+**MUST READ** - Explains how to capture kernel panics
+
+**Key Problem Fixed:**
+- `copy_from_user()` in kprobe handlers caused panic
+- Fixed to use kernel-space pointers
+- See guide for complete explanation
+
+## Testing Workflow
+
+```bash
+cd /home/r/Desktop/what-happens-when-open-is-called/STAGE3_BUILD_20260213_175745
+
+# 1. Setup crash capture (see KERNEL_CRASH_CAPTURE_GUIDE.md)
+# Recommended: Use netconsole to another machine
+
+# 2. Clear dmesg
+sudo dmesg -C
+
+# 3. Load driver
+sudo insmod driver_deep_trace.ko
+
+# 4. Run test
+./user_deep_create.out
+
+# 5. Check dmesg
+sudo dmesg | tail -50
+
+# 6. Unload driver
+sudo rmmod driver_deep_trace
+```
+
+## Files in Build Directory
+
+| File | Purpose |
+|------|---------|
+| *.ko | Kernel modules (drivers) |
+| *.out | User space test programs |
+| compilation_log.txt | Full build output |
+| BUILD_SUMMARY.txt | Summary statistics |
+| KERNEL_CRASH_CAPTURE_GUIDE.md | **Crash capture methods** |
+| reports/ | All collected test reports |
+
+## Important Notes
+
+1. **DO NOT** use copy_from_user() in kprobe handlers
+2. **ALWAYS** validate pointers in kernel modules
+3. **NEVER** sleep in atomic context
+4. **USE** netconsole or serial for crash capture
+5. **SAVE** crash logs before they disappear
+
+## Reports Collected
+
+All proof documents and test results saved in `reports/` directory.
+
+## Next Steps
+
+1. Read KERNEL_CRASH_CAPTURE_GUIDE.md
+2. Setup netconsole for crash logging
+3. Test each driver systematically
+4. Document results in reports/
+
+---
+Generated: $(date)
