@@ -1,0 +1,45 @@
+# Stage3 Axiom Worksheet Index
+
+backup_dir: kernel/user/stage3/planning/worksheet_backups_20260215_013023
+
+- `kernel/user/stage3/case1/worksheets/case1_relative_worksheet_axiom.md`
+- `kernel/user/stage3/case1/worksheets/case6_symlink_loop_worksheet_axiom.md`
+- `kernel/user/stage3/case1/worksheets/case7_symlink_fast_worksheet_axiom.md`
+- `kernel/user/stage3/case1/worksheets/dcache_loop_analysis_worksheet_axiom.md`
+- `kernel/user/stage3/case1/worksheets/demo_at_fdcwd_worksheet_axiom.md`
+- `kernel/user/stage3/case1/worksheets/demo_dup_names_worksheet_axiom.md`
+- `kernel/user/stage3/case1/worksheets/demo_o_path_dir_worksheet_axiom.md`
+- `kernel/user/stage3/case1/worksheets/demo_o_path_worksheet_axiom.md`
+- `kernel/user/stage3/case1/worksheets/demo_o_tmpfile_worksheet_axiom.md`
+- `kernel/user/stage3/case1/worksheets/demo_thread_safety_worksheet_axiom.md`
+- `kernel/user/stage3/case1/worksheets/demo_toctou_worksheet_axiom.md`
+- `kernel/user/stage3/case1/worksheets/manual_dentry_check_worksheet_axiom.md`
+- `kernel/user/stage3/case1/worksheets/test_vfs_trace_worksheet_axiom.md`
+- `kernel/user/stage3/case1/worksheets/vfs_trigger_worksheet_axiom.md`
+- `kernel/user/stage3/case10_rename_investigation/worksheets/user_dir_rename_worksheet_axiom.md`
+- `kernel/user/stage3/case11_bulk_rename/worksheets/user_bulk_rename_worksheet_axiom.md`
+- `kernel/user/stage3/case12_harder_puzzle/worksheets/puzzle_verify_worksheet_axiom.md`
+- `kernel/user/stage3/case12_harder_puzzle/worksheets/user_puzzle_worksheet_axiom.md`
+- `kernel/user/stage3/case13_salt_avalanche/worksheets/user_salt_avalanche_worksheet_axiom.md`
+- `kernel/user/stage3/case14_symmetry_break/worksheets/user_symmetry_break_worksheet_axiom.md`
+- `kernel/user/stage3/case15_deep_trace/worksheets/user_deep_create_worksheet_axiom.md`
+- `kernel/user/stage3/case15_deep_trace/worksheets/user_deep_open_worksheet_axiom.md`
+- `kernel/user/stage3/case16_do_filp_open_trace/worksheets/user_trigger_exists_worksheet_axiom.md`
+- `kernel/user/stage3/case16_do_filp_open_trace/worksheets/user_trigger_missing_worksheet_axiom.md`
+- `kernel/user/stage3/case16_do_sys_openat2_trace/worksheets/user_trigger_worksheet_axiom.md`
+- `kernel/user/stage3/case17_do_filp_open_deep_trace/worksheets/user_trigger_raw_openat_worksheet_axiom.md`
+- `kernel/user/stage3/case17_do_filp_open_deep_trace/worksheets/user_trigger_worksheet_axiom.md`
+- `kernel/user/stage3/case2_deep_miss/worksheets/case2_deep_miss_worksheet_axiom.md`
+- `kernel/user/stage3/case3_deep_hit/worksheets/case3_deep_hit_worksheet_axiom.md`
+- `kernel/user/stage3/case4_create_flow/worksheets/case4_create_flow_worksheet_axiom.md`
+- `kernel/user/stage3/case5_mount_jump/worksheets/case5_mount_jump_worksheet_axiom.md`
+- `kernel/user/stage3/case6_symlink_loop/worksheets/case6_symlink_loop_worksheet_axiom.md`
+- `kernel/user/stage3/case7_symlink_fast/worksheets/case7_symlink_fast_worksheet_axiom.md`
+- `kernel/user/stage3/case8_creation_proof/worksheets/derive_hash_worksheet_axiom.md`
+- `kernel/user/stage3/case8_creation_proof/worksheets/user_create_deep_worksheet_axiom.md`
+- `kernel/user/stage3/case8_creation_proof/worksheets/user_create_long_worksheet_axiom.md`
+- `kernel/user/stage3/case8_creation_proof/worksheets/user_create_simple_worksheet_axiom.md`
+- `kernel/user/stage3/case8_creation_proof/worksheets/user_hash_collision_worksheet_axiom.md`
+- `kernel/user/stage3/case8_creation_proof/worksheets/user_open_existing_worksheet_axiom.md`
+- `kernel/user/stage3/case8_creation_proof/worksheets/user_rename_worksheet_axiom.md`
+- `kernel/user/stage3/stage3/worksheets/multi_path_open_worksheet_axiom.md`
