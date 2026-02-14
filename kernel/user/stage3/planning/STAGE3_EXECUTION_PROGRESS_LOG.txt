@@ -1,0 +1,5 @@
+2026-02-14T00:00:00Z | created planning docs and 41 pair matrix
+2026-02-14T00:00:00Z | generated dedicated driver skeletons + report placeholders for all 41 pairs
+2026-02-14T00:00:00Z | fixed generator newline-escape bug in auto drivers
+2026-02-14T00:00:00Z | validated build: case17 trace_user_trigger.ko
+2026-02-14T00:00:00Z | executed case17 user_trigger baseline trace and captured dmesg targeted filter

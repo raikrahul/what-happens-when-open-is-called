@@ -1,0 +1,400 @@
+[52612.682268] [trace_user_trigger] do_filp_open.ret pid=248393 comm=sudo ret=ffff899074eae240
+[52612.682445] [trace_user_trigger] do_filp_open.entry pid=248393 comm=sudo dfd=4294967196 pathname=ffff898e8d700000 op=ffffcc9701ce7c24
+[52612.682451] [trace_user_trigger] do_filp_open.ret pid=248393 comm=sudo ret=ffff899074eae300
+[52612.682465] [trace_user_trigger] do_filp_open.entry pid=248393 comm=sudo dfd=4294967196 pathname=ffff898e8d700000 op=ffffcc9701ce7b04
+[52612.682470] [trace_user_trigger] do_filp_open.ret pid=248393 comm=sudo ret=ffff899074eae900
+[52612.682556] [trace_user_trigger] do_filp_open.entry pid=248393 comm=sudo dfd=4294967196 pathname=ffff898e8d700000 op=ffffcc9701ce7d24
+[52612.682561] [trace_user_trigger] do_filp_open.ret pid=248393 comm=sudo ret=fffffffffffffffe
+[52612.682566] [trace_user_trigger] do_filp_open.entry pid=248393 comm=sudo dfd=4294967196 pathname=ffff898e8d700000 op=ffffcc9701ce7bc4
+[52612.682570] [trace_user_trigger] do_filp_open.ret pid=248393 comm=sudo ret=fffffffffffffffe
+[52612.682582] [trace_user_trigger] __d_alloc.entry pid=248393 comm=sudo sb=ffff898e808df000 name_qstr=ffffcc9701ce7e08
+[52612.682585] [trace_user_trigger] __d_alloc.ret pid=248393 comm=sudo dentry=ffff899011177600
+[52612.682633] [trace_user_trigger] do_filp_open.entry pid=248393 comm=sudo dfd=4294967196 pathname=ffff898e8d700000 op=ffffcc9701ce7d34
+[52612.682638] [trace_user_trigger] do_filp_open.ret pid=248393 comm=sudo ret=ffff899074eae300
+[52612.682732] [trace_user_trigger] do_filp_open.entry pid=248393 comm=sudo dfd=4294967196 pathname=ffff898e8d700000 op=ffffcc9701ce7b04
+[52612.682738] [trace_user_trigger] do_filp_open.ret pid=248393 comm=sudo ret=ffff899074eae300
+[52612.682749] [trace_user_trigger] do_filp_open.entry pid=248393 comm=sudo dfd=4294967196 pathname=ffff898e8d700000 op=ffffcc9701ce7ab4
+[52612.682754] [trace_user_trigger] do_filp_open.ret pid=248393 comm=sudo ret=ffff899074eae300
+[52612.682766] [trace_user_trigger] do_filp_open.entry pid=248393 comm=sudo dfd=4294967196 pathname=ffff898e8d700000 op=ffffcc9701ce7c14
+[52612.682771] [trace_user_trigger] do_filp_open.ret pid=248393 comm=sudo ret=ffff899074eae300
+[52612.682772] [trace_user_trigger] do_filp_open.entry pid=161385 comm=codex dfd=4294967196 pathname=ffff898e868b0000 op=ffffcc9711957b94
+[52612.682783] [trace_user_trigger] do_filp_open.entry pid=248393 comm=sudo dfd=4294967196 pathname=ffff898e8d700000 op=ffffcc9701ce7c24
+[52612.682789] [trace_user_trigger] do_filp_open.ret pid=248393 comm=sudo ret=ffff899074eae300
+[52612.682800] [trace_user_trigger] do_filp_open.entry pid=248393 comm=sudo dfd=4294967196 pathname=ffff898e8d700000 op=ffffcc9701ce7d44
+[52612.682806] [trace_user_trigger] do_filp_open.ret pid=248393 comm=sudo ret=ffff899074eae300
+[52612.682819] [trace_user_trigger] do_filp_open.entry pid=248393 comm=sudo dfd=4294967196 pathname=ffff898e8d700000 op=ffffcc9701ce7b44
+[52612.682821] [trace_user_trigger] do_filp_open.ret pid=161385 comm=codex ret=ffff89910c4579c0
+[52612.682825] [trace_user_trigger] do_filp_open.ret pid=248393 comm=sudo ret=ffff899074eae300
+[52612.682840] [trace_user_trigger] do_filp_open.entry pid=248393 comm=sudo dfd=4294967196 pathname=ffff898e8d700000 op=ffffcc9701ce7bd4
+[52612.682846] [trace_user_trigger] do_filp_open.ret pid=248393 comm=sudo ret=ffff899074eae300
+[52612.682851] [trace_user_trigger] do_filp_open.entry pid=161385 comm=codex dfd=4294967196 pathname=ffff898e868b0000 op=ffffcc9711957d94
+[52612.682861] [trace_user_trigger] do_filp_open.entry pid=248393 comm=sudo dfd=4294967196 pathname=ffff898e8d700000 op=ffffcc9701ce7ca4
+[52612.682868] [trace_user_trigger] do_filp_open.ret pid=248393 comm=sudo ret=ffff899074eae300
+[52612.682871] [trace_user_trigger] do_filp_open.ret pid=161385 comm=codex ret=ffff89910c4579c0
+[52612.682882] [trace_user_trigger] do_filp_open.entry pid=248393 comm=sudo dfd=4294967196 pathname=ffff898e8d700000 op=ffffcc9701ce7ca4
+[52612.682887] [trace_user_trigger] do_filp_open.ret pid=248393 comm=sudo ret=ffff899074eae300
+[52612.682919] [trace_user_trigger] do_filp_open.entry pid=161385 comm=codex dfd=4294967196 pathname=ffff898e868b0000 op=ffffcc9711957d04
+[52612.682939] [trace_user_trigger] do_filp_open.ret pid=161385 comm=codex ret=ffff89910c4579c0
+[52612.682960] [trace_user_trigger] do_filp_open.entry pid=161385 comm=codex dfd=4294967196 pathname=ffff898e868b0000 op=ffffcc9711957e64
+[52612.682979] [trace_user_trigger] do_filp_open.ret pid=161385 comm=codex ret=ffff89910c4579c0
+[52612.682995] [trace_user_trigger] do_filp_open.entry pid=248393 comm=sudo dfd=4294967196 pathname=ffff898e8d700000 op=ffffcc9701ce7e54
+[52612.683001] [trace_user_trigger] do_filp_open.ret pid=248393 comm=sudo ret=ffff899074eae300
+[52612.682999] [trace_user_trigger] do_filp_open.entry pid=161385 comm=codex dfd=4294967196 pathname=ffff898e868b0000 op=ffffcc9711957dc4
+[52612.683013] [trace_user_trigger] do_filp_open.entry pid=248393 comm=sudo dfd=4294967196 pathname=ffff898e8d700000 op=ffffcc9701ce7d64
+[52612.683019] [trace_user_trigger] do_filp_open.ret pid=248393 comm=sudo ret=ffff899074eae6c0
+[52612.683018] [trace_user_trigger] do_filp_open.ret pid=161385 comm=codex ret=ffff89910c4579c0
+[52612.683085] [trace_user_trigger] do_filp_open.entry pid=248393 comm=sudo dfd=4294967196 pathname=ffff898e8d700000 op=ffffcc9701ce7ae4
+[52612.683091] [trace_user_trigger] do_filp_open.ret pid=248393 comm=sudo ret=ffff899074eae540
+[52612.683145] [trace_user_trigger] do_filp_open.entry pid=248393 comm=sudo dfd=4294967196 pathname=ffff898e8d700000 op=ffffcc9701ce7bf4
+[52612.683151] [trace_user_trigger] do_filp_open.ret pid=248393 comm=sudo ret=ffff899074eae180
+[52612.683161] [trace_user_trigger] do_filp_open.entry pid=248393 comm=sudo dfd=4294967196 pathname=ffff898e8d700000 op=ffffcc9701ce7c64
+[52612.683165] [trace_user_trigger] do_filp_open.ret pid=248393 comm=sudo ret=ffff899074eaef00
+[52612.683207] [trace_user_trigger] do_filp_open.entry pid=248393 comm=sudo dfd=4294967196 pathname=ffff898e8d700000 op=ffffcc9701ce7ca4
+[52612.683213] [trace_user_trigger] do_filp_open.ret pid=248393 comm=sudo ret=ffff899074eae480
+[52612.683229] [trace_user_trigger] do_filp_open.entry pid=248393 comm=sudo dfd=4294967196 pathname=ffff898e8d700000 op=ffffcc9701ce7aa4
+[52612.683235] [trace_user_trigger] do_filp_open.ret pid=248393 comm=sudo ret=ffff899074eae600
+[52612.683333] [trace_user_trigger] do_filp_open.entry pid=248393 comm=sudo dfd=4294967196 pathname=ffff898e8d700000 op=ffffcc9701ce7ba4
+[52612.683338] [trace_user_trigger] do_filp_open.ret pid=248393 comm=sudo ret=ffff899074eae480
+[52612.683399] [trace_user_trigger] do_filp_open.entry pid=248393 comm=sudo dfd=4294967196 pathname=ffff898e8d700000 op=ffffcc9701ce7d34
+[52612.683404] [trace_user_trigger] do_filp_open.ret pid=248393 comm=sudo ret=ffff899014142b40
+[52612.683451] [trace_user_trigger] do_filp_open.entry pid=248393 comm=sudo dfd=4294967196 pathname=ffff898e8d700000 op=ffffcc9701ce7be4
+[52612.683457] [trace_user_trigger] do_filp_open.ret pid=248393 comm=sudo ret=ffff898dbb4b7900
+[52612.683500] [trace_user_trigger] do_filp_open.entry pid=248393 comm=sudo dfd=4294967196 pathname=ffff898e8d700000 op=ffffcc9701ce7bb4
+[52612.683506] [trace_user_trigger] do_filp_open.ret pid=248393 comm=sudo ret=ffff898dbb4b79c0
+[52612.683560] [trace_user_trigger] do_filp_open.entry pid=248393 comm=sudo dfd=4294967196 pathname=ffff898e8d700000 op=ffffcc9701ce7ce4
+[52612.683565] [trace_user_trigger] do_filp_open.ret pid=248393 comm=sudo ret=ffff898dbb4b7b40
+[52612.683578] [trace_user_trigger] do_filp_open.entry pid=248393 comm=sudo dfd=4294967196 pathname=ffff898e8d700000 op=ffffcc9701ce7b74
+[52612.683583] [trace_user_trigger] do_filp_open.ret pid=248393 comm=sudo ret=ffff898dbb4b7600
+[52612.683634] [trace_user_trigger] do_filp_open.entry pid=248393 comm=sudo dfd=4294967196 pathname=ffff898e8d700000 op=ffffcc9701ce7bf4
+[52612.683640] [trace_user_trigger] do_filp_open.ret pid=248393 comm=sudo ret=ffff898dbb4b7b40
+[52612.683665] [trace_user_trigger] do_filp_open.entry pid=248393 comm=sudo dfd=4294967196 pathname=ffff898e8d700000 op=ffffcc9701ce7ba4
+[52612.683671] [trace_user_trigger] do_filp_open.ret pid=248393 comm=sudo ret=ffff898dbb4b7240
+[52612.683740] [trace_user_trigger] do_filp_open.entry pid=248393 comm=sudo dfd=4294967196 pathname=ffff898e8d700000 op=ffffcc9701ce7ab4
+[52612.683747] [trace_user_trigger] do_filp_open.ret pid=248393 comm=sudo ret=ffff898dbb4b7b40
+[52612.683755] [trace_user_trigger] do_filp_open.entry pid=248393 comm=sudo dfd=4294967196 pathname=ffff898e8d700000 op=ffffcc9701ce7c84
+[52612.683760] [trace_user_trigger] do_filp_open.ret pid=248393 comm=sudo ret=ffff899074eae300
+[52612.683789] [trace_user_trigger] do_filp_open.entry pid=248393 comm=sudo dfd=4294967196 pathname=ffff898e8d700000 op=ffffcc9701ce7b84
+[52612.683794] [trace_user_trigger] do_filp_open.ret pid=248393 comm=sudo ret=ffff899074eae300
+[52612.683805] [trace_user_trigger] do_filp_open.entry pid=248393 comm=sudo dfd=4294967196 pathname=ffff898e8d700000 op=ffffcc9701ce7e74
+[52612.683810] [trace_user_trigger] do_filp_open.ret pid=248393 comm=sudo ret=ffff899074eae300
+[52612.683817] [trace_user_trigger] do_filp_open.entry pid=248393 comm=sudo dfd=4294967196 pathname=ffff898e8d700000 op=ffffcc9701ce7d64
+[52612.683822] [trace_user_trigger] do_filp_open.ret pid=248393 comm=sudo ret=ffff899074eae180
+[52612.683863] [trace_user_trigger] do_filp_open.entry pid=248393 comm=sudo dfd=4294967196 pathname=ffff898e8d700000 op=ffffcc9701ce7b04
+[52612.683869] [trace_user_trigger] do_filp_open.ret pid=248393 comm=sudo ret=ffff898fee470cc0
+[52612.683885] [trace_user_trigger] do_filp_open.entry pid=248393 comm=sudo dfd=4294967196 pathname=ffff898e8d700000 op=ffffcc9701ce7b14
+[52612.683891] [trace_user_trigger] do_filp_open.ret pid=248393 comm=sudo ret=ffff898fee470b40
+[52612.683929] [trace_user_trigger] do_filp_open.entry pid=248393 comm=sudo dfd=4294967196 pathname=ffff898e8d700000 op=ffffcc9701ce7dc4
+[52612.683934] [trace_user_trigger] do_filp_open.ret pid=248393 comm=sudo ret=ffff898fee470f00
+[52612.684036] [trace_user_trigger] do_filp_open.entry pid=248393 comm=sudo dfd=4294967196 pathname=ffff898e8d700000 op=ffffcc9701ce7e44
+[52612.684042] [trace_user_trigger] do_filp_open.ret pid=248393 comm=sudo ret=ffff898fee470cc0
+[52612.684101] [trace_user_trigger] do_filp_open.entry pid=248393 comm=sudo dfd=4294967196 pathname=ffff898e8d700000 op=ffffcc9701ce7cf4
+[52612.684106] [trace_user_trigger] do_filp_open.ret pid=248393 comm=sudo ret=ffff898fee470180
+[52612.684121] [trace_user_trigger] do_filp_open.entry pid=248393 comm=sudo dfd=4294967196 pathname=ffff898e8d700000 op=ffffcc9701ce7af4
+[52612.684126] [trace_user_trigger] do_filp_open.ret pid=248393 comm=sudo ret=ffff899074eae300
+[52612.684174] [trace_user_trigger] do_filp_open.entry pid=248393 comm=sudo dfd=4294967196 pathname=ffff898e8d700000 op=ffffcc9701ce7d64
+[52612.684179] [trace_user_trigger] do_filp_open.ret pid=248393 comm=sudo ret=ffff898e99f39c00
+[52612.684196] [trace_user_trigger] do_filp_open.entry pid=248393 comm=sudo dfd=4294967196 pathname=ffff898e8d700000 op=ffffcc9701ce7b94
+[52612.684203] [trace_user_trigger] do_filp_open.ret pid=248393 comm=sudo ret=ffff899096eecf00
+[52612.684333] [trace_user_trigger] do_filp_open.entry pid=248393 comm=sudo dfd=4294967196 pathname=ffff898e8d700000 op=ffffcc9701ce7e44
+[52612.684340] [trace_user_trigger] do_filp_open.ret pid=248393 comm=sudo ret=ffff899096eec240
+[52612.684346] [trace_user_trigger] do_filp_open.entry pid=248393 comm=sudo dfd=6 pathname=ffff898e8d700000 op=ffffcc9701ce7cb4
+[52612.684351] [trace_user_trigger] do_filp_open.ret pid=248393 comm=sudo ret=ffff899096eec300
+[52612.684356] [trace_user_trigger] do_filp_open.entry pid=248393 comm=sudo dfd=4294967196 pathname=ffff898e8d700000 op=ffffcc9701ce7dd4
+[52612.684364] [trace_user_trigger] do_filp_open.ret pid=248393 comm=sudo ret=ffff899096eecd80
+[52612.684427] [trace_user_trigger] do_filp_open.entry pid=248393 comm=sudo dfd=4294967196 pathname=ffff898e8d700000 op=ffffcc9701ce7b34
+[52612.684433] [trace_user_trigger] do_filp_open.ret pid=248393 comm=sudo ret=ffff899096eec240
+[52612.684485] [trace_user_trigger] do_filp_open.entry pid=248393 comm=sudo dfd=4294967196 pathname=ffff898e8d700000 op=ffffcc9701ce7d24
+[52612.684491] [trace_user_trigger] do_filp_open.ret pid=248393 comm=sudo ret=ffff899096eec240
+[52612.684514] [trace_user_trigger] do_filp_open.entry pid=248393 comm=sudo dfd=4294967196 pathname=ffff898e8d700000 op=ffffcc9701ce7e44
+[52612.684518] [trace_user_trigger] do_filp_open.ret pid=248393 comm=sudo ret=ffff899096eec240
+[52612.684534] [trace_user_trigger] do_filp_open.entry pid=248393 comm=sudo dfd=4294967196 pathname=ffff898e8d700000 op=ffffcc9701ce7e64
+[52612.684539] [trace_user_trigger] do_filp_open.ret pid=248393 comm=sudo ret=ffff899096eec240
+[52612.684554] [trace_user_trigger] do_filp_open.entry pid=248393 comm=sudo dfd=4294967196 pathname=ffff898e8d700000 op=ffffcc9701ce7dd4
+[52612.684558] [trace_user_trigger] do_filp_open.ret pid=248393 comm=sudo ret=ffff899096eec240
+[52612.684573] [trace_user_trigger] __d_alloc.entry pid=248393 comm=sudo sb=ffff898e808df000 name_qstr=ffffcc9701ce7d28
+[52612.684576] [trace_user_trigger] __d_alloc.ret pid=248393 comm=sudo dentry=ffff899011177600
+[52612.684589] [trace_user_trigger] __d_alloc.entry pid=248393 comm=sudo sb=ffff898e8206e800 name_qstr=ffffcc9701ce7af0
+[52612.684592] [trace_user_trigger] __d_alloc.ret pid=248393 comm=sudo dentry=ffff8990111770c0
+[52612.684656] [trace_user_trigger] do_filp_open.entry pid=248393 comm=sudo dfd=4294967196 pathname=ffff898e8d700000 op=ffffcc9701ce7c44
+[52612.684663] [trace_user_trigger] do_filp_open.ret pid=248393 comm=sudo ret=ffffffffffffffef
+[52612.684687] [trace_user_trigger] do_filp_open.entry pid=248393 comm=sudo dfd=4294967196 pathname=ffff898e8d700000 op=ffffcc9701ce7cb4
+[52612.684692] [trace_user_trigger] do_filp_open.ret pid=248393 comm=sudo ret=ffff899096eec300
+[52612.684714] [trace_user_trigger] do_filp_open.entry pid=248393 comm=sudo dfd=4294967196 pathname=ffff898e8d700000 op=ffffcc9701ce7d94
+[52612.684720] [trace_user_trigger] do_filp_open.ret pid=248393 comm=sudo ret=ffff899096eec300
+[52612.684764] [trace_user_trigger] __d_alloc.entry pid=248393 comm=sudo sb=ffff898e808df000 name_qstr=ffffcc9701ce7ac8
+[52612.684768] [trace_user_trigger] __d_alloc.ret pid=248393 comm=sudo dentry=ffff899011177600
+[52612.684800] [trace_user_trigger] __d_alloc.entry pid=248393 comm=sudo sb=ffff898e808df000 name_qstr=ffffcc9701ce7e38
+[52612.684804] [trace_user_trigger] __d_alloc.ret pid=248393 comm=sudo dentry=ffff899011177540
+[52612.684838] [trace_user_trigger] do_filp_open.entry pid=248393 comm=sudo dfd=4294967196 pathname=ffff898e8d700000 op=ffffcc9701ce7d84
+[52612.684843] [trace_user_trigger] do_filp_open.ret pid=248393 comm=sudo ret=ffff899096eecd80
+[52612.684855] [trace_user_trigger] do_filp_open.entry pid=248393 comm=sudo dfd=4294967196 pathname=ffff898e8d700000 op=ffffcc9701ce7e74
+[52612.684861] [trace_user_trigger] do_filp_open.ret pid=248393 comm=sudo ret=fffffffffffffffa
+[52612.684871] [trace_user_trigger] do_filp_open.entry pid=248393 comm=sudo dfd=4294967196 pathname=ffff898e8d700000 op=ffffcc9701ce7e64
+[52612.684875] [trace_user_trigger] do_filp_open.ret pid=248393 comm=sudo ret=ffff899096eecd80
+[52612.685038] [trace_user_trigger] do_filp_open.entry pid=248393 comm=sudo dfd=4294967196 pathname=ffff898e8d700000 op=ffffcc9701ce7d24
+[52612.685043] [trace_user_trigger] do_filp_open.ret pid=248393 comm=sudo ret=ffff899096eecd80
+[52612.685063] [trace_user_trigger] do_filp_open.entry pid=248393 comm=sudo dfd=4294967196 pathname=ffff898e8d700000 op=ffffcc9701ce7c94
+[52612.685067] [trace_user_trigger] do_filp_open.ret pid=248393 comm=sudo ret=ffff899096eecd80
+[52612.685088] [trace_user_trigger] do_filp_open.entry pid=248393 comm=sudo dfd=4294967196 pathname=ffff898e8d700000 op=ffffcc9701ce7ad4
+[52612.685093] [trace_user_trigger] do_filp_open.ret pid=248393 comm=sudo ret=fffffffffffffffe
+[52612.685097] [trace_user_trigger] do_filp_open.entry pid=248393 comm=sudo dfd=4294967196 pathname=ffff898e8d700000 op=ffffcc9701ce7cd4
+[52612.685100] [trace_user_trigger] do_filp_open.ret pid=248393 comm=sudo ret=fffffffffffffffe
+[52612.685111] [trace_user_trigger] __d_alloc.entry pid=248393 comm=sudo sb=ffff898e808df000 name_qstr=ffffcc9701ce7de8
+[52612.685114] [trace_user_trigger] __d_alloc.ret pid=248393 comm=sudo dentry=ffff899011177240
+[52612.685130] [trace_user_trigger] do_filp_open.entry pid=248393 comm=sudo dfd=4294967196 pathname=ffff898e8d700000 op=ffffcc9701ce7b24
+[52612.685135] [trace_user_trigger] do_filp_open.ret pid=248393 comm=sudo ret=ffff899096eecd80
+[52612.685143] [trace_user_trigger] do_filp_open.entry pid=248393 comm=sudo dfd=4294967196 pathname=ffff898e8d700000 op=ffffcc9701ce7d34
+[52612.685148] [trace_user_trigger] do_filp_open.ret pid=248393 comm=sudo ret=ffff899096eecd80
+[52612.685160] [trace_user_trigger] __d_alloc.entry pid=248393 comm=sudo sb=ffff898e808df000 name_qstr=ffffcc9701ce7b38
+[52612.685163] [trace_user_trigger] __d_alloc.ret pid=248393 comm=sudo dentry=ffff899011177240
+[52612.685183] [trace_user_trigger] do_filp_open.entry pid=248393 comm=sudo dfd=4294967196 pathname=ffff898e8d700000 op=ffffcc9701ce7db4
+[52612.685187] [trace_user_trigger] do_filp_open.ret pid=248393 comm=sudo ret=ffff899096eecd80
+[52612.685200] [trace_user_trigger] do_filp_open.entry pid=248393 comm=sudo dfd=4294967196 pathname=ffff898e8d700000 op=ffffcc9701ce7c24
+[52612.685206] [trace_user_trigger] do_filp_open.ret pid=248393 comm=sudo ret=ffff899096eecd80
+[52612.685226] [trace_user_trigger] do_filp_open.entry pid=248393 comm=sudo dfd=4294967196 pathname=ffff898e8d700000 op=ffffcc9701ce7bd4
+[52612.685231] [trace_user_trigger] do_filp_open.ret pid=248393 comm=sudo ret=ffff899096eecd80
+[52612.685241] [trace_user_trigger] do_filp_open.entry pid=248393 comm=sudo dfd=4294967196 pathname=ffff898e8d700000 op=ffffcc9701ce7cd4
+[52612.685246] [trace_user_trigger] do_filp_open.ret pid=248393 comm=sudo ret=ffff899096eecd80
+[52612.685278] [trace_user_trigger] do_filp_open.entry pid=248393 comm=sudo dfd=4294967196 pathname=ffff898e8d700000 op=ffffcc9701ce7ba4
+[52612.685287] [trace_user_trigger] do_filp_open.ret pid=248393 comm=sudo ret=ffff899096eecd80
+[52612.685298] [trace_user_trigger] do_filp_open.entry pid=248393 comm=sudo dfd=4294967196 pathname=ffff898e8d700000 op=ffffcc9701ce7c04
+[52612.685302] [trace_user_trigger] do_filp_open.ret pid=248393 comm=sudo ret=ffff899096eecd80
+[52612.685319] [trace_user_trigger] do_filp_open.entry pid=248393 comm=sudo dfd=4294967196 pathname=ffff898e8d700000 op=ffffcc9701ce7b94
+[52612.685325] [trace_user_trigger] do_filp_open.ret pid=248393 comm=sudo ret=ffff899096eecd80
+[52612.685337] [trace_user_trigger] do_filp_open.entry pid=248393 comm=sudo dfd=4294967196 pathname=ffff898e8d700000 op=ffffcc9701ce7e54
+[52612.685342] [trace_user_trigger] do_filp_open.ret pid=248393 comm=sudo ret=ffff899096eecd80
+[52612.685350] [trace_user_trigger] do_filp_open.entry pid=248393 comm=sudo dfd=4294967196 pathname=ffff898e8d700000 op=ffffcc9701ce7c44
+[52612.685354] [trace_user_trigger] do_filp_open.ret pid=248393 comm=sudo ret=ffff899096eecd80
+[52612.685362] [trace_user_trigger] do_filp_open.entry pid=248393 comm=sudo dfd=4294967196 pathname=ffff898e8d700000 op=ffffcc9701ce7c04
+[52612.685368] [trace_user_trigger] do_filp_open.ret pid=248393 comm=sudo ret=ffff899096eecd80
+[52612.685377] [trace_user_trigger] do_filp_open.entry pid=248393 comm=sudo dfd=4294967196 pathname=ffff898e8d700000 op=ffffcc9701ce7d14
+[52612.685381] [trace_user_trigger] do_filp_open.ret pid=248393 comm=sudo ret=ffff899096eecd80
+[52612.685393] [trace_user_trigger] do_filp_open.entry pid=248393 comm=sudo dfd=4294967196 pathname=ffff898e8d700000 op=ffffcc9701ce7aa4
+[52612.685397] [trace_user_trigger] do_filp_open.ret pid=248393 comm=sudo ret=ffff899096eecd80
+[52612.685413] [trace_user_trigger] do_filp_open.entry pid=248393 comm=sudo dfd=4294967196 pathname=ffff898e8d700000 op=ffffcc9701ce7bd4
+[52612.685417] [trace_user_trigger] do_filp_open.ret pid=248393 comm=sudo ret=ffff899096eecd80
+[52612.685426] [trace_user_trigger] do_filp_open.entry pid=248393 comm=sudo dfd=4294967196 pathname=ffff898e8d700000 op=ffffcc9701ce7b04
+[52612.685430] [trace_user_trigger] do_filp_open.ret pid=248393 comm=sudo ret=ffff899096eecd80
+[52612.685447] [trace_user_trigger] do_filp_open.entry pid=248393 comm=sudo dfd=4294967196 pathname=ffff898e8d700000 op=ffffcc9701ce7d44
+[52612.685452] [trace_user_trigger] __d_alloc.entry pid=248393 comm=sudo sb=ffff898e8206e800 name_qstr=ffffcc9701ce7c10
+[52612.685455] [trace_user_trigger] __d_alloc.ret pid=248393 comm=sudo dentry=ffff899011177240
+[52612.685462] [trace_user_trigger] do_filp_open.ret pid=248393 comm=sudo ret=ffff899096eecd80
+[52612.685470] [trace_user_trigger] do_filp_open.entry pid=248393 comm=sudo dfd=4294967196 pathname=ffff898e8d700000 op=ffffcc9701ce7ad4
+[52612.685474] [trace_user_trigger] do_filp_open.ret pid=248393 comm=sudo ret=ffff899096eecd80
+[52612.685494] [trace_user_trigger] __d_alloc.entry pid=248393 comm=sudo sb=ffff898e808df000 name_qstr=ffffcc9701ce7db8
+[52612.685497] [trace_user_trigger] __d_alloc.ret pid=248393 comm=sudo dentry=ffff899011177180
+[52612.685520] [trace_user_trigger] __d_alloc.entry pid=248393 comm=sudo sb=ffff898e808df800 name_qstr=ffffcc9701ce7a38
+[52612.685524] [trace_user_trigger] __d_alloc.ret pid=248393 comm=sudo dentry=ffff899011177180
+[52612.686103] [trace_user_trigger] do_filp_open.entry pid=248394 comm=sudo dfd=4294967196 pathname=ffff898e8f377000 op=ffffcc9700783db0
+[52612.686124] [trace_user_trigger] do_filp_open.ret pid=248394 comm=sudo ret=ffff898fe0775300
+[52612.686277] [trace_user_trigger] do_filp_open.entry pid=248394 comm=sudo dfd=4294967196 pathname=ffff898e8f376000 op=ffffcc9700783c48
+[52612.686291] [trace_user_trigger] do_filp_open.ret pid=248394 comm=sudo ret=ffff898fe07753c0
+[52612.687082] [trace_user_trigger] do_filp_open.entry pid=248394 comm=rmmod dfd=4294967196 pathname=ffff898e8f377000 op=ffffcc9700783bb4
+[52612.687096] [trace_user_trigger] do_filp_open.ret pid=248394 comm=rmmod ret=ffff898fe07759c0
+[52612.687135] [trace_user_trigger] do_filp_open.entry pid=248394 comm=rmmod dfd=4294967196 pathname=ffff898e8f377000 op=ffffcc9700783d24
+[52612.687146] [trace_user_trigger] do_filp_open.ret pid=248394 comm=rmmod ret=ffff898fe0775600
+[52612.687222] [trace_user_trigger] do_filp_open.entry pid=248394 comm=rmmod dfd=4294967196 pathname=ffff898e8f377000 op=ffffcc9700783c34
+[52612.687234] [trace_user_trigger] do_filp_open.ret pid=248394 comm=rmmod ret=ffff898fe0775c00
+[52612.687330] [trace_user_trigger] do_filp_open.entry pid=248394 comm=rmmod dfd=4294967196 pathname=ffff898e8f377000 op=ffffcc9700783c54
+[52612.687341] [trace_user_trigger] do_filp_open.ret pid=248394 comm=rmmod ret=ffff898fe0775b40
+[52612.687444] [trace_user_trigger] do_filp_open.entry pid=248394 comm=rmmod dfd=4294967196 pathname=ffff898e8f377000 op=ffffcc9700783b14
+[52612.687455] [trace_user_trigger] do_filp_open.ret pid=248394 comm=rmmod ret=ffff898fe0775780
+[52612.688710] [trace_user_trigger] do_filp_open.entry pid=248394 comm=rmmod dfd=4294967196 pathname=ffff898e8f377000 op=ffffcc9700783c54
+[52612.688737] [trace_user_trigger] do_filp_open.ret pid=248394 comm=rmmod ret=ffff898fe07759c0
+[52612.688759] [trace_user_trigger] do_filp_open.entry pid=248394 comm=rmmod dfd=4294967196 pathname=ffff898e8f377000 op=ffffcc9700783ac4
+[52612.688771] [trace_user_trigger] do_filp_open.ret pid=248394 comm=rmmod ret=ffff898fe07759c0
+[52612.688876] [trace_user_trigger] do_filp_open.entry pid=248394 comm=rmmod dfd=4294967196 pathname=ffff898e8f377000 op=ffffcc9700783dd4
+[52612.688889] [trace_user_trigger] do_filp_open.ret pid=248394 comm=rmmod ret=ffff898fe07759c0
+[52612.688917] [trace_user_trigger] do_filp_open.entry pid=248394 comm=rmmod dfd=4294967196 pathname=ffff898e8f377000 op=ffffcc9700783c14
+[52612.688928] [trace_user_trigger] do_filp_open.ret pid=248394 comm=rmmod ret=ffff898fe07759c0
+[52612.688955] [trace_user_trigger] do_filp_open.entry pid=248394 comm=rmmod dfd=4294967196 pathname=ffff898e8f377000 op=ffffcc9700783e04
+[52612.688967] [trace_user_trigger] __d_alloc.entry pid=248394 comm=rmmod sb=ffff898e8a3fc800 name_qstr=ffffcc9700783cd0
+[52612.688975] [trace_user_trigger] __d_alloc.ret pid=248394 comm=rmmod dentry=ffff898e824453c0
+[52612.688991] [trace_user_trigger] do_filp_open.ret pid=248394 comm=rmmod ret=ffff898fe07759c0
+[52612.689017] [trace_user_trigger] do_filp_open.entry pid=248394 comm=rmmod dfd=4294967196 pathname=ffff898e8f377000 op=ffffcc9700783a94
+[52612.689028] [trace_user_trigger] __d_alloc.entry pid=248394 comm=rmmod sb=ffff898e8a3fc800 name_qstr=ffffcc9700783960
+[52612.689034] [trace_user_trigger] __d_alloc.ret pid=248394 comm=rmmod dentry=ffff898e824450c0
+[52612.689044] [trace_user_trigger] do_filp_open.ret pid=248394 comm=rmmod ret=ffff898fe07759c0
+[52612.689064] [trace_user_trigger] do_filp_open.entry pid=248394 comm=rmmod dfd=4294967196 pathname=ffff898e8f377000 op=ffffcc9700783e14
+[52612.689076] [trace_user_trigger] __d_alloc.entry pid=248394 comm=rmmod sb=ffff898e8a3fc800 name_qstr=ffffcc9700783ce0
+[52612.689082] [trace_user_trigger] __d_alloc.ret pid=248394 comm=rmmod dentry=ffff898e824459c0
+[52612.689094] [trace_user_trigger] do_filp_open.ret pid=248394 comm=rmmod ret=ffff898fe07759c0
+[52612.695002] [trace_user_trigger] do_filp_open.entry pid=388 comm=systemd-journal dfd=4294967196 pathname=ffff898e8c88d000 op=ffffcc9700887b54
+[52612.695018] [trace_user_trigger] __d_alloc.entry pid=388 comm=systemd-journal sb=ffff898e8206e800 name_qstr=ffffcc9700887a20
+[52612.695033] [trace_user_trigger] do_filp_open.ret pid=388 comm=systemd-journal ret=fffffffffffffffe
+[52612.695044] [trace_user_trigger] __d_alloc.entry pid=388 comm=systemd-journal sb=ffff898e8206e800 name_qstr=ffffcc9700887d00
+[52612.695057] [trace_user_trigger] do_filp_open.entry pid=388 comm=systemd-journal dfd=4294967196 pathname=ffff898e8c88d000 op=ffffcc9700887e84
+[52612.695065] [trace_user_trigger] __d_alloc.entry pid=388 comm=systemd-journal sb=ffff898e8206e800 name_qstr=ffffcc9700887d50
+[52612.695074] [trace_user_trigger] do_filp_open.ret pid=388 comm=systemd-journal ret=fffffffffffffffe
+[52612.695084] [trace_user_trigger] do_filp_open.entry pid=388 comm=systemd-journal dfd=4294967196 pathname=ffff898e8c88d000 op=ffffcc9700887c14
+[52612.695092] [trace_user_trigger] __d_alloc.entry pid=388 comm=systemd-journal sb=ffff898e8206e800 name_qstr=ffffcc9700887ae0
+[52612.695100] [trace_user_trigger] do_filp_open.ret pid=388 comm=systemd-journal ret=fffffffffffffffe
+[52612.695111] [trace_user_trigger] do_filp_open.entry pid=388 comm=systemd-journal dfd=4294967196 pathname=ffff898e8c88d000 op=ffffcc9700887dc4
+[52612.695118] [trace_user_trigger] __d_alloc.entry pid=388 comm=systemd-journal sb=ffff898e8206e800 name_qstr=ffffcc9700887c90
+[52612.695127] [trace_user_trigger] do_filp_open.ret pid=388 comm=systemd-journal ret=fffffffffffffffe
+[52612.695136] [trace_user_trigger] do_filp_open.entry pid=388 comm=systemd-journal dfd=4294967196 pathname=ffff898e8c88d000 op=ffffcc9700887ca4
+[52612.695144] [trace_user_trigger] __d_alloc.entry pid=388 comm=systemd-journal sb=ffff898e8206e800 name_qstr=ffffcc9700887b70
+[52612.695153] [trace_user_trigger] do_filp_open.ret pid=388 comm=systemd-journal ret=fffffffffffffffe
+[52612.695162] [trace_user_trigger] do_filp_open.entry pid=388 comm=systemd-journal dfd=4294967196 pathname=ffff898e8c88d000 op=ffffcc9700887bd4
+[52612.695170] [trace_user_trigger] __d_alloc.entry pid=388 comm=systemd-journal sb=ffff898e8206e800 name_qstr=ffffcc9700887aa0
+[52612.695178] [trace_user_trigger] do_filp_open.ret pid=388 comm=systemd-journal ret=fffffffffffffffe
+[52612.695189] [trace_user_trigger] do_filp_open.entry pid=388 comm=systemd-journal dfd=4294967196 pathname=ffff898e8c88d000 op=ffffcc9700887c34
+[52612.695196] [trace_user_trigger] __d_alloc.entry pid=388 comm=systemd-journal sb=ffff898e8206e800 name_qstr=ffffcc9700887b00
+[52612.695205] [trace_user_trigger] do_filp_open.ret pid=388 comm=systemd-journal ret=fffffffffffffffe
+[52612.695297] [trace_user_trigger] do_filp_open.entry pid=388 comm=systemd-journal dfd=4294967196 pathname=ffff898e8c88d000 op=ffffcc9700887ad4
+[52612.695308] [trace_user_trigger] __d_alloc.entry pid=388 comm=systemd-journal sb=ffff898e8206e800 name_qstr=ffffcc97008879a0
+[52612.695318] [trace_user_trigger] do_filp_open.ret pid=388 comm=systemd-journal ret=fffffffffffffffe
+[52612.695327] [trace_user_trigger] __d_alloc.entry pid=388 comm=systemd-journal sb=ffff898e8206e800 name_qstr=ffffcc9700887b60
+[52612.695339] [trace_user_trigger] do_filp_open.entry pid=388 comm=systemd-journal dfd=4294967196 pathname=ffff898e8c88d000 op=ffffcc9700887c44
+[52612.695347] [trace_user_trigger] __d_alloc.entry pid=388 comm=systemd-journal sb=ffff898e8206e800 name_qstr=ffffcc9700887b10
+[52612.695356] [trace_user_trigger] do_filp_open.ret pid=388 comm=systemd-journal ret=fffffffffffffffe
+[52612.695365] [trace_user_trigger] do_filp_open.entry pid=388 comm=systemd-journal dfd=4294967196 pathname=ffff898e8c88d000 op=ffffcc9700887c04
+[52612.695372] [trace_user_trigger] __d_alloc.entry pid=388 comm=systemd-journal sb=ffff898e8206e800 name_qstr=ffffcc9700887ad0
+[52612.695381] [trace_user_trigger] do_filp_open.ret pid=388 comm=systemd-journal ret=fffffffffffffffe
+[52612.695391] [trace_user_trigger] do_filp_open.entry pid=388 comm=systemd-journal dfd=4294967196 pathname=ffff898e8c88d000 op=ffffcc9700887ae4
+[52612.695398] [trace_user_trigger] __d_alloc.entry pid=388 comm=systemd-journal sb=ffff898e8206e800 name_qstr=ffffcc97008879b0
+[52612.695407] [trace_user_trigger] do_filp_open.ret pid=388 comm=systemd-journal ret=fffffffffffffffe
+[52612.695416] [trace_user_trigger] do_filp_open.entry pid=388 comm=systemd-journal dfd=4294967196 pathname=ffff898e8c88d000 op=ffffcc9700887db4
+[52612.695424] [trace_user_trigger] __d_alloc.entry pid=388 comm=systemd-journal sb=ffff898e8206e800 name_qstr=ffffcc9700887c80
+[52612.695432] [trace_user_trigger] do_filp_open.ret pid=388 comm=systemd-journal ret=fffffffffffffffe
+[52612.695442] [trace_user_trigger] do_filp_open.entry pid=388 comm=systemd-journal dfd=4294967196 pathname=ffff898e8c88d000 op=ffffcc9700887aa4
+[52612.695449] [trace_user_trigger] __d_alloc.entry pid=388 comm=systemd-journal sb=ffff898e8206e800 name_qstr=ffffcc9700887970
+[52612.695458] [trace_user_trigger] do_filp_open.ret pid=388 comm=systemd-journal ret=fffffffffffffffe
+[52612.695467] [trace_user_trigger] do_filp_open.entry pid=388 comm=systemd-journal dfd=4294967196 pathname=ffff898e8c88d000 op=ffffcc9700887b14
+[52612.695475] [trace_user_trigger] __d_alloc.entry pid=388 comm=systemd-journal sb=ffff898e8206e800 name_qstr=ffffcc97008879e0
+[52612.695483] [trace_user_trigger] do_filp_open.ret pid=388 comm=systemd-journal ret=fffffffffffffffe
+[52612.695617] [trace_user_trigger] do_filp_open.entry pid=388 comm=systemd-journal dfd=4294967196 pathname=ffff898e8c88d000 op=ffffcc9700887cf4
+[52612.695630] [trace_user_trigger] __d_alloc.entry pid=388 comm=systemd-journal sb=ffff898e8206e800 name_qstr=ffffcc9700887bc0
+[52612.695665] [trace_user_trigger] do_filp_open.ret pid=388 comm=systemd-journal ret=ffff8990145066c0
+[52612.695712] [trace_user_trigger] do_filp_open.entry pid=388 comm=systemd-journal dfd=4294967196 pathname=ffff898e8c88d000 op=ffffcc9700887e04
+[52612.695722] [trace_user_trigger] __d_alloc.entry pid=388 comm=systemd-journal sb=ffff898e8206e800 name_qstr=ffffcc9700887cd0
+[52612.695733] [trace_user_trigger] do_filp_open.ret pid=388 comm=systemd-journal ret=ffff8990145066c0
+[52612.695768] [trace_user_trigger] do_filp_open.entry pid=388 comm=systemd-journal dfd=4294967196 pathname=ffff898e8c88d000 op=ffffcc9700887d94
+[52612.695777] [trace_user_trigger] __d_alloc.entry pid=388 comm=systemd-journal sb=ffff898e8206e800 name_qstr=ffffcc9700887c60
+[52612.695789] [trace_user_trigger] do_filp_open.ret pid=388 comm=systemd-journal ret=ffff8990145066c0
+[52612.695840] [trace_user_trigger] do_filp_open.entry pid=388 comm=systemd-journal dfd=4294967196 pathname=ffff898e8c88d000 op=ffffcc9700887ce4
+[52612.695849] [trace_user_trigger] __d_alloc.entry pid=388 comm=systemd-journal sb=ffff898e8206e800 name_qstr=ffffcc9700887bb0
+[52612.695860] [trace_user_trigger] __d_alloc.entry pid=388 comm=systemd-journal sb=ffff898e8206e800 name_qstr=ffffcc9700887bb0
+[52612.695873] [trace_user_trigger] do_filp_open.ret pid=388 comm=systemd-journal ret=ffff8990145066c0
+[52612.695891] [trace_user_trigger] do_filp_open.entry pid=388 comm=systemd-journal dfd=4294967196 pathname=ffff898e8c88d000 op=ffffcc9700887c14
+[52612.695899] [trace_user_trigger] __d_alloc.entry pid=388 comm=systemd-journal sb=ffff898e8206e800 name_qstr=ffffcc9700887ae0
+[52612.695911] [trace_user_trigger] do_filp_open.ret pid=388 comm=systemd-journal ret=ffff8990145066c0
+[52612.695929] [trace_user_trigger] do_filp_open.entry pid=388 comm=systemd-journal dfd=4294967196 pathname=ffff898e8c88d000 op=ffffcc9700887c54
+[52612.695939] [trace_user_trigger] do_filp_open.ret pid=388 comm=systemd-journal ret=ffff8990145066c0
+[52612.695957] [trace_user_trigger] do_filp_open.entry pid=388 comm=systemd-journal dfd=4294967196 pathname=ffff898e8c88d000 op=ffffcc9700887d74
+[52612.695965] [trace_user_trigger] __d_alloc.entry pid=388 comm=systemd-journal sb=ffff898e8206e800 name_qstr=ffffcc9700887c40
+[52612.695977] [trace_user_trigger] do_filp_open.ret pid=388 comm=systemd-journal ret=ffff8990145066c0
+[52612.696042] [trace_user_trigger] __d_alloc.entry pid=388 comm=systemd-journal sb=ffff898e8ca1c800 name_qstr=ffffcc97008879d0
+[52612.696056] [trace_user_trigger] do_filp_open.entry pid=388 comm=systemd-journal dfd=4294967196 pathname=ffff898e8c88d000 op=ffffcc9700887e54
+[52612.696064] [trace_user_trigger] __d_alloc.entry pid=388 comm=systemd-journal sb=ffff898e8ca1c800 name_qstr=ffffcc9700887d20
+[52612.696073] [trace_user_trigger] do_filp_open.ret pid=388 comm=systemd-journal ret=fffffffffffffffe
+[52612.696081] [trace_user_trigger] __d_alloc.entry pid=388 comm=systemd-journal sb=ffff898e8ca1c800 name_qstr=ffffcc9700887a30
+[52612.696093] [trace_user_trigger] __d_alloc.entry pid=388 comm=systemd-journal sb=ffff898e8ca1c800 name_qstr=ffffcc9700887bf0
+[52612.698012] [trace_user_trigger] do_filp_open.entry pid=388 comm=systemd-journal dfd=4294967196 pathname=ffff898e8c88d000 op=ffffcc9700887ad4
+[52612.698029] [trace_user_trigger] do_filp_open.ret pid=388 comm=systemd-journal ret=ffff8990145066c0
+[52612.698065] [trace_user_trigger] do_filp_open.entry pid=388 comm=systemd-journal dfd=4294967196 pathname=ffff898e8c88d000 op=ffffcc9700887bf4
+[52612.698076] [trace_user_trigger] do_filp_open.ret pid=388 comm=systemd-journal ret=ffff8990145066c0
+[52612.698104] [trace_user_trigger] do_filp_open.entry pid=388 comm=systemd-journal dfd=4294967196 pathname=ffff898e8c88d000 op=ffffcc9700887b14
+[52612.698115] [trace_user_trigger] do_filp_open.ret pid=388 comm=systemd-journal ret=ffff8990145066c0
+[52612.698159] [trace_user_trigger] do_filp_open.entry pid=388 comm=systemd-journal dfd=4294967196 pathname=ffff898e8c88d000 op=ffffcc9700887de4
+[52612.698171] [trace_user_trigger] do_filp_open.ret pid=388 comm=systemd-journal ret=ffff8990145066c0
+[52612.698186] [trace_user_trigger] do_filp_open.entry pid=388 comm=systemd-journal dfd=4294967196 pathname=ffff898e8c88d000 op=ffffcc9700887e14
+[52612.698196] [trace_user_trigger] do_filp_open.ret pid=388 comm=systemd-journal ret=ffff8990145066c0
+[52612.698213] [trace_user_trigger] do_filp_open.entry pid=388 comm=systemd-journal dfd=4294967196 pathname=ffff898e8c88d000 op=ffffcc9700887df4
+[52612.698222] [trace_user_trigger] do_filp_open.ret pid=388 comm=systemd-journal ret=ffff8990145066c0
+[52612.698239] [trace_user_trigger] do_filp_open.entry pid=388 comm=systemd-journal dfd=4294967196 pathname=ffff898e8c88d000 op=ffffcc9700887ae4
+[52612.698257] [trace_user_trigger] do_filp_open.ret pid=388 comm=systemd-journal ret=ffff8990145066c0
+[52612.698327] [trace_user_trigger] __d_alloc.entry pid=388 comm=systemd-journal sb=ffff898e8ca1c800 name_qstr=ffffcc9700887ce0
+[52612.698347] [trace_user_trigger] do_filp_open.entry pid=388 comm=systemd-journal dfd=4294967196 pathname=ffff898e8c88d000 op=ffffcc9700887b04
+[52612.698359] [trace_user_trigger] __d_alloc.entry pid=388 comm=systemd-journal sb=ffff898e8ca1c800 name_qstr=ffffcc97008879d0
+[52612.698372] [trace_user_trigger] do_filp_open.ret pid=388 comm=systemd-journal ret=fffffffffffffffe
+[52612.698384] [trace_user_trigger] __d_alloc.entry pid=388 comm=systemd-journal sb=ffff898e8ca1c800 name_qstr=ffffcc9700887a80
+[52612.698401] [trace_user_trigger] __d_alloc.entry pid=388 comm=systemd-journal sb=ffff898e8ca1c800 name_qstr=ffffcc9700887b20
+[52612.716323] [trace_user_trigger] do_filp_open.entry pid=161385 comm=codex dfd=4294967196 pathname=ffff898e868b0000 op=ffffcc9711957b84
+[52612.716365] [trace_user_trigger] do_filp_open.ret pid=161385 comm=codex ret=ffff89910c4579c0
+[52612.716392] [trace_user_trigger] do_filp_open.entry pid=161385 comm=codex dfd=4294967196 pathname=ffff898e868b0000 op=ffffcc9711957b04
+[52612.716407] [trace_user_trigger] do_filp_open.ret pid=161385 comm=codex ret=ffff89910c4579c0
+[52612.716461] [trace_user_trigger] do_filp_open.entry pid=161385 comm=codex dfd=4294967196 pathname=ffff898e868b0000 op=ffffcc9711957e84
+[52612.716476] [trace_user_trigger] do_filp_open.ret pid=161385 comm=codex ret=ffff89910c4579c0
+[52612.716492] [trace_user_trigger] do_filp_open.entry pid=161385 comm=codex dfd=4294967196 pathname=ffff898e868b0000 op=ffffcc9711957e64
+[52612.716507] [trace_user_trigger] do_filp_open.ret pid=161385 comm=codex ret=ffff89910c4579c0
+[52612.716522] [trace_user_trigger] do_filp_open.entry pid=161385 comm=codex dfd=4294967196 pathname=ffff898e868b0000 op=ffffcc9711957c14
+[52612.716536] [trace_user_trigger] do_filp_open.ret pid=161385 comm=codex ret=ffff89910c4579c0
+[52612.728893] [trace_user_trigger] do_filp_open.entry pid=6105 comm=opencode-cli dfd=4294967196 pathname=ffff898e9961f000 op=ffffcc9702483b04
+[52612.728909] [trace_user_trigger] do_filp_open.ret pid=6105 comm=opencode-cli ret=ffff898e98b3db40
+[52612.728915] [trace_user_trigger] do_filp_open.entry pid=6105 comm=opencode-cli dfd=19 pathname=ffff898e9961f000 op=ffffcc9702483ac4
+[52612.728920] [trace_user_trigger] do_filp_open.ret pid=6105 comm=opencode-cli ret=ffff898e98b3d540
+[52612.729116] [trace_user_trigger] do_filp_open.entry pid=248395 comm=opencode-cli dfd=4294967196 pathname=ffff898e8d700000 op=ffffcc971cdcbce0
+[52612.729137] [trace_user_trigger] do_filp_open.ret pid=248395 comm=opencode-cli ret=ffff898dbb4b7b40
+[52612.729359] [trace_user_trigger] do_filp_open.entry pid=248395 comm=opencode-cli dfd=4294967196 pathname=ffff898e9961f000 op=ffffcc971cdcbb78
+[52612.729378] [trace_user_trigger] do_filp_open.ret pid=248395 comm=opencode-cli ret=ffff898e98b3d300
+[52612.729813] [trace_user_trigger] do_filp_open.entry pid=248395 comm=git dfd=4294967196 pathname=ffff898e9961f000 op=ffffcc971cdcbde4
+[52612.729833] [trace_user_trigger] do_filp_open.ret pid=248395 comm=git ret=fffffffffffffffe
+[52612.729849] [trace_user_trigger] do_filp_open.entry pid=248395 comm=git dfd=4294967196 pathname=ffff898e9961f000 op=ffffcc971cdcbe14
+[52612.729862] [trace_user_trigger] do_filp_open.ret pid=248395 comm=git ret=fffffffffffffffe
+[52612.729877] [trace_user_trigger] do_filp_open.entry pid=248395 comm=git dfd=4294967196 pathname=ffff898e9961f000 op=ffffcc971cdcbb14
+[52612.729891] [trace_user_trigger] do_filp_open.ret pid=248395 comm=git ret=fffffffffffffffe
+[52612.729909] [trace_user_trigger] do_filp_open.entry pid=248395 comm=git dfd=4294967196 pathname=ffff898e9961f000 op=ffffcc971cdcbe54
+[52612.729919] [trace_user_trigger] do_filp_open.ret pid=248395 comm=git ret=fffffffffffffffe
+[52612.729928] [trace_user_trigger] do_filp_open.entry pid=248395 comm=git dfd=4294967196 pathname=ffff898e9961f000 op=ffffcc971cdcbd64
+[52612.729937] [trace_user_trigger] do_filp_open.ret pid=248395 comm=git ret=fffffffffffffffe
+[52612.729945] [trace_user_trigger] do_filp_open.entry pid=248395 comm=git dfd=4294967196 pathname=ffff898e9961f000 op=ffffcc971cdcbe44
+[52612.729955] [trace_user_trigger] do_filp_open.ret pid=248395 comm=git ret=fffffffffffffffe
+[52612.729964] [trace_user_trigger] do_filp_open.entry pid=248395 comm=git dfd=4294967196 pathname=ffff898e9961f000 op=ffffcc971cdcbd44
+[52612.729977] [trace_user_trigger] do_filp_open.ret pid=248395 comm=git ret=ffff898e98b3df00
+[52612.730024] [trace_user_trigger] do_filp_open.entry pid=248395 comm=git dfd=4294967196 pathname=ffff898e9961f000 op=ffffcc971cdcbde4
+[52612.730038] [trace_user_trigger] do_filp_open.ret pid=248395 comm=git ret=ffff898e98b3d480
+[52612.730135] [trace_user_trigger] do_filp_open.entry pid=248395 comm=git dfd=4294967196 pathname=ffff898e9961f000 op=ffffcc971cdcbe24
+[52612.730150] [trace_user_trigger] do_filp_open.ret pid=248395 comm=git ret=fffffffffffffffe
+[52612.730158] [trace_user_trigger] do_filp_open.entry pid=248395 comm=git dfd=4294967196 pathname=ffff898e9961f000 op=ffffcc971cdcbc14
+[52612.730168] [trace_user_trigger] do_filp_open.ret pid=248395 comm=git ret=fffffffffffffffe
+[52612.730176] [trace_user_trigger] do_filp_open.entry pid=248395 comm=git dfd=4294967196 pathname=ffff898e9961f000 op=ffffcc971cdcbd54
+[52612.730185] [trace_user_trigger] do_filp_open.ret pid=248395 comm=git ret=fffffffffffffffe
+[52612.730194] [trace_user_trigger] do_filp_open.entry pid=248395 comm=git dfd=4294967196 pathname=ffff898e9961f000 op=ffffcc971cdcbcc4
+[52612.730203] [trace_user_trigger] do_filp_open.ret pid=248395 comm=git ret=fffffffffffffffe
+[52612.730214] [trace_user_trigger] do_filp_open.entry pid=248395 comm=git dfd=4294967196 pathname=ffff898e9961f000 op=ffffcc971cdcbc04
+[52612.730227] [trace_user_trigger] do_filp_open.ret pid=248395 comm=git ret=ffff898e98b3dcc0
+[52612.730289] [trace_user_trigger] do_filp_open.entry pid=248395 comm=git dfd=4294967196 pathname=ffff898e9961f000 op=ffffcc971cdcbcf4
+[52612.730296] [trace_user_trigger] do_filp_open.ret pid=248395 comm=git ret=fffffffffffffffe
+[52612.730299] [trace_user_trigger] do_filp_open.entry pid=248395 comm=git dfd=4294967196 pathname=ffff898e9961f000 op=ffffcc971cdcbd54
+[52612.730303] [trace_user_trigger] do_filp_open.ret pid=248395 comm=git ret=fffffffffffffffe
+[52612.730307] [trace_user_trigger] do_filp_open.entry pid=248395 comm=git dfd=4294967196 pathname=ffff898e9961f000 op=ffffcc971cdcbe14
+[52612.730310] [trace_user_trigger] do_filp_open.ret pid=248395 comm=git ret=fffffffffffffffe
+[52612.730314] [trace_user_trigger] do_filp_open.entry pid=248395 comm=git dfd=4294967196 pathname=ffff898e9961f000 op=ffffcc971cdcba94
+[52612.730318] [trace_user_trigger] do_filp_open.ret pid=248395 comm=git ret=fffffffffffffffe
+[52612.730323] [trace_user_trigger] do_filp_open.entry pid=248395 comm=git dfd=4294967196 pathname=ffff898e9961f000 op=ffffcc971cdcba94
+[52612.730329] [trace_user_trigger] do_filp_open.ret pid=248395 comm=git ret=ffff898e98b3d180
+[52612.730722] [trace_user_trigger] do_filp_open.entry pid=248395 comm=git dfd=4294967196 pathname=ffff898e9961f000 op=ffffcc971cdcbdb4
+[52612.730764] [trace_user_trigger] do_filp_open.entry pid=248395 comm=git dfd=4294967196 pathname=ffff898e9961f000 op=ffffcc971cdcbbd4
+[52612.730883] [trace_user_trigger] do_filp_open.entry pid=248395 comm=git dfd=4294967196 pathname=ffff898e9961f000 op=ffffcc971cdcbbd4
+[52612.730958] [trace_user_trigger] do_filp_open.entry pid=248395 comm=git dfd=4294967196 pathname=ffff898e9961f000 op=ffffcc971cdcbca4
+[52612.730981] [trace_user_trigger] do_filp_open.entry pid=248395 comm=git dfd=4294967196 pathname=ffff898e9961f000 op=ffffcc971cdcbca4
+[52612.731037] [trace_user_trigger] do_filp_open.entry pid=248395 comm=git dfd=4294967196 pathname=ffff898e9961f000 op=ffffcc971cdcbab4
+[52612.731063] [trace_user_trigger] do_filp_open.entry pid=248395 comm=git dfd=4294967196 pathname=ffff898e9961f000 op=ffffcc971cdcbd64
+[52612.731105] [trace_user_trigger] do_filp_open.entry pid=248395 comm=git dfd=4294967196 pathname=ffff898e9961f000 op=ffffcc971cdcbb04
+[52612.731116] [trace_user_trigger] do_filp_open.entry pid=248395 comm=git dfd=4294967196 pathname=ffff898e9961f000 op=ffffcc971cdcbb64
+[52612.731125] [trace_user_trigger] do_filp_open.entry pid=248395 comm=git dfd=4294967196 pathname=ffff898e9961f000 op=ffffcc971cdcbb44
+[52612.731153] [trace_user_trigger] do_filp_open.entry pid=248395 comm=git dfd=4294967196 pathname=ffff898e9961f000 op=ffffcc971cdcbbc4
+[52612.731162] [trace_user_trigger] do_filp_open.entry pid=248395 comm=git dfd=4294967196 pathname=ffff898e9961f000 op=ffffcc971cdcbb54
+[52612.753676] [trace_user_trigger] unloaded
+[52622.465699] [trace_user_trigger] loaded target_comm=user_trigger.ou user=kernel/user/stage3/case17_do_filp_open_deep_trace/user_trigger.c
+[52622.468462] [trace_user_trigger] do_filp_open.entry pid=248441 comm=user_trigger.ou dfd=4294967196 pathname=ffff898e8c9a1000 op=ffffcc971a073bd4
+[52622.468489] [trace_user_trigger] do_filp_open.ret pid=248441 comm=user_trigger.ou ret=fffffffffffffffe
+[52622.468507] [trace_user_trigger] do_filp_open.entry pid=248441 comm=user_trigger.ou dfd=4294967196 pathname=ffff898e8c9a1000 op=ffffcc971a073cc4
+[52622.468522] [trace_user_trigger] do_filp_open.ret pid=248441 comm=user_trigger.ou ret=fffffffffffffffe
+[52622.468537] [trace_user_trigger] do_filp_open.entry pid=248441 comm=user_trigger.ou dfd=4294967196 pathname=ffff898e8c9a1000 op=ffffcc971a073dd4
+[52622.468552] [trace_user_trigger] do_filp_open.ret pid=248441 comm=user_trigger.ou ret=fffffffffffffffe
+[52622.468571] [trace_user_trigger] do_filp_open.entry pid=248441 comm=user_trigger.ou dfd=4294967196 pathname=ffff898e8c9a1000 op=ffffcc971a073a94
+[52622.468581] [trace_user_trigger] do_filp_open.ret pid=248441 comm=user_trigger.ou ret=fffffffffffffffe
+[52622.468590] [trace_user_trigger] do_filp_open.entry pid=248441 comm=user_trigger.ou dfd=4294967196 pathname=ffff898e8c9a1000 op=ffffcc971a073a94
+[52622.468600] [trace_user_trigger] do_filp_open.ret pid=248441 comm=user_trigger.ou ret=fffffffffffffffe
+[52622.468608] [trace_user_trigger] do_filp_open.entry pid=248441 comm=user_trigger.ou dfd=4294967196 pathname=ffff898e8c9a1000 op=ffffcc971a073b54
+[52622.468619] [trace_user_trigger] do_filp_open.ret pid=248441 comm=user_trigger.ou ret=fffffffffffffffe
+[52622.468628] [trace_user_trigger] do_filp_open.entry pid=248441 comm=user_trigger.ou dfd=4294967196 pathname=ffff898e8c9a1000 op=ffffcc971a073b24
+[52622.468641] [trace_user_trigger] do_filp_open.ret pid=248441 comm=user_trigger.ou ret=ffff898eaaa05840
+[52622.468691] [trace_user_trigger] do_filp_open.entry pid=248441 comm=user_trigger.ou dfd=4294967196 pathname=ffff898e8c9a1000 op=ffffcc971a073e04
+[52622.468704] [trace_user_trigger] do_filp_open.ret pid=248441 comm=user_trigger.ou ret=ffff898eaaa05300
+[52622.469227] [trace_user_trigger] do_filp_open.entry pid=248441 comm=user_trigger.ou dfd=4294967196 pathname=ffff898e8c9a1000 op=ffffcc971a073c84
+[52622.469245] [trace_user_trigger] __d_alloc.entry pid=248441 comm=user_trigger.ou sb=ffff898e906aa000 name_qstr=ffffcc971a073b50
+[52622.469255] [trace_user_trigger] __d_alloc.ret pid=248441 comm=user_trigger.ou dentry=ffff898fdb434240
+[52622.469281] [trace_user_trigger] do_filp_open.ret pid=248441 comm=user_trigger.ou ret=fffffffffffffffe
