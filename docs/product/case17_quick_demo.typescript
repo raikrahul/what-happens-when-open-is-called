@@ -1,0 +1,28 @@
+Script started on 2026-02-15 00:31:17+05:30 [COMMAND="cd kernel/user/stage3/case17_do_filp_open_deep_trace && echo "[DEMO] pwd" && pwd && echo "[DEMO] ls" && ls -1 | head -n 20 && echo "[DEMO] run openat_raw" && ./openat_raw; echo "[DEMO] done"" <not executed on terminal>]
+[DEMO] pwd
+/home/r/Desktop/what-happens-when-open-is-called/kernel/user/stage3/case17_do_filp_open_deep_trace
+[DEMO] ls
+CONTAINER_OF_STRUGGLE_REPORT.md
+CORRECTED_FULL_TRACE_EXT4_MISSING_FILE.md
+DMESG_CAPTURE_2026-02-14_CASE17.txt
+DRIVER_PROGRESS_LOG.txt
+FULL_FUNCTION_TRACE_MISSING_FILE.log
+FUNCTIONS_BEFORE_ATOMIC_OPEN.txt
+Makefile
+Makefile_prober
+Module.symvers
+NEGATIVE_DENTRY_PROOF_METHOD.md
+POINTER_CHECK_DMESG_2026-02-14.txt
+POINTER_CHECK_RUN_LOG_2026-02-14.txt
+RUN_LOG_D_ALLOC_ONLY_RAW.txt
+RUN_LOG_FILP_AND_DALLOC_RAW.txt
+RUN_LOG_MISSING_CASE17_WITH_DALLOC.txt
+STRICT_GENERIC_VERIFICATION_PROMPT.txt
+STRICT_KERNEL_VERIFICATION_PROMPT.txt
+TRACE_REPORT_2026-02-14_CASE17.txt
+driver.c
+driver.ko
+[DEMO] run openat_raw
+[DEMO] done
+
+Script done on 2026-02-15 00:31:17+05:30 [COMMAND_EXIT_CODE="0"]

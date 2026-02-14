@@ -3,6 +3,10 @@
 ## Live Blog
 **URL**: https://raikrahul.github.io/what-happens-when-open-is-called/
 
+## Product Launch Kit
+- Free launch kit: `product/free-launch-kit/README.md`
+- Product page source: `docs/product/index.md`
+
 ## Branches
 
 - `main`: source code, docs, and site source
