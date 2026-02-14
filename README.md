@@ -8,6 +8,7 @@
 - Product page source: `docs/product/index.md`
 - Packs index: `PACKS.md`
 - Buyer FAQ: `docs/product/buyer_faq.md`
+- 14-day X execution: `product/free-launch-kit/11_14_DAY_X_CALENDAR.md`
 
 ## Branches
 

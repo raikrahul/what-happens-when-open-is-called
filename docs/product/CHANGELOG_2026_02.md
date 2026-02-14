@@ -11,3 +11,4 @@
 - Added product index and quick terminal demo cast.
 - Added packs index, contributing, security policy.
 - Added compatibility and buyer FAQ pages.
+- Added 30-day viral execution docs (failure-first backlog, 14-day X calendar, post factory, objection matrix, scorecard).

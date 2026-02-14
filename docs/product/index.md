@@ -20,6 +20,9 @@
 - Licensing boundary: `docs/product/licensing_boundary.md`
 - Monthly changelog: `docs/product/CHANGELOG_2026_02.md`
 - Packs index: `PACKS.md`
+- Viral growth kit: `product/free-launch-kit/README.md`
+- 14-day X plan: `product/free-launch-kit/11_14_DAY_X_CALENDAR.md`
+- Post templates: `product/free-launch-kit/12_POST_FACTORY.md`
 
 ## Start Here (5 commands)
 ```bash

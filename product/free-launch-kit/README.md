@@ -18,6 +18,12 @@ This folder is a full zero-cost launch system to turn your kernel tracing work i
 - `07_PAID_REPO_TEMPLATE.md`
 - `08_FREE_REPO_TEMPLATE.md`
 - `09_LAUNCH_POST_TEMPLATES.md`
+- `10_FAILURE_FIRST_BACKLOG.md`
+- `11_14_DAY_X_CALENDAR.md`
+- `12_POST_FACTORY.md`
+- `13_PRO_CASE_PACK_SPEC.md`
+- `14_OBJECTION_RESPONSE_MATRIX.md`
+- `15_SIGNAL_SCORECARD.md`
 
 ## Fast Start
 1. Read `01_PRODUCT_SHAPE.md`.
