@@ -2,20 +2,29 @@
 
 - Userspace source: `kernel/user/stage3/case1/case6_symlink_loop.c`
 - Driver source: `kernel/drivers/stage3/case1/trace_case6_symlink_loop/trace_case6_symlink_loop.c`
-- Status: pending
+- Module: `trace_case6_symlink_loop`
+- Binary: `kernel/user/stage3/case1/case6_symlink_loop.out`
+- Run timestamp: `2026-02-15T01:14:54`
+- Final status: `pass_probe_hits`
 
-## Objective
-- Capture `do_filp_open` entry/return and `__d_alloc` entry/return.
+## Probe Counts
+- do_filp_open.entry: 9
+- do_filp_open.ret: 9
+- __d_alloc.entry: 0
+- __d_alloc.ret: 0
+
+## Return Signature Counts
+- ERR_PTR(-ENOENT) observed (fffffffffffffffe): 7
+- Non-error pointer returns observed: 2
 
 ## Commands
 ```bash
-make kernel/drivers/stage3/case1/trace_case6_symlink_loop/trace_case6_symlink_loop.ko
-# build userspace binary target as needed
-sudo insmod trace_case6_symlink_loop.ko target_comm="case6_symlink_l"
-# run userspace program
-sudo dmesg | tail -n 400
+make -C kernel/drivers/stage3/case1/trace_case6_symlink_loop
+kernel/user/stage3/case1/case6_symlink_loop.out
+sudo dmesg -C
+sudo insmod kernel/drivers/stage3/case1/trace_case6_symlink_loop/trace_case6_symlink_loop.ko target_comm="case6_symlink_l"
 sudo rmmod trace_case6_symlink_loop
 ```
 
-## Notes
-- Add parsed timeline and branch-path proof here.
+## Dmesg
+`kernel/user/stage3/case1/reports/case6_symlink_loop_dmesg.txt`

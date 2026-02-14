@@ -1,0 +1,19 @@
+[53121.044253] [trace_user_open_existing] loaded target_comm=user_open_exist user=kernel/user/stage3/case8_creation_proof/user_open_existing.c
+[53121.047425] [trace_user_open_existing] do_filp_open.entry pid=272602 comm=user_open_exist dfd=4294967196 pathname=ffff898e8c9a1000 op=ffffcc9700fcfac4
+[53121.047437] [trace_user_open_existing] do_filp_open.ret pid=272602 comm=user_open_exist ret=fffffffffffffffe
+[53121.047444] [trace_user_open_existing] do_filp_open.entry pid=272602 comm=user_open_exist dfd=4294967196 pathname=ffff898e8c9a1000 op=ffffcc9700fcfc34
+[53121.047449] [trace_user_open_existing] do_filp_open.ret pid=272602 comm=user_open_exist ret=fffffffffffffffe
+[53121.047454] [trace_user_open_existing] do_filp_open.entry pid=272602 comm=user_open_exist dfd=4294967196 pathname=ffff898e8c9a1000 op=ffffcc9700fcfb84
+[53121.047459] [trace_user_open_existing] do_filp_open.ret pid=272602 comm=user_open_exist ret=fffffffffffffffe
+[53121.047467] [trace_user_open_existing] do_filp_open.entry pid=272602 comm=user_open_exist dfd=4294967196 pathname=ffff898e8c9a1000 op=ffffcc9700fcfe84
+[53121.047470] [trace_user_open_existing] do_filp_open.ret pid=272602 comm=user_open_exist ret=fffffffffffffffe
+[53121.047473] [trace_user_open_existing] do_filp_open.entry pid=272602 comm=user_open_exist dfd=4294967196 pathname=ffff898e8c9a1000 op=ffffcc9700fcfdc4
+[53121.047476] [trace_user_open_existing] do_filp_open.ret pid=272602 comm=user_open_exist ret=fffffffffffffffe
+[53121.047479] [trace_user_open_existing] do_filp_open.entry pid=272602 comm=user_open_exist dfd=4294967196 pathname=ffff898e8c9a1000 op=ffffcc9700fcfd64
+[53121.047483] [trace_user_open_existing] do_filp_open.ret pid=272602 comm=user_open_exist ret=fffffffffffffffe
+[53121.047486] [trace_user_open_existing] do_filp_open.entry pid=272602 comm=user_open_exist dfd=4294967196 pathname=ffff898e8c9a1000 op=ffffcc9700fcfc24
+[53121.047491] [trace_user_open_existing] do_filp_open.ret pid=272602 comm=user_open_exist ret=ffff898fd33a1240
+[53121.047509] [trace_user_open_existing] do_filp_open.entry pid=272602 comm=user_open_exist dfd=4294967196 pathname=ffff898e8c9a1000 op=ffffcc9700fcfd84
+[53121.047514] [trace_user_open_existing] do_filp_open.ret pid=272602 comm=user_open_exist ret=ffff898fd33a1000
+[53121.047696] [trace_user_open_existing] do_filp_open.entry pid=272602 comm=user_open_exist dfd=4294967196 pathname=ffff898e8c9a1000 op=ffffcc9700fcfe34
+[53121.047701] [trace_user_open_existing] do_filp_open.ret pid=272602 comm=user_open_exist ret=fffffffffffffffe

@@ -1,0 +1,19 @@
+[53116.493799] [trace_user_create_deep] loaded target_comm=user_create_dee user=kernel/user/stage3/case8_creation_proof/user_create_deep.c
+[53116.497540] [trace_user_create_deep] do_filp_open.entry pid=271559 comm=user_create_dee dfd=4294967196 pathname=ffff898e868b3000 op=ffffcc970070fdb4
+[53116.497553] [trace_user_create_deep] do_filp_open.ret pid=271559 comm=user_create_dee ret=fffffffffffffffe
+[53116.497560] [trace_user_create_deep] do_filp_open.entry pid=271559 comm=user_create_dee dfd=4294967196 pathname=ffff898e868b3000 op=ffffcc970070fb44
+[53116.497565] [trace_user_create_deep] do_filp_open.ret pid=271559 comm=user_create_dee ret=fffffffffffffffe
+[53116.497571] [trace_user_create_deep] do_filp_open.entry pid=271559 comm=user_create_dee dfd=4294967196 pathname=ffff898e868b3000 op=ffffcc970070fcc4
+[53116.497577] [trace_user_create_deep] do_filp_open.ret pid=271559 comm=user_create_dee ret=fffffffffffffffe
+[53116.497584] [trace_user_create_deep] do_filp_open.entry pid=271559 comm=user_create_dee dfd=4294967196 pathname=ffff898e868b3000 op=ffffcc970070fe04
+[53116.497587] [trace_user_create_deep] do_filp_open.ret pid=271559 comm=user_create_dee ret=fffffffffffffffe
+[53116.497590] [trace_user_create_deep] do_filp_open.entry pid=271559 comm=user_create_dee dfd=4294967196 pathname=ffff898e868b3000 op=ffffcc970070faa4
+[53116.497593] [trace_user_create_deep] do_filp_open.ret pid=271559 comm=user_create_dee ret=fffffffffffffffe
+[53116.497596] [trace_user_create_deep] do_filp_open.entry pid=271559 comm=user_create_dee dfd=4294967196 pathname=ffff898e868b3000 op=ffffcc970070fc94
+[53116.497600] [trace_user_create_deep] do_filp_open.ret pid=271559 comm=user_create_dee ret=fffffffffffffffe
+[53116.497603] [trace_user_create_deep] do_filp_open.entry pid=271559 comm=user_create_dee dfd=4294967196 pathname=ffff898e868b3000 op=ffffcc970070fcc4
+[53116.497608] [trace_user_create_deep] do_filp_open.ret pid=271559 comm=user_create_dee ret=ffff898fd33a1f00
+[53116.497629] [trace_user_create_deep] do_filp_open.entry pid=271559 comm=user_create_dee dfd=4294967196 pathname=ffff898e868b3000 op=ffffcc970070fe24
+[53116.497634] [trace_user_create_deep] do_filp_open.ret pid=271559 comm=user_create_dee ret=ffff898fd33a1180
+[53116.497841] [trace_user_create_deep] do_filp_open.entry pid=271559 comm=user_create_dee dfd=4294967196 pathname=ffff898e868b3000 op=ffffcc970070fcc4
+[53116.497848] [trace_user_create_deep] do_filp_open.ret pid=271559 comm=user_create_dee ret=ffffffffffffffef

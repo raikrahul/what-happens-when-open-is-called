@@ -2,20 +2,29 @@
 
 - Userspace source: `kernel/user/stage3/case8_creation_proof/derive_hash.c`
 - Driver source: `kernel/drivers/stage3/case8_creation_proof/trace_derive_hash/trace_derive_hash.c`
-- Status: pending
+- Module: `trace_derive_hash`
+- Binary: `kernel/user/stage3/case8_creation_proof/derive_hash.out`
+- Run timestamp: `2026-02-15T01:15:35`
+- Final status: `pass_probe_hits`
 
-## Objective
-- Capture `do_filp_open` entry/return and `__d_alloc` entry/return.
+## Probe Counts
+- do_filp_open.entry: 8
+- do_filp_open.ret: 8
+- __d_alloc.entry: 0
+- __d_alloc.ret: 0
+
+## Return Signature Counts
+- ERR_PTR(-ENOENT) observed (fffffffffffffffe): 6
+- Non-error pointer returns observed: 2
 
 ## Commands
 ```bash
-make kernel/drivers/stage3/case8_creation_proof/trace_derive_hash/trace_derive_hash.ko
-# build userspace binary target as needed
-sudo insmod trace_derive_hash.ko target_comm="derive_hash"
-# run userspace program
-sudo dmesg | tail -n 400
+make -C kernel/drivers/stage3/case8_creation_proof/trace_derive_hash
+kernel/user/stage3/case8_creation_proof/derive_hash.out
+sudo dmesg -C
+sudo insmod kernel/drivers/stage3/case8_creation_proof/trace_derive_hash/trace_derive_hash.ko target_comm="derive_hash.out"
 sudo rmmod trace_derive_hash
 ```
 
-## Notes
-- Add parsed timeline and branch-path proof here.
+## Dmesg
+`kernel/user/stage3/case8_creation_proof/reports/derive_hash_dmesg.txt`

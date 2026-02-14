@@ -1,0 +1,21 @@
+[53087.881753] [trace_vfs_trigger] loaded target_comm=vfs_trigger.out user=kernel/user/stage3/case1/vfs_trigger.c
+[53087.885183] [trace_vfs_trigger] do_filp_open.entry pid=265987 comm=vfs_trigger.out dfd=4294967196 pathname=ffff898e8c9e4000 op=ffffcc9702303bb4
+[53087.885205] [trace_vfs_trigger] do_filp_open.ret pid=265987 comm=vfs_trigger.out ret=fffffffffffffffe
+[53087.885218] [trace_vfs_trigger] do_filp_open.entry pid=265987 comm=vfs_trigger.out dfd=4294967196 pathname=ffff898e8c9e4000 op=ffffcc9702303e14
+[53087.885229] [trace_vfs_trigger] do_filp_open.ret pid=265987 comm=vfs_trigger.out ret=fffffffffffffffe
+[53087.885241] [trace_vfs_trigger] do_filp_open.entry pid=265987 comm=vfs_trigger.out dfd=4294967196 pathname=ffff898e8c9e4000 op=ffffcc9702303c94
+[53087.885252] [trace_vfs_trigger] do_filp_open.ret pid=265987 comm=vfs_trigger.out ret=fffffffffffffffe
+[53087.885266] [trace_vfs_trigger] do_filp_open.entry pid=265987 comm=vfs_trigger.out dfd=4294967196 pathname=ffff898e8c9e4000 op=ffffcc9702303df4
+[53087.885274] [trace_vfs_trigger] do_filp_open.ret pid=265987 comm=vfs_trigger.out ret=fffffffffffffffe
+[53087.885281] [trace_vfs_trigger] do_filp_open.entry pid=265987 comm=vfs_trigger.out dfd=4294967196 pathname=ffff898e8c9e4000 op=ffffcc9702303ca4
+[53087.885288] [trace_vfs_trigger] do_filp_open.ret pid=265987 comm=vfs_trigger.out ret=fffffffffffffffe
+[53087.885295] [trace_vfs_trigger] do_filp_open.entry pid=265987 comm=vfs_trigger.out dfd=4294967196 pathname=ffff898e8c9e4000 op=ffffcc9702303cc4
+[53087.885303] [trace_vfs_trigger] do_filp_open.ret pid=265987 comm=vfs_trigger.out ret=fffffffffffffffe
+[53087.885310] [trace_vfs_trigger] do_filp_open.entry pid=265987 comm=vfs_trigger.out dfd=4294967196 pathname=ffff898e8c9e4000 op=ffffcc9702303db4
+[53087.885321] [trace_vfs_trigger] do_filp_open.ret pid=265987 comm=vfs_trigger.out ret=ffff898eb832a540
+[53087.885358] [trace_vfs_trigger] do_filp_open.entry pid=265987 comm=vfs_trigger.out dfd=4294967196 pathname=ffff898e8c9e4000 op=ffffcc9702303de4
+[53087.885369] [trace_vfs_trigger] do_filp_open.ret pid=265987 comm=vfs_trigger.out ret=ffff898fee51a6c0
+[53087.885730] [trace_vfs_trigger] do_filp_open.entry pid=265987 comm=vfs_trigger.out dfd=4294967196 pathname=ffff898e8c9e4000 op=ffffcc9702303e44
+[53087.885745] [trace_vfs_trigger] do_filp_open.ret pid=265987 comm=vfs_trigger.out ret=ffff898eb832a540
+[53087.885798] [trace_vfs_trigger] do_filp_open.entry pid=265987 comm=vfs_trigger.out dfd=3 pathname=ffff898e8c9e4000 op=ffffcc9702303ad4
+[53087.885809] [trace_vfs_trigger] do_filp_open.ret pid=265987 comm=vfs_trigger.out ret=ffff89911fbd3e40

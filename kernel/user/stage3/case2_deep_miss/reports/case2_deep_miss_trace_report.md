@@ -2,20 +2,29 @@
 
 - Userspace source: `kernel/user/stage3/case2_deep_miss/case2_deep_miss.c`
 - Driver source: `kernel/drivers/stage3/case2_deep_miss/trace_case2_deep_miss/trace_case2_deep_miss.c`
-- Status: pending
+- Module: `trace_case2_deep_miss`
+- Binary: `kernel/user/stage3/case2_deep_miss/case2_deep_miss.out`
+- Run timestamp: `2026-02-15T01:15:23`
+- Final status: `pass_probe_hits`
 
-## Objective
-- Capture `do_filp_open` entry/return and `__d_alloc` entry/return.
+## Probe Counts
+- do_filp_open.entry: 9
+- do_filp_open.ret: 9
+- __d_alloc.entry: 1
+- __d_alloc.ret: 1
+
+## Return Signature Counts
+- ERR_PTR(-ENOENT) observed (fffffffffffffffe): 7
+- Non-error pointer returns observed: 2
 
 ## Commands
 ```bash
-make kernel/drivers/stage3/case2_deep_miss/trace_case2_deep_miss/trace_case2_deep_miss.ko
-# build userspace binary target as needed
-sudo insmod trace_case2_deep_miss.ko target_comm="case2_deep_miss"
-# run userspace program
-sudo dmesg | tail -n 400
+make -C kernel/drivers/stage3/case2_deep_miss/trace_case2_deep_miss
+kernel/user/stage3/case2_deep_miss/case2_deep_miss.out
+sudo dmesg -C
+sudo insmod kernel/drivers/stage3/case2_deep_miss/trace_case2_deep_miss/trace_case2_deep_miss.ko target_comm="case2_deep_miss"
 sudo rmmod trace_case2_deep_miss
 ```
 
-## Notes
-- Add parsed timeline and branch-path proof here.
+## Dmesg
+`kernel/user/stage3/case2_deep_miss/reports/case2_deep_miss_dmesg.txt`

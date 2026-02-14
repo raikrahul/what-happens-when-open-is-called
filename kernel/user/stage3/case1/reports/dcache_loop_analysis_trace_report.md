@@ -2,20 +2,29 @@
 
 - Userspace source: `kernel/user/stage3/case1/dcache_loop_analysis.c`
 - Driver source: `kernel/drivers/stage3/case1/trace_dcache_loop_analysis/trace_dcache_loop_analysis.c`
-- Status: pending
+- Module: `trace_dcache_loop_analysis`
+- Binary: `kernel/user/stage3/case1/dcache_loop_analysis.out`
+- Run timestamp: `2026-02-15T01:14:57`
+- Final status: `pass_probe_hits`
 
-## Objective
-- Capture `do_filp_open` entry/return and `__d_alloc` entry/return.
+## Probe Counts
+- do_filp_open.entry: 8
+- do_filp_open.ret: 8
+- __d_alloc.entry: 0
+- __d_alloc.ret: 0
+
+## Return Signature Counts
+- ERR_PTR(-ENOENT) observed (fffffffffffffffe): 6
+- Non-error pointer returns observed: 2
 
 ## Commands
 ```bash
-make kernel/drivers/stage3/case1/trace_dcache_loop_analysis/trace_dcache_loop_analysis.ko
-# build userspace binary target as needed
-sudo insmod trace_dcache_loop_analysis.ko target_comm="dcache_loop_ana"
-# run userspace program
-sudo dmesg | tail -n 400
+make -C kernel/drivers/stage3/case1/trace_dcache_loop_analysis
+kernel/user/stage3/case1/dcache_loop_analysis.out
+sudo dmesg -C
+sudo insmod kernel/drivers/stage3/case1/trace_dcache_loop_analysis/trace_dcache_loop_analysis.ko target_comm="dcache_loop_ana"
 sudo rmmod trace_dcache_loop_analysis
 ```
 
-## Notes
-- Add parsed timeline and branch-path proof here.
+## Dmesg
+`kernel/user/stage3/case1/reports/dcache_loop_analysis_dmesg.txt`

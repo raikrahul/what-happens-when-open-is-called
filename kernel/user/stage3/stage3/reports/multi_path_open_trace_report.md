@@ -2,20 +2,29 @@
 
 - Userspace source: `kernel/user/stage3/multi_path_open.c`
 - Driver source: `kernel/drivers/stage3/stage3/trace_multi_path_open/trace_multi_path_open.c`
-- Status: pending
+- Module: `trace_multi_path_open`
+- Binary: `kernel/user/stage3/multi_path_open.auto.out`
+- Run timestamp: `2026-02-15T01:15:43`
+- Final status: `pass_probe_hits`
 
-## Objective
-- Capture `do_filp_open` entry/return and `__d_alloc` entry/return.
+## Probe Counts
+- do_filp_open.entry: 9
+- do_filp_open.ret: 9
+- __d_alloc.entry: 0
+- __d_alloc.ret: 0
+
+## Return Signature Counts
+- ERR_PTR(-ENOENT) observed (fffffffffffffffe): 6
+- Non-error pointer returns observed: 3
 
 ## Commands
 ```bash
-make kernel/drivers/stage3/stage3/trace_multi_path_open/trace_multi_path_open.ko
-# build userspace binary target as needed
-sudo insmod trace_multi_path_open.ko target_comm="multi_path_open"
-# run userspace program
-sudo dmesg | tail -n 400
+make -C kernel/drivers/stage3/stage3/trace_multi_path_open
+kernel/user/stage3/multi_path_open.auto.out
+sudo dmesg -C
+sudo insmod kernel/drivers/stage3/stage3/trace_multi_path_open/trace_multi_path_open.ko target_comm="multi_path_open"
 sudo rmmod trace_multi_path_open
 ```
 
-## Notes
-- Add parsed timeline and branch-path proof here.
+## Dmesg
+`kernel/user/stage3/stage3/reports/multi_path_open_dmesg.txt`

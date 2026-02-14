@@ -2,20 +2,29 @@
 
 - Userspace source: `kernel/user/stage3/case16_do_filp_open_trace/user_trigger_missing.c`
 - Driver source: `kernel/drivers/stage3/case16_do_filp_open_trace/trace_user_trigger_missing/trace_user_trigger_missing.c`
-- Status: pending
+- Module: `trace_user_trigger_missing`
+- Binary: `kernel/user/stage3/case16_do_filp_open_trace/user_trigger_missing`
+- Run timestamp: `2026-02-15T01:15:19`
+- Final status: `pass_probe_hits`
 
-## Objective
-- Capture `do_filp_open` entry/return and `__d_alloc` entry/return.
+## Probe Counts
+- do_filp_open.entry: 9
+- do_filp_open.ret: 9
+- __d_alloc.entry: 0
+- __d_alloc.ret: 0
+
+## Return Signature Counts
+- ERR_PTR(-ENOENT) observed (fffffffffffffffe): 7
+- Non-error pointer returns observed: 2
 
 ## Commands
 ```bash
-make kernel/drivers/stage3/case16_do_filp_open_trace/trace_user_trigger_missing/trace_user_trigger_missing.ko
-# build userspace binary target as needed
-sudo insmod trace_user_trigger_missing.ko target_comm="user_trigger_mi"
-# run userspace program
-sudo dmesg | tail -n 400
+make -C kernel/drivers/stage3/case16_do_filp_open_trace/trace_user_trigger_missing
+kernel/user/stage3/case16_do_filp_open_trace/user_trigger_missing
+sudo dmesg -C
+sudo insmod kernel/drivers/stage3/case16_do_filp_open_trace/trace_user_trigger_missing/trace_user_trigger_missing.ko target_comm="user_trigger_mi"
 sudo rmmod trace_user_trigger_missing
 ```
 
-## Notes
-- Add parsed timeline and branch-path proof here.
+## Dmesg
+`kernel/user/stage3/case16_do_filp_open_trace/reports/user_trigger_missing_dmesg.txt`

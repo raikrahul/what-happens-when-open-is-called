@@ -1,0 +1,19 @@
+[53099.121255] [trace_user_trigger_missing] loaded target_comm=user_trigger_mi user=kernel/user/stage3/case16_do_filp_open_trace/user_trigger_missing.c
+[53099.124978] [trace_user_trigger_missing] do_filp_open.entry pid=268681 comm=user_trigger_mi dfd=4294967196 pathname=ffff898e8d779000 op=ffffcc9700783bf4
+[53099.125000] [trace_user_trigger_missing] do_filp_open.ret pid=268681 comm=user_trigger_mi ret=fffffffffffffffe
+[53099.125013] [trace_user_trigger_missing] do_filp_open.entry pid=268681 comm=user_trigger_mi dfd=4294967196 pathname=ffff898e8d779000 op=ffffcc9700783da4
+[53099.125025] [trace_user_trigger_missing] do_filp_open.ret pid=268681 comm=user_trigger_mi ret=fffffffffffffffe
+[53099.125037] [trace_user_trigger_missing] do_filp_open.entry pid=268681 comm=user_trigger_mi dfd=4294967196 pathname=ffff898e8d779000 op=ffffcc9700783d14
+[53099.125048] [trace_user_trigger_missing] do_filp_open.ret pid=268681 comm=user_trigger_mi ret=fffffffffffffffe
+[53099.125062] [trace_user_trigger_missing] do_filp_open.entry pid=268681 comm=user_trigger_mi dfd=4294967196 pathname=ffff898e8d779000 op=ffffcc9700783c54
+[53099.125070] [trace_user_trigger_missing] do_filp_open.ret pid=268681 comm=user_trigger_mi ret=fffffffffffffffe
+[53099.125077] [trace_user_trigger_missing] do_filp_open.entry pid=268681 comm=user_trigger_mi dfd=4294967196 pathname=ffff898e8d779000 op=ffffcc9700783b84
+[53099.125084] [trace_user_trigger_missing] do_filp_open.ret pid=268681 comm=user_trigger_mi ret=fffffffffffffffe
+[53099.125091] [trace_user_trigger_missing] do_filp_open.entry pid=268681 comm=user_trigger_mi dfd=4294967196 pathname=ffff898e8d779000 op=ffffcc9700783db4
+[53099.125099] [trace_user_trigger_missing] do_filp_open.ret pid=268681 comm=user_trigger_mi ret=fffffffffffffffe
+[53099.125106] [trace_user_trigger_missing] do_filp_open.entry pid=268681 comm=user_trigger_mi dfd=4294967196 pathname=ffff898e8d779000 op=ffffcc9700783e54
+[53099.125121] [trace_user_trigger_missing] do_filp_open.ret pid=268681 comm=user_trigger_mi ret=ffff898ea5f3d600
+[53099.125160] [trace_user_trigger_missing] do_filp_open.entry pid=268681 comm=user_trigger_mi dfd=4294967196 pathname=ffff898e8d779000 op=ffffcc9700783b84
+[53099.125171] [trace_user_trigger_missing] do_filp_open.ret pid=268681 comm=user_trigger_mi ret=ffff898ea5f3dc00
+[53099.125809] [trace_user_trigger_missing] do_filp_open.entry pid=268681 comm=user_trigger_mi dfd=4294967196 pathname=ffff898e8d779000 op=ffffcc9700783cf4
+[53099.125832] [trace_user_trigger_missing] do_filp_open.ret pid=268681 comm=user_trigger_mi ret=fffffffffffffffe

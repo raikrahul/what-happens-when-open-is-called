@@ -1,0 +1,19 @@
+[53096.829697] [trace_user_deep_open] loaded target_comm=user_deep_open. user=kernel/user/stage3/case15_deep_trace/user_deep_open.c
+[53096.833441] [trace_user_deep_open] do_filp_open.entry pid=268165 comm=user_deep_open. dfd=4294967196 pathname=ffff898e8c888000 op=ffffcc9700ae3bf4
+[53096.833466] [trace_user_deep_open] do_filp_open.ret pid=268165 comm=user_deep_open. ret=fffffffffffffffe
+[53096.833484] [trace_user_deep_open] do_filp_open.entry pid=268165 comm=user_deep_open. dfd=4294967196 pathname=ffff898e8c888000 op=ffffcc9700ae3c04
+[53096.833498] [trace_user_deep_open] do_filp_open.ret pid=268165 comm=user_deep_open. ret=fffffffffffffffe
+[53096.833513] [trace_user_deep_open] do_filp_open.entry pid=268165 comm=user_deep_open. dfd=4294967196 pathname=ffff898e8c888000 op=ffffcc9700ae3bb4
+[53096.833527] [trace_user_deep_open] do_filp_open.ret pid=268165 comm=user_deep_open. ret=fffffffffffffffe
+[53096.833545] [trace_user_deep_open] do_filp_open.entry pid=268165 comm=user_deep_open. dfd=4294967196 pathname=ffff898e8c888000 op=ffffcc9700ae3d94
+[53096.833555] [trace_user_deep_open] do_filp_open.ret pid=268165 comm=user_deep_open. ret=fffffffffffffffe
+[53096.833563] [trace_user_deep_open] do_filp_open.entry pid=268165 comm=user_deep_open. dfd=4294967196 pathname=ffff898e8c888000 op=ffffcc9700ae3aa4
+[53096.833573] [trace_user_deep_open] do_filp_open.ret pid=268165 comm=user_deep_open. ret=fffffffffffffffe
+[53096.833581] [trace_user_deep_open] do_filp_open.entry pid=268165 comm=user_deep_open. dfd=4294967196 pathname=ffff898e8c888000 op=ffffcc9700ae3c44
+[53096.833591] [trace_user_deep_open] do_filp_open.ret pid=268165 comm=user_deep_open. ret=fffffffffffffffe
+[53096.833600] [trace_user_deep_open] do_filp_open.entry pid=268165 comm=user_deep_open. dfd=4294967196 pathname=ffff898e8c888000 op=ffffcc9700ae3b74
+[53096.833613] [trace_user_deep_open] do_filp_open.ret pid=268165 comm=user_deep_open. ret=ffff898eaaa05e40
+[53096.833697] [trace_user_deep_open] do_filp_open.entry pid=268165 comm=user_deep_open. dfd=4294967196 pathname=ffff898e8c888000 op=ffffcc9700ae3ac4
+[53096.833715] [trace_user_deep_open] do_filp_open.ret pid=268165 comm=user_deep_open. ret=ffff898eaaa05000
+[53096.834346] [trace_user_deep_open] do_filp_open.entry pid=268165 comm=user_deep_open. dfd=4294967196 pathname=ffff898e8c888000 op=ffffcc9700ae3e04
+[53096.834368] [trace_user_deep_open] do_filp_open.ret pid=268165 comm=user_deep_open. ret=ffff898eaaa05e40

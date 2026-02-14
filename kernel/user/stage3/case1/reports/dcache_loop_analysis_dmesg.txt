@@ -1,0 +1,17 @@
+[53076.963695] [trace_dcache_loop_analysis] loaded target_comm=dcache_loop_ana user=kernel/user/stage3/case1/dcache_loop_analysis.c
+[53076.967078] [trace_dcache_loop_analysis] do_filp_open.entry pid=263391 comm=dcache_loop_ana dfd=4294967196 pathname=ffff898e8f377000 op=ffffcc9701e8fc84
+[53076.967091] [trace_dcache_loop_analysis] do_filp_open.ret pid=263391 comm=dcache_loop_ana ret=fffffffffffffffe
+[53076.967098] [trace_dcache_loop_analysis] do_filp_open.entry pid=263391 comm=dcache_loop_ana dfd=4294967196 pathname=ffff898e8f377000 op=ffffcc9701e8fce4
+[53076.967103] [trace_dcache_loop_analysis] do_filp_open.ret pid=263391 comm=dcache_loop_ana ret=fffffffffffffffe
+[53076.967108] [trace_dcache_loop_analysis] do_filp_open.entry pid=263391 comm=dcache_loop_ana dfd=4294967196 pathname=ffff898e8f377000 op=ffffcc9701e8fc04
+[53076.967113] [trace_dcache_loop_analysis] do_filp_open.ret pid=263391 comm=dcache_loop_ana ret=fffffffffffffffe
+[53076.967120] [trace_dcache_loop_analysis] do_filp_open.entry pid=263391 comm=dcache_loop_ana dfd=4294967196 pathname=ffff898e8f377000 op=ffffcc9701e8fe54
+[53076.967124] [trace_dcache_loop_analysis] do_filp_open.ret pid=263391 comm=dcache_loop_ana ret=fffffffffffffffe
+[53076.967127] [trace_dcache_loop_analysis] do_filp_open.entry pid=263391 comm=dcache_loop_ana dfd=4294967196 pathname=ffff898e8f377000 op=ffffcc9701e8fd84
+[53076.967130] [trace_dcache_loop_analysis] do_filp_open.ret pid=263391 comm=dcache_loop_ana ret=fffffffffffffffe
+[53076.967133] [trace_dcache_loop_analysis] do_filp_open.entry pid=263391 comm=dcache_loop_ana dfd=4294967196 pathname=ffff898e8f377000 op=ffffcc9701e8fb44
+[53076.967137] [trace_dcache_loop_analysis] do_filp_open.ret pid=263391 comm=dcache_loop_ana ret=fffffffffffffffe
+[53076.967140] [trace_dcache_loop_analysis] do_filp_open.entry pid=263391 comm=dcache_loop_ana dfd=4294967196 pathname=ffff898e8f377000 op=ffffcc9701e8fd14
+[53076.967145] [trace_dcache_loop_analysis] do_filp_open.ret pid=263391 comm=dcache_loop_ana ret=ffff898eb832a6c0
+[53076.967161] [trace_dcache_loop_analysis] do_filp_open.entry pid=263391 comm=dcache_loop_ana dfd=4294967196 pathname=ffff898e8f377000 op=ffffcc9701e8fb94
+[53076.967167] [trace_dcache_loop_analysis] do_filp_open.ret pid=263391 comm=dcache_loop_ana ret=ffff898e8e00ef00

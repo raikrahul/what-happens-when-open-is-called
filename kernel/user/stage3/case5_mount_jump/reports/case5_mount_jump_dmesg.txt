@@ -1,0 +1,19 @@
+[53112.107305] [trace_case5_mount_jump] loaded target_comm=case5_mount_jum user=kernel/user/stage3/case5_mount_jump/case5_mount_jump.c
+[53112.110737] [trace_case5_mount_jump] do_filp_open.entry pid=270526 comm=case5_mount_jum dfd=4294967196 pathname=ffff898e8d779000 op=ffffcc9700763de4
+[53112.110759] [trace_case5_mount_jump] do_filp_open.ret pid=270526 comm=case5_mount_jum ret=fffffffffffffffe
+[53112.110773] [trace_case5_mount_jump] do_filp_open.entry pid=270526 comm=case5_mount_jum dfd=4294967196 pathname=ffff898e8d779000 op=ffffcc9700763e44
+[53112.110784] [trace_case5_mount_jump] do_filp_open.ret pid=270526 comm=case5_mount_jum ret=fffffffffffffffe
+[53112.110796] [trace_case5_mount_jump] do_filp_open.entry pid=270526 comm=case5_mount_jum dfd=4294967196 pathname=ffff898e8d779000 op=ffffcc9700763d84
+[53112.110807] [trace_case5_mount_jump] do_filp_open.ret pid=270526 comm=case5_mount_jum ret=fffffffffffffffe
+[53112.110822] [trace_case5_mount_jump] do_filp_open.entry pid=270526 comm=case5_mount_jum dfd=4294967196 pathname=ffff898e8d779000 op=ffffcc9700763af4
+[53112.110829] [trace_case5_mount_jump] do_filp_open.ret pid=270526 comm=case5_mount_jum ret=fffffffffffffffe
+[53112.110836] [trace_case5_mount_jump] do_filp_open.entry pid=270526 comm=case5_mount_jum dfd=4294967196 pathname=ffff898e8d779000 op=ffffcc9700763da4
+[53112.110843] [trace_case5_mount_jump] do_filp_open.ret pid=270526 comm=case5_mount_jum ret=fffffffffffffffe
+[53112.110850] [trace_case5_mount_jump] do_filp_open.entry pid=270526 comm=case5_mount_jum dfd=4294967196 pathname=ffff898e8d779000 op=ffffcc9700763dd4
+[53112.110858] [trace_case5_mount_jump] do_filp_open.ret pid=270526 comm=case5_mount_jum ret=fffffffffffffffe
+[53112.110865] [trace_case5_mount_jump] do_filp_open.entry pid=270526 comm=case5_mount_jum dfd=4294967196 pathname=ffff898e8d779000 op=ffffcc9700763e54
+[53112.110880] [trace_case5_mount_jump] do_filp_open.ret pid=270526 comm=case5_mount_jum ret=ffff898f8b10ae40
+[53112.110912] [trace_case5_mount_jump] do_filp_open.entry pid=270526 comm=case5_mount_jum dfd=4294967196 pathname=ffff898e8d779000 op=ffffcc9700763b04
+[53112.110922] [trace_case5_mount_jump] do_filp_open.ret pid=270526 comm=case5_mount_jum ret=ffff898f8b10a9c0
+[53112.111330] [trace_case5_mount_jump] do_filp_open.entry pid=270526 comm=case5_mount_jum dfd=4294967196 pathname=ffff898e8d779000 op=ffffcc9700763d84
+[53112.111341] [trace_case5_mount_jump] do_filp_open.ret pid=270526 comm=case5_mount_jum ret=fffffffffffffffe

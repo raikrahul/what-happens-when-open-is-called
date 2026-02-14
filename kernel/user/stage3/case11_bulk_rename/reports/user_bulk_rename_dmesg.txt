@@ -1,0 +1,421 @@
+[53090.158108] [trace_user_bulk_rename] loaded target_comm=user_bulk_renam user=kernel/user/stage3/case11_bulk_rename/user_bulk_rename.c
+[53090.161814] [trace_user_bulk_rename] do_filp_open.entry pid=266507 comm=user_bulk_renam dfd=4294967196 pathname=ffff898e881d4000 op=ffffcc97023dbb04
+[53090.161840] [trace_user_bulk_rename] do_filp_open.ret pid=266507 comm=user_bulk_renam ret=fffffffffffffffe
+[53090.161858] [trace_user_bulk_rename] do_filp_open.entry pid=266507 comm=user_bulk_renam dfd=4294967196 pathname=ffff898e881d4000 op=ffffcc97023dbd24
+[53090.161872] [trace_user_bulk_rename] do_filp_open.ret pid=266507 comm=user_bulk_renam ret=fffffffffffffffe
+[53090.161887] [trace_user_bulk_rename] do_filp_open.entry pid=266507 comm=user_bulk_renam dfd=4294967196 pathname=ffff898e881d4000 op=ffffcc97023dbaa4
+[53090.161901] [trace_user_bulk_rename] do_filp_open.ret pid=266507 comm=user_bulk_renam ret=fffffffffffffffe
+[53090.161919] [trace_user_bulk_rename] do_filp_open.entry pid=266507 comm=user_bulk_renam dfd=4294967196 pathname=ffff898e881d4000 op=ffffcc97023dbcf4
+[53090.161929] [trace_user_bulk_rename] do_filp_open.ret pid=266507 comm=user_bulk_renam ret=fffffffffffffffe
+[53090.161938] [trace_user_bulk_rename] do_filp_open.entry pid=266507 comm=user_bulk_renam dfd=4294967196 pathname=ffff898e881d4000 op=ffffcc97023dbc74
+[53090.161947] [trace_user_bulk_rename] do_filp_open.ret pid=266507 comm=user_bulk_renam ret=fffffffffffffffe
+[53090.161956] [trace_user_bulk_rename] do_filp_open.entry pid=266507 comm=user_bulk_renam dfd=4294967196 pathname=ffff898e881d4000 op=ffffcc97023dbce4
+[53090.161965] [trace_user_bulk_rename] do_filp_open.ret pid=266507 comm=user_bulk_renam ret=fffffffffffffffe
+[53090.161974] [trace_user_bulk_rename] do_filp_open.entry pid=266507 comm=user_bulk_renam dfd=4294967196 pathname=ffff898e881d4000 op=ffffcc97023dbc54
+[53090.161987] [trace_user_bulk_rename] do_filp_open.ret pid=266507 comm=user_bulk_renam ret=ffff898fd33a1d80
+[53090.162030] [trace_user_bulk_rename] do_filp_open.entry pid=266507 comm=user_bulk_renam dfd=4294967196 pathname=ffff898e881d4000 op=ffffcc97023dbbf4
+[53090.162043] [trace_user_bulk_rename] do_filp_open.ret pid=266507 comm=user_bulk_renam ret=ffff898fd33a1600
+[53090.162644] [trace_user_bulk_rename] do_filp_open.entry pid=266507 comm=user_bulk_renam dfd=4294967196 pathname=ffff898e881d4000 op=ffffcc97023dbdd4
+[53090.162661] [trace_user_bulk_rename] __d_alloc.entry pid=266507 comm=user_bulk_renam sb=ffff898e906aa000 name_qstr=ffffcc97023dbca0
+[53090.162670] [trace_user_bulk_rename] __d_alloc.ret pid=266507 comm=user_bulk_renam dentry=ffff898e8c0d5780
+[53090.162712] [trace_user_bulk_rename] do_filp_open.ret pid=266507 comm=user_bulk_renam ret=ffff898fd33a1d80
+[53090.162727] [trace_user_bulk_rename] do_filp_open.entry pid=266507 comm=user_bulk_renam dfd=4294967196 pathname=ffff898e881d4000 op=ffffcc97023dbb64
+[53090.162737] [trace_user_bulk_rename] __d_alloc.entry pid=266507 comm=user_bulk_renam sb=ffff898e906aa000 name_qstr=ffffcc97023dba30
+[53090.162746] [trace_user_bulk_rename] __d_alloc.ret pid=266507 comm=user_bulk_renam dentry=ffff89914d164600
+[53090.162780] [trace_user_bulk_rename] do_filp_open.ret pid=266507 comm=user_bulk_renam ret=ffff898fd33a1d80
+[53090.162793] [trace_user_bulk_rename] do_filp_open.entry pid=266507 comm=user_bulk_renam dfd=4294967196 pathname=ffff898e881d4000 op=ffffcc97023dbd44
+[53090.162803] [trace_user_bulk_rename] __d_alloc.entry pid=266507 comm=user_bulk_renam sb=ffff898e906aa000 name_qstr=ffffcc97023dbc10
+[53090.162816] [trace_user_bulk_rename] __d_alloc.ret pid=266507 comm=user_bulk_renam dentry=ffff898f9b3ea480
+[53090.162854] [trace_user_bulk_rename] do_filp_open.ret pid=266507 comm=user_bulk_renam ret=ffff898fd33a1d80
+[53090.162867] [trace_user_bulk_rename] do_filp_open.entry pid=266507 comm=user_bulk_renam dfd=4294967196 pathname=ffff898e881d4000 op=ffffcc97023dbac4
+[53090.162877] [trace_user_bulk_rename] __d_alloc.entry pid=266507 comm=user_bulk_renam sb=ffff898e906aa000 name_qstr=ffffcc97023db990
+[53090.162885] [trace_user_bulk_rename] __d_alloc.ret pid=266507 comm=user_bulk_renam dentry=ffff898f9b3eaf00
+[53090.162921] [trace_user_bulk_rename] do_filp_open.ret pid=266507 comm=user_bulk_renam ret=ffff898fd33a1d80
+[53090.162934] [trace_user_bulk_rename] do_filp_open.entry pid=266507 comm=user_bulk_renam dfd=4294967196 pathname=ffff898e881d4000 op=ffffcc97023dbb04
+[53090.162944] [trace_user_bulk_rename] __d_alloc.entry pid=266507 comm=user_bulk_renam sb=ffff898e906aa000 name_qstr=ffffcc97023db9d0
+[53090.162952] [trace_user_bulk_rename] __d_alloc.ret pid=266507 comm=user_bulk_renam dentry=ffff898f9b3ea3c0
+[53090.162987] [trace_user_bulk_rename] do_filp_open.ret pid=266507 comm=user_bulk_renam ret=ffff898fd33a1d80
+[53090.163000] [trace_user_bulk_rename] do_filp_open.entry pid=266507 comm=user_bulk_renam dfd=4294967196 pathname=ffff898e881d4000 op=ffffcc97023dbba4
+[53090.163010] [trace_user_bulk_rename] __d_alloc.entry pid=266507 comm=user_bulk_renam sb=ffff898e906aa000 name_qstr=ffffcc97023dba70
+[53090.163017] [trace_user_bulk_rename] __d_alloc.ret pid=266507 comm=user_bulk_renam dentry=ffff898f9b3ea780
+[53090.163052] [trace_user_bulk_rename] do_filp_open.ret pid=266507 comm=user_bulk_renam ret=ffff898fd33a1d80
+[53090.163065] [trace_user_bulk_rename] do_filp_open.entry pid=266507 comm=user_bulk_renam dfd=4294967196 pathname=ffff898e881d4000 op=ffffcc97023dbcb4
+[53090.163075] [trace_user_bulk_rename] __d_alloc.entry pid=266507 comm=user_bulk_renam sb=ffff898e906aa000 name_qstr=ffffcc97023dbb80
+[53090.163083] [trace_user_bulk_rename] __d_alloc.ret pid=266507 comm=user_bulk_renam dentry=ffff898f9b3ea900
+[53090.163118] [trace_user_bulk_rename] do_filp_open.ret pid=266507 comm=user_bulk_renam ret=ffff898fd33a1d80
+[53090.163131] [trace_user_bulk_rename] do_filp_open.entry pid=266507 comm=user_bulk_renam dfd=4294967196 pathname=ffff898e881d4000 op=ffffcc97023dbcd4
+[53090.163141] [trace_user_bulk_rename] __d_alloc.entry pid=266507 comm=user_bulk_renam sb=ffff898e906aa000 name_qstr=ffffcc97023dbba0
+[53090.163149] [trace_user_bulk_rename] __d_alloc.ret pid=266507 comm=user_bulk_renam dentry=ffff898f9b3ea840
+[53090.163186] [trace_user_bulk_rename] do_filp_open.ret pid=266507 comm=user_bulk_renam ret=ffff898fd33a1d80
+[53090.163199] [trace_user_bulk_rename] do_filp_open.entry pid=266507 comm=user_bulk_renam dfd=4294967196 pathname=ffff898e881d4000 op=ffffcc97023dbd34
+[53090.163209] [trace_user_bulk_rename] __d_alloc.entry pid=266507 comm=user_bulk_renam sb=ffff898e906aa000 name_qstr=ffffcc97023dbc00
+[53090.163217] [trace_user_bulk_rename] __d_alloc.ret pid=266507 comm=user_bulk_renam dentry=ffff898f9b3ea300
+[53090.163252] [trace_user_bulk_rename] do_filp_open.ret pid=266507 comm=user_bulk_renam ret=ffff898fd33a1d80
+[53090.163265] [trace_user_bulk_rename] do_filp_open.entry pid=266507 comm=user_bulk_renam dfd=4294967196 pathname=ffff898e881d4000 op=ffffcc97023dbbe4
+[53090.163275] [trace_user_bulk_rename] __d_alloc.entry pid=266507 comm=user_bulk_renam sb=ffff898e906aa000 name_qstr=ffffcc97023dbab0
+[53090.163283] [trace_user_bulk_rename] __d_alloc.ret pid=266507 comm=user_bulk_renam dentry=ffff898f9b3ea6c0
+[53090.163319] [trace_user_bulk_rename] do_filp_open.ret pid=266507 comm=user_bulk_renam ret=ffff898fd33a1d80
+[53090.163358] [trace_user_bulk_rename] do_filp_open.entry pid=266507 comm=user_bulk_renam dfd=4294967196 pathname=ffff898e881d4000 op=ffffcc97023dbc54
+[53090.163369] [trace_user_bulk_rename] __d_alloc.entry pid=266507 comm=user_bulk_renam sb=ffff898e906aa000 name_qstr=ffffcc97023dbb20
+[53090.163376] [trace_user_bulk_rename] __d_alloc.ret pid=266507 comm=user_bulk_renam dentry=ffff898f9b3ead80
+[53090.163415] [trace_user_bulk_rename] do_filp_open.ret pid=266507 comm=user_bulk_renam ret=ffff898fd33a1d80
+[53090.163428] [trace_user_bulk_rename] do_filp_open.entry pid=266507 comm=user_bulk_renam dfd=4294967196 pathname=ffff898e881d4000 op=ffffcc97023dbcd4
+[53090.163438] [trace_user_bulk_rename] __d_alloc.entry pid=266507 comm=user_bulk_renam sb=ffff898e906aa000 name_qstr=ffffcc97023dbba0
+[53090.163446] [trace_user_bulk_rename] __d_alloc.ret pid=266507 comm=user_bulk_renam dentry=ffff898f9b3ea9c0
+[53090.163483] [trace_user_bulk_rename] do_filp_open.ret pid=266507 comm=user_bulk_renam ret=ffff898fd33a1d80
+[53090.163496] [trace_user_bulk_rename] do_filp_open.entry pid=266507 comm=user_bulk_renam dfd=4294967196 pathname=ffff898e881d4000 op=ffffcc97023dbb44
+[53090.163506] [trace_user_bulk_rename] __d_alloc.entry pid=266507 comm=user_bulk_renam sb=ffff898e906aa000 name_qstr=ffffcc97023dba10
+[53090.163514] [trace_user_bulk_rename] __d_alloc.ret pid=266507 comm=user_bulk_renam dentry=ffff898f9b3eae40
+[53090.163550] [trace_user_bulk_rename] do_filp_open.ret pid=266507 comm=user_bulk_renam ret=ffff898fd33a1d80
+[53090.163563] [trace_user_bulk_rename] do_filp_open.entry pid=266507 comm=user_bulk_renam dfd=4294967196 pathname=ffff898e881d4000 op=ffffcc97023dbc84
+[53090.163573] [trace_user_bulk_rename] __d_alloc.entry pid=266507 comm=user_bulk_renam sb=ffff898e906aa000 name_qstr=ffffcc97023dbb50
+[53090.163581] [trace_user_bulk_rename] __d_alloc.ret pid=266507 comm=user_bulk_renam dentry=ffff898f9b3eab40
+[53090.163618] [trace_user_bulk_rename] do_filp_open.ret pid=266507 comm=user_bulk_renam ret=ffff898fd33a1d80
+[53090.163631] [trace_user_bulk_rename] do_filp_open.entry pid=266507 comm=user_bulk_renam dfd=4294967196 pathname=ffff898e881d4000 op=ffffcc97023dbcb4
+[53090.163641] [trace_user_bulk_rename] __d_alloc.entry pid=266507 comm=user_bulk_renam sb=ffff898e906aa000 name_qstr=ffffcc97023dbb80
+[53090.163648] [trace_user_bulk_rename] __d_alloc.ret pid=266507 comm=user_bulk_renam dentry=ffff898f9b3ea0c0
+[53090.163685] [trace_user_bulk_rename] do_filp_open.ret pid=266507 comm=user_bulk_renam ret=ffff898fd33a1d80
+[53090.163698] [trace_user_bulk_rename] do_filp_open.entry pid=266507 comm=user_bulk_renam dfd=4294967196 pathname=ffff898e881d4000 op=ffffcc97023dbe34
+[53090.163708] [trace_user_bulk_rename] __d_alloc.entry pid=266507 comm=user_bulk_renam sb=ffff898e906aa000 name_qstr=ffffcc97023dbd00
+[53090.163716] [trace_user_bulk_rename] __d_alloc.ret pid=266507 comm=user_bulk_renam dentry=ffff898f9b3ea600
+[53090.163756] [trace_user_bulk_rename] do_filp_open.ret pid=266507 comm=user_bulk_renam ret=ffff898fd33a1d80
+[53090.163769] [trace_user_bulk_rename] do_filp_open.entry pid=266507 comm=user_bulk_renam dfd=4294967196 pathname=ffff898e881d4000 op=ffffcc97023dbd84
+[53090.163779] [trace_user_bulk_rename] __d_alloc.entry pid=266507 comm=user_bulk_renam sb=ffff898e906aa000 name_qstr=ffffcc97023dbc50
+[53090.163787] [trace_user_bulk_rename] __d_alloc.ret pid=266507 comm=user_bulk_renam dentry=ffff898f9b3eacc0
+[53090.163825] [trace_user_bulk_rename] do_filp_open.ret pid=266507 comm=user_bulk_renam ret=ffff898fd33a1d80
+[53090.163838] [trace_user_bulk_rename] do_filp_open.entry pid=266507 comm=user_bulk_renam dfd=4294967196 pathname=ffff898e881d4000 op=ffffcc97023dbe54
+[53090.163848] [trace_user_bulk_rename] __d_alloc.entry pid=266507 comm=user_bulk_renam sb=ffff898e906aa000 name_qstr=ffffcc97023dbd20
+[53090.163856] [trace_user_bulk_rename] __d_alloc.ret pid=266507 comm=user_bulk_renam dentry=ffff898f9b3eaa80
+[53090.163894] [trace_user_bulk_rename] do_filp_open.ret pid=266507 comm=user_bulk_renam ret=ffff898fd33a1d80
+[53090.163907] [trace_user_bulk_rename] do_filp_open.entry pid=266507 comm=user_bulk_renam dfd=4294967196 pathname=ffff898e881d4000 op=ffffcc97023dbd94
+[53090.163917] [trace_user_bulk_rename] __d_alloc.entry pid=266507 comm=user_bulk_renam sb=ffff898e906aa000 name_qstr=ffffcc97023dbc60
+[53090.163925] [trace_user_bulk_rename] __d_alloc.ret pid=266507 comm=user_bulk_renam dentry=ffff898f9b3ea000
+[53090.163962] [trace_user_bulk_rename] do_filp_open.ret pid=266507 comm=user_bulk_renam ret=ffff898fd33a1d80
+[53090.163975] [trace_user_bulk_rename] do_filp_open.entry pid=266507 comm=user_bulk_renam dfd=4294967196 pathname=ffff898e881d4000 op=ffffcc97023dbdd4
+[53090.163985] [trace_user_bulk_rename] __d_alloc.entry pid=266507 comm=user_bulk_renam sb=ffff898e906aa000 name_qstr=ffffcc97023dbca0
+[53090.163993] [trace_user_bulk_rename] __d_alloc.ret pid=266507 comm=user_bulk_renam dentry=ffff898f9b3eac00
+[53090.164032] [trace_user_bulk_rename] do_filp_open.ret pid=266507 comm=user_bulk_renam ret=ffff898fd33a1d80
+[53090.164046] [trace_user_bulk_rename] do_filp_open.entry pid=266507 comm=user_bulk_renam dfd=4294967196 pathname=ffff898e881d4000 op=ffffcc97023dbc94
+[53090.164056] [trace_user_bulk_rename] __d_alloc.entry pid=266507 comm=user_bulk_renam sb=ffff898e906aa000 name_qstr=ffffcc97023dbb60
+[53090.164064] [trace_user_bulk_rename] __d_alloc.ret pid=266507 comm=user_bulk_renam dentry=ffff898f9b3ea180
+[53090.164104] [trace_user_bulk_rename] do_filp_open.ret pid=266507 comm=user_bulk_renam ret=ffff898fd33a1d80
+[53090.164120] [trace_user_bulk_rename] do_filp_open.entry pid=266507 comm=user_bulk_renam dfd=4294967196 pathname=ffff898e881d4000 op=ffffcc97023dbdd4
+[53090.164130] [trace_user_bulk_rename] __d_alloc.entry pid=266507 comm=user_bulk_renam sb=ffff898e906aa000 name_qstr=ffffcc97023dbca0
+[53090.164137] [trace_user_bulk_rename] __d_alloc.ret pid=266507 comm=user_bulk_renam dentry=ffff898f9b3ea240
+[53090.164179] [trace_user_bulk_rename] do_filp_open.ret pid=266507 comm=user_bulk_renam ret=ffff898fd33a1d80
+[53090.164192] [trace_user_bulk_rename] do_filp_open.entry pid=266507 comm=user_bulk_renam dfd=4294967196 pathname=ffff898e881d4000 op=ffffcc97023dbca4
+[53090.164202] [trace_user_bulk_rename] __d_alloc.entry pid=266507 comm=user_bulk_renam sb=ffff898e906aa000 name_qstr=ffffcc97023dbb70
+[53090.164210] [trace_user_bulk_rename] __d_alloc.ret pid=266507 comm=user_bulk_renam dentry=ffff898f9b3ea540
+[53090.164250] [trace_user_bulk_rename] do_filp_open.ret pid=266507 comm=user_bulk_renam ret=ffff898fd33a1d80
+[53090.164263] [trace_user_bulk_rename] do_filp_open.entry pid=266507 comm=user_bulk_renam dfd=4294967196 pathname=ffff898e881d4000 op=ffffcc97023dbad4
+[53090.164274] [trace_user_bulk_rename] __d_alloc.entry pid=266507 comm=user_bulk_renam sb=ffff898e906aa000 name_qstr=ffffcc97023db9a0
+[53090.164285] [trace_user_bulk_rename] __d_alloc.ret pid=266507 comm=user_bulk_renam dentry=ffff898f9b3f2d80
+[53090.164346] [trace_user_bulk_rename] do_filp_open.ret pid=266507 comm=user_bulk_renam ret=ffff898fd33a1d80
+[53090.164363] [trace_user_bulk_rename] do_filp_open.entry pid=266507 comm=user_bulk_renam dfd=4294967196 pathname=ffff898e881d4000 op=ffffcc97023dbcd4
+[53090.164375] [trace_user_bulk_rename] __d_alloc.entry pid=266507 comm=user_bulk_renam sb=ffff898e906aa000 name_qstr=ffffcc97023dbba0
+[53090.164383] [trace_user_bulk_rename] __d_alloc.ret pid=266507 comm=user_bulk_renam dentry=ffff898f9b3f29c0
+[53090.164425] [trace_user_bulk_rename] do_filp_open.ret pid=266507 comm=user_bulk_renam ret=ffff898fd33a1d80
+[53090.164438] [trace_user_bulk_rename] do_filp_open.entry pid=266507 comm=user_bulk_renam dfd=4294967196 pathname=ffff898e881d4000 op=ffffcc97023dbd14
+[53090.164448] [trace_user_bulk_rename] __d_alloc.entry pid=266507 comm=user_bulk_renam sb=ffff898e906aa000 name_qstr=ffffcc97023dbbe0
+[53090.164456] [trace_user_bulk_rename] __d_alloc.ret pid=266507 comm=user_bulk_renam dentry=ffff898f9b3f2e40
+[53090.164496] [trace_user_bulk_rename] do_filp_open.ret pid=266507 comm=user_bulk_renam ret=ffff898fd33a1d80
+[53090.164509] [trace_user_bulk_rename] do_filp_open.entry pid=266507 comm=user_bulk_renam dfd=4294967196 pathname=ffff898e881d4000 op=ffffcc97023dbe64
+[53090.164519] [trace_user_bulk_rename] __d_alloc.entry pid=266507 comm=user_bulk_renam sb=ffff898e906aa000 name_qstr=ffffcc97023dbd30
+[53090.164528] [trace_user_bulk_rename] __d_alloc.ret pid=266507 comm=user_bulk_renam dentry=ffff898f9b3f2b40
+[53090.164568] [trace_user_bulk_rename] do_filp_open.ret pid=266507 comm=user_bulk_renam ret=ffff898fd33a1d80
+[53090.164581] [trace_user_bulk_rename] do_filp_open.entry pid=266507 comm=user_bulk_renam dfd=4294967196 pathname=ffff898e881d4000 op=ffffcc97023dbc74
+[53090.164591] [trace_user_bulk_rename] __d_alloc.entry pid=266507 comm=user_bulk_renam sb=ffff898e906aa000 name_qstr=ffffcc97023dbb40
+[53090.164598] [trace_user_bulk_rename] __d_alloc.ret pid=266507 comm=user_bulk_renam dentry=ffff898f9b3f20c0
+[53090.164639] [trace_user_bulk_rename] do_filp_open.ret pid=266507 comm=user_bulk_renam ret=ffff898fd33a1d80
+[53090.164653] [trace_user_bulk_rename] do_filp_open.entry pid=266507 comm=user_bulk_renam dfd=4294967196 pathname=ffff898e881d4000 op=ffffcc97023dbcc4
+[53090.164666] [trace_user_bulk_rename] __d_alloc.entry pid=266507 comm=user_bulk_renam sb=ffff898e906aa000 name_qstr=ffffcc97023dbb90
+[53090.164675] [trace_user_bulk_rename] __d_alloc.ret pid=266507 comm=user_bulk_renam dentry=ffff898f9b3f2600
+[53090.164722] [trace_user_bulk_rename] do_filp_open.ret pid=266507 comm=user_bulk_renam ret=ffff898fd33a1d80
+[53090.164737] [trace_user_bulk_rename] do_filp_open.entry pid=266507 comm=user_bulk_renam dfd=4294967196 pathname=ffff898e881d4000 op=ffffcc97023dbe74
+[53090.164747] [trace_user_bulk_rename] __d_alloc.entry pid=266507 comm=user_bulk_renam sb=ffff898e906aa000 name_qstr=ffffcc97023dbd40
+[53090.164755] [trace_user_bulk_rename] __d_alloc.ret pid=266507 comm=user_bulk_renam dentry=ffff898f9b3f2cc0
+[53090.164796] [trace_user_bulk_rename] do_filp_open.ret pid=266507 comm=user_bulk_renam ret=ffff898fd33a1d80
+[53090.164810] [trace_user_bulk_rename] do_filp_open.entry pid=266507 comm=user_bulk_renam dfd=4294967196 pathname=ffff898e881d4000 op=ffffcc97023dbc14
+[53090.164820] [trace_user_bulk_rename] __d_alloc.entry pid=266507 comm=user_bulk_renam sb=ffff898e906aa000 name_qstr=ffffcc97023dbae0
+[53090.164827] [trace_user_bulk_rename] __d_alloc.ret pid=266507 comm=user_bulk_renam dentry=ffff898f9b3f2a80
+[53090.164869] [trace_user_bulk_rename] do_filp_open.ret pid=266507 comm=user_bulk_renam ret=ffff898fd33a1d80
+[53090.164882] [trace_user_bulk_rename] do_filp_open.entry pid=266507 comm=user_bulk_renam dfd=4294967196 pathname=ffff898e881d4000 op=ffffcc97023dbb44
+[53090.164892] [trace_user_bulk_rename] __d_alloc.entry pid=266507 comm=user_bulk_renam sb=ffff898e906aa000 name_qstr=ffffcc97023dba10
+[53090.164900] [trace_user_bulk_rename] __d_alloc.ret pid=266507 comm=user_bulk_renam dentry=ffff898f9b3f2000
+[53090.164945] [trace_user_bulk_rename] do_filp_open.ret pid=266507 comm=user_bulk_renam ret=ffff898fd33a1d80
+[53090.164958] [trace_user_bulk_rename] do_filp_open.entry pid=266507 comm=user_bulk_renam dfd=4294967196 pathname=ffff898e881d4000 op=ffffcc97023dbe54
+[53090.164968] [trace_user_bulk_rename] __d_alloc.entry pid=266507 comm=user_bulk_renam sb=ffff898e906aa000 name_qstr=ffffcc97023dbd20
+[53090.164976] [trace_user_bulk_rename] __d_alloc.ret pid=266507 comm=user_bulk_renam dentry=ffff898f9b3f2c00
+[53090.165019] [trace_user_bulk_rename] do_filp_open.ret pid=266507 comm=user_bulk_renam ret=ffff898fd33a1d80
+[53090.165032] [trace_user_bulk_rename] do_filp_open.entry pid=266507 comm=user_bulk_renam dfd=4294967196 pathname=ffff898e881d4000 op=ffffcc97023dbc34
+[53090.165042] [trace_user_bulk_rename] __d_alloc.entry pid=266507 comm=user_bulk_renam sb=ffff898e906aa000 name_qstr=ffffcc97023dbb00
+[53090.165050] [trace_user_bulk_rename] __d_alloc.ret pid=266507 comm=user_bulk_renam dentry=ffff898f9b3f2180
+[53090.165093] [trace_user_bulk_rename] do_filp_open.ret pid=266507 comm=user_bulk_renam ret=ffff898fd33a1d80
+[53090.165106] [trace_user_bulk_rename] do_filp_open.entry pid=266507 comm=user_bulk_renam dfd=4294967196 pathname=ffff898e881d4000 op=ffffcc97023dbe04
+[53090.165116] [trace_user_bulk_rename] __d_alloc.entry pid=266507 comm=user_bulk_renam sb=ffff898e906aa000 name_qstr=ffffcc97023dbcd0
+[53090.165124] [trace_user_bulk_rename] __d_alloc.ret pid=266507 comm=user_bulk_renam dentry=ffff898f9b3f2240
+[53090.165166] [trace_user_bulk_rename] do_filp_open.ret pid=266507 comm=user_bulk_renam ret=ffff898fd33a1d80
+[53090.165179] [trace_user_bulk_rename] do_filp_open.entry pid=266507 comm=user_bulk_renam dfd=4294967196 pathname=ffff898e881d4000 op=ffffcc97023dbd34
+[53090.165189] [trace_user_bulk_rename] __d_alloc.entry pid=266507 comm=user_bulk_renam sb=ffff898e906aa000 name_qstr=ffffcc97023dbc00
+[53090.165197] [trace_user_bulk_rename] __d_alloc.ret pid=266507 comm=user_bulk_renam dentry=ffff898f9b3f2540
+[53090.165239] [trace_user_bulk_rename] do_filp_open.ret pid=266507 comm=user_bulk_renam ret=ffff898fd33a1d80
+[53090.165252] [trace_user_bulk_rename] do_filp_open.entry pid=266507 comm=user_bulk_renam dfd=4294967196 pathname=ffff898e881d4000 op=ffffcc97023dbc14
+[53090.165262] [trace_user_bulk_rename] __d_alloc.entry pid=266507 comm=user_bulk_renam sb=ffff898e906aa000 name_qstr=ffffcc97023dbae0
+[53090.165270] [trace_user_bulk_rename] __d_alloc.ret pid=266507 comm=user_bulk_renam dentry=ffff898f9b3f2480
+[53090.165313] [trace_user_bulk_rename] do_filp_open.ret pid=266507 comm=user_bulk_renam ret=ffff898fd33a1d80
+[53090.165345] [trace_user_bulk_rename] do_filp_open.entry pid=266507 comm=user_bulk_renam dfd=4294967196 pathname=ffff898e881d4000 op=ffffcc97023dbe24
+[53090.165356] [trace_user_bulk_rename] __d_alloc.entry pid=266507 comm=user_bulk_renam sb=ffff898e906aa000 name_qstr=ffffcc97023dbcf0
+[53090.165364] [trace_user_bulk_rename] __d_alloc.ret pid=266507 comm=user_bulk_renam dentry=ffff898f9b3f2f00
+[53090.165410] [trace_user_bulk_rename] do_filp_open.ret pid=266507 comm=user_bulk_renam ret=ffff898fd33a1d80
+[53090.165423] [trace_user_bulk_rename] do_filp_open.entry pid=266507 comm=user_bulk_renam dfd=4294967196 pathname=ffff898e881d4000 op=ffffcc97023dbca4
+[53090.165433] [trace_user_bulk_rename] __d_alloc.entry pid=266507 comm=user_bulk_renam sb=ffff898e906aa000 name_qstr=ffffcc97023dbb70
+[53090.165441] [trace_user_bulk_rename] __d_alloc.ret pid=266507 comm=user_bulk_renam dentry=ffff898f9b3f23c0
+[53090.165485] [trace_user_bulk_rename] do_filp_open.ret pid=266507 comm=user_bulk_renam ret=ffff898fd33a1d80
+[53090.165498] [trace_user_bulk_rename] do_filp_open.entry pid=266507 comm=user_bulk_renam dfd=4294967196 pathname=ffff898e881d4000 op=ffffcc97023dbe44
+[53090.165508] [trace_user_bulk_rename] __d_alloc.entry pid=266507 comm=user_bulk_renam sb=ffff898e906aa000 name_qstr=ffffcc97023dbd10
+[53090.165516] [trace_user_bulk_rename] __d_alloc.ret pid=266507 comm=user_bulk_renam dentry=ffff898f9b3f2780
+[53090.165559] [trace_user_bulk_rename] do_filp_open.ret pid=266507 comm=user_bulk_renam ret=ffff898fd33a1d80
+[53090.165572] [trace_user_bulk_rename] do_filp_open.entry pid=266507 comm=user_bulk_renam dfd=4294967196 pathname=ffff898e881d4000 op=ffffcc97023dbba4
+[53090.165582] [trace_user_bulk_rename] __d_alloc.entry pid=266507 comm=user_bulk_renam sb=ffff898e906aa000 name_qstr=ffffcc97023dba70
+[53090.165590] [trace_user_bulk_rename] __d_alloc.ret pid=266507 comm=user_bulk_renam dentry=ffff898f9b3f2900
+[53090.165633] [trace_user_bulk_rename] do_filp_open.ret pid=266507 comm=user_bulk_renam ret=ffff898fd33a1d80
+[53090.165646] [trace_user_bulk_rename] do_filp_open.entry pid=266507 comm=user_bulk_renam dfd=4294967196 pathname=ffff898e881d4000 op=ffffcc97023dbac4
+[53090.165656] [trace_user_bulk_rename] __d_alloc.entry pid=266507 comm=user_bulk_renam sb=ffff898e906aa000 name_qstr=ffffcc97023db990
+[53090.165664] [trace_user_bulk_rename] __d_alloc.ret pid=266507 comm=user_bulk_renam dentry=ffff898f9b3f2840
+[53090.165709] [trace_user_bulk_rename] do_filp_open.ret pid=266507 comm=user_bulk_renam ret=ffff898fd33a1d80
+[53090.165722] [trace_user_bulk_rename] do_filp_open.entry pid=266507 comm=user_bulk_renam dfd=4294967196 pathname=ffff898e881d4000 op=ffffcc97023dbe74
+[53090.165731] [trace_user_bulk_rename] __d_alloc.entry pid=266507 comm=user_bulk_renam sb=ffff898e906aa000 name_qstr=ffffcc97023dbd40
+[53090.165739] [trace_user_bulk_rename] __d_alloc.ret pid=266507 comm=user_bulk_renam dentry=ffff898f9b3f2300
+[53090.165783] [trace_user_bulk_rename] do_filp_open.ret pid=266507 comm=user_bulk_renam ret=ffff898fd33a1d80
+[53090.165796] [trace_user_bulk_rename] do_filp_open.entry pid=266507 comm=user_bulk_renam dfd=4294967196 pathname=ffff898e881d4000 op=ffffcc97023dbe84
+[53090.165806] [trace_user_bulk_rename] __d_alloc.entry pid=266507 comm=user_bulk_renam sb=ffff898e906aa000 name_qstr=ffffcc97023dbd50
+[53090.165814] [trace_user_bulk_rename] __d_alloc.ret pid=266507 comm=user_bulk_renam dentry=ffff898f9b3f26c0
+[53090.165857] [trace_user_bulk_rename] do_filp_open.ret pid=266507 comm=user_bulk_renam ret=ffff898fd33a1d80
+[53090.165873] [trace_user_bulk_rename] do_filp_open.entry pid=266507 comm=user_bulk_renam dfd=4294967196 pathname=ffff898e881d4000 op=ffffcc97023dbb74
+[53090.165885] [trace_user_bulk_rename] __d_alloc.entry pid=266507 comm=user_bulk_renam sb=ffff898e906aa000 name_qstr=ffffcc97023dba40
+[53090.165901] [trace_user_bulk_rename] __d_alloc.ret pid=266507 comm=user_bulk_renam dentry=ffff898f9b211d80
+[53090.165959] [trace_user_bulk_rename] do_filp_open.ret pid=266507 comm=user_bulk_renam ret=ffff898fd33a1d80
+[53090.165978] [trace_user_bulk_rename] do_filp_open.entry pid=266507 comm=user_bulk_renam dfd=4294967196 pathname=ffff898e881d4000 op=ffffcc97023dbac4
+[53090.165990] [trace_user_bulk_rename] __d_alloc.entry pid=266507 comm=user_bulk_renam sb=ffff898e906aa000 name_qstr=ffffcc97023db990
+[53090.165998] [trace_user_bulk_rename] __d_alloc.ret pid=266507 comm=user_bulk_renam dentry=ffff898f9b2119c0
+[53090.166048] [trace_user_bulk_rename] do_filp_open.ret pid=266507 comm=user_bulk_renam ret=ffff898fd33a1d80
+[53090.166061] [trace_user_bulk_rename] do_filp_open.entry pid=266507 comm=user_bulk_renam dfd=4294967196 pathname=ffff898e881d4000 op=ffffcc97023dbbe4
+[53090.166071] [trace_user_bulk_rename] __d_alloc.entry pid=266507 comm=user_bulk_renam sb=ffff898e906aa000 name_qstr=ffffcc97023dbab0
+[53090.166079] [trace_user_bulk_rename] __d_alloc.ret pid=266507 comm=user_bulk_renam dentry=ffff898f9b211e40
+[53090.166125] [trace_user_bulk_rename] do_filp_open.ret pid=266507 comm=user_bulk_renam ret=ffff898fd33a1d80
+[53090.166138] [trace_user_bulk_rename] do_filp_open.entry pid=266507 comm=user_bulk_renam dfd=4294967196 pathname=ffff898e881d4000 op=ffffcc97023dbb94
+[53090.166148] [trace_user_bulk_rename] __d_alloc.entry pid=266507 comm=user_bulk_renam sb=ffff898e906aa000 name_qstr=ffffcc97023dba60
+[53090.166156] [trace_user_bulk_rename] __d_alloc.ret pid=266507 comm=user_bulk_renam dentry=ffff898f9b211b40
+[53090.166206] [trace_user_bulk_rename] do_filp_open.ret pid=266507 comm=user_bulk_renam ret=ffff898fd33a1d80
+[53090.166219] [trace_user_bulk_rename] do_filp_open.entry pid=266507 comm=user_bulk_renam dfd=4294967196 pathname=ffff898e881d4000 op=ffffcc97023dbaa4
+[53090.166229] [trace_user_bulk_rename] __d_alloc.entry pid=266507 comm=user_bulk_renam sb=ffff898e906aa000 name_qstr=ffffcc97023db970
+[53090.166237] [trace_user_bulk_rename] __d_alloc.ret pid=266507 comm=user_bulk_renam dentry=ffff898f9b2110c0
+[53090.166286] [trace_user_bulk_rename] do_filp_open.ret pid=266507 comm=user_bulk_renam ret=ffff898fd33a1d80
+[53090.166303] [trace_user_bulk_rename] do_filp_open.entry pid=266507 comm=user_bulk_renam dfd=4294967196 pathname=ffff898e881d4000 op=ffffcc97023dbd44
+[53090.166315] [trace_user_bulk_rename] __d_alloc.entry pid=266507 comm=user_bulk_renam sb=ffff898e906aa000 name_qstr=ffffcc97023dbc10
+[53090.166349] [trace_user_bulk_rename] __d_alloc.ret pid=266507 comm=user_bulk_renam dentry=ffff898f9b211600
+[53090.166406] [trace_user_bulk_rename] do_filp_open.ret pid=266507 comm=user_bulk_renam ret=ffff898fd33a1d80
+[53090.166422] [trace_user_bulk_rename] do_filp_open.entry pid=266507 comm=user_bulk_renam dfd=4294967196 pathname=ffff898e881d4000 op=ffffcc97023dbdd4
+[53090.166433] [trace_user_bulk_rename] __d_alloc.entry pid=266507 comm=user_bulk_renam sb=ffff898e906aa000 name_qstr=ffffcc97023dbca0
+[53090.166442] [trace_user_bulk_rename] __d_alloc.ret pid=266507 comm=user_bulk_renam dentry=ffff898f9b211cc0
+[53090.166489] [trace_user_bulk_rename] do_filp_open.ret pid=266507 comm=user_bulk_renam ret=ffff898fd33a1d80
+[53090.166502] [trace_user_bulk_rename] do_filp_open.entry pid=266507 comm=user_bulk_renam dfd=4294967196 pathname=ffff898e881d4000 op=ffffcc97023dbb64
+[53090.166512] [trace_user_bulk_rename] __d_alloc.entry pid=266507 comm=user_bulk_renam sb=ffff898e906aa000 name_qstr=ffffcc97023dba30
+[53090.166520] [trace_user_bulk_rename] __d_alloc.ret pid=266507 comm=user_bulk_renam dentry=ffff898f9b211a80
+[53090.166573] [trace_user_bulk_rename] do_filp_open.ret pid=266507 comm=user_bulk_renam ret=ffff898fd33a1d80
+[53090.166590] [trace_user_bulk_rename] do_filp_open.entry pid=266507 comm=user_bulk_renam dfd=4294967196 pathname=ffff898e881d4000 op=ffffcc97023dbd54
+[53090.166603] [trace_user_bulk_rename] __d_alloc.entry pid=266507 comm=user_bulk_renam sb=ffff898e906aa000 name_qstr=ffffcc97023dbc20
+[53090.166613] [trace_user_bulk_rename] __d_alloc.ret pid=266507 comm=user_bulk_renam dentry=ffff898f9b211000
+[53090.166668] [trace_user_bulk_rename] do_filp_open.ret pid=266507 comm=user_bulk_renam ret=ffff898fd33a1d80
+[53090.166683] [trace_user_bulk_rename] do_filp_open.entry pid=266507 comm=user_bulk_renam dfd=4294967196 pathname=ffff898e881d4000 op=ffffcc97023dbe14
+[53090.166694] [trace_user_bulk_rename] __d_alloc.entry pid=266507 comm=user_bulk_renam sb=ffff898e906aa000 name_qstr=ffffcc97023dbce0
+[53090.166702] [trace_user_bulk_rename] __d_alloc.ret pid=266507 comm=user_bulk_renam dentry=ffff898f9b211c00
+[53090.166750] [trace_user_bulk_rename] do_filp_open.ret pid=266507 comm=user_bulk_renam ret=ffff898fd33a1d80
+[53090.166763] [trace_user_bulk_rename] do_filp_open.entry pid=266507 comm=user_bulk_renam dfd=4294967196 pathname=ffff898e881d4000 op=ffffcc97023dbe64
+[53090.166773] [trace_user_bulk_rename] __d_alloc.entry pid=266507 comm=user_bulk_renam sb=ffff898e906aa000 name_qstr=ffffcc97023dbd30
+[53090.166781] [trace_user_bulk_rename] __d_alloc.ret pid=266507 comm=user_bulk_renam dentry=ffff898f9b211180
+[53090.166839] [trace_user_bulk_rename] do_filp_open.ret pid=266507 comm=user_bulk_renam ret=ffff898fd33a1d80
+[53090.166854] [trace_user_bulk_rename] do_filp_open.entry pid=266507 comm=user_bulk_renam dfd=4294967196 pathname=ffff898e881d4000 op=ffffcc97023dbc24
+[53090.166864] [trace_user_bulk_rename] __d_alloc.entry pid=266507 comm=user_bulk_renam sb=ffff898e906aa000 name_qstr=ffffcc97023dbaf0
+[53090.166872] [trace_user_bulk_rename] __d_alloc.ret pid=266507 comm=user_bulk_renam dentry=ffff898f9b211240
+[53090.166930] [trace_user_bulk_rename] do_filp_open.ret pid=266507 comm=user_bulk_renam ret=ffff898fd33a1d80
+[53090.166947] [trace_user_bulk_rename] do_filp_open.entry pid=266507 comm=user_bulk_renam dfd=4294967196 pathname=ffff898e881d4000 op=ffffcc97023dbdc4
+[53090.166960] [trace_user_bulk_rename] __d_alloc.entry pid=266507 comm=user_bulk_renam sb=ffff898e906aa000 name_qstr=ffffcc97023dbc90
+[53090.166970] [trace_user_bulk_rename] __d_alloc.ret pid=266507 comm=user_bulk_renam dentry=ffff898f9b211540
+[53090.167033] [trace_user_bulk_rename] do_filp_open.ret pid=266507 comm=user_bulk_renam ret=ffff898fd33a1d80
+[53090.167051] [trace_user_bulk_rename] do_filp_open.entry pid=266507 comm=user_bulk_renam dfd=4294967196 pathname=ffff898e881d4000 op=ffffcc97023dbd14
+[53090.167064] [trace_user_bulk_rename] __d_alloc.entry pid=266507 comm=user_bulk_renam sb=ffff898e906aa000 name_qstr=ffffcc97023dbbe0
+[53090.167073] [trace_user_bulk_rename] __d_alloc.ret pid=266507 comm=user_bulk_renam dentry=ffff898f9b211480
+[53090.167127] [trace_user_bulk_rename] do_filp_open.ret pid=266507 comm=user_bulk_renam ret=ffff898fd33a1d80
+[53090.167141] [trace_user_bulk_rename] do_filp_open.entry pid=266507 comm=user_bulk_renam dfd=4294967196 pathname=ffff898e881d4000 op=ffffcc97023dbd64
+[53090.167151] [trace_user_bulk_rename] __d_alloc.entry pid=266507 comm=user_bulk_renam sb=ffff898e906aa000 name_qstr=ffffcc97023dbc30
+[53090.167159] [trace_user_bulk_rename] __d_alloc.ret pid=266507 comm=user_bulk_renam dentry=ffff898f9b211f00
+[53090.167214] [trace_user_bulk_rename] do_filp_open.ret pid=266507 comm=user_bulk_renam ret=ffff898fd33a1d80
+[53090.167228] [trace_user_bulk_rename] do_filp_open.entry pid=266507 comm=user_bulk_renam dfd=4294967196 pathname=ffff898e881d4000 op=ffffcc97023dbd74
+[53090.167237] [trace_user_bulk_rename] __d_alloc.entry pid=266507 comm=user_bulk_renam sb=ffff898e906aa000 name_qstr=ffffcc97023dbc40
+[53090.167246] [trace_user_bulk_rename] __d_alloc.ret pid=266507 comm=user_bulk_renam dentry=ffff898f9b2113c0
+[53090.167296] [trace_user_bulk_rename] do_filp_open.ret pid=266507 comm=user_bulk_renam ret=ffff898fd33a1d80
+[53090.167309] [trace_user_bulk_rename] do_filp_open.entry pid=266507 comm=user_bulk_renam dfd=4294967196 pathname=ffff898e881d4000 op=ffffcc97023dbad4
+[53090.167319] [trace_user_bulk_rename] __d_alloc.entry pid=266507 comm=user_bulk_renam sb=ffff898e906aa000 name_qstr=ffffcc97023db9a0
+[53090.167347] [trace_user_bulk_rename] __d_alloc.ret pid=266507 comm=user_bulk_renam dentry=ffff898f9b211780
+[53090.167399] [trace_user_bulk_rename] do_filp_open.ret pid=266507 comm=user_bulk_renam ret=ffff898fd33a1d80
+[53090.167413] [trace_user_bulk_rename] do_filp_open.entry pid=266507 comm=user_bulk_renam dfd=4294967196 pathname=ffff898e881d4000 op=ffffcc97023dbb74
+[53090.167423] [trace_user_bulk_rename] __d_alloc.entry pid=266507 comm=user_bulk_renam sb=ffff898e906aa000 name_qstr=ffffcc97023dba40
+[53090.167431] [trace_user_bulk_rename] __d_alloc.ret pid=266507 comm=user_bulk_renam dentry=ffff898f9b211900
+[53090.167481] [trace_user_bulk_rename] do_filp_open.ret pid=266507 comm=user_bulk_renam ret=ffff898fd33a1d80
+[53090.167495] [trace_user_bulk_rename] do_filp_open.entry pid=266507 comm=user_bulk_renam dfd=4294967196 pathname=ffff898e881d4000 op=ffffcc97023dbca4
+[53090.167505] [trace_user_bulk_rename] __d_alloc.entry pid=266507 comm=user_bulk_renam sb=ffff898e906aa000 name_qstr=ffffcc97023dbb70
+[53090.167512] [trace_user_bulk_rename] __d_alloc.ret pid=266507 comm=user_bulk_renam dentry=ffff898f9b211840
+[53090.167562] [trace_user_bulk_rename] do_filp_open.ret pid=266507 comm=user_bulk_renam ret=ffff898fd33a1d80
+[53090.167576] [trace_user_bulk_rename] do_filp_open.entry pid=266507 comm=user_bulk_renam dfd=4294967196 pathname=ffff898e881d4000 op=ffffcc97023dbd84
+[53090.167586] [trace_user_bulk_rename] __d_alloc.entry pid=266507 comm=user_bulk_renam sb=ffff898e906aa000 name_qstr=ffffcc97023dbc50
+[53090.167594] [trace_user_bulk_rename] __d_alloc.ret pid=266507 comm=user_bulk_renam dentry=ffff898f9b211300
+[53090.167648] [trace_user_bulk_rename] do_filp_open.ret pid=266507 comm=user_bulk_renam ret=ffff898fd33a1d80
+[53090.167662] [trace_user_bulk_rename] do_filp_open.entry pid=266507 comm=user_bulk_renam dfd=4294967196 pathname=ffff898e881d4000 op=ffffcc97023dbe24
+[53090.167672] [trace_user_bulk_rename] __d_alloc.entry pid=266507 comm=user_bulk_renam sb=ffff898e906aa000 name_qstr=ffffcc97023dbcf0
+[53090.167679] [trace_user_bulk_rename] __d_alloc.ret pid=266507 comm=user_bulk_renam dentry=ffff898f9b2116c0
+[53090.167730] [trace_user_bulk_rename] do_filp_open.ret pid=266507 comm=user_bulk_renam ret=ffff898fd33a1d80
+[53090.167743] [trace_user_bulk_rename] do_filp_open.entry pid=266507 comm=user_bulk_renam dfd=4294967196 pathname=ffff898e881d4000 op=ffffcc97023dbb24
+[53090.167753] [trace_user_bulk_rename] __d_alloc.entry pid=266507 comm=user_bulk_renam sb=ffff898e906aa000 name_qstr=ffffcc97023db9f0
+[53090.167764] [trace_user_bulk_rename] __d_alloc.ret pid=266507 comm=user_bulk_renam dentry=ffff898f9b2129c0
+[53090.167819] [trace_user_bulk_rename] do_filp_open.ret pid=266507 comm=user_bulk_renam ret=ffff898fd33a1d80
+[53090.167832] [trace_user_bulk_rename] do_filp_open.entry pid=266507 comm=user_bulk_renam dfd=4294967196 pathname=ffff898e881d4000 op=ffffcc97023dbcd4
+[53090.167842] [trace_user_bulk_rename] __d_alloc.entry pid=266507 comm=user_bulk_renam sb=ffff898e906aa000 name_qstr=ffffcc97023dbba0
+[53090.167850] [trace_user_bulk_rename] __d_alloc.ret pid=266507 comm=user_bulk_renam dentry=ffff898f9b212e40
+[53090.167900] [trace_user_bulk_rename] do_filp_open.ret pid=266507 comm=user_bulk_renam ret=ffff898fd33a1d80
+[53090.167913] [trace_user_bulk_rename] do_filp_open.entry pid=266507 comm=user_bulk_renam dfd=4294967196 pathname=ffff898e881d4000 op=ffffcc97023dbe04
+[53090.167923] [trace_user_bulk_rename] __d_alloc.entry pid=266507 comm=user_bulk_renam sb=ffff898e906aa000 name_qstr=ffffcc97023dbcd0
+[53090.167931] [trace_user_bulk_rename] __d_alloc.ret pid=266507 comm=user_bulk_renam dentry=ffff898f9b212b40
+[53090.167981] [trace_user_bulk_rename] do_filp_open.ret pid=266507 comm=user_bulk_renam ret=ffff898fd33a1d80
+[53090.167994] [trace_user_bulk_rename] do_filp_open.entry pid=266507 comm=user_bulk_renam dfd=4294967196 pathname=ffff898e881d4000 op=ffffcc97023dba94
+[53090.168004] [trace_user_bulk_rename] __d_alloc.entry pid=266507 comm=user_bulk_renam sb=ffff898e906aa000 name_qstr=ffffcc97023db960
+[53090.168012] [trace_user_bulk_rename] __d_alloc.ret pid=266507 comm=user_bulk_renam dentry=ffff898f9b2120c0
+[53090.168063] [trace_user_bulk_rename] do_filp_open.ret pid=266507 comm=user_bulk_renam ret=ffff898fd33a1d80
+[53090.168076] [trace_user_bulk_rename] do_filp_open.entry pid=266507 comm=user_bulk_renam dfd=4294967196 pathname=ffff898e881d4000 op=ffffcc97023dbc14
+[53090.168086] [trace_user_bulk_rename] __d_alloc.entry pid=266507 comm=user_bulk_renam sb=ffff898e906aa000 name_qstr=ffffcc97023dbae0
+[53090.168094] [trace_user_bulk_rename] __d_alloc.ret pid=266507 comm=user_bulk_renam dentry=ffff898f9b212600
+[53090.168145] [trace_user_bulk_rename] do_filp_open.ret pid=266507 comm=user_bulk_renam ret=ffff898fd33a1d80
+[53090.168159] [trace_user_bulk_rename] do_filp_open.entry pid=266507 comm=user_bulk_renam dfd=4294967196 pathname=ffff898e881d4000 op=ffffcc97023dbd94
+[53090.168171] [trace_user_bulk_rename] __d_alloc.entry pid=266507 comm=user_bulk_renam sb=ffff898e906aa000 name_qstr=ffffcc97023dbc60
+[53090.168181] [trace_user_bulk_rename] __d_alloc.ret pid=266507 comm=user_bulk_renam dentry=ffff898f9b212cc0
+[53090.168237] [trace_user_bulk_rename] do_filp_open.ret pid=266507 comm=user_bulk_renam ret=ffff898fd33a1d80
+[53090.168251] [trace_user_bulk_rename] do_filp_open.entry pid=266507 comm=user_bulk_renam dfd=4294967196 pathname=ffff898e881d4000 op=ffffcc97023dba94
+[53090.168261] [trace_user_bulk_rename] __d_alloc.entry pid=266507 comm=user_bulk_renam sb=ffff898e906aa000 name_qstr=ffffcc97023db960
+[53090.168269] [trace_user_bulk_rename] __d_alloc.ret pid=266507 comm=user_bulk_renam dentry=ffff898f9b212a80
+[53090.168321] [trace_user_bulk_rename] do_filp_open.ret pid=266507 comm=user_bulk_renam ret=ffff898fd33a1d80
+[53090.168352] [trace_user_bulk_rename] do_filp_open.entry pid=266507 comm=user_bulk_renam dfd=4294967196 pathname=ffff898e881d4000 op=ffffcc97023dbc44
+[53090.168362] [trace_user_bulk_rename] __d_alloc.entry pid=266507 comm=user_bulk_renam sb=ffff898e906aa000 name_qstr=ffffcc97023dbb10
+[53090.168370] [trace_user_bulk_rename] __d_alloc.ret pid=266507 comm=user_bulk_renam dentry=ffff898f9b212000
+[53090.168451] [trace_user_bulk_rename] do_filp_open.ret pid=266507 comm=user_bulk_renam ret=ffff898fd33a1d80
+[53090.168472] [trace_user_bulk_rename] do_filp_open.entry pid=266507 comm=user_bulk_renam dfd=4294967196 pathname=ffff898e881d4000 op=ffffcc97023dbcf4
+[53090.168483] [trace_user_bulk_rename] __d_alloc.entry pid=266507 comm=user_bulk_renam sb=ffff898e906aa000 name_qstr=ffffcc97023dbbc0
+[53090.168491] [trace_user_bulk_rename] __d_alloc.ret pid=266507 comm=user_bulk_renam dentry=ffff898f9b212c00
+[53090.168546] [trace_user_bulk_rename] do_filp_open.ret pid=266507 comm=user_bulk_renam ret=ffff898fd33a1d80
+[53090.168559] [trace_user_bulk_rename] do_filp_open.entry pid=266507 comm=user_bulk_renam dfd=4294967196 pathname=ffff898e881d4000 op=ffffcc97023dbc54
+[53090.168569] [trace_user_bulk_rename] __d_alloc.entry pid=266507 comm=user_bulk_renam sb=ffff898e906aa000 name_qstr=ffffcc97023dbb20
+[53090.168577] [trace_user_bulk_rename] __d_alloc.ret pid=266507 comm=user_bulk_renam dentry=ffff898f9b212180
+[53090.168630] [trace_user_bulk_rename] do_filp_open.ret pid=266507 comm=user_bulk_renam ret=ffff898fd33a1d80
+[53090.168643] [trace_user_bulk_rename] do_filp_open.entry pid=266507 comm=user_bulk_renam dfd=4294967196 pathname=ffff898e881d4000 op=ffffcc97023dbde4
+[53090.168653] [trace_user_bulk_rename] __d_alloc.entry pid=266507 comm=user_bulk_renam sb=ffff898e906aa000 name_qstr=ffffcc97023dbcb0
+[53090.168661] [trace_user_bulk_rename] __d_alloc.ret pid=266507 comm=user_bulk_renam dentry=ffff898f9b212240
+[53090.168714] [trace_user_bulk_rename] do_filp_open.ret pid=266507 comm=user_bulk_renam ret=ffff898fd33a1d80
+[53090.168727] [trace_user_bulk_rename] do_filp_open.entry pid=266507 comm=user_bulk_renam dfd=4294967196 pathname=ffff898e881d4000 op=ffffcc97023dbb84
+[53090.168737] [trace_user_bulk_rename] __d_alloc.entry pid=266507 comm=user_bulk_renam sb=ffff898e906aa000 name_qstr=ffffcc97023dba50
+[53090.168745] [trace_user_bulk_rename] __d_alloc.ret pid=266507 comm=user_bulk_renam dentry=ffff898f9b212540
+[53090.168798] [trace_user_bulk_rename] do_filp_open.ret pid=266507 comm=user_bulk_renam ret=ffff898fd33a1d80
+[53090.168811] [trace_user_bulk_rename] do_filp_open.entry pid=266507 comm=user_bulk_renam dfd=4294967196 pathname=ffff898e881d4000 op=ffffcc97023dbdb4
+[53090.168821] [trace_user_bulk_rename] __d_alloc.entry pid=266507 comm=user_bulk_renam sb=ffff898e906aa000 name_qstr=ffffcc97023dbc80
+[53090.168829] [trace_user_bulk_rename] __d_alloc.ret pid=266507 comm=user_bulk_renam dentry=ffff898f9b212480
+[53090.168884] [trace_user_bulk_rename] do_filp_open.ret pid=266507 comm=user_bulk_renam ret=ffff898fd33a1d80
+[53090.168897] [trace_user_bulk_rename] do_filp_open.entry pid=266507 comm=user_bulk_renam dfd=4294967196 pathname=ffff898e881d4000 op=ffffcc97023dbbb4
+[53090.168907] [trace_user_bulk_rename] __d_alloc.entry pid=266507 comm=user_bulk_renam sb=ffff898e906aa000 name_qstr=ffffcc97023dba80
+[53090.168915] [trace_user_bulk_rename] __d_alloc.ret pid=266507 comm=user_bulk_renam dentry=ffff898f9b212f00
+[53090.168970] [trace_user_bulk_rename] do_filp_open.ret pid=266507 comm=user_bulk_renam ret=ffff898fd33a1d80
+[53090.168983] [trace_user_bulk_rename] do_filp_open.entry pid=266507 comm=user_bulk_renam dfd=4294967196 pathname=ffff898e881d4000 op=ffffcc97023dbaf4
+[53090.168993] [trace_user_bulk_rename] __d_alloc.entry pid=266507 comm=user_bulk_renam sb=ffff898e906aa000 name_qstr=ffffcc97023db9c0
+[53090.169001] [trace_user_bulk_rename] __d_alloc.ret pid=266507 comm=user_bulk_renam dentry=ffff898f9b2123c0
+[53090.169058] [trace_user_bulk_rename] do_filp_open.ret pid=266507 comm=user_bulk_renam ret=ffff898fd33a1d80
+[53090.169071] [trace_user_bulk_rename] do_filp_open.entry pid=266507 comm=user_bulk_renam dfd=4294967196 pathname=ffff898e881d4000 op=ffffcc97023dbaa4
+[53090.169081] [trace_user_bulk_rename] __d_alloc.entry pid=266507 comm=user_bulk_renam sb=ffff898e906aa000 name_qstr=ffffcc97023db970
+[53090.169089] [trace_user_bulk_rename] __d_alloc.ret pid=266507 comm=user_bulk_renam dentry=ffff898f9b212780
+[53090.169144] [trace_user_bulk_rename] do_filp_open.ret pid=266507 comm=user_bulk_renam ret=ffff898fd33a1d80
+[53090.169157] [trace_user_bulk_rename] do_filp_open.entry pid=266507 comm=user_bulk_renam dfd=4294967196 pathname=ffff898e881d4000 op=ffffcc97023dbbc4
+[53090.169167] [trace_user_bulk_rename] __d_alloc.entry pid=266507 comm=user_bulk_renam sb=ffff898e906aa000 name_qstr=ffffcc97023dba90
+[53090.169175] [trace_user_bulk_rename] __d_alloc.ret pid=266507 comm=user_bulk_renam dentry=ffff898f9b212900
+[53090.169229] [trace_user_bulk_rename] do_filp_open.ret pid=266507 comm=user_bulk_renam ret=ffff898fd33a1d80
+[53090.169242] [trace_user_bulk_rename] do_filp_open.entry pid=266507 comm=user_bulk_renam dfd=4294967196 pathname=ffff898e881d4000 op=ffffcc97023dbd94
+[53090.169252] [trace_user_bulk_rename] __d_alloc.entry pid=266507 comm=user_bulk_renam sb=ffff898e906aa000 name_qstr=ffffcc97023dbc60
+[53090.169259] [trace_user_bulk_rename] __d_alloc.ret pid=266507 comm=user_bulk_renam dentry=ffff898f9b212840
+[53090.169314] [trace_user_bulk_rename] do_filp_open.ret pid=266507 comm=user_bulk_renam ret=ffff898fd33a1d80
+[53090.169347] [trace_user_bulk_rename] do_filp_open.entry pid=266507 comm=user_bulk_renam dfd=4294967196 pathname=ffff898e881d4000 op=ffffcc97023dbad4
+[53090.169358] [trace_user_bulk_rename] __d_alloc.entry pid=266507 comm=user_bulk_renam sb=ffff898e906aa000 name_qstr=ffffcc97023db9a0
+[53090.169366] [trace_user_bulk_rename] __d_alloc.ret pid=266507 comm=user_bulk_renam dentry=ffff898f9b212300
+[53090.169428] [trace_user_bulk_rename] do_filp_open.ret pid=266507 comm=user_bulk_renam ret=ffff898fd33a1d80
+[53090.169444] [trace_user_bulk_rename] do_filp_open.entry pid=266507 comm=user_bulk_renam dfd=4294967196 pathname=ffff898e881d4000 op=ffffcc97023dbd14
+[53090.169457] [trace_user_bulk_rename] __d_alloc.entry pid=266507 comm=user_bulk_renam sb=ffff898e906aa000 name_qstr=ffffcc97023dbbe0
+[53090.169466] [trace_user_bulk_rename] __d_alloc.ret pid=266507 comm=user_bulk_renam dentry=ffff898f9b2126c0
+[53090.169524] [trace_user_bulk_rename] do_filp_open.ret pid=266507 comm=user_bulk_renam ret=ffff898fd33a1d80
+[53090.169537] [trace_user_bulk_rename] do_filp_open.entry pid=266507 comm=user_bulk_renam dfd=4294967196 pathname=ffff898e881d4000 op=ffffcc97023dbd04
+[53090.169548] [trace_user_bulk_rename] __d_alloc.entry pid=266507 comm=user_bulk_renam sb=ffff898e906aa000 name_qstr=ffffcc97023dbbd0
+[53090.169556] [trace_user_bulk_rename] __d_alloc.ret pid=266507 comm=user_bulk_renam dentry=ffff898f9b212d80
+[53090.169612] [trace_user_bulk_rename] do_filp_open.ret pid=266507 comm=user_bulk_renam ret=ffff898fd33a1d80
+[53090.169625] [trace_user_bulk_rename] do_filp_open.entry pid=266507 comm=user_bulk_renam dfd=4294967196 pathname=ffff898e881d4000 op=ffffcc97023dbc84
+[53090.169635] [trace_user_bulk_rename] __d_alloc.entry pid=266507 comm=user_bulk_renam sb=ffff898e906aa000 name_qstr=ffffcc97023dbb50
+[53090.169647] [trace_user_bulk_rename] __d_alloc.ret pid=266507 comm=user_bulk_renam dentry=ffff898f9b2b83c0
+[53090.169704] [trace_user_bulk_rename] do_filp_open.ret pid=266507 comm=user_bulk_renam ret=ffff898fd33a1d80
+[53090.169717] [trace_user_bulk_rename] do_filp_open.entry pid=266507 comm=user_bulk_renam dfd=4294967196 pathname=ffff898e881d4000 op=ffffcc97023dbe74
+[53090.169727] [trace_user_bulk_rename] __d_alloc.entry pid=266507 comm=user_bulk_renam sb=ffff898e906aa000 name_qstr=ffffcc97023dbd40
+[53090.169735] [trace_user_bulk_rename] __d_alloc.ret pid=266507 comm=user_bulk_renam dentry=ffff898f9b2b8780
+[53090.169790] [trace_user_bulk_rename] do_filp_open.ret pid=266507 comm=user_bulk_renam ret=ffff898fd33a1d80
+[53090.169803] [trace_user_bulk_rename] do_filp_open.entry pid=266507 comm=user_bulk_renam dfd=4294967196 pathname=ffff898e881d4000 op=ffffcc97023dbc34
+[53090.169814] [trace_user_bulk_rename] __d_alloc.entry pid=266507 comm=user_bulk_renam sb=ffff898e906aa000 name_qstr=ffffcc97023dbb00
+[53090.169821] [trace_user_bulk_rename] __d_alloc.ret pid=266507 comm=user_bulk_renam dentry=ffff898f9b2b8900
+[53090.169879] [trace_user_bulk_rename] do_filp_open.ret pid=266507 comm=user_bulk_renam ret=ffff898fd33a1d80
+[53090.169892] [trace_user_bulk_rename] do_filp_open.entry pid=266507 comm=user_bulk_renam dfd=4294967196 pathname=ffff898e881d4000 op=ffffcc97023dbd24
+[53090.169902] [trace_user_bulk_rename] __d_alloc.entry pid=266507 comm=user_bulk_renam sb=ffff898e906aa000 name_qstr=ffffcc97023dbbf0
+[53090.169910] [trace_user_bulk_rename] __d_alloc.ret pid=266507 comm=user_bulk_renam dentry=ffff898f9b2b8840
+[53090.169966] [trace_user_bulk_rename] do_filp_open.ret pid=266507 comm=user_bulk_renam ret=ffff898fd33a1d80
+[53090.169980] [trace_user_bulk_rename] do_filp_open.entry pid=266507 comm=user_bulk_renam dfd=4294967196 pathname=ffff898e881d4000 op=ffffcc97023dbe44
+[53090.169989] [trace_user_bulk_rename] __d_alloc.entry pid=266507 comm=user_bulk_renam sb=ffff898e906aa000 name_qstr=ffffcc97023dbd10
+[53090.169997] [trace_user_bulk_rename] __d_alloc.ret pid=266507 comm=user_bulk_renam dentry=ffff898f9b2b8300
+[53090.170059] [trace_user_bulk_rename] do_filp_open.ret pid=266507 comm=user_bulk_renam ret=ffff898fd33a1d80
+[53090.170075] [trace_user_bulk_rename] do_filp_open.entry pid=266507 comm=user_bulk_renam dfd=4294967196 pathname=ffff898e881d4000 op=ffffcc97023dbc54
+[53090.170088] [trace_user_bulk_rename] __d_alloc.entry pid=266507 comm=user_bulk_renam sb=ffff898e906aa000 name_qstr=ffffcc97023dbb20
+[53090.170097] [trace_user_bulk_rename] __d_alloc.ret pid=266507 comm=user_bulk_renam dentry=ffff898f9b2b86c0
+[53090.170169] [trace_user_bulk_rename] do_filp_open.ret pid=266507 comm=user_bulk_renam ret=ffff898fd33a1d80
+[53090.170185] [trace_user_bulk_rename] do_filp_open.entry pid=266507 comm=user_bulk_renam dfd=4294967196 pathname=ffff898e881d4000 op=ffffcc97023dbba4
+[53090.170196] [trace_user_bulk_rename] __d_alloc.entry pid=266507 comm=user_bulk_renam sb=ffff898e906aa000 name_qstr=ffffcc97023dba70
+[53090.170204] [trace_user_bulk_rename] __d_alloc.ret pid=266507 comm=user_bulk_renam dentry=ffff898f9b2b8d80
+[53090.170263] [trace_user_bulk_rename] do_filp_open.ret pid=266507 comm=user_bulk_renam ret=ffff898fd33a1d80
+[53090.170276] [trace_user_bulk_rename] do_filp_open.entry pid=266507 comm=user_bulk_renam dfd=4294967196 pathname=ffff898e881d4000 op=ffffcc97023dbaf4
+[53090.170286] [trace_user_bulk_rename] __d_alloc.entry pid=266507 comm=user_bulk_renam sb=ffff898e906aa000 name_qstr=ffffcc97023db9c0
+[53090.170294] [trace_user_bulk_rename] __d_alloc.ret pid=266507 comm=user_bulk_renam dentry=ffff898f9b2b89c0
+[53090.170369] [trace_user_bulk_rename] do_filp_open.ret pid=266507 comm=user_bulk_renam ret=ffff898fd33a1d80
+[53090.170383] [trace_user_bulk_rename] do_filp_open.entry pid=266507 comm=user_bulk_renam dfd=4294967196 pathname=ffff898e881d4000 op=ffffcc97023dbb44
+[53090.170393] [trace_user_bulk_rename] __d_alloc.entry pid=266507 comm=user_bulk_renam sb=ffff898e906aa000 name_qstr=ffffcc97023dba10
+[53090.170401] [trace_user_bulk_rename] __d_alloc.ret pid=266507 comm=user_bulk_renam dentry=ffff898f9b2b8e40
+[53090.170460] [trace_user_bulk_rename] do_filp_open.ret pid=266507 comm=user_bulk_renam ret=ffff898fd33a1d80
+[53090.170473] [trace_user_bulk_rename] do_filp_open.entry pid=266507 comm=user_bulk_renam dfd=4294967196 pathname=ffff898e881d4000 op=ffffcc97023dbd64
+[53090.170482] [trace_user_bulk_rename] __d_alloc.entry pid=266507 comm=user_bulk_renam sb=ffff898e906aa000 name_qstr=ffffcc97023dbc30
+[53090.170491] [trace_user_bulk_rename] __d_alloc.ret pid=266507 comm=user_bulk_renam dentry=ffff898f9b2b8b40
+[53090.170552] [trace_user_bulk_rename] do_filp_open.ret pid=266507 comm=user_bulk_renam ret=ffff898fd33a1d80
+[53090.170565] [trace_user_bulk_rename] do_filp_open.entry pid=266507 comm=user_bulk_renam dfd=4294967196 pathname=ffff898e881d4000 op=ffffcc97023dbd94
+[53090.170575] [trace_user_bulk_rename] __d_alloc.entry pid=266507 comm=user_bulk_renam sb=ffff898e906aa000 name_qstr=ffffcc97023dbc60
+[53090.170583] [trace_user_bulk_rename] __d_alloc.ret pid=266507 comm=user_bulk_renam dentry=ffff898f9b2b80c0
+[53090.170642] [trace_user_bulk_rename] do_filp_open.ret pid=266507 comm=user_bulk_renam ret=ffff898fd33a1d80
+[53090.170655] [trace_user_bulk_rename] do_filp_open.entry pid=266507 comm=user_bulk_renam dfd=4294967196 pathname=ffff898e881d4000 op=ffffcc97023dbb04
+[53090.170665] [trace_user_bulk_rename] __d_alloc.entry pid=266507 comm=user_bulk_renam sb=ffff898e906aa000 name_qstr=ffffcc97023db9d0
+[53090.170673] [trace_user_bulk_rename] __d_alloc.ret pid=266507 comm=user_bulk_renam dentry=ffff898f9b2b8600
+[53090.170731] [trace_user_bulk_rename] do_filp_open.ret pid=266507 comm=user_bulk_renam ret=ffff898fd33a1d80
+[53090.170744] [trace_user_bulk_rename] do_filp_open.entry pid=266507 comm=user_bulk_renam dfd=4294967196 pathname=ffff898e881d4000 op=ffffcc97023dbc04
+[53090.170754] [trace_user_bulk_rename] __d_alloc.entry pid=266507 comm=user_bulk_renam sb=ffff898e906aa000 name_qstr=ffffcc97023dbad0
+[53090.170762] [trace_user_bulk_rename] __d_alloc.ret pid=266507 comm=user_bulk_renam dentry=ffff898f9b2b8cc0
+[53090.170821] [trace_user_bulk_rename] do_filp_open.ret pid=266507 comm=user_bulk_renam ret=ffff898fd33a1d80
+[53090.170834] [trace_user_bulk_rename] do_filp_open.entry pid=266507 comm=user_bulk_renam dfd=4294967196 pathname=ffff898e881d4000 op=ffffcc97023dbb94
+[53090.170844] [trace_user_bulk_rename] __d_alloc.entry pid=266507 comm=user_bulk_renam sb=ffff898e906aa000 name_qstr=ffffcc97023dba60
+[53090.170852] [trace_user_bulk_rename] __d_alloc.ret pid=266507 comm=user_bulk_renam dentry=ffff898f9b2b8a80
+[53090.170911] [trace_user_bulk_rename] do_filp_open.ret pid=266507 comm=user_bulk_renam ret=ffff898fd33a1d80
+[53090.170986] [trace_user_bulk_rename] do_filp_open.entry pid=266507 comm=user_bulk_renam dfd=4294967196 pathname=ffff898e881d4000 op=ffffcc97023dbab4
+[53090.170999] [trace_user_bulk_rename] do_filp_open.ret pid=266507 comm=user_bulk_renam ret=ffff898fd33a1d80
+[53090.171049] [trace_user_bulk_rename] do_filp_open.entry pid=266507 comm=user_bulk_renam dfd=4294967196 pathname=ffff898e881d4000 op=ffffcc97023dbd54
+[53090.171061] [trace_user_bulk_rename] do_filp_open.ret pid=266507 comm=user_bulk_renam ret=ffff898fd33a1d80

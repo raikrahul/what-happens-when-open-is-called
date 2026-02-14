@@ -2,20 +2,29 @@
 
 - Userspace source: `kernel/user/stage3/case12_harder_puzzle/user_puzzle.c`
 - Driver source: `kernel/drivers/stage3/case12_harder_puzzle/trace_user_puzzle/trace_user_puzzle.c`
-- Status: pending
+- Module: `trace_user_puzzle`
+- Binary: `kernel/user/stage3/case12_harder_puzzle/user_puzzle.out`
+- Run timestamp: `2026-02-15T01:15:12`
+- Final status: `pass_probe_hits`
 
-## Objective
-- Capture `do_filp_open` entry/return and `__d_alloc` entry/return.
+## Probe Counts
+- do_filp_open.entry: 11
+- do_filp_open.ret: 11
+- __d_alloc.entry: 0
+- __d_alloc.ret: 0
+
+## Return Signature Counts
+- ERR_PTR(-ENOENT) observed (fffffffffffffffe): 6
+- Non-error pointer returns observed: 5
 
 ## Commands
 ```bash
-make kernel/drivers/stage3/case12_harder_puzzle/trace_user_puzzle/trace_user_puzzle.ko
-# build userspace binary target as needed
-sudo insmod trace_user_puzzle.ko target_comm="user_puzzle"
-# run userspace program
-sudo dmesg | tail -n 400
+make -C kernel/drivers/stage3/case12_harder_puzzle/trace_user_puzzle
+kernel/user/stage3/case12_harder_puzzle/user_puzzle.out
+sudo dmesg -C
+sudo insmod kernel/drivers/stage3/case12_harder_puzzle/trace_user_puzzle/trace_user_puzzle.ko target_comm="user_puzzle.out"
 sudo rmmod trace_user_puzzle
 ```
 
-## Notes
-- Add parsed timeline and branch-path proof here.
+## Dmesg
+`kernel/user/stage3/case12_harder_puzzle/reports/user_puzzle_dmesg.txt`

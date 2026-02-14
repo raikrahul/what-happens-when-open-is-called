@@ -2,20 +2,29 @@
 
 - Userspace source: `kernel/user/stage3/case1/demo_o_path/demo_o_path_dir.c`
 - Driver source: `kernel/drivers/stage3/case1/trace_demo_o_path_dir/trace_demo_o_path_dir.c`
-- Status: pending
+- Module: `trace_demo_o_path_dir`
+- Binary: `kernel/user/stage3/case1/demo_o_path/demo_o_path_dir.out`
+- Run timestamp: `2026-02-15T01:15:01`
+- Final status: `pass_probe_hits`
 
-## Objective
-- Capture `do_filp_open` entry/return and `__d_alloc` entry/return.
+## Probe Counts
+- do_filp_open.entry: 11
+- do_filp_open.ret: 11
+- __d_alloc.entry: 1
+- __d_alloc.ret: 1
+
+## Return Signature Counts
+- ERR_PTR(-ENOENT) observed (fffffffffffffffe): 6
+- Non-error pointer returns observed: 5
 
 ## Commands
 ```bash
-make kernel/drivers/stage3/case1/trace_demo_o_path_dir/trace_demo_o_path_dir.ko
-# build userspace binary target as needed
-sudo insmod trace_demo_o_path_dir.ko target_comm="demo_o_path_dir"
-# run userspace program
-sudo dmesg | tail -n 400
+make -C kernel/drivers/stage3/case1/trace_demo_o_path_dir
+kernel/user/stage3/case1/demo_o_path/demo_o_path_dir.out
+sudo dmesg -C
+sudo insmod kernel/drivers/stage3/case1/trace_demo_o_path_dir/trace_demo_o_path_dir.ko target_comm="demo_o_path_dir"
 sudo rmmod trace_demo_o_path_dir
 ```
 
-## Notes
-- Add parsed timeline and branch-path proof here.
+## Dmesg
+`kernel/user/stage3/case1/reports/demo_o_path_dir_dmesg.txt`

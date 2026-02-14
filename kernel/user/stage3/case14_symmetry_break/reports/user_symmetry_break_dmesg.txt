@@ -1,0 +1,21 @@
+[53094.744112] [trace_user_symmetry_break] loaded target_comm=user_symmetry_b user=kernel/user/stage3/case14_symmetry_break/user_symmetry_break.c
+[53094.747793] [trace_user_symmetry_break] do_filp_open.entry pid=267650 comm=user_symmetry_b dfd=4294967196 pathname=ffff898e8d738000 op=ffffcc9701f5bb84
+[53094.747820] [trace_user_symmetry_break] do_filp_open.ret pid=267650 comm=user_symmetry_b ret=fffffffffffffffe
+[53094.747837] [trace_user_symmetry_break] do_filp_open.entry pid=267650 comm=user_symmetry_b dfd=4294967196 pathname=ffff898e8d738000 op=ffffcc9701f5bc54
+[53094.747851] [trace_user_symmetry_break] do_filp_open.ret pid=267650 comm=user_symmetry_b ret=fffffffffffffffe
+[53094.747892] [trace_user_symmetry_break] do_filp_open.entry pid=267650 comm=user_symmetry_b dfd=4294967196 pathname=ffff898e8d738000 op=ffffcc9701f5be74
+[53094.747907] [trace_user_symmetry_break] do_filp_open.ret pid=267650 comm=user_symmetry_b ret=fffffffffffffffe
+[53094.747926] [trace_user_symmetry_break] do_filp_open.entry pid=267650 comm=user_symmetry_b dfd=4294967196 pathname=ffff898e8d738000 op=ffffcc9701f5bd54
+[53094.747936] [trace_user_symmetry_break] do_filp_open.ret pid=267650 comm=user_symmetry_b ret=fffffffffffffffe
+[53094.747944] [trace_user_symmetry_break] do_filp_open.entry pid=267650 comm=user_symmetry_b dfd=4294967196 pathname=ffff898e8d738000 op=ffffcc9701f5bc24
+[53094.747954] [trace_user_symmetry_break] do_filp_open.ret pid=267650 comm=user_symmetry_b ret=fffffffffffffffe
+[53094.747963] [trace_user_symmetry_break] do_filp_open.entry pid=267650 comm=user_symmetry_b dfd=4294967196 pathname=ffff898e8d738000 op=ffffcc9701f5bd34
+[53094.747973] [trace_user_symmetry_break] do_filp_open.ret pid=267650 comm=user_symmetry_b ret=fffffffffffffffe
+[53094.747983] [trace_user_symmetry_break] do_filp_open.entry pid=267650 comm=user_symmetry_b dfd=4294967196 pathname=ffff898e8d738000 op=ffffcc9701f5bcf4
+[53094.747996] [trace_user_symmetry_break] do_filp_open.ret pid=267650 comm=user_symmetry_b ret=ffff89901398b900
+[53094.748040] [trace_user_symmetry_break] do_filp_open.entry pid=267650 comm=user_symmetry_b dfd=4294967196 pathname=ffff898e8d738000 op=ffffcc9701f5bad4
+[53094.748053] [trace_user_symmetry_break] do_filp_open.ret pid=267650 comm=user_symmetry_b ret=ffff89901398b480
+[53094.748500] [trace_user_symmetry_break] do_filp_open.entry pid=267650 comm=user_symmetry_b dfd=4294967196 pathname=ffff898e8d738000 op=ffffcc9701f5bb84
+[53094.748516] [trace_user_symmetry_break] do_filp_open.ret pid=267650 comm=user_symmetry_b ret=ffff89901398b900
+[53094.748529] [trace_user_symmetry_break] do_filp_open.entry pid=267650 comm=user_symmetry_b dfd=4294967196 pathname=ffff898e8d738000 op=ffffcc9701f5bdb4
+[53094.748541] [trace_user_symmetry_break] do_filp_open.ret pid=267650 comm=user_symmetry_b ret=ffff89901398b900

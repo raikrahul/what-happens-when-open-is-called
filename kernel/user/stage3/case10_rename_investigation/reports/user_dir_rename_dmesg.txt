@@ -1,0 +1,17 @@
+[53089.001343] [trace_user_dir_rename] loaded target_comm=user_dir_rename user=kernel/user/stage3/case10_rename_investigation/user_dir_rename.c
+[53089.005184] [trace_user_dir_rename] do_filp_open.entry pid=266248 comm=user_dir_rename dfd=4294967196 pathname=ffff898e8c888000 op=ffffcc970235fb94
+[53089.005206] [trace_user_dir_rename] do_filp_open.ret pid=266248 comm=user_dir_rename ret=fffffffffffffffe
+[53089.005213] [trace_user_dir_rename] do_filp_open.entry pid=266248 comm=user_dir_rename dfd=4294967196 pathname=ffff898e8c888000 op=ffffcc970235fac4
+[53089.005218] [trace_user_dir_rename] do_filp_open.ret pid=266248 comm=user_dir_rename ret=fffffffffffffffe
+[53089.005223] [trace_user_dir_rename] do_filp_open.entry pid=266248 comm=user_dir_rename dfd=4294967196 pathname=ffff898e8c888000 op=ffffcc970235fdc4
+[53089.005228] [trace_user_dir_rename] do_filp_open.ret pid=266248 comm=user_dir_rename ret=fffffffffffffffe
+[53089.005236] [trace_user_dir_rename] do_filp_open.entry pid=266248 comm=user_dir_rename dfd=4294967196 pathname=ffff898e8c888000 op=ffffcc970235fc94
+[53089.005240] [trace_user_dir_rename] do_filp_open.ret pid=266248 comm=user_dir_rename ret=fffffffffffffffe
+[53089.005243] [trace_user_dir_rename] do_filp_open.entry pid=266248 comm=user_dir_rename dfd=4294967196 pathname=ffff898e8c888000 op=ffffcc970235fd34
+[53089.005246] [trace_user_dir_rename] do_filp_open.ret pid=266248 comm=user_dir_rename ret=fffffffffffffffe
+[53089.005249] [trace_user_dir_rename] do_filp_open.entry pid=266248 comm=user_dir_rename dfd=4294967196 pathname=ffff898e8c888000 op=ffffcc970235fc54
+[53089.005253] [trace_user_dir_rename] do_filp_open.ret pid=266248 comm=user_dir_rename ret=fffffffffffffffe
+[53089.005257] [trace_user_dir_rename] do_filp_open.entry pid=266248 comm=user_dir_rename dfd=4294967196 pathname=ffff898e8c888000 op=ffffcc970235fe34
+[53089.005262] [trace_user_dir_rename] do_filp_open.ret pid=266248 comm=user_dir_rename ret=ffff898ebd38e540
+[53089.005286] [trace_user_dir_rename] do_filp_open.entry pid=266248 comm=user_dir_rename dfd=4294967196 pathname=ffff898e8c888000 op=ffffcc970235fac4
+[53089.005292] [trace_user_dir_rename] do_filp_open.ret pid=266248 comm=user_dir_rename ret=ffff898ebd38e840

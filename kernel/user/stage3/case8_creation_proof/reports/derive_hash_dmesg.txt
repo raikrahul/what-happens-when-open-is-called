@@ -1,0 +1,17 @@
+[53115.390594] [trace_derive_hash] loaded target_comm=derive_hash.out user=kernel/user/stage3/case8_creation_proof/derive_hash.c
+[53115.394038] [trace_derive_hash] do_filp_open.entry pid=271301 comm=derive_hash.out dfd=4294967196 pathname=ffff898e8c9e5000 op=ffffcc9700e77c64
+[53115.394059] [trace_derive_hash] do_filp_open.ret pid=271301 comm=derive_hash.out ret=fffffffffffffffe
+[53115.394073] [trace_derive_hash] do_filp_open.entry pid=271301 comm=derive_hash.out dfd=4294967196 pathname=ffff898e8c9e5000 op=ffffcc9700e77b74
+[53115.394084] [trace_derive_hash] do_filp_open.ret pid=271301 comm=derive_hash.out ret=fffffffffffffffe
+[53115.394096] [trace_derive_hash] do_filp_open.entry pid=271301 comm=derive_hash.out dfd=4294967196 pathname=ffff898e8c9e5000 op=ffffcc9700e77ab4
+[53115.394107] [trace_derive_hash] do_filp_open.ret pid=271301 comm=derive_hash.out ret=fffffffffffffffe
+[53115.394121] [trace_derive_hash] do_filp_open.entry pid=271301 comm=derive_hash.out dfd=4294967196 pathname=ffff898e8c9e5000 op=ffffcc9700e77e64
+[53115.394129] [trace_derive_hash] do_filp_open.ret pid=271301 comm=derive_hash.out ret=fffffffffffffffe
+[53115.394136] [trace_derive_hash] do_filp_open.entry pid=271301 comm=derive_hash.out dfd=4294967196 pathname=ffff898e8c9e5000 op=ffffcc9700e77e44
+[53115.394143] [trace_derive_hash] do_filp_open.ret pid=271301 comm=derive_hash.out ret=fffffffffffffffe
+[53115.394150] [trace_derive_hash] do_filp_open.entry pid=271301 comm=derive_hash.out dfd=4294967196 pathname=ffff898e8c9e5000 op=ffffcc9700e77dd4
+[53115.394158] [trace_derive_hash] do_filp_open.ret pid=271301 comm=derive_hash.out ret=fffffffffffffffe
+[53115.394165] [trace_derive_hash] do_filp_open.entry pid=271301 comm=derive_hash.out dfd=4294967196 pathname=ffff898e8c9e5000 op=ffffcc9700e77b64
+[53115.394176] [trace_derive_hash] do_filp_open.ret pid=271301 comm=derive_hash.out ret=ffff898e8d448240
+[53115.394209] [trace_derive_hash] do_filp_open.entry pid=271301 comm=derive_hash.out dfd=4294967196 pathname=ffff898e8c9e5000 op=ffffcc9700e77ac4
+[53115.394219] [trace_derive_hash] do_filp_open.ret pid=271301 comm=derive_hash.out ret=ffff898e8d448900

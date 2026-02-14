@@ -2,20 +2,29 @@
 
 - Userspace source: `kernel/user/stage3/case1/manual_dentry_check.c`
 - Driver source: `kernel/drivers/stage3/case1/trace_manual_dentry_check/trace_manual_dentry_check.c`
-- Status: pending
+- Module: `trace_manual_dentry_check`
+- Binary: `kernel/user/stage3/case1/manual_dentry_check.out`
+- Run timestamp: `2026-02-15T01:15:05`
+- Final status: `pass_probe_hits`
 
-## Objective
-- Capture `do_filp_open` entry/return and `__d_alloc` entry/return.
+## Probe Counts
+- do_filp_open.entry: 8
+- do_filp_open.ret: 8
+- __d_alloc.entry: 0
+- __d_alloc.ret: 0
+
+## Return Signature Counts
+- ERR_PTR(-ENOENT) observed (fffffffffffffffe): 6
+- Non-error pointer returns observed: 2
 
 ## Commands
 ```bash
-make kernel/drivers/stage3/case1/trace_manual_dentry_check/trace_manual_dentry_check.ko
-# build userspace binary target as needed
-sudo insmod trace_manual_dentry_check.ko target_comm="manual_dentry_c"
-# run userspace program
-sudo dmesg | tail -n 400
+make -C kernel/drivers/stage3/case1/trace_manual_dentry_check
+kernel/user/stage3/case1/manual_dentry_check.out
+sudo dmesg -C
+sudo insmod kernel/drivers/stage3/case1/trace_manual_dentry_check/trace_manual_dentry_check.ko target_comm="manual_dentry_c"
 sudo rmmod trace_manual_dentry_check
 ```
 
-## Notes
-- Add parsed timeline and branch-path proof here.
+## Dmesg
+`kernel/user/stage3/case1/reports/manual_dentry_check_dmesg.txt`
