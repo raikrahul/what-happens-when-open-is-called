@@ -23,6 +23,7 @@
 - Viral growth kit: `product/free-launch-kit/README.md`
 - 14-day X plan: `product/free-launch-kit/11_14_DAY_X_CALENDAR.md`
 - Post templates: `product/free-launch-kit/12_POST_FACTORY.md`
+- Prewritten Week-1 X posts: `product/free-launch-kit/16_7_DAY_PREWRITTEN_X_POSTS.md`
 
 ## Start Here (5 commands)
 ```bash

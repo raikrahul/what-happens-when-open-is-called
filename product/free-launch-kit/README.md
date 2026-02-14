@@ -24,6 +24,7 @@ This folder is a full zero-cost launch system to turn your kernel tracing work i
 - `13_PRO_CASE_PACK_SPEC.md`
 - `14_OBJECTION_RESPONSE_MATRIX.md`
 - `15_SIGNAL_SCORECARD.md`
+- `16_7_DAY_PREWRITTEN_X_POSTS.md`
 
 ## Fast Start
 1. Read `01_PRODUCT_SHAPE.md`.
