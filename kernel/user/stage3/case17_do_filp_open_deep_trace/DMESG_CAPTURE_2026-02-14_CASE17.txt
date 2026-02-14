@@ -1,0 +1,6 @@
+[47741.939064] [C17] Loaded: do_filp_open + d_alloc_parallel + __d_alloc | target_comm=openat_raw target_name=missing_case17_raw_syscall
+[47741.941921] [C17][do_filp_open][ENTRY] pid=229087 tgid=229087 pathname_ptr=ffff898e819b6000 name=/home/r/Desktop/what-happens-when-open-is-called/kernel/user/stage3/case17_do_filp_open_deep_trace/missing_case17_raw_syscall.txt
+[47741.941944] [C17][d_alloc_parallel][ENTRY] pid=229087 tgid=229087 parent=ffff899181570c00 parent_inode=ffff898f9b369b80 parent_name=case17_do_filp_open_deep_trace child_name=missing_case17_raw_syscall.txt parent_sb=ffff898e906aa000 sb_magic=0xef53 sb_blocksize=4096
+[47741.941958] [C17][__d_alloc][ENTRY] pid=229087 tgid=229087 qstr_ptr=ffffcc9700793ab0 name_ptr=ffff898e819b6083 len=30 hash=0x4101d47 name=missing_case17_raw_syscall.txt
+[47741.941969] [C17][__d_alloc][RET] pid=229087 tgid=229087 dentry=ffff898ea4413c00 inode=0000000000000000 unhashed=1 in_lookup=0 name.hash=0x4101d47 name.len=30 name_ptr=ffff898ea4413c38
+[47741.941992] [C17][do_filp_open][RET] pid=229087 tgid=229087 ret_ptr=fffffffffffffffe is_err=1 err=2

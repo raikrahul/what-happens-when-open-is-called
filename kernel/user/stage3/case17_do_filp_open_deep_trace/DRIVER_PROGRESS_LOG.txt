@@ -1,0 +1,69 @@
+[2026-02-14] Case17 Driver Progress Log
+
+1) Objective
+- Keep only stable tools: kprobe, kretprobe, dmesg, classic shell tools.
+- Prove both facts in one trace:
+  a) file open failed
+  b) dentry object was created
+
+2) Current driver status
+- File: kernel/user/stage3/case17_do_filp_open_deep_trace/driver.c
+- Active probes:
+  1. do_filp_open (entry)
+  2. do_filp_open (return)
+  3. d_alloc_parallel (entry)
+  4. __d_alloc (entry)
+  5. __d_alloc (return)
+- Filters:
+  - target_comm (default: openat_raw)
+  - target_name substring (default: missing_case17_raw_syscall)
+  - trace_tgid lock after target hit
+
+3) Last verified signal chain (from dmesg)
+- [do_filp_open][ENTRY] target pathname seen
+- [d_alloc_parallel][ENTRY] parent + parent_sb seen
+- [__d_alloc][ENTRY] qstr name/hash seen
+- [__d_alloc][RET] new dentry returned with inode=0x0
+- [do_filp_open][RET] is_err=1 err=2 (ENOENT)
+
+4) Known risk points (module crash risk)
+- Reading deep pointer fields in probe context without null checks.
+- Expanding logging too much in hot path.
+- Adding non-trivial loops or task iteration inside handlers.
+- Probing unstable/private symbols across kernel builds.
+
+5) Safety rules for next edits
+- Keep only direct field reads with null guards.
+- No global scans from probe handlers.
+- Keep one new log field per edit cycle.
+- Build + single run + dmesg check after each edit.
+
+6) Safe run checklist
+- cd kernel/user/stage3/case17_do_filp_open_deep_trace
+- make
+- sync
+- sudo sh -c 'echo 2 > /proc/sys/vm/drop_caches'
+- sudo dmesg -C
+- sudo insmod ./driver.ko target_comm=openat_raw target_name=missing_case17_raw_syscall
+- ./openat_raw
+- sudo dmesg | tail -n 260
+- sudo rmmod driver
+
+7) If crash/hang happens
+- Reboot if required.
+- Start with minimal probe set only:
+  1. do_filp_open entry/ret
+  2. __d_alloc ret
+- Re-add probes one by one.
+
+8) Next minimal coding blocks (one at a time)
+- Block A: add parent/self compare log for new dentry.
+- Block B: add 3 counters (alloc, inode_null, enoent).
+- Block C: print counters on module exit.
+
+9) Evidence files
+- RUN_LOG_FILP_AND_DALLOC_RAW.txt
+- RUN_LOG_D_ALLOC_ONLY_RAW.txt
+- RUN_LOG_MISSING_CASE17_WITH_DALLOC.txt
+- CONTAINER_OF_STRUGGLE_REPORT.md
+

@@ -1,0 +1,53 @@
+Case17 Trace Report
+Date: 2026-02-14
+Kernel: 6.17.0-14-generic
+
+Run command set:
+- make
+- drop dcache/inode caches (echo 2 > /proc/sys/vm/drop_caches)
+- insmod driver.ko target_comm=openat_raw target_name=missing_case17_raw_syscall
+- ./openat_raw
+- dmesg capture
+- rmmod driver
+
+Observed probe sequence (single target run):
+1) [do_filp_open][ENTRY]
+   - pathname: .../missing_case17_raw_syscall.txt
+
+2) [d_alloc_parallel][ENTRY]
+   - parent dentry ptr seen
+   - parent inode ptr seen
+   - parent name: case17_do_filp_open_deep_trace
+   - parent superblock ptr seen
+   - sb_magic: 0xef53
+   - sb_blocksize: 4096
+
+3) [__d_alloc][ENTRY]
+   - qstr name/hash captured
+   - name: missing_case17_raw_syscall.txt
+   - hash: 0x4101d47
+
+4) [__d_alloc][RET]
+   - new dentry ptr returned
+   - inode: 0x0
+   - unhashed: 1
+   - in_lookup: 0
+
+5) [do_filp_open][RET]
+   - ret_ptr: ERR_PTR(-ENOENT)
+   - is_err: 1
+   - err: 2
+
+Proof points from this run:
+- Dentry allocation event happened for target name (__d_alloc entry+return present).
+- Open failed with ENOENT (do_filp_open return err=2).
+- Parent directory and filesystem context were captured (d_alloc_parallel entry).
+
+Risk notes:
+- Probe handlers only do direct field reads + null checks.
+- No task/fd global scans in probe context.
+- Keep symbol set minimal to reduce instability.
+
+Artifacts:
+- DMESG_CAPTURE_2026-02-14_CASE17.txt
+- driver.c
