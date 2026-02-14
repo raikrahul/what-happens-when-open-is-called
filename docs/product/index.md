@@ -24,6 +24,9 @@
 - 14-day X plan: `product/free-launch-kit/11_14_DAY_X_CALENDAR.md`
 - Post templates: `product/free-launch-kit/12_POST_FACTORY.md`
 - Prewritten Week-1 X posts: `product/free-launch-kit/16_7_DAY_PREWRITTEN_X_POSTS.md`
+- Prewritten Week-2 X posts: `product/free-launch-kit/17_7_DAY_PREWRITTEN_X_POSTS_WEEK2.md`
+- Pro landing copy variants: `product/free-launch-kit/18_PRO_LANDING_COPY_VARIANTS.md`
+- Day picker script: `product/free-launch-kit/post_picker.sh`
 
 ## Start Here (5 commands)
 ```bash

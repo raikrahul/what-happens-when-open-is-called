@@ -12,3 +12,6 @@
 - Added packs index, contributing, security policy.
 - Added compatibility and buyer FAQ pages.
 - Added 30-day viral execution docs (failure-first backlog, 14-day X calendar, post factory, objection matrix, scorecard).
+- Added Week-2 prewritten X post set.
+- Added post picker script (`post_picker.sh`) for day-based copy/paste output.
+- Added pro landing copy variants for manual A/B.
