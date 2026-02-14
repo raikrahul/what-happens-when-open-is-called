@@ -104,10 +104,22 @@ help:
 	@echo "  install-deps - Install build dependencies"
 	@echo "  build-site   - Build HTML from Markdown in site/articles"
 	@echo "  publish      - Build site, commit, and push (MSG='...')"
+	@echo "  case17-demo  - Run case17 end-to-end trace demo"
 
 build-site:
 	@./tools/build_site.sh
 
 publish:
 	@MSG="$(MSG)" ./tools/publish_all.sh
-	@echo "  help         - Show this help"
+
+case17-demo:
+	@echo "[CASE17] building artifacts"
+	@$(MAKE) -C kernel/user/stage3/case17_do_filp_open_deep_trace all
+	@echo "[CASE17] loading driver"
+	@sudo insmod kernel/user/stage3/case17_do_filp_open_deep_trace/driver.ko target_comm=openat_raw target_name=missing_case17_raw_syscall || true
+	@echo "[CASE17] running raw trigger"
+	@kernel/user/stage3/case17_do_filp_open_deep_trace/openat_raw || true
+	@echo "[CASE17] last dmesg lines"
+	@sudo dmesg | tail -n 200
+	@echo "[CASE17] unloading driver"
+	@sudo rmmod driver || true

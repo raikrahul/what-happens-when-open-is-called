@@ -6,6 +6,8 @@
 ## Product Launch Kit
 - Free launch kit: `product/free-launch-kit/README.md`
 - Product page source: `docs/product/index.md`
+- Packs index: `PACKS.md`
+- Buyer FAQ: `docs/product/buyer_faq.md`
 
 ## Branches
 
