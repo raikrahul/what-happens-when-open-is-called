@@ -1,23 +1,23 @@
-[ 3355.087638] [trace_user_hash_collision] loaded target_comm=user_hash_colli user=kernel/user/stage3/case8_creation_proof/user_hash_collision.c
-[ 3355.089919] [trace_user_hash_collision] do_filp_open.entry pid=66986 comm=user_hash_colli dfd=4294967196 pathname=ffff8dda0a2d5000 op=ffffd0c94071fca4
-[ 3355.089933] [trace_user_hash_collision] do_filp_open.ret pid=66986 comm=user_hash_colli ret=fffffffffffffffe
-[ 3355.089940] [trace_user_hash_collision] do_filp_open.entry pid=66986 comm=user_hash_colli dfd=4294967196 pathname=ffff8dda0a2d5000 op=ffffd0c94071fd54
-[ 3355.089945] [trace_user_hash_collision] do_filp_open.ret pid=66986 comm=user_hash_colli ret=fffffffffffffffe
-[ 3355.089950] [trace_user_hash_collision] do_filp_open.entry pid=66986 comm=user_hash_colli dfd=4294967196 pathname=ffff8dda0a2d5000 op=ffffd0c94071fcf4
-[ 3355.089955] [trace_user_hash_collision] do_filp_open.ret pid=66986 comm=user_hash_colli ret=fffffffffffffffe
-[ 3355.089962] [trace_user_hash_collision] do_filp_open.entry pid=66986 comm=user_hash_colli dfd=4294967196 pathname=ffff8dda0a2d5000 op=ffffd0c94071faa4
-[ 3355.089966] [trace_user_hash_collision] do_filp_open.ret pid=66986 comm=user_hash_colli ret=fffffffffffffffe
-[ 3355.089969] [trace_user_hash_collision] do_filp_open.entry pid=66986 comm=user_hash_colli dfd=4294967196 pathname=ffff8dda0a2d5000 op=ffffd0c94071fac4
-[ 3355.089972] [trace_user_hash_collision] do_filp_open.ret pid=66986 comm=user_hash_colli ret=fffffffffffffffe
-[ 3355.089975] [trace_user_hash_collision] do_filp_open.entry pid=66986 comm=user_hash_colli dfd=4294967196 pathname=ffff8dda0a2d5000 op=ffffd0c94071fc04
-[ 3355.089978] [trace_user_hash_collision] do_filp_open.ret pid=66986 comm=user_hash_colli ret=fffffffffffffffe
-[ 3355.089981] [trace_user_hash_collision] do_filp_open.entry pid=66986 comm=user_hash_colli dfd=4294967196 pathname=ffff8dda0a2d5000 op=ffffd0c94071fdd4
-[ 3355.089986] [trace_user_hash_collision] do_filp_open.ret pid=66986 comm=user_hash_colli ret=ffff8dd92f45acc0
-[ 3355.090005] [trace_user_hash_collision] do_filp_open.entry pid=66986 comm=user_hash_colli dfd=4294967196 pathname=ffff8dda0a2d5000 op=ffffd0c94071fb44
-[ 3355.090009] [trace_user_hash_collision] do_filp_open.ret pid=66986 comm=user_hash_colli ret=ffff8dd92f45a180
-[ 3355.090191] [trace_user_hash_collision] do_filp_open.entry pid=66986 comm=user_hash_colli dfd=4294967196 pathname=ffff8dda0a2d5000 op=ffffd0c94071fd54
-[ 3355.090196] [trace_user_hash_collision] do_filp_open.ret pid=66986 comm=user_hash_colli ret=ffffffffffffffef
-[ 3355.090199] [trace_user_hash_collision] do_filp_open.entry pid=66986 comm=user_hash_colli dfd=4294967196 pathname=ffff8dda0a2d5000 op=ffffd0c94071fd94
-[ 3355.090203] [trace_user_hash_collision] do_filp_open.ret pid=66986 comm=user_hash_colli ret=ffffffffffffffef
-[ 3355.090206] [trace_user_hash_collision] do_filp_open.entry pid=66986 comm=user_hash_colli dfd=4294967196 pathname=ffff8dda0a2d5000 op=ffffd0c94071fc44
-[ 3355.090210] [trace_user_hash_collision] do_filp_open.ret pid=66986 comm=user_hash_colli ret=ffffffffffffffef
+[38337.160520] [trace_user_hash_collision] loaded target_comm=user_hash_colli user=kernel/user/stage3/case8_creation_proof/user_hash_collision.c
+[38337.163666] [trace_user_hash_collision] do_filp_open.entry pid=184938 comm=user_hash_colli dfd=4294967196 pathname=ffff8dda0d5e5000 op=ffffd0c941c4bc14
+[38337.163687] [trace_user_hash_collision] do_filp_open.ret pid=184938 comm=user_hash_colli ret=fffffffffffffffe
+[38337.163700] [trace_user_hash_collision] do_filp_open.entry pid=184938 comm=user_hash_colli dfd=4294967196 pathname=ffff8dda0d5e5000 op=ffffd0c941c4bb54
+[38337.163711] [trace_user_hash_collision] do_filp_open.ret pid=184938 comm=user_hash_colli ret=fffffffffffffffe
+[38337.163723] [trace_user_hash_collision] do_filp_open.entry pid=184938 comm=user_hash_colli dfd=4294967196 pathname=ffff8dda0d5e5000 op=ffffd0c941c4bd44
+[38337.163734] [trace_user_hash_collision] do_filp_open.ret pid=184938 comm=user_hash_colli ret=fffffffffffffffe
+[38337.163748] [trace_user_hash_collision] do_filp_open.entry pid=184938 comm=user_hash_colli dfd=4294967196 pathname=ffff8dda0d5e5000 op=ffffd0c941c4bb64
+[38337.163756] [trace_user_hash_collision] do_filp_open.ret pid=184938 comm=user_hash_colli ret=fffffffffffffffe
+[38337.163763] [trace_user_hash_collision] do_filp_open.entry pid=184938 comm=user_hash_colli dfd=4294967196 pathname=ffff8dda0d5e5000 op=ffffd0c941c4bc04
+[38337.163770] [trace_user_hash_collision] do_filp_open.ret pid=184938 comm=user_hash_colli ret=fffffffffffffffe
+[38337.163777] [trace_user_hash_collision] do_filp_open.entry pid=184938 comm=user_hash_colli dfd=4294967196 pathname=ffff8dda0d5e5000 op=ffffd0c941c4bd74
+[38337.163785] [trace_user_hash_collision] do_filp_open.ret pid=184938 comm=user_hash_colli ret=fffffffffffffffe
+[38337.163792] [trace_user_hash_collision] do_filp_open.entry pid=184938 comm=user_hash_colli dfd=4294967196 pathname=ffff8dda0d5e5000 op=ffffd0c941c4baa4
+[38337.163802] [trace_user_hash_collision] do_filp_open.ret pid=184938 comm=user_hash_colli ret=ffff8dda3aeba0c0
+[38337.163836] [trace_user_hash_collision] do_filp_open.entry pid=184938 comm=user_hash_colli dfd=4294967196 pathname=ffff8dda0d5e5000 op=ffffd0c941c4bc44
+[38337.163848] [trace_user_hash_collision] do_filp_open.ret pid=184938 comm=user_hash_colli ret=ffff8dda3aebacc0
+[38337.164263] [trace_user_hash_collision] do_filp_open.entry pid=184938 comm=user_hash_colli dfd=4294967196 pathname=ffff8dda0d5e5000 op=ffffd0c941c4bb44
+[38337.164278] [trace_user_hash_collision] do_filp_open.ret pid=184938 comm=user_hash_colli ret=ffffffffffffffef
+[38337.164287] [trace_user_hash_collision] do_filp_open.entry pid=184938 comm=user_hash_colli dfd=4294967196 pathname=ffff8dda0d5e5000 op=ffffd0c941c4bd24
+[38337.164297] [trace_user_hash_collision] do_filp_open.ret pid=184938 comm=user_hash_colli ret=ffffffffffffffef
+[38337.164305] [trace_user_hash_collision] do_filp_open.entry pid=184938 comm=user_hash_colli dfd=4294967196 pathname=ffff8dda0d5e5000 op=ffffd0c941c4bd14
+[38337.164315] [trace_user_hash_collision] do_filp_open.ret pid=184938 comm=user_hash_colli ret=ffffffffffffffef

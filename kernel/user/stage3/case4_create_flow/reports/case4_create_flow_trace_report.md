@@ -3,8 +3,8 @@
 - Userspace source: `kernel/user/stage3/case4_create_flow/case4_create_flow.c`
 - Driver source: `kernel/drivers/stage3/case4_create_flow/trace_case4_create_flow/trace_case4_create_flow.c`
 - Module: `trace_case4_create_flow`
-- Binary: `kernel/user/stage3/case4_create_flow/case4_create_flow.out`
-- Run timestamp: `2026-02-15T13:49:18`
+- Binary: `kernel/user/stage3/case4_create_flow/case4_create_flow`
+- Run timestamp: `2026-02-15T23:32:21`
 - Final status: `pass_probe_hits`
 
 ## Probe Counts
@@ -20,7 +20,7 @@
 ## Commands
 ```bash
 make -C kernel/drivers/stage3/case4_create_flow/trace_case4_create_flow
-kernel/user/stage3/case4_create_flow/case4_create_flow.out
+kernel/user/stage3/case4_create_flow/case4_create_flow
 sudo dmesg -C
 sudo insmod kernel/drivers/stage3/case4_create_flow/trace_case4_create_flow/trace_case4_create_flow.ko target_comm="case4_create_fl"
 sudo rmmod trace_case4_create_flow

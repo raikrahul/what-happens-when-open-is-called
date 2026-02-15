@@ -3,8 +3,8 @@
 - Userspace source: `kernel/user/stage3/case1/demo_thread_safety/demo_thread_safety.c`
 - Driver source: `kernel/drivers/stage3/case1/trace_demo_thread_safety/trace_demo_thread_safety.c`
 - Module: `trace_demo_thread_safety`
-- Binary: `kernel/user/stage3/case1/demo_thread_safety/demo_thread_safety.out`
-- Run timestamp: `2026-02-15T13:48:57`
+- Binary: `kernel/user/stage3/case1/demo_thread_safety/demo_thread_safety`
+- Run timestamp: `2026-02-15T23:31:57`
 - Final status: `pass_probe_hits`
 
 ## Probe Counts
@@ -20,7 +20,7 @@
 ## Commands
 ```bash
 make -C kernel/drivers/stage3/case1/trace_demo_thread_safety
-kernel/user/stage3/case1/demo_thread_safety/demo_thread_safety.out
+kernel/user/stage3/case1/demo_thread_safety/demo_thread_safety
 sudo dmesg -C
 sudo insmod kernel/drivers/stage3/case1/trace_demo_thread_safety/trace_demo_thread_safety.ko target_comm="demo_thread_saf"
 sudo rmmod trace_demo_thread_safety

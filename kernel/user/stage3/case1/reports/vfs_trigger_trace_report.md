@@ -3,8 +3,8 @@
 - Userspace source: `kernel/user/stage3/case1/vfs_trigger.c`
 - Driver source: `kernel/drivers/stage3/case1/trace_vfs_trigger/trace_vfs_trigger.c`
 - Module: `trace_vfs_trigger`
-- Binary: `kernel/user/stage3/case1/vfs_trigger.out`
-- Run timestamp: `2026-02-15T13:49:02`
+- Binary: `kernel/user/stage3/case1/vfs_trigger`
+- Run timestamp: `2026-02-15T23:32:03`
 - Final status: `pass_probe_hits`
 
 ## Probe Counts
@@ -20,9 +20,9 @@
 ## Commands
 ```bash
 make -C kernel/drivers/stage3/case1/trace_vfs_trigger
-kernel/user/stage3/case1/vfs_trigger.out
+kernel/user/stage3/case1/vfs_trigger
 sudo dmesg -C
-sudo insmod kernel/drivers/stage3/case1/trace_vfs_trigger/trace_vfs_trigger.ko target_comm="vfs_trigger.out"
+sudo insmod kernel/drivers/stage3/case1/trace_vfs_trigger/trace_vfs_trigger.ko target_comm="vfs_trigger"
 sudo rmmod trace_vfs_trigger
 ```
 

@@ -17,3 +17,29 @@ title: "Stage 3 CASE16: Textbook"
 - reports root: [kernel/user/stage3/case16_do_filp_open_trace/reports](https://github.com/raikrahul/what-happens-when-open-is-called/blob/main/kernel/user/stage3/case16_do_filp_open_trace/reports)
 - worksheets root: [kernel/user/stage3/case16_do_filp_open_trace/worksheets](https://github.com/raikrahul/what-happens-when-open-is-called/blob/main/kernel/user/stage3/case16_do_filp_open_trace/worksheets)
 - planning summary: [STAGE3_FULL_TEST_SUMMARY](https://github.com/raikrahul/what-happens-when-open-is-called/blob/main/kernel/user/stage3/planning/STAGE3_FULL_TEST_SUMMARY.md)
+
+<!-- AUTO-EMBED START -->
+[AUTO] case=case16
+
+[FOLDER] case16_do_filp_open_trace
+[INTENT] do_filp_open focus
+
+[INVARIANTS] source=kernel/user/stage3/case16_do_filp_open_trace/reports/user_trigger_exists_trace_report.md
+- filp_open entry=10 ret=10
+- __d_alloc entry=0 ret=0
+- ERR_PTR(-ENOENT) count=6
+- non-error file* count=4
+- check: entry==ret (filp_open) => 1
+- check: entry==ret (__d_alloc) => 1
+
+[FOLDER] case16_do_sys_openat2_trace
+[INTENT] syscall front-door focus
+
+[INVARIANTS] source=kernel/user/stage3/case16_do_sys_openat2_trace/reports/user_trigger_trace_report.md
+- filp_open entry=9 ret=9
+- __d_alloc entry=0 ret=0
+- ERR_PTR(-ENOENT) count=7
+- non-error file* count=2
+- check: entry==ret (filp_open) => 1
+- check: entry==ret (__d_alloc) => 1
+<!-- AUTO-EMBED END -->

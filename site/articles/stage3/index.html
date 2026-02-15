@@ -1,58 +1,109 @@
 <!DOCTYPE html>
 <html>
+
 <head>
   <meta charset="UTF-8">
   <title>Stage 3 Index</title>
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/styles/github.min.css">
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/highlight.min.js"></script>
+  <script>window.addEventListener('DOMContentLoaded', () => { if (window.hljs) hljs.highlightAll(); });</script>
   <style>
-    * { margin: 0; padding: 0; box-sizing: border-box; }
-    body { background: #111; color: #ddd; font-family: monospace; font-size: 12px; }
-    .header { background: #222; color: #888; padding: 6px 16px; display: flex; justify-content: space-between; }
-    .wrap { padding: 14px; }
-    .grid { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; }
-    .case { border: 1px solid #333; padding: 10px; background: #181818; }
-    .case-title { color: #f0f0f0; margin-bottom: 8px; }
-    .links { display: inline-flex; gap: 6px; }
-    .links a { color: #aaa; text-decoration: none; border: 1px solid #444; padding: 1px 6px; }
-    .links a:hover { color: #fff; border-color: #777; }
-    .section { margin-top: 14px; border: 1px solid #333; padding: 10px; background: #181818; }
-    .section a { color: #9ecbff; text-decoration: none; }
-    .section ul { margin-left: 18px; }
+    body {
+      background: #fff;
+      color: #000;
+      font-family: monospace;
+      font-size: 13px;
+      line-height: 1.2;
+      padding: 0 5px;
+      margin: 0;
+    }
+
+    pre {
+      margin: 0.5em 0;
+      white-space: pre-wrap;
+      word-wrap: break-word;
+    }
+
+    pre code {
+      display: block;
+      white-space: pre;
+    }
+
+    h1,
+    h2,
+    h3,
+    h4,
+    h5,
+    h6 {
+      margin: 0.5em 0 0.2em 0;
+      font-size: 1em;
+      font-weight: bold;
+      text-transform: uppercase;
+    }
+
+    p,
+    ul,
+    ol {
+      margin: 0.5em 0;
+    }
+
+    hr {
+      margin: 0.5em 0;
+      border: none;
+      border-bottom: 1px dashed #000;
+    }
+
+    .blank {
+      display: inline-block;
+      min-width: 150px;
+      border-bottom: 1px solid #000;
+      color: #000;
+    }
+
+    @media print {
+
+      button,
+      div[style*="text-align: right"] {
+        display: none !important;
+      }
+
+      body {
+        padding: 0;
+      }
+    }
   </style>
 </head>
-<body>
-  <div class="header">
-    <span>STAGE 3 INDEX</span>
-    <span><a href="/what-happens-when-open-is-called/index.html" style="color:#aaa;text-decoration:none;">[HOME]</a></span>
-  </div>
-  <div class="wrap">
-    <div class="grid">
-      <div class="case"><div class="case-title">Case 1: Relative Path</div><div class="links"><a href="case1/explanation.html">E</a><a href="case1/textbook.html">T</a><a href="case1/worksheet.html">W</a><a href="case1/proof.html">P</a></div></div>
-      <div class="case"><div class="case-title">Case 2: Deep Miss</div><div class="links"><a href="case2/explanation.html">E</a><a href="case2/textbook.html">T</a><a href="case2/worksheet.html">W</a><a href="case2/proof.html">P</a></div></div>
-      <div class="case"><div class="case-title">Case 3: Deep Hit</div><div class="links"><a href="case3/explanation.html">E</a><a href="case3/textbook.html">T</a><a href="case3/worksheet.html">W</a><a href="case3/proof.html">P</a></div></div>
-      <div class="case"><div class="case-title">Case 4: Create Flow</div><div class="links"><a href="case4/explanation.html">E</a><a href="case4/textbook.html">T</a><a href="case4/worksheet.html">W</a><a href="case4/proof.html">P</a></div></div>
-      <div class="case"><div class="case-title">Case 5: Mount Jump</div><div class="links"><a href="case5/explanation.html">E</a><a href="case5/textbook.html">T</a><a href="case5/worksheet.html">W</a><a href="case5/proof.html">P</a></div></div>
-      <div class="case"><div class="case-title">Case 6: Symlink Loop</div><div class="links"><a href="case6/explanation.html">E</a><a href="case6/textbook.html">T</a><a href="case6/worksheet.html">W</a><a href="case6/proof.html">P</a></div></div>
-      <div class="case"><div class="case-title">Case 7: Symlink Follow</div><div class="links"><a href="case7/explanation.html">E</a><a href="case7/textbook.html">T</a><a href="case7/worksheet.html">W</a><a href="case7/proof.html">P</a></div></div>
-      <div class="case"><div class="case-title">Case 8: Creation Proof</div><div class="links"><a href="case8/explanation.html">E</a><a href="case8/textbook.html">T</a><a href="case8/worksheet.html">W</a><a href="case8/proof.html">P</a></div></div>
-      <div class="case"><div class="case-title">Case 10: Rename Investigation</div><div class="links"><a href="case10/explanation.html">E</a><a href="case10/textbook.html">T</a><a href="case10/worksheet.html">W</a><a href="case10/proof.html">P</a></div></div>
-      <div class="case"><div class="case-title">Case 11: Bulk Rename</div><div class="links"><a href="case11/explanation.html">E</a><a href="case11/textbook.html">T</a><a href="case11/worksheet.html">W</a><a href="case11/proof.html">P</a></div></div>
-      <div class="case"><div class="case-title">Case 12: Harder Puzzle</div><div class="links"><a href="case12/explanation.html">E</a><a href="case12/textbook.html">T</a><a href="case12/worksheet.html">W</a><a href="case12/proof.html">P</a></div></div>
-      <div class="case"><div class="case-title">Case 13: Salt Avalanche</div><div class="links"><a href="case13/explanation.html">E</a><a href="case13/textbook.html">T</a><a href="case13/worksheet.html">W</a><a href="case13/proof.html">P</a></div></div>
-      <div class="case"><div class="case-title">Case 14: Symmetry Break</div><div class="links"><a href="case14/explanation.html">E</a><a href="case14/textbook.html">T</a><a href="case14/worksheet.html">W</a><a href="case14/proof.html">P</a></div></div>
-      <div class="case"><div class="case-title">Case 15: Deep Trace</div><div class="links"><a href="case15/explanation.html">E</a><a href="case15/textbook.html">T</a><a href="case15/worksheet.html">W</a><a href="case15/proof.html">P</a></div></div>
-      <div class="case"><div class="case-title">Case 16: filp_open + sys_openat2</div><div class="links"><a href="case16/explanation.html">E</a><a href="case16/textbook.html">T</a><a href="case16/worksheet.html">W</a><a href="case16/proof.html">P</a></div></div>
-      <div class="case"><div class="case-title">Case 17: Deep filp_open</div><div class="links"><a href="case17/explanation.html">E</a><a href="case17/textbook.html">T</a><a href="case17/worksheet.html">W</a><a href="case17/proof.html">P</a></div></div>
-    </div>
 
-    <div class="section">
-      <div>PLANNING + SUMMARY</div>
-      <ul>
-        <li><a href="https://github.com/raikrahul/what-happens-when-open-is-called/blob/main/kernel/user/stage3/planning/STAGE3_FULL_TEST_SUMMARY.md">STAGE3_FULL_TEST_SUMMARY</a></li>
-        <li><a href="https://github.com/raikrahul/what-happens-when-open-is-called/blob/main/kernel/user/stage3/planning/STAGE3_WORKSHEET_INDEX.md">STAGE3_WORKSHEET_INDEX</a></li>
-        <li><a href="https://github.com/raikrahul/what-happens-when-open-is-called/blob/main/kernel/user/stage3/planning/STAGE3_AXIOM_WORKSHEET_INDEX.md">STAGE3_AXIOM_WORKSHEET_INDEX</a></li>
-        <li><a href="https://github.com/raikrahul/what-happens-when-open-is-called/blob/main/kernel/user/stage3/planning/STAGE3_AXIOM_HARD_WORKSHEET_INDEX.md">STAGE3_AXIOM_HARD_WORKSHEET_INDEX</a></li>
-      </ul>
-    </div>
+<body>
+  <div style="text-align: right; font-size: 10px; padding: 2px;">
+    <button onclick="window.print()" style="font-size: 10px; cursor: pointer;">Print</button>
   </div>
+  <div class="content">
+    <pre style="white-space: pre-wrap; word-wrap: break-word; margin: 0; font-family: monospace;">[STAGE 3 CASE INDEX]
+- [Case 1](case1/index.html)
+- [Case 2](case2/index.html)
+- [Case 3](case3/index.html)
+- [Case 4](case4/index.html)
+- [Case 5](case5/index.html)
+- [Case 6](case6/index.html)
+- [Case 7](case7/index.html)
+- [Case 8](case8/index.html)
+- [Case 10](case10/index.html)
+- [Case 11](case11/index.html)
+- [Case 12](case12/index.html)
+- [Case 13](case13/index.html)
+- [Case 14](case14/index.html)
+- [Case 15](case15/index.html)
+- [Case 16](case16/index.html)
+- [Case 17](case17/index.html)
+
+[PLANNING + SUMMARY]
+- [STAGE3_FULL_TEST_SUMMARY](https://github.com/raikrahul/what-happens-when-open-is-called/blob/main/kernel/user/stage3/planning/STAGE3_FULL_TEST_SUMMARY.md)
+- [STAGE3_WORKSHEET_INDEX](https://github.com/raikrahul/what-happens-when-open-is-called/blob/main/kernel/user/stage3/planning/STAGE3_WORKSHEET_INDEX.md)
+- [STAGE3_AXIOM_WORKSHEET_INDEX](https://github.com/raikrahul/what-happens-when-open-is-called/blob/main/kernel/user/stage3/planning/STAGE3_AXIOM_WORKSHEET_INDEX.md)
+- [STAGE3_AXIOM_HARD_WORKSHEET_INDEX](https://github.com/raikrahul/what-happens-when-open-is-called/blob/main/kernel/user/stage3/planning/STAGE3_AXIOM_HARD_WORKSHEET_INDEX.md)</pre>
+  </div>
+
 </body>
+
 </html>

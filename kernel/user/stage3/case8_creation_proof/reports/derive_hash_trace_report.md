@@ -3,8 +3,8 @@
 - Userspace source: `kernel/user/stage3/case8_creation_proof/derive_hash.c`
 - Driver source: `kernel/drivers/stage3/case8_creation_proof/trace_derive_hash/trace_derive_hash.c`
 - Module: `trace_derive_hash`
-- Binary: `kernel/user/stage3/case8_creation_proof/derive_hash.out`
-- Run timestamp: `2026-02-15T13:49:27`
+- Binary: `kernel/user/stage3/case8_creation_proof/derive_hash`
+- Run timestamp: `2026-02-15T23:32:31`
 - Final status: `pass_probe_hits`
 
 ## Probe Counts
@@ -20,9 +20,9 @@
 ## Commands
 ```bash
 make -C kernel/drivers/stage3/case8_creation_proof/trace_derive_hash
-kernel/user/stage3/case8_creation_proof/derive_hash.out
+kernel/user/stage3/case8_creation_proof/derive_hash
 sudo dmesg -C
-sudo insmod kernel/drivers/stage3/case8_creation_proof/trace_derive_hash/trace_derive_hash.ko target_comm="derive_hash.out"
+sudo insmod kernel/drivers/stage3/case8_creation_proof/trace_derive_hash/trace_derive_hash.ko target_comm="derive_hash"
 sudo rmmod trace_derive_hash
 ```
 

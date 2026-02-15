@@ -1,3 +1,8 @@
+---
+layout: default
+title: "Worksheet: Stage 3 (Path Walk)"
+---
+
 [STAGE 3 WORKSHEET: COMPONENT WALK]
 Input: 7 target paths
 Computation: system execution + dmesg capture

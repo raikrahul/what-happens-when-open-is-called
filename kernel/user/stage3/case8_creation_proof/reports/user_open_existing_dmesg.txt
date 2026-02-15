@@ -1,19 +1,19 @@
-[ 3356.149472] [trace_user_open_existing] loaded target_comm=user_open_exist user=kernel/user/stage3/case8_creation_proof/user_open_existing.c
-[ 3356.153449] [trace_user_open_existing] do_filp_open.entry pid=67243 comm=user_open_exist dfd=4294967196 pathname=ffff8dda0e688000 op=ffffd0c940ac3c24
-[ 3356.153464] [trace_user_open_existing] do_filp_open.ret pid=67243 comm=user_open_exist ret=fffffffffffffffe
-[ 3356.153470] [trace_user_open_existing] do_filp_open.entry pid=67243 comm=user_open_exist dfd=4294967196 pathname=ffff8dda0e688000 op=ffffd0c940ac3b24
-[ 3356.153476] [trace_user_open_existing] do_filp_open.ret pid=67243 comm=user_open_exist ret=fffffffffffffffe
-[ 3356.153481] [trace_user_open_existing] do_filp_open.entry pid=67243 comm=user_open_exist dfd=4294967196 pathname=ffff8dda0e688000 op=ffffd0c940ac3d14
-[ 3356.153486] [trace_user_open_existing] do_filp_open.ret pid=67243 comm=user_open_exist ret=fffffffffffffffe
-[ 3356.153492] [trace_user_open_existing] do_filp_open.entry pid=67243 comm=user_open_exist dfd=4294967196 pathname=ffff8dda0e688000 op=ffffd0c940ac3b94
-[ 3356.153495] [trace_user_open_existing] do_filp_open.ret pid=67243 comm=user_open_exist ret=fffffffffffffffe
-[ 3356.153498] [trace_user_open_existing] do_filp_open.entry pid=67243 comm=user_open_exist dfd=4294967196 pathname=ffff8dda0e688000 op=ffffd0c940ac3e64
-[ 3356.153502] [trace_user_open_existing] do_filp_open.ret pid=67243 comm=user_open_exist ret=fffffffffffffffe
-[ 3356.153505] [trace_user_open_existing] do_filp_open.entry pid=67243 comm=user_open_exist dfd=4294967196 pathname=ffff8dda0e688000 op=ffffd0c940ac3c44
-[ 3356.153508] [trace_user_open_existing] do_filp_open.ret pid=67243 comm=user_open_exist ret=fffffffffffffffe
-[ 3356.153511] [trace_user_open_existing] do_filp_open.entry pid=67243 comm=user_open_exist dfd=4294967196 pathname=ffff8dda0e688000 op=ffffd0c940ac3ca4
-[ 3356.153516] [trace_user_open_existing] do_filp_open.ret pid=67243 comm=user_open_exist ret=ffff8dd92f675600
-[ 3356.153538] [trace_user_open_existing] do_filp_open.entry pid=67243 comm=user_open_exist dfd=4294967196 pathname=ffff8dda0e688000 op=ffffd0c940ac3e44
-[ 3356.153543] [trace_user_open_existing] do_filp_open.ret pid=67243 comm=user_open_exist ret=ffff8dd92f675cc0
-[ 3356.153729] [trace_user_open_existing] do_filp_open.entry pid=67243 comm=user_open_exist dfd=4294967196 pathname=ffff8dda0e688000 op=ffffd0c940ac3c34
-[ 3356.153734] [trace_user_open_existing] do_filp_open.ret pid=67243 comm=user_open_exist ret=fffffffffffffffe
+[38338.310856] [trace_user_open_existing] loaded target_comm=user_open_exist user=kernel/user/stage3/case8_creation_proof/user_open_existing.c
+[38338.313876] [trace_user_open_existing] do_filp_open.entry pid=185195 comm=user_open_exist dfd=4294967196 pathname=ffff8dda0eca4000 op=ffffd0c941d13da4
+[38338.313887] [trace_user_open_existing] do_filp_open.ret pid=185195 comm=user_open_exist ret=fffffffffffffffe
+[38338.313894] [trace_user_open_existing] do_filp_open.entry pid=185195 comm=user_open_exist dfd=4294967196 pathname=ffff8dda0eca4000 op=ffffd0c941d13a94
+[38338.313899] [trace_user_open_existing] do_filp_open.ret pid=185195 comm=user_open_exist ret=fffffffffffffffe
+[38338.313904] [trace_user_open_existing] do_filp_open.entry pid=185195 comm=user_open_exist dfd=4294967196 pathname=ffff8dda0eca4000 op=ffffd0c941d13db4
+[38338.313909] [trace_user_open_existing] do_filp_open.ret pid=185195 comm=user_open_exist ret=fffffffffffffffe
+[38338.313916] [trace_user_open_existing] do_filp_open.entry pid=185195 comm=user_open_exist dfd=4294967196 pathname=ffff8dda0eca4000 op=ffffd0c941d13a94
+[38338.313919] [trace_user_open_existing] do_filp_open.ret pid=185195 comm=user_open_exist ret=fffffffffffffffe
+[38338.313922] [trace_user_open_existing] do_filp_open.entry pid=185195 comm=user_open_exist dfd=4294967196 pathname=ffff8dda0eca4000 op=ffffd0c941d13bd4
+[38338.313926] [trace_user_open_existing] do_filp_open.ret pid=185195 comm=user_open_exist ret=fffffffffffffffe
+[38338.313929] [trace_user_open_existing] do_filp_open.entry pid=185195 comm=user_open_exist dfd=4294967196 pathname=ffff8dda0eca4000 op=ffffd0c941d13b84
+[38338.313932] [trace_user_open_existing] do_filp_open.ret pid=185195 comm=user_open_exist ret=fffffffffffffffe
+[38338.313936] [trace_user_open_existing] do_filp_open.entry pid=185195 comm=user_open_exist dfd=4294967196 pathname=ffff8dda0eca4000 op=ffffd0c941d13b04
+[38338.313940] [trace_user_open_existing] do_filp_open.ret pid=185195 comm=user_open_exist ret=ffff8ddb92455000
+[38338.313958] [trace_user_open_existing] do_filp_open.entry pid=185195 comm=user_open_exist dfd=4294967196 pathname=ffff8dda0eca4000 op=ffffd0c941d13cc4
+[38338.313962] [trace_user_open_existing] do_filp_open.ret pid=185195 comm=user_open_exist ret=ffff8ddb92455180
+[38338.314129] [trace_user_open_existing] do_filp_open.entry pid=185195 comm=user_open_exist dfd=4294967196 pathname=ffff8dda0eca4000 op=ffffd0c941d13b14
+[38338.314134] [trace_user_open_existing] do_filp_open.ret pid=185195 comm=user_open_exist ret=fffffffffffffffe

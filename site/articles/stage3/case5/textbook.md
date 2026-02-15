@@ -17,3 +17,18 @@ title: "Stage 3 CASE5: Textbook"
 - reports root: [kernel/user/stage3/case5_mount_jump/reports](https://github.com/raikrahul/what-happens-when-open-is-called/blob/main/kernel/user/stage3/case5_mount_jump/reports)
 - worksheets root: [kernel/user/stage3/case5_mount_jump/worksheets](https://github.com/raikrahul/what-happens-when-open-is-called/blob/main/kernel/user/stage3/case5_mount_jump/worksheets)
 - planning summary: [STAGE3_FULL_TEST_SUMMARY](https://github.com/raikrahul/what-happens-when-open-is-called/blob/main/kernel/user/stage3/planning/STAGE3_FULL_TEST_SUMMARY.md)
+
+<!-- AUTO-EMBED START -->
+[AUTO] case=case5
+
+[FOLDER] case5_mount_jump
+[INTENT] mount traversal
+
+[INVARIANTS] source=kernel/user/stage3/case5_mount_jump/reports/case5_mount_jump_trace_report.md
+- filp_open entry=9 ret=9
+- __d_alloc entry=0 ret=0
+- ERR_PTR(-ENOENT) count=7
+- non-error file* count=2
+- check: entry==ret (filp_open) => 1
+- check: entry==ret (__d_alloc) => 1
+<!-- AUTO-EMBED END -->

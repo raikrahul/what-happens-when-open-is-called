@@ -3,8 +3,8 @@
 - Userspace source: `kernel/user/stage3/case1/demo_dup_names.c`
 - Driver source: `kernel/drivers/stage3/case1/trace_demo_dup_names/trace_demo_dup_names.c`
 - Module: `trace_demo_dup_names`
-- Binary: `kernel/user/stage3/case1/demo_dup_names.out`
-- Run timestamp: `2026-02-15T13:48:53`
+- Binary: `kernel/user/stage3/case1/demo_dup_names`
+- Run timestamp: `2026-02-15T23:31:53`
 - Final status: `pass_probe_hits`
 
 ## Probe Counts
@@ -20,9 +20,9 @@
 ## Commands
 ```bash
 make -C kernel/drivers/stage3/case1/trace_demo_dup_names
-kernel/user/stage3/case1/demo_dup_names.out
+kernel/user/stage3/case1/demo_dup_names
 sudo dmesg -C
-sudo insmod kernel/drivers/stage3/case1/trace_demo_dup_names/trace_demo_dup_names.ko target_comm="demo_dup_names."
+sudo insmod kernel/drivers/stage3/case1/trace_demo_dup_names/trace_demo_dup_names.ko target_comm="demo_dup_names"
 sudo rmmod trace_demo_dup_names
 ```
 

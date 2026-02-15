@@ -1,0 +1,29 @@
+[RUN] Case17 d_lookup replay proof
+
+Step1: capture with probe driver
+- module: driver.ko
+- params: target_comm=user_trigger target_name=missing_case17_filp_
+- trigger: ./user_trigger
+
+Captured lines:
+[C17][d_alloc_parallel][ENTRY] pid=75221 tgid=75221 parent=ffff8dda3ba6f0c0 parent_inode=ffff8ddb28e95d98 parent_name=case17_do_filp_open_deep_trace child_name=missing_case17_filp_75221.txt parent_sb=ffff8dda0bce8000 sb_magic=0xef53 sb_blocksize=4096
+[C17][__d_alloc][ENTRY] pid=75221 tgid=75221 qstr_ptr=ffffd0c941f33a80 name_ptr=ffff8dda082a8083 len=29 hash=0xf168d14a name=missing_case17_filp_75221.txt
+[C17][__d_alloc][RET] pid=75221 tgid=75221 dentry=ffff8ddc063cb3c0 inode=0000000000000000 unhashed=1 in_lookup=0 name.hash=0xf168d14a name.len=29 name_ptr=ffff8ddc063cb3f8
+[C17][do_filp_open][RET] pid=75221 tgid=75221 ret_ptr=fffffffffffffffe is_err=1 err=2
+
+Parsed replay inputs:
+- parent_addr=0xffff8dda3ba6f0c0
+- child_name=missing_case17_filp_75221.txt
+- child_hash=0xf168d14a
+
+Step2: replay with direct d_lookup module
+- module: dlookup_replay_driver.ko
+- params: parent_addr=0xffff8dda3ba6f0c0 child_name=missing_case17_filp_75221.txt child_hash=0xf168d14a
+
+Replay output:
+[DLOOKUP_REPLAY] init parent=ffff8dda3ba6f0c0 child_name=missing_case17_filp_75221.txt child_hash=0xf168d14a
+[DLOOKUP_REPLAY] d_lookup HIT dentry=ffff8ddc063cb3c0 inode=0000000000000000 negative=1 unhashed=0
+
+Result:
+- d_lookup returned non-NULL HIT for captured parent+qstr
+- returned dentry is negative (inode=NULL)

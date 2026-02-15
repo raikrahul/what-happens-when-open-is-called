@@ -4,7 +4,7 @@
 - Driver source: `kernel/drivers/stage3/case16_do_filp_open_trace/trace_user_trigger_missing/trace_user_trigger_missing.c`
 - Module: `trace_user_trigger_missing`
 - Binary: `kernel/user/stage3/case16_do_filp_open_trace/user_trigger_missing`
-- Run timestamp: `2026-02-15T13:49:11`
+- Run timestamp: `2026-02-15T23:32:14`
 - Final status: `pass_probe_hits`
 
 ## Probe Counts

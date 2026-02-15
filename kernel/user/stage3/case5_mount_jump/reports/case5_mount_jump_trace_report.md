@@ -3,8 +3,8 @@
 - Userspace source: `kernel/user/stage3/case5_mount_jump/case5_mount_jump.c`
 - Driver source: `kernel/drivers/stage3/case5_mount_jump/trace_case5_mount_jump/trace_case5_mount_jump.c`
 - Module: `trace_case5_mount_jump`
-- Binary: `kernel/user/stage3/case5_mount_jump/case5_mount_jump.out`
-- Run timestamp: `2026-02-15T13:49:24`
+- Binary: `kernel/user/stage3/case5_mount_jump/case5_mount_jump`
+- Run timestamp: `2026-02-15T23:32:27`
 - Final status: `pass_probe_hits`
 
 ## Probe Counts
@@ -20,7 +20,7 @@
 ## Commands
 ```bash
 make -C kernel/drivers/stage3/case5_mount_jump/trace_case5_mount_jump
-kernel/user/stage3/case5_mount_jump/case5_mount_jump.out
+kernel/user/stage3/case5_mount_jump/case5_mount_jump
 sudo dmesg -C
 sudo insmod kernel/drivers/stage3/case5_mount_jump/trace_case5_mount_jump/trace_case5_mount_jump.ko target_comm="case5_mount_jum"
 sudo rmmod trace_case5_mount_jump

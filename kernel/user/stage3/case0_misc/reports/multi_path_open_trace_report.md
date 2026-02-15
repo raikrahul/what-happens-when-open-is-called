@@ -3,8 +3,8 @@
 - Userspace source: `kernel/user/stage3/multi_path_open.c`
 - Driver source: `kernel/drivers/stage3/case0_misc/trace_multi_path_open/trace_multi_path_open.c`
 - Module: `trace_multi_path_open`
-- Binary: `kernel/user/stage3/multi_path_open.auto.out`
-- Run timestamp: `2026-02-15T13:49:34`
+- Binary: `kernel/user/stage3/multi_path_open`
+- Run timestamp: `2026-02-15T23:32:39`
 - Final status: `pass_probe_hits`
 
 ## Probe Counts
@@ -20,7 +20,7 @@
 ## Commands
 ```bash
 make -C kernel/drivers/stage3/case0_misc/trace_multi_path_open
-kernel/user/stage3/multi_path_open.auto.out
+kernel/user/stage3/multi_path_open
 sudo dmesg -C
 sudo insmod kernel/drivers/stage3/case0_misc/trace_multi_path_open/trace_multi_path_open.ko target_comm="multi_path_open"
 sudo rmmod trace_multi_path_open

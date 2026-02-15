@@ -17,3 +17,18 @@ title: "Stage 3 CASE3: Textbook"
 - reports root: [kernel/user/stage3/case3_deep_hit/reports](https://github.com/raikrahul/what-happens-when-open-is-called/blob/main/kernel/user/stage3/case3_deep_hit/reports)
 - worksheets root: [kernel/user/stage3/case3_deep_hit/worksheets](https://github.com/raikrahul/what-happens-when-open-is-called/blob/main/kernel/user/stage3/case3_deep_hit/worksheets)
 - planning summary: [STAGE3_FULL_TEST_SUMMARY](https://github.com/raikrahul/what-happens-when-open-is-called/blob/main/kernel/user/stage3/planning/STAGE3_FULL_TEST_SUMMARY.md)
+
+<!-- AUTO-EMBED START -->
+[AUTO] case=case3
+
+[FOLDER] case3_deep_hit
+[INTENT] dcache hit path
+
+[INVARIANTS] source=kernel/user/stage3/case3_deep_hit/reports/case3_deep_hit_trace_report.md
+- filp_open entry=10 ret=10
+- __d_alloc entry=0 ret=0
+- ERR_PTR(-ENOENT) count=8
+- non-error file* count=2
+- check: entry==ret (filp_open) => 1
+- check: entry==ret (__d_alloc) => 1
+<!-- AUTO-EMBED END -->

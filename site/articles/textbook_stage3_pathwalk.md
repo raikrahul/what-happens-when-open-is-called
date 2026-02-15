@@ -1,3 +1,8 @@
+---
+layout: default
+title: "Textbook: Stage 3 (Path Walk)"
+---
+
 [STAGE 3 TEXTBOOK: PATHNAME WALK]
 Input: pathname pointer
 Computation: fs/namei.c state machine

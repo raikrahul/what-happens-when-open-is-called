@@ -36,20 +36,31 @@ def sudo_cmd(args, check=False):
 
 def detect_binary(src: Path):
     stem = src.stem
-    cands = [src.with_suffix('.out'), src.parent / stem]
+    # Prefer binaries whose basename equals the source stem. This makes
+    # TASK_COMM_LEN filtering predictable: current->comm == stem[:15].
+    cands = [src.parent / stem, src.with_suffix('.out')]
     if stem == 'user_trigger_raw_openat':
         cands.insert(0, src.parent / 'openat_raw')
-    for c in cands:
-        if c.exists() and os.access(c, os.X_OK):
-            return c, 'existing'
     if src.suffix == '.c':
-        out = src.parent / f"{stem}.auto.out"
+        # If a legacy `*.out` exists, do NOT prefer it: its basename often
+        # includes ".out" and shifts comm truncation (e.g. "case1_relative.o").
+        # Always try to build/use a stem-named binary first.
+        out = src.parent / stem
+        if out.exists() and os.access(out, os.X_OK):
+            return out, 'existing'
         cmd = ['gcc', '-O2', '-Wall', '-Wextra', '-o', str(out), str(src), '-pthread']
         p = run(cmd)
         if p.returncode == 0 and out.exists():
             out.chmod(0o755)
             return out, 'compiled'
+        # Fallback: if compilation failed but an older runnable binary exists, use it.
+        for c in cands:
+            if c.exists() and os.access(c, os.X_OK):
+                return c, 'existing_fallback'
         return None, f"compile_failed: {p.stderr.strip()[:200]}"
+    for c in cands:
+        if c.exists() and os.access(c, os.X_OK):
+            return c, 'existing'
     return None, 'no_runnable_binary'
 
 
@@ -148,7 +159,14 @@ for i, r in enumerate(rows, 1):
         sudo_cmd(['dmesg', '-C'])
         data['commands'].append('sudo dmesg -C')
 
-        target_comm = binary.name[:15]
+        # task_struct->comm is TASK_COMM_LEN (16) including NUL -> 15 visible chars.
+        # For C sources we force stability by building/running a stem-named binary
+        # and passing stem[:15]. For non-C (e.g. .S) we must key off the actual
+        # produced binary name.
+        if userspace.suffix == '.c':
+            target_comm = userspace.stem[:15]
+        else:
+            target_comm = binary.name[:15]
         ko = driver_dir / f"{module}.ko"
 
         p_ins = sudo_cmd(['insmod', str(ko), f"target_comm={target_comm}"])

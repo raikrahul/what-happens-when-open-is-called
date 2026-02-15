@@ -3,8 +3,8 @@
 - Userspace source: `kernel/user/stage3/case1/test_vfs_trace.c`
 - Driver source: `kernel/drivers/stage3/case1/trace_test_vfs_trace/trace_test_vfs_trace.c`
 - Module: `trace_test_vfs_trace`
-- Binary: `kernel/user/stage3/case1/test_vfs_trace.out`
-- Run timestamp: `2026-02-15T13:49:00`
+- Binary: `kernel/user/stage3/case1/test_vfs_trace`
+- Run timestamp: `2026-02-15T23:32:01`
 - Final status: `pass_probe_hits`
 
 ## Probe Counts
@@ -20,9 +20,9 @@
 ## Commands
 ```bash
 make -C kernel/drivers/stage3/case1/trace_test_vfs_trace
-kernel/user/stage3/case1/test_vfs_trace.out
+kernel/user/stage3/case1/test_vfs_trace
 sudo dmesg -C
-sudo insmod kernel/drivers/stage3/case1/trace_test_vfs_trace/trace_test_vfs_trace.ko target_comm="test_vfs_trace."
+sudo insmod kernel/drivers/stage3/case1/trace_test_vfs_trace/trace_test_vfs_trace.ko target_comm="test_vfs_trace"
 sudo rmmod trace_test_vfs_trace
 ```
 

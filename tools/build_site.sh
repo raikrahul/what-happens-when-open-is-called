@@ -11,8 +11,11 @@ fi
 
 cd "$ARTICLES_DIR"
 
-# Build list of markdown files excluding backups
-mapfile -t md_files < <(find . -maxdepth 1 -type f -name "*.md" ! -name "*.bak*" ! -name "*.backup*" -print)
+# Sync stage3 embeds (worksheets/reports into site pages) before rendering.
+python3 "$ROOT_DIR/tools/sync_stage3_site_embeds.py"
+
+# Build list of markdown files excluding backups (recursive, stage3 lives in subdirs)
+mapfile -t md_files < <(find . -type f -name "*.md" ! -name "*.bak*" ! -name "*.backup*" -print)
 
 if [ ${#md_files[@]} -eq 0 ]; then
   echo "No markdown files found"

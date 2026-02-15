@@ -3,8 +3,8 @@
 - Userspace source: `kernel/user/stage3/case8_creation_proof/user_open_existing.c`
 - Driver source: `kernel/drivers/stage3/case8_creation_proof/trace_user_open_existing/trace_user_open_existing.c`
 - Module: `trace_user_open_existing`
-- Binary: `kernel/user/stage3/case8_creation_proof/user_open_existing.out`
-- Run timestamp: `2026-02-15T13:49:32`
+- Binary: `kernel/user/stage3/case8_creation_proof/user_open_existing`
+- Run timestamp: `2026-02-15T23:32:37`
 - Final status: `pass_probe_hits`
 
 ## Probe Counts
@@ -20,7 +20,7 @@
 ## Commands
 ```bash
 make -C kernel/drivers/stage3/case8_creation_proof/trace_user_open_existing
-kernel/user/stage3/case8_creation_proof/user_open_existing.out
+kernel/user/stage3/case8_creation_proof/user_open_existing
 sudo dmesg -C
 sudo insmod kernel/drivers/stage3/case8_creation_proof/trace_user_open_existing/trace_user_open_existing.ko target_comm="user_open_exist"
 sudo rmmod trace_user_open_existing

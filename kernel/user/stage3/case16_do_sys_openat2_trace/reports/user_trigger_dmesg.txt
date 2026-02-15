@@ -1,19 +1,19 @@
-[ 3336.176807] [trace_user_trigger] loaded target_comm=user_trigger user=kernel/user/stage3/case16_do_sys_openat2_trace/user_trigger.c
-[ 3336.180631] [trace_user_trigger] do_filp_open.entry pid=63575 comm=user_trigger dfd=4294967196 pathname=ffff8dda294d1000 op=ffffd0c940aebe24
-[ 3336.180660] [trace_user_trigger] do_filp_open.ret pid=63575 comm=user_trigger ret=fffffffffffffffe
-[ 3336.180678] [trace_user_trigger] do_filp_open.entry pid=63575 comm=user_trigger dfd=4294967196 pathname=ffff8dda294d1000 op=ffffd0c940aebcb4
-[ 3336.180692] [trace_user_trigger] do_filp_open.ret pid=63575 comm=user_trigger ret=fffffffffffffffe
-[ 3336.180707] [trace_user_trigger] do_filp_open.entry pid=63575 comm=user_trigger dfd=4294967196 pathname=ffff8dda294d1000 op=ffffd0c940aebd74
-[ 3336.180721] [trace_user_trigger] do_filp_open.ret pid=63575 comm=user_trigger ret=fffffffffffffffe
-[ 3336.180739] [trace_user_trigger] do_filp_open.entry pid=63575 comm=user_trigger dfd=4294967196 pathname=ffff8dda294d1000 op=ffffd0c940aebe84
-[ 3336.180749] [trace_user_trigger] do_filp_open.ret pid=63575 comm=user_trigger ret=fffffffffffffffe
-[ 3336.180757] [trace_user_trigger] do_filp_open.entry pid=63575 comm=user_trigger dfd=4294967196 pathname=ffff8dda294d1000 op=ffffd0c940aebd54
-[ 3336.180767] [trace_user_trigger] do_filp_open.ret pid=63575 comm=user_trigger ret=fffffffffffffffe
-[ 3336.180775] [trace_user_trigger] do_filp_open.entry pid=63575 comm=user_trigger dfd=4294967196 pathname=ffff8dda294d1000 op=ffffd0c940aebad4
-[ 3336.180784] [trace_user_trigger] do_filp_open.ret pid=63575 comm=user_trigger ret=fffffffffffffffe
-[ 3336.180793] [trace_user_trigger] do_filp_open.entry pid=63575 comm=user_trigger dfd=4294967196 pathname=ffff8dda294d1000 op=ffffd0c940aebd24
-[ 3336.180806] [trace_user_trigger] do_filp_open.ret pid=63575 comm=user_trigger ret=ffff8dda38a77900
-[ 3336.180853] [trace_user_trigger] do_filp_open.entry pid=63575 comm=user_trigger dfd=4294967196 pathname=ffff8dda294d1000 op=ffffd0c940aebcc4
-[ 3336.180865] [trace_user_trigger] do_filp_open.ret pid=63575 comm=user_trigger ret=ffff8dda38a77d80
-[ 3336.181329] [trace_user_trigger] do_filp_open.entry pid=63575 comm=user_trigger dfd=4294967196 pathname=ffff8dda294d1000 op=ffffd0c940aebccc
-[ 3336.181343] [trace_user_trigger] do_filp_open.ret pid=63575 comm=user_trigger ret=fffffffffffffffe
+[38316.753785] [trace_user_trigger] loaded target_comm=user_trigger user=kernel/user/stage3/case16_do_sys_openat2_trace/user_trigger.c
+[38316.756383] [trace_user_trigger] do_filp_open.entry pid=181580 comm=user_trigger dfd=4294967196 pathname=ffff8dda294d0000 op=ffffd0c940f3bba4
+[38316.756396] [trace_user_trigger] do_filp_open.ret pid=181580 comm=user_trigger ret=fffffffffffffffe
+[38316.756402] [trace_user_trigger] do_filp_open.entry pid=181580 comm=user_trigger dfd=4294967196 pathname=ffff8dda294d0000 op=ffffd0c940f3bdd4
+[38316.756407] [trace_user_trigger] do_filp_open.ret pid=181580 comm=user_trigger ret=fffffffffffffffe
+[38316.756413] [trace_user_trigger] do_filp_open.entry pid=181580 comm=user_trigger dfd=4294967196 pathname=ffff8dda294d0000 op=ffffd0c940f3bcf4
+[38316.756418] [trace_user_trigger] do_filp_open.ret pid=181580 comm=user_trigger ret=fffffffffffffffe
+[38316.756425] [trace_user_trigger] do_filp_open.entry pid=181580 comm=user_trigger dfd=4294967196 pathname=ffff8dda294d0000 op=ffffd0c940f3be34
+[38316.756428] [trace_user_trigger] do_filp_open.ret pid=181580 comm=user_trigger ret=fffffffffffffffe
+[38316.756431] [trace_user_trigger] do_filp_open.entry pid=181580 comm=user_trigger dfd=4294967196 pathname=ffff8dda294d0000 op=ffffd0c940f3bb34
+[38316.756434] [trace_user_trigger] do_filp_open.ret pid=181580 comm=user_trigger ret=fffffffffffffffe
+[38316.756437] [trace_user_trigger] do_filp_open.entry pid=181580 comm=user_trigger dfd=4294967196 pathname=ffff8dda294d0000 op=ffffd0c940f3bc44
+[38316.756441] [trace_user_trigger] do_filp_open.ret pid=181580 comm=user_trigger ret=fffffffffffffffe
+[38316.756444] [trace_user_trigger] do_filp_open.entry pid=181580 comm=user_trigger dfd=4294967196 pathname=ffff8dda294d0000 op=ffffd0c940f3be44
+[38316.756449] [trace_user_trigger] do_filp_open.ret pid=181580 comm=user_trigger ret=ffff8ddc220af180
+[38316.756467] [trace_user_trigger] do_filp_open.entry pid=181580 comm=user_trigger dfd=4294967196 pathname=ffff8dda294d0000 op=ffffd0c940f3bcc4
+[38316.756472] [trace_user_trigger] do_filp_open.ret pid=181580 comm=user_trigger ret=ffff8ddc220afb40
+[38316.756673] [trace_user_trigger] do_filp_open.entry pid=181580 comm=user_trigger dfd=4294967196 pathname=ffff8dda294d0000 op=ffffd0c940f3ba9c
+[38316.756679] [trace_user_trigger] do_filp_open.ret pid=181580 comm=user_trigger ret=fffffffffffffffe

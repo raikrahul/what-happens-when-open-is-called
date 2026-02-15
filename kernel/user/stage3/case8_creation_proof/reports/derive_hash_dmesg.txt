@@ -1,17 +1,17 @@
-[ 3350.832607] [trace_derive_hash] loaded target_comm=derive_hash.out user=kernel/user/stage3/case8_creation_proof/derive_hash.c
-[ 3350.835503] [trace_derive_hash] do_filp_open.entry pid=65947 comm=derive_hash.out dfd=4294967196 pathname=ffff8dda0a26a000 op=ffffd0c94088fad4
-[ 3350.835515] [trace_derive_hash] do_filp_open.ret pid=65947 comm=derive_hash.out ret=fffffffffffffffe
-[ 3350.835522] [trace_derive_hash] do_filp_open.entry pid=65947 comm=derive_hash.out dfd=4294967196 pathname=ffff8dda0a26a000 op=ffffd0c94088fb54
-[ 3350.835527] [trace_derive_hash] do_filp_open.ret pid=65947 comm=derive_hash.out ret=fffffffffffffffe
-[ 3350.835532] [trace_derive_hash] do_filp_open.entry pid=65947 comm=derive_hash.out dfd=4294967196 pathname=ffff8dda0a26a000 op=ffffd0c94088fb74
-[ 3350.835546] [trace_derive_hash] do_filp_open.ret pid=65947 comm=derive_hash.out ret=fffffffffffffffe
-[ 3350.835554] [trace_derive_hash] do_filp_open.entry pid=65947 comm=derive_hash.out dfd=4294967196 pathname=ffff8dda0a26a000 op=ffffd0c94088fd94
-[ 3350.835557] [trace_derive_hash] do_filp_open.ret pid=65947 comm=derive_hash.out ret=fffffffffffffffe
-[ 3350.835560] [trace_derive_hash] do_filp_open.entry pid=65947 comm=derive_hash.out dfd=4294967196 pathname=ffff8dda0a26a000 op=ffffd0c94088fb34
-[ 3350.835564] [trace_derive_hash] do_filp_open.ret pid=65947 comm=derive_hash.out ret=fffffffffffffffe
-[ 3350.835566] [trace_derive_hash] do_filp_open.entry pid=65947 comm=derive_hash.out dfd=4294967196 pathname=ffff8dda0a26a000 op=ffffd0c94088fe14
-[ 3350.835570] [trace_derive_hash] do_filp_open.ret pid=65947 comm=derive_hash.out ret=fffffffffffffffe
-[ 3350.835573] [trace_derive_hash] do_filp_open.entry pid=65947 comm=derive_hash.out dfd=4294967196 pathname=ffff8dda0a26a000 op=ffffd0c94088fe14
-[ 3350.835578] [trace_derive_hash] do_filp_open.ret pid=65947 comm=derive_hash.out ret=ffff8ddbf3577cc0
-[ 3350.835596] [trace_derive_hash] do_filp_open.entry pid=65947 comm=derive_hash.out dfd=4294967196 pathname=ffff8dda0a26a000 op=ffffd0c94088fdb4
-[ 3350.835601] [trace_derive_hash] do_filp_open.ret pid=65947 comm=derive_hash.out ret=ffff8ddbf3577480
+[38332.409362] [trace_derive_hash] loaded target_comm=derive_hash user=kernel/user/stage3/case8_creation_proof/derive_hash.c
+[38332.413077] [trace_derive_hash] do_filp_open.entry pid=183915 comm=derive_hash dfd=4294967196 pathname=ffff8dda0e689000 op=ffffd0c940e07ac4
+[38332.413090] [trace_derive_hash] do_filp_open.ret pid=183915 comm=derive_hash ret=fffffffffffffffe
+[38332.413096] [trace_derive_hash] do_filp_open.entry pid=183915 comm=derive_hash dfd=4294967196 pathname=ffff8dda0e689000 op=ffffd0c940e07d34
+[38332.413101] [trace_derive_hash] do_filp_open.ret pid=183915 comm=derive_hash ret=fffffffffffffffe
+[38332.413106] [trace_derive_hash] do_filp_open.entry pid=183915 comm=derive_hash dfd=4294967196 pathname=ffff8dda0e689000 op=ffffd0c940e07bf4
+[38332.413111] [trace_derive_hash] do_filp_open.ret pid=183915 comm=derive_hash ret=fffffffffffffffe
+[38332.413118] [trace_derive_hash] do_filp_open.entry pid=183915 comm=derive_hash dfd=4294967196 pathname=ffff8dda0e689000 op=ffffd0c940e07cd4
+[38332.413122] [trace_derive_hash] do_filp_open.ret pid=183915 comm=derive_hash ret=fffffffffffffffe
+[38332.413125] [trace_derive_hash] do_filp_open.entry pid=183915 comm=derive_hash dfd=4294967196 pathname=ffff8dda0e689000 op=ffffd0c940e07c74
+[38332.413128] [trace_derive_hash] do_filp_open.ret pid=183915 comm=derive_hash ret=fffffffffffffffe
+[38332.413131] [trace_derive_hash] do_filp_open.entry pid=183915 comm=derive_hash dfd=4294967196 pathname=ffff8dda0e689000 op=ffffd0c940e07d64
+[38332.413134] [trace_derive_hash] do_filp_open.ret pid=183915 comm=derive_hash ret=fffffffffffffffe
+[38332.413138] [trace_derive_hash] do_filp_open.entry pid=183915 comm=derive_hash dfd=4294967196 pathname=ffff8dda0e689000 op=ffffd0c940e07e04
+[38332.413143] [trace_derive_hash] do_filp_open.ret pid=183915 comm=derive_hash ret=ffff8ddc12465d80
+[38332.413161] [trace_derive_hash] do_filp_open.entry pid=183915 comm=derive_hash dfd=4294967196 pathname=ffff8dda0e689000 op=ffffd0c940e07d44
+[38332.413166] [trace_derive_hash] do_filp_open.ret pid=183915 comm=derive_hash ret=ffff8ddc124650c0

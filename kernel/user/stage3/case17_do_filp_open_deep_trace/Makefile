@@ -1,4 +1,4 @@
-obj-m += driver.o offset_prober.o pointer_check_driver.o
+obj-m += driver.o offset_prober.o pointer_check_driver.o dlookup_replay_driver.o
 
 all:
 	make -C /lib/modules/$(shell uname -r)/build M=$(PWD) modules

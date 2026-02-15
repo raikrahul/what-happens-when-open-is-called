@@ -3,8 +3,8 @@
 - Userspace source: `kernel/user/stage3/case1/case7_symlink_fast.c`
 - Driver source: `kernel/drivers/stage3/case1/trace_case7_symlink_fast/trace_case7_symlink_fast.c`
 - Module: `trace_case7_symlink_fast`
-- Binary: `kernel/user/stage3/case1/case7_symlink_fast.out`
-- Run timestamp: `2026-02-15T13:48:50`
+- Binary: `kernel/user/stage3/case1/case7_symlink_fast`
+- Run timestamp: `2026-02-15T23:31:49`
 - Final status: `pass_probe_hits`
 
 ## Probe Counts
@@ -20,7 +20,7 @@
 ## Commands
 ```bash
 make -C kernel/drivers/stage3/case1/trace_case7_symlink_fast
-kernel/user/stage3/case1/case7_symlink_fast.out
+kernel/user/stage3/case1/case7_symlink_fast
 sudo dmesg -C
 sudo insmod kernel/drivers/stage3/case1/trace_case7_symlink_fast/trace_case7_symlink_fast.ko target_comm="case7_symlink_f"
 sudo rmmod trace_case7_symlink_fast

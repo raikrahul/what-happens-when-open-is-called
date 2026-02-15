@@ -106,7 +106,423 @@
 [SECONDARY PROOF INPUTS]
 - worksheet index: [STAGE3_WORKSHEET_INDEX](https://github.com/raikrahul/what-happens-when-open-is-called/blob/main/kernel/user/stage3/planning/STAGE3_WORKSHEET_INDEX.md)
 - axiom index: [STAGE3_AXIOM_WORKSHEET_INDEX](https://github.com/raikrahul/what-happens-when-open-is-called/blob/main/kernel/user/stage3/planning/STAGE3_AXIOM_WORKSHEET_INDEX.md)
-- hard index: [STAGE3_AXIOM_HARD_WORKSHEET_INDEX](https://github.com/raikrahul/what-happens-when-open-is-called/blob/main/kernel/user/stage3/planning/STAGE3_AXIOM_HARD_WORKSHEET_INDEX.md)</pre>
+- hard index: [STAGE3_AXIOM_HARD_WORKSHEET_INDEX](https://github.com/raikrahul/what-happens-when-open-is-called/blob/main/kernel/user/stage3/planning/STAGE3_AXIOM_HARD_WORKSHEET_INDEX.md)
+
+&lt;!-- AUTO-EMBED START --&gt;
+[AUTO] case=case8
+
+[USERDIR] kernel/user/stage3/case8_creation_proof
+
+================================================================================
+[EMBED] derive_hash_trace_report.md
+[SOURCE] kernel/user/stage3/case8_creation_proof/reports/derive_hash_trace_report.md
+================================================================================
+# Trace Report: derive_hash.c
+
+- Userspace source: `kernel/user/stage3/case8_creation_proof/derive_hash.c`
+- Driver source: `kernel/drivers/stage3/case8_creation_proof/trace_derive_hash/trace_derive_hash.c`
+- Module: `trace_derive_hash`
+- Binary: `kernel/user/stage3/case8_creation_proof/derive_hash`
+- Run timestamp: `2026-02-15T23:32:31`
+- Final status: `pass_probe_hits`
+
+## Probe Counts
+- do_filp_open.entry: 8
+- do_filp_open.ret: 8
+- __d_alloc.entry: 0
+- __d_alloc.ret: 0
+
+## Return Signature Counts
+- ERR_PTR(-ENOENT) observed (fffffffffffffffe): 6
+- Non-error pointer returns observed: 2
+
+## Commands</pre>
+<pre><code class="language-bash">make -C kernel/drivers/stage3/case8_creation_proof/trace_derive_hash
+kernel/user/stage3/case8_creation_proof/derive_hash
+sudo dmesg -C
+sudo insmod kernel/drivers/stage3/case8_creation_proof/trace_derive_hash/trace_derive_hash.ko target_comm="derive_hash"
+sudo rmmod trace_derive_hash</code></pre>
+<pre style="white-space: pre-wrap; word-wrap: break-word; margin: 0; font-family: monospace;">
+
+## Dmesg
+`kernel/user/stage3/case8_creation_proof/reports/derive_hash_dmesg.txt`
+
+================================================================================
+[EMBED] user_create_deep_trace_report.md
+[SOURCE] kernel/user/stage3/case8_creation_proof/reports/user_create_deep_trace_report.md
+================================================================================
+# Trace Report: user_create_deep.c
+
+- Userspace source: `kernel/user/stage3/case8_creation_proof/user_create_deep.c`
+- Driver source: `kernel/drivers/stage3/case8_creation_proof/trace_user_create_deep/trace_user_create_deep.c`
+- Module: `trace_user_create_deep`
+- Binary: `kernel/user/stage3/case8_creation_proof/user_create_deep`
+- Run timestamp: `2026-02-15T23:32:32`
+- Final status: `pass_probe_hits`
+
+## Probe Counts
+- do_filp_open.entry: 9
+- do_filp_open.ret: 9
+- __d_alloc.entry: 0
+- __d_alloc.ret: 0
+
+## Return Signature Counts
+- ERR_PTR(-ENOENT) observed (fffffffffffffffe): 6
+- Non-error pointer returns observed: 3
+
+## Commands</pre>
+<pre><code class="language-bash">make -C kernel/drivers/stage3/case8_creation_proof/trace_user_create_deep
+kernel/user/stage3/case8_creation_proof/user_create_deep
+sudo dmesg -C
+sudo insmod kernel/drivers/stage3/case8_creation_proof/trace_user_create_deep/trace_user_create_deep.ko target_comm="user_create_dee"
+sudo rmmod trace_user_create_deep</code></pre>
+<pre style="white-space: pre-wrap; word-wrap: break-word; margin: 0; font-family: monospace;">
+
+## Dmesg
+`kernel/user/stage3/case8_creation_proof/reports/user_create_deep_dmesg.txt`
+
+================================================================================
+[EMBED] user_create_long_trace_report.md
+[SOURCE] kernel/user/stage3/case8_creation_proof/reports/user_create_long_trace_report.md
+================================================================================
+# Trace Report: user_create_long.c
+
+- Userspace source: `kernel/user/stage3/case8_creation_proof/user_create_long.c`
+- Driver source: `kernel/drivers/stage3/case8_creation_proof/trace_user_create_long/trace_user_create_long.c`
+- Module: `trace_user_create_long`
+- Binary: `kernel/user/stage3/case8_creation_proof/user_create_long`
+- Run timestamp: `2026-02-15T23:32:33`
+- Final status: `pass_probe_hits`
+
+## Probe Counts
+- do_filp_open.entry: 9
+- do_filp_open.ret: 9
+- __d_alloc.entry: 0
+- __d_alloc.ret: 0
+
+## Return Signature Counts
+- ERR_PTR(-ENOENT) observed (fffffffffffffffe): 6
+- Non-error pointer returns observed: 3
+
+## Commands</pre>
+<pre><code class="language-bash">make -C kernel/drivers/stage3/case8_creation_proof/trace_user_create_long
+kernel/user/stage3/case8_creation_proof/user_create_long
+sudo dmesg -C
+sudo insmod kernel/drivers/stage3/case8_creation_proof/trace_user_create_long/trace_user_create_long.ko target_comm="user_create_lon"
+sudo rmmod trace_user_create_long</code></pre>
+<pre style="white-space: pre-wrap; word-wrap: break-word; margin: 0; font-family: monospace;">
+
+## Dmesg
+`kernel/user/stage3/case8_creation_proof/reports/user_create_long_dmesg.txt`
+
+================================================================================
+[EMBED] user_create_simple_trace_report.md
+[SOURCE] kernel/user/stage3/case8_creation_proof/reports/user_create_simple_trace_report.md
+================================================================================
+# Trace Report: user_create_simple.c
+
+- Userspace source: `kernel/user/stage3/case8_creation_proof/user_create_simple.c`
+- Driver source: `kernel/drivers/stage3/case8_creation_proof/trace_user_create_simple/trace_user_create_simple.c`
+- Module: `trace_user_create_simple`
+- Binary: `kernel/user/stage3/case8_creation_proof/user_create_simple`
+- Run timestamp: `2026-02-15T23:32:34`
+- Final status: `pass_probe_hits`
+
+## Probe Counts
+- do_filp_open.entry: 9
+- do_filp_open.ret: 9
+- __d_alloc.entry: 1
+- __d_alloc.ret: 1
+
+## Return Signature Counts
+- ERR_PTR(-ENOENT) observed (fffffffffffffffe): 6
+- Non-error pointer returns observed: 3
+
+## Commands</pre>
+<pre><code class="language-bash">make -C kernel/drivers/stage3/case8_creation_proof/trace_user_create_simple
+kernel/user/stage3/case8_creation_proof/user_create_simple
+sudo dmesg -C
+sudo insmod kernel/drivers/stage3/case8_creation_proof/trace_user_create_simple/trace_user_create_simple.ko target_comm="user_create_sim"
+sudo rmmod trace_user_create_simple</code></pre>
+<pre style="white-space: pre-wrap; word-wrap: break-word; margin: 0; font-family: monospace;">
+
+## Dmesg
+`kernel/user/stage3/case8_creation_proof/reports/user_create_simple_dmesg.txt`
+
+================================================================================
+[EMBED] user_hash_collision_trace_report.md
+[SOURCE] kernel/user/stage3/case8_creation_proof/reports/user_hash_collision_trace_report.md
+================================================================================
+# Trace Report: user_hash_collision.c
+
+- Userspace source: `kernel/user/stage3/case8_creation_proof/user_hash_collision.c`
+- Driver source: `kernel/drivers/stage3/case8_creation_proof/trace_user_hash_collision/trace_user_hash_collision.c`
+- Module: `trace_user_hash_collision`
+- Binary: `kernel/user/stage3/case8_creation_proof/user_hash_collision`
+- Run timestamp: `2026-02-15T23:32:36`
+- Final status: `pass_probe_hits`
+
+## Probe Counts
+- do_filp_open.entry: 11
+- do_filp_open.ret: 11
+- __d_alloc.entry: 0
+- __d_alloc.ret: 0
+
+## Return Signature Counts
+- ERR_PTR(-ENOENT) observed (fffffffffffffffe): 6
+- Non-error pointer returns observed: 5
+
+## Commands</pre>
+<pre><code class="language-bash">make -C kernel/drivers/stage3/case8_creation_proof/trace_user_hash_collision
+kernel/user/stage3/case8_creation_proof/user_hash_collision
+sudo dmesg -C
+sudo insmod kernel/drivers/stage3/case8_creation_proof/trace_user_hash_collision/trace_user_hash_collision.ko target_comm="user_hash_colli"
+sudo rmmod trace_user_hash_collision</code></pre>
+<pre style="white-space: pre-wrap; word-wrap: break-word; margin: 0; font-family: monospace;">
+
+## Dmesg
+`kernel/user/stage3/case8_creation_proof/reports/user_hash_collision_dmesg.txt`
+
+================================================================================
+[EMBED] user_open_existing_trace_report.md
+[SOURCE] kernel/user/stage3/case8_creation_proof/reports/user_open_existing_trace_report.md
+================================================================================
+# Trace Report: user_open_existing.c
+
+- Userspace source: `kernel/user/stage3/case8_creation_proof/user_open_existing.c`
+- Driver source: `kernel/drivers/stage3/case8_creation_proof/trace_user_open_existing/trace_user_open_existing.c`
+- Module: `trace_user_open_existing`
+- Binary: `kernel/user/stage3/case8_creation_proof/user_open_existing`
+- Run timestamp: `2026-02-15T23:32:37`
+- Final status: `pass_probe_hits`
+
+## Probe Counts
+- do_filp_open.entry: 9
+- do_filp_open.ret: 9
+- __d_alloc.entry: 0
+- __d_alloc.ret: 0
+
+## Return Signature Counts
+- ERR_PTR(-ENOENT) observed (fffffffffffffffe): 7
+- Non-error pointer returns observed: 2
+
+## Commands</pre>
+<pre><code class="language-bash">make -C kernel/drivers/stage3/case8_creation_proof/trace_user_open_existing
+kernel/user/stage3/case8_creation_proof/user_open_existing
+sudo dmesg -C
+sudo insmod kernel/drivers/stage3/case8_creation_proof/trace_user_open_existing/trace_user_open_existing.ko target_comm="user_open_exist"
+sudo rmmod trace_user_open_existing</code></pre>
+<pre style="white-space: pre-wrap; word-wrap: break-word; margin: 0; font-family: monospace;">
+
+## Dmesg
+`kernel/user/stage3/case8_creation_proof/reports/user_open_existing_dmesg.txt`
+
+================================================================================
+[EMBED] user_rename_trace_report.md
+[SOURCE] kernel/user/stage3/case8_creation_proof/reports/user_rename_trace_report.md
+================================================================================
+# Trace Report: user_rename.c
+
+- Userspace source: `kernel/user/stage3/case8_creation_proof/user_rename.c`
+- Driver source: `kernel/drivers/stage3/case8_creation_proof/trace_user_rename/trace_user_rename.c`
+- Module: `trace_user_rename`
+- Binary: `kernel/user/stage3/case8_creation_proof/user_rename`
+- Run timestamp: `2026-02-15T23:32:38`
+- Final status: `pass_probe_hits`
+
+## Probe Counts
+- do_filp_open.entry: 9
+- do_filp_open.ret: 9
+- __d_alloc.entry: 0
+- __d_alloc.ret: 0
+
+## Return Signature Counts
+- ERR_PTR(-ENOENT) observed (fffffffffffffffe): 6
+- Non-error pointer returns observed: 3
+
+## Commands</pre>
+<pre><code class="language-bash">make -C kernel/drivers/stage3/case8_creation_proof/trace_user_rename
+kernel/user/stage3/case8_creation_proof/user_rename
+sudo dmesg -C
+sudo insmod kernel/drivers/stage3/case8_creation_proof/trace_user_rename/trace_user_rename.ko target_comm="user_rename"
+sudo rmmod trace_user_rename</code></pre>
+<pre style="white-space: pre-wrap; word-wrap: break-word; margin: 0; font-family: monospace;">
+
+## Dmesg
+`kernel/user/stage3/case8_creation_proof/reports/user_rename_dmesg.txt`
+
+================================================================================
+[EMBED] derive_hash_dmesg.txt
+[SOURCE] kernel/user/stage3/case8_creation_proof/reports/derive_hash_dmesg.txt
+================================================================================
+[38332.409362] [trace_derive_hash] loaded target_comm=derive_hash user=kernel/user/stage3/case8_creation_proof/derive_hash.c
+[38332.413077] [trace_derive_hash] do_filp_open.entry pid=183915 comm=derive_hash dfd=4294967196 pathname=ffff8dda0e689000 op=ffffd0c940e07ac4
+[38332.413090] [trace_derive_hash] do_filp_open.ret pid=183915 comm=derive_hash ret=fffffffffffffffe
+[38332.413096] [trace_derive_hash] do_filp_open.entry pid=183915 comm=derive_hash dfd=4294967196 pathname=ffff8dda0e689000 op=ffffd0c940e07d34
+[38332.413101] [trace_derive_hash] do_filp_open.ret pid=183915 comm=derive_hash ret=fffffffffffffffe
+[38332.413106] [trace_derive_hash] do_filp_open.entry pid=183915 comm=derive_hash dfd=4294967196 pathname=ffff8dda0e689000 op=ffffd0c940e07bf4
+[38332.413111] [trace_derive_hash] do_filp_open.ret pid=183915 comm=derive_hash ret=fffffffffffffffe
+[38332.413118] [trace_derive_hash] do_filp_open.entry pid=183915 comm=derive_hash dfd=4294967196 pathname=ffff8dda0e689000 op=ffffd0c940e07cd4
+[38332.413122] [trace_derive_hash] do_filp_open.ret pid=183915 comm=derive_hash ret=fffffffffffffffe
+[38332.413125] [trace_derive_hash] do_filp_open.entry pid=183915 comm=derive_hash dfd=4294967196 pathname=ffff8dda0e689000 op=ffffd0c940e07c74
+[38332.413128] [trace_derive_hash] do_filp_open.ret pid=183915 comm=derive_hash ret=fffffffffffffffe
+[38332.413131] [trace_derive_hash] do_filp_open.entry pid=183915 comm=derive_hash dfd=4294967196 pathname=ffff8dda0e689000 op=ffffd0c940e07d64
+[38332.413134] [trace_derive_hash] do_filp_open.ret pid=183915 comm=derive_hash ret=fffffffffffffffe
+[38332.413138] [trace_derive_hash] do_filp_open.entry pid=183915 comm=derive_hash dfd=4294967196 pathname=ffff8dda0e689000 op=ffffd0c940e07e04
+[38332.413143] [trace_derive_hash] do_filp_open.ret pid=183915 comm=derive_hash ret=ffff8ddc12465d80
+[38332.413161] [trace_derive_hash] do_filp_open.entry pid=183915 comm=derive_hash dfd=4294967196 pathname=ffff8dda0e689000 op=ffffd0c940e07d44
+[38332.413166] [trace_derive_hash] do_filp_open.ret pid=183915 comm=derive_hash ret=ffff8ddc124650c0
+
+================================================================================
+[EMBED] user_create_deep_dmesg.txt
+[SOURCE] kernel/user/stage3/case8_creation_proof/reports/user_create_deep_dmesg.txt
+================================================================================
+[38333.604635] [trace_user_create_deep] loaded target_comm=user_create_dee user=kernel/user/stage3/case8_creation_proof/user_create_deep.c
+[38333.608229] [trace_user_create_deep] do_filp_open.entry pid=184172 comm=user_create_dee dfd=4294967196 pathname=ffff8dda0d5e4000 op=ffffd0c94088fb34
+[38333.608258] [trace_user_create_deep] do_filp_open.ret pid=184172 comm=user_create_dee ret=fffffffffffffffe
+[38333.608275] [trace_user_create_deep] do_filp_open.entry pid=184172 comm=user_create_dee dfd=4294967196 pathname=ffff8dda0d5e4000 op=ffffd0c94088fc84
+[38333.608290] [trace_user_create_deep] do_filp_open.ret pid=184172 comm=user_create_dee ret=fffffffffffffffe
+[38333.608304] [trace_user_create_deep] do_filp_open.entry pid=184172 comm=user_create_dee dfd=4294967196 pathname=ffff8dda0d5e4000 op=ffffd0c94088fc24
+[38333.608318] [trace_user_create_deep] do_filp_open.ret pid=184172 comm=user_create_dee ret=fffffffffffffffe
+[38333.608337] [trace_user_create_deep] do_filp_open.entry pid=184172 comm=user_create_dee dfd=4294967196 pathname=ffff8dda0d5e4000 op=ffffd0c94088fc44
+[38333.608346] [trace_user_create_deep] do_filp_open.ret pid=184172 comm=user_create_dee ret=fffffffffffffffe
+[38333.608355] [trace_user_create_deep] do_filp_open.entry pid=184172 comm=user_create_dee dfd=4294967196 pathname=ffff8dda0d5e4000 op=ffffd0c94088fad4
+[38333.608364] [trace_user_create_deep] do_filp_open.ret pid=184172 comm=user_create_dee ret=fffffffffffffffe
+[38333.608373] [trace_user_create_deep] do_filp_open.entry pid=184172 comm=user_create_dee dfd=4294967196 pathname=ffff8dda0d5e4000 op=ffffd0c94088fe74
+[38333.608383] [trace_user_create_deep] do_filp_open.ret pid=184172 comm=user_create_dee ret=fffffffffffffffe
+[38333.608392] [trace_user_create_deep] do_filp_open.entry pid=184172 comm=user_create_dee dfd=4294967196 pathname=ffff8dda0d5e4000 op=ffffd0c94088fd14
+[38333.608405] [trace_user_create_deep] do_filp_open.ret pid=184172 comm=user_create_dee ret=ffff8dd904158180
+[38333.608446] [trace_user_create_deep] do_filp_open.entry pid=184172 comm=user_create_dee dfd=4294967196 pathname=ffff8dda0d5e4000 op=ffffd0c94088fc84
+[38333.608459] [trace_user_create_deep] do_filp_open.ret pid=184172 comm=user_create_dee ret=ffff8dd904158300
+[38333.608873] [trace_user_create_deep] do_filp_open.entry pid=184172 comm=user_create_dee dfd=4294967196 pathname=ffff8dda0d5e4000 op=ffffd0c94088fe44
+[38333.608889] [trace_user_create_deep] do_filp_open.ret pid=184172 comm=user_create_dee ret=ffffffffffffffef
+
+================================================================================
+[EMBED] user_create_long_dmesg.txt
+[SOURCE] kernel/user/stage3/case8_creation_proof/reports/user_create_long_dmesg.txt
+================================================================================
+[38334.842415] [trace_user_create_long] loaded target_comm=user_create_lon user=kernel/user/stage3/case8_creation_proof/user_create_long.c
+[38334.845275] [trace_user_create_long] do_filp_open.entry pid=184427 comm=user_create_lon dfd=4294967196 pathname=ffff8dda13f5d000 op=ffffd0c940fdfb24
+[38334.845288] [trace_user_create_long] do_filp_open.ret pid=184427 comm=user_create_lon ret=fffffffffffffffe
+[38334.845295] [trace_user_create_long] do_filp_open.entry pid=184427 comm=user_create_lon dfd=4294967196 pathname=ffff8dda13f5d000 op=ffffd0c940fdfa94
+[38334.845300] [trace_user_create_long] do_filp_open.ret pid=184427 comm=user_create_lon ret=fffffffffffffffe
+[38334.845305] [trace_user_create_long] do_filp_open.entry pid=184427 comm=user_create_lon dfd=4294967196 pathname=ffff8dda13f5d000 op=ffffd0c940fdfb84
+[38334.845310] [trace_user_create_long] do_filp_open.ret pid=184427 comm=user_create_lon ret=fffffffffffffffe
+[38334.845317] [trace_user_create_long] do_filp_open.entry pid=184427 comm=user_create_lon dfd=4294967196 pathname=ffff8dda13f5d000 op=ffffd0c940fdfc64
+[38334.845321] [trace_user_create_long] do_filp_open.ret pid=184427 comm=user_create_lon ret=fffffffffffffffe
+[38334.845324] [trace_user_create_long] do_filp_open.entry pid=184427 comm=user_create_lon dfd=4294967196 pathname=ffff8dda13f5d000 op=ffffd0c940fdfe44
+[38334.845327] [trace_user_create_long] do_filp_open.ret pid=184427 comm=user_create_lon ret=fffffffffffffffe
+[38334.845330] [trace_user_create_long] do_filp_open.entry pid=184427 comm=user_create_lon dfd=4294967196 pathname=ffff8dda13f5d000 op=ffffd0c940fdfcc4
+[38334.845333] [trace_user_create_long] do_filp_open.ret pid=184427 comm=user_create_lon ret=fffffffffffffffe
+[38334.845337] [trace_user_create_long] do_filp_open.entry pid=184427 comm=user_create_lon dfd=4294967196 pathname=ffff8dda13f5d000 op=ffffd0c940fdfb34
+[38334.845341] [trace_user_create_long] do_filp_open.ret pid=184427 comm=user_create_lon ret=ffff8ddb4d804cc0
+[38334.845358] [trace_user_create_long] do_filp_open.entry pid=184427 comm=user_create_lon dfd=4294967196 pathname=ffff8dda13f5d000 op=ffffd0c940fdfd34
+[38334.845363] [trace_user_create_long] do_filp_open.ret pid=184427 comm=user_create_lon ret=ffff8ddb4d8040c0
+[38334.845536] [trace_user_create_long] do_filp_open.entry pid=184427 comm=user_create_lon dfd=4294967196 pathname=ffff8dda13f5d000 op=ffffd0c940fdfc84
+[38334.845542] [trace_user_create_long] do_filp_open.ret pid=184427 comm=user_create_lon ret=ffffffffffffffef
+
+================================================================================
+[EMBED] user_create_simple_dmesg.txt
+[SOURCE] kernel/user/stage3/case8_creation_proof/reports/user_create_simple_dmesg.txt
+================================================================================
+[38336.054966] [trace_user_create_simple] loaded target_comm=user_create_sim user=kernel/user/stage3/case8_creation_proof/user_create_simple.c
+[38336.057212] [trace_user_create_simple] do_filp_open.entry pid=184683 comm=user_create_sim dfd=4294967196 pathname=ffff8dda294d6000 op=ffffd0c940737c34
+[38336.057225] [trace_user_create_simple] do_filp_open.ret pid=184683 comm=user_create_sim ret=fffffffffffffffe
+[38336.057231] [trace_user_create_simple] do_filp_open.entry pid=184683 comm=user_create_sim dfd=4294967196 pathname=ffff8dda294d6000 op=ffffd0c940737bc4
+[38336.057236] [trace_user_create_simple] do_filp_open.ret pid=184683 comm=user_create_sim ret=fffffffffffffffe
+[38336.057241] [trace_user_create_simple] do_filp_open.entry pid=184683 comm=user_create_sim dfd=4294967196 pathname=ffff8dda294d6000 op=ffffd0c940737c24
+[38336.057246] [trace_user_create_simple] do_filp_open.ret pid=184683 comm=user_create_sim ret=fffffffffffffffe
+[38336.057253] [trace_user_create_simple] do_filp_open.entry pid=184683 comm=user_create_sim dfd=4294967196 pathname=ffff8dda294d6000 op=ffffd0c940737d84
+[38336.057257] [trace_user_create_simple] do_filp_open.ret pid=184683 comm=user_create_sim ret=fffffffffffffffe
+[38336.057260] [trace_user_create_simple] do_filp_open.entry pid=184683 comm=user_create_sim dfd=4294967196 pathname=ffff8dda294d6000 op=ffffd0c940737e74
+[38336.057263] [trace_user_create_simple] do_filp_open.ret pid=184683 comm=user_create_sim ret=fffffffffffffffe
+[38336.057266] [trace_user_create_simple] do_filp_open.entry pid=184683 comm=user_create_sim dfd=4294967196 pathname=ffff8dda294d6000 op=ffffd0c940737e14
+[38336.057269] [trace_user_create_simple] do_filp_open.ret pid=184683 comm=user_create_sim ret=fffffffffffffffe
+[38336.057273] [trace_user_create_simple] do_filp_open.entry pid=184683 comm=user_create_sim dfd=4294967196 pathname=ffff8dda294d6000 op=ffffd0c940737b34
+[38336.057278] [trace_user_create_simple] do_filp_open.ret pid=184683 comm=user_create_sim ret=ffff8ddc47541300
+[38336.057294] [trace_user_create_simple] do_filp_open.entry pid=184683 comm=user_create_sim dfd=4294967196 pathname=ffff8dda294d6000 op=ffffd0c940737be4
+[38336.057299] [trace_user_create_simple] do_filp_open.ret pid=184683 comm=user_create_sim ret=ffff8ddc47541d80
+[38336.057489] [trace_user_create_simple] do_filp_open.entry pid=184683 comm=user_create_sim dfd=4294967196 pathname=ffff8dda294d6000 op=ffffd0c940737be4
+[38336.057495] [trace_user_create_simple] __d_alloc.entry pid=184683 comm=user_create_sim sb=ffff8dda0bce8000 name_qstr=ffffd0c940737ab0
+[38336.057498] [trace_user_create_simple] __d_alloc.ret pid=184683 comm=user_create_sim dentry=ffff8dda274ce3c0
+[38336.057549] [trace_user_create_simple] do_filp_open.ret pid=184683 comm=user_create_sim ret=ffff8ddc47541300
+
+================================================================================
+[EMBED] user_hash_collision_dmesg.txt
+[SOURCE] kernel/user/stage3/case8_creation_proof/reports/user_hash_collision_dmesg.txt
+================================================================================
+[38337.160520] [trace_user_hash_collision] loaded target_comm=user_hash_colli user=kernel/user/stage3/case8_creation_proof/user_hash_collision.c
+[38337.163666] [trace_user_hash_collision] do_filp_open.entry pid=184938 comm=user_hash_colli dfd=4294967196 pathname=ffff8dda0d5e5000 op=ffffd0c941c4bc14
+[38337.163687] [trace_user_hash_collision] do_filp_open.ret pid=184938 comm=user_hash_colli ret=fffffffffffffffe
+[38337.163700] [trace_user_hash_collision] do_filp_open.entry pid=184938 comm=user_hash_colli dfd=4294967196 pathname=ffff8dda0d5e5000 op=ffffd0c941c4bb54
+[38337.163711] [trace_user_hash_collision] do_filp_open.ret pid=184938 comm=user_hash_colli ret=fffffffffffffffe
+[38337.163723] [trace_user_hash_collision] do_filp_open.entry pid=184938 comm=user_hash_colli dfd=4294967196 pathname=ffff8dda0d5e5000 op=ffffd0c941c4bd44
+[38337.163734] [trace_user_hash_collision] do_filp_open.ret pid=184938 comm=user_hash_colli ret=fffffffffffffffe
+[38337.163748] [trace_user_hash_collision] do_filp_open.entry pid=184938 comm=user_hash_colli dfd=4294967196 pathname=ffff8dda0d5e5000 op=ffffd0c941c4bb64
+[38337.163756] [trace_user_hash_collision] do_filp_open.ret pid=184938 comm=user_hash_colli ret=fffffffffffffffe
+[38337.163763] [trace_user_hash_collision] do_filp_open.entry pid=184938 comm=user_hash_colli dfd=4294967196 pathname=ffff8dda0d5e5000 op=ffffd0c941c4bc04
+[38337.163770] [trace_user_hash_collision] do_filp_open.ret pid=184938 comm=user_hash_colli ret=fffffffffffffffe
+[38337.163777] [trace_user_hash_collision] do_filp_open.entry pid=184938 comm=user_hash_colli dfd=4294967196 pathname=ffff8dda0d5e5000 op=ffffd0c941c4bd74
+[38337.163785] [trace_user_hash_collision] do_filp_open.ret pid=184938 comm=user_hash_colli ret=fffffffffffffffe
+[38337.163792] [trace_user_hash_collision] do_filp_open.entry pid=184938 comm=user_hash_colli dfd=4294967196 pathname=ffff8dda0d5e5000 op=ffffd0c941c4baa4
+[38337.163802] [trace_user_hash_collision] do_filp_open.ret pid=184938 comm=user_hash_colli ret=ffff8dda3aeba0c0
+[38337.163836] [trace_user_hash_collision] do_filp_open.entry pid=184938 comm=user_hash_colli dfd=4294967196 pathname=ffff8dda0d5e5000 op=ffffd0c941c4bc44
+[38337.163848] [trace_user_hash_collision] do_filp_open.ret pid=184938 comm=user_hash_colli ret=ffff8dda3aebacc0
+[38337.164263] [trace_user_hash_collision] do_filp_open.entry pid=184938 comm=user_hash_colli dfd=4294967196 pathname=ffff8dda0d5e5000 op=ffffd0c941c4bb44
+[38337.164278] [trace_user_hash_collision] do_filp_open.ret pid=184938 comm=user_hash_colli ret=ffffffffffffffef
+[38337.164287] [trace_user_hash_collision] do_filp_open.entry pid=184938 comm=user_hash_colli dfd=4294967196 pathname=ffff8dda0d5e5000 op=ffffd0c941c4bd24
+[38337.164297] [trace_user_hash_collision] do_filp_open.ret pid=184938 comm=user_hash_colli ret=ffffffffffffffef
+[38337.164305] [trace_user_hash_collision] do_filp_open.entry pid=184938 comm=user_hash_colli dfd=4294967196 pathname=ffff8dda0d5e5000 op=ffffd0c941c4bd14
+[38337.164315] [trace_user_hash_collision] do_filp_open.ret pid=184938 comm=user_hash_colli ret=ffffffffffffffef
+
+================================================================================
+[EMBED] user_open_existing_dmesg.txt
+[SOURCE] kernel/user/stage3/case8_creation_proof/reports/user_open_existing_dmesg.txt
+================================================================================
+[38338.310856] [trace_user_open_existing] loaded target_comm=user_open_exist user=kernel/user/stage3/case8_creation_proof/user_open_existing.c
+[38338.313876] [trace_user_open_existing] do_filp_open.entry pid=185195 comm=user_open_exist dfd=4294967196 pathname=ffff8dda0eca4000 op=ffffd0c941d13da4
+[38338.313887] [trace_user_open_existing] do_filp_open.ret pid=185195 comm=user_open_exist ret=fffffffffffffffe
+[38338.313894] [trace_user_open_existing] do_filp_open.entry pid=185195 comm=user_open_exist dfd=4294967196 pathname=ffff8dda0eca4000 op=ffffd0c941d13a94
+[38338.313899] [trace_user_open_existing] do_filp_open.ret pid=185195 comm=user_open_exist ret=fffffffffffffffe
+[38338.313904] [trace_user_open_existing] do_filp_open.entry pid=185195 comm=user_open_exist dfd=4294967196 pathname=ffff8dda0eca4000 op=ffffd0c941d13db4
+[38338.313909] [trace_user_open_existing] do_filp_open.ret pid=185195 comm=user_open_exist ret=fffffffffffffffe
+[38338.313916] [trace_user_open_existing] do_filp_open.entry pid=185195 comm=user_open_exist dfd=4294967196 pathname=ffff8dda0eca4000 op=ffffd0c941d13a94
+[38338.313919] [trace_user_open_existing] do_filp_open.ret pid=185195 comm=user_open_exist ret=fffffffffffffffe
+[38338.313922] [trace_user_open_existing] do_filp_open.entry pid=185195 comm=user_open_exist dfd=4294967196 pathname=ffff8dda0eca4000 op=ffffd0c941d13bd4
+[38338.313926] [trace_user_open_existing] do_filp_open.ret pid=185195 comm=user_open_exist ret=fffffffffffffffe
+[38338.313929] [trace_user_open_existing] do_filp_open.entry pid=185195 comm=user_open_exist dfd=4294967196 pathname=ffff8dda0eca4000 op=ffffd0c941d13b84
+[38338.313932] [trace_user_open_existing] do_filp_open.ret pid=185195 comm=user_open_exist ret=fffffffffffffffe
+[38338.313936] [trace_user_open_existing] do_filp_open.entry pid=185195 comm=user_open_exist dfd=4294967196 pathname=ffff8dda0eca4000 op=ffffd0c941d13b04
+[38338.313940] [trace_user_open_existing] do_filp_open.ret pid=185195 comm=user_open_exist ret=ffff8ddb92455000
+[38338.313958] [trace_user_open_existing] do_filp_open.entry pid=185195 comm=user_open_exist dfd=4294967196 pathname=ffff8dda0eca4000 op=ffffd0c941d13cc4
+[38338.313962] [trace_user_open_existing] do_filp_open.ret pid=185195 comm=user_open_exist ret=ffff8ddb92455180
+[38338.314129] [trace_user_open_existing] do_filp_open.entry pid=185195 comm=user_open_exist dfd=4294967196 pathname=ffff8dda0eca4000 op=ffffd0c941d13b14
+[38338.314134] [trace_user_open_existing] do_filp_open.ret pid=185195 comm=user_open_exist ret=fffffffffffffffe
+
+================================================================================
+[EMBED] user_rename_dmesg.txt
+[SOURCE] kernel/user/stage3/case8_creation_proof/reports/user_rename_dmesg.txt
+================================================================================
+[38339.507325] [trace_user_rename] loaded target_comm=user_rename user=kernel/user/stage3/case8_creation_proof/user_rename.c
+[38339.509711] [trace_user_rename] do_filp_open.entry pid=185450 comm=user_rename dfd=4294967196 pathname=ffff8dda0d5e4000 op=ffffd0c940817ae4
+[38339.509723] [trace_user_rename] do_filp_open.ret pid=185450 comm=user_rename ret=fffffffffffffffe
+[38339.509740] [trace_user_rename] do_filp_open.entry pid=185450 comm=user_rename dfd=4294967196 pathname=ffff8dda0d5e4000 op=ffffd0c940817aa4
+[38339.509745] [trace_user_rename] do_filp_open.ret pid=185450 comm=user_rename ret=fffffffffffffffe
+[38339.509751] [trace_user_rename] do_filp_open.entry pid=185450 comm=user_rename dfd=4294967196 pathname=ffff8dda0d5e4000 op=ffffd0c940817ab4
+[38339.509757] [trace_user_rename] do_filp_open.ret pid=185450 comm=user_rename ret=fffffffffffffffe
+[38339.509765] [trace_user_rename] do_filp_open.entry pid=185450 comm=user_rename dfd=4294967196 pathname=ffff8dda0d5e4000 op=ffffd0c940817b74
+[38339.509769] [trace_user_rename] do_filp_open.ret pid=185450 comm=user_rename ret=fffffffffffffffe
+[38339.509773] [trace_user_rename] do_filp_open.entry pid=185450 comm=user_rename dfd=4294967196 pathname=ffff8dda0d5e4000 op=ffffd0c940817d44
+[38339.509777] [trace_user_rename] do_filp_open.ret pid=185450 comm=user_rename ret=fffffffffffffffe
+[38339.509780] [trace_user_rename] do_filp_open.entry pid=185450 comm=user_rename dfd=4294967196 pathname=ffff8dda0d5e4000 op=ffffd0c940817dd4
+[38339.509784] [trace_user_rename] do_filp_open.ret pid=185450 comm=user_rename ret=fffffffffffffffe
+[38339.509788] [trace_user_rename] do_filp_open.entry pid=185450 comm=user_rename dfd=4294967196 pathname=ffff8dda0d5e4000 op=ffffd0c940817dd4
+[38339.509794] [trace_user_rename] do_filp_open.ret pid=185450 comm=user_rename ret=ffff8dda27b3a600
+[38339.509818] [trace_user_rename] do_filp_open.entry pid=185450 comm=user_rename dfd=4294967196 pathname=ffff8dda0d5e4000 op=ffffd0c940817c14
+[38339.509825] [trace_user_rename] do_filp_open.ret pid=185450 comm=user_rename ret=ffff8dda27b3ab40
+[38339.510045] [trace_user_rename] do_filp_open.entry pid=185450 comm=user_rename dfd=4294967196 pathname=ffff8dda0d5e4000 op=ffffd0c940817b64
+[38339.510098] [trace_user_rename] do_filp_open.ret pid=185450 comm=user_rename ret=ffff8dda27b3a600
+&lt;!-- AUTO-EMBED END --&gt;</pre>
   </div>
 
 </body>

@@ -1,21 +1,21 @@
-[ 3316.473561] [trace_demo_dup_names] loaded target_comm=demo_dup_names. user=kernel/user/stage3/case1/demo_dup_names.c
-[ 3316.476701] [trace_demo_dup_names] do_filp_open.entry pid=58634 comm=demo_dup_names. dfd=4294967196 pathname=ffff8dda082f0000 op=ffffd0c940cafe34
-[ 3316.476724] [trace_demo_dup_names] do_filp_open.ret pid=58634 comm=demo_dup_names. ret=fffffffffffffffe
-[ 3316.476738] [trace_demo_dup_names] do_filp_open.entry pid=58634 comm=demo_dup_names. dfd=4294967196 pathname=ffff8dda082f0000 op=ffffd0c940cafde4
-[ 3316.476749] [trace_demo_dup_names] do_filp_open.ret pid=58634 comm=demo_dup_names. ret=fffffffffffffffe
-[ 3316.476761] [trace_demo_dup_names] do_filp_open.entry pid=58634 comm=demo_dup_names. dfd=4294967196 pathname=ffff8dda082f0000 op=ffffd0c940cafe84
-[ 3316.476772] [trace_demo_dup_names] do_filp_open.ret pid=58634 comm=demo_dup_names. ret=fffffffffffffffe
-[ 3316.476787] [trace_demo_dup_names] do_filp_open.entry pid=58634 comm=demo_dup_names. dfd=4294967196 pathname=ffff8dda082f0000 op=ffffd0c940cafd74
-[ 3316.476795] [trace_demo_dup_names] do_filp_open.ret pid=58634 comm=demo_dup_names. ret=fffffffffffffffe
-[ 3316.476801] [trace_demo_dup_names] do_filp_open.entry pid=58634 comm=demo_dup_names. dfd=4294967196 pathname=ffff8dda082f0000 op=ffffd0c940cafae4
-[ 3316.476809] [trace_demo_dup_names] do_filp_open.ret pid=58634 comm=demo_dup_names. ret=fffffffffffffffe
-[ 3316.476815] [trace_demo_dup_names] do_filp_open.entry pid=58634 comm=demo_dup_names. dfd=4294967196 pathname=ffff8dda082f0000 op=ffffd0c940cafb34
-[ 3316.476823] [trace_demo_dup_names] do_filp_open.ret pid=58634 comm=demo_dup_names. ret=fffffffffffffffe
-[ 3316.476830] [trace_demo_dup_names] do_filp_open.entry pid=58634 comm=demo_dup_names. dfd=4294967196 pathname=ffff8dda082f0000 op=ffffd0c940cafe24
-[ 3316.476841] [trace_demo_dup_names] do_filp_open.ret pid=58634 comm=demo_dup_names. ret=ffff8dda1d954780
-[ 3316.476874] [trace_demo_dup_names] do_filp_open.entry pid=58634 comm=demo_dup_names. dfd=4294967196 pathname=ffff8dda082f0000 op=ffffd0c940cafce4
-[ 3316.476884] [trace_demo_dup_names] do_filp_open.ret pid=58634 comm=demo_dup_names. ret=ffff8dda1d954e40
-[ 3316.477307] [trace_demo_dup_names] do_filp_open.entry pid=58634 comm=demo_dup_names. dfd=4294967196 pathname=ffff8dda082f0000 op=ffffd0c940cafd24
-[ 3316.477321] [trace_demo_dup_names] do_filp_open.ret pid=58634 comm=demo_dup_names. ret=ffff8dda1d954780
-[ 3316.477335] [trace_demo_dup_names] do_filp_open.entry pid=58634 comm=demo_dup_names. dfd=4294967196 pathname=ffff8dda082f0000 op=ffffd0c940cafb24
-[ 3316.477344] [trace_demo_dup_names] do_filp_open.ret pid=58634 comm=demo_dup_names. ret=ffff8dda1d954780
+[38294.442603] [trace_demo_dup_names] loaded target_comm=demo_dup_names user=kernel/user/stage3/case1/demo_dup_names.c
+[38294.445627] [trace_demo_dup_names] do_filp_open.entry pid=176695 comm=demo_dup_names dfd=4294967196 pathname=ffff8dda0a2d3000 op=ffffd0c94071fe84
+[38294.445639] [trace_demo_dup_names] do_filp_open.ret pid=176695 comm=demo_dup_names ret=fffffffffffffffe
+[38294.445645] [trace_demo_dup_names] do_filp_open.entry pid=176695 comm=demo_dup_names dfd=4294967196 pathname=ffff8dda0a2d3000 op=ffffd0c94071fd64
+[38294.445650] [trace_demo_dup_names] do_filp_open.ret pid=176695 comm=demo_dup_names ret=fffffffffffffffe
+[38294.445655] [trace_demo_dup_names] do_filp_open.entry pid=176695 comm=demo_dup_names dfd=4294967196 pathname=ffff8dda0a2d3000 op=ffffd0c94071faa4
+[38294.445660] [trace_demo_dup_names] do_filp_open.ret pid=176695 comm=demo_dup_names ret=fffffffffffffffe
+[38294.445667] [trace_demo_dup_names] do_filp_open.entry pid=176695 comm=demo_dup_names dfd=4294967196 pathname=ffff8dda0a2d3000 op=ffffd0c94071fe54
+[38294.445670] [trace_demo_dup_names] do_filp_open.ret pid=176695 comm=demo_dup_names ret=fffffffffffffffe
+[38294.445673] [trace_demo_dup_names] do_filp_open.entry pid=176695 comm=demo_dup_names dfd=4294967196 pathname=ffff8dda0a2d3000 op=ffffd0c94071fbd4
+[38294.445677] [trace_demo_dup_names] do_filp_open.ret pid=176695 comm=demo_dup_names ret=fffffffffffffffe
+[38294.445680] [trace_demo_dup_names] do_filp_open.entry pid=176695 comm=demo_dup_names dfd=4294967196 pathname=ffff8dda0a2d3000 op=ffffd0c94071fb84
+[38294.445683] [trace_demo_dup_names] do_filp_open.ret pid=176695 comm=demo_dup_names ret=fffffffffffffffe
+[38294.445686] [trace_demo_dup_names] do_filp_open.entry pid=176695 comm=demo_dup_names dfd=4294967196 pathname=ffff8dda0a2d3000 op=ffffd0c94071fc44
+[38294.445691] [trace_demo_dup_names] do_filp_open.ret pid=176695 comm=demo_dup_names ret=ffff8dda119f2a80
+[38294.445708] [trace_demo_dup_names] do_filp_open.entry pid=176695 comm=demo_dup_names dfd=4294967196 pathname=ffff8dda0a2d3000 op=ffffd0c94071fd14
+[38294.445712] [trace_demo_dup_names] do_filp_open.ret pid=176695 comm=demo_dup_names ret=ffff8dda119f2cc0
+[38294.445908] [trace_demo_dup_names] do_filp_open.entry pid=176695 comm=demo_dup_names dfd=4294967196 pathname=ffff8dda0a2d3000 op=ffffd0c94071fd84
+[38294.445914] [trace_demo_dup_names] do_filp_open.ret pid=176695 comm=demo_dup_names ret=ffff8dda119f2a80
+[38294.445920] [trace_demo_dup_names] do_filp_open.entry pid=176695 comm=demo_dup_names dfd=4294967196 pathname=ffff8dda0a2d3000 op=ffffd0c94071fcc4
+[38294.445924] [trace_demo_dup_names] do_filp_open.ret pid=176695 comm=demo_dup_names ret=ffff8dda119f2a80

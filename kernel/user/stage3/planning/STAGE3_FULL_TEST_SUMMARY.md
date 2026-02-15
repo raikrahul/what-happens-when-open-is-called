@@ -46,5 +46,5 @@
 - 37. `kernel/user/stage3/case8_creation_proof/user_create_simple.c` -> `pass_probe_hits` | filp=9/9 dalloc=1/1 | report `kernel/user/stage3/case8_creation_proof/reports/user_create_simple_trace_report.md`
 - 38. `kernel/user/stage3/case8_creation_proof/user_hash_collision.c` -> `pass_probe_hits` | filp=11/11 dalloc=0/0 | report `kernel/user/stage3/case8_creation_proof/reports/user_hash_collision_trace_report.md`
 - 39. `kernel/user/stage3/case8_creation_proof/user_open_existing.c` -> `pass_probe_hits` | filp=9/9 dalloc=0/0 | report `kernel/user/stage3/case8_creation_proof/reports/user_open_existing_trace_report.md`
-- 40. `kernel/user/stage3/case8_creation_proof/user_rename.c` -> `pass_probe_hits` | filp=9/9 dalloc=1/1 | report `kernel/user/stage3/case8_creation_proof/reports/user_rename_trace_report.md`
+- 40. `kernel/user/stage3/case8_creation_proof/user_rename.c` -> `pass_probe_hits` | filp=9/9 dalloc=0/0 | report `kernel/user/stage3/case8_creation_proof/reports/user_rename_trace_report.md`
 - 41. `kernel/user/stage3/multi_path_open.c` -> `pass_probe_hits` | filp=9/9 dalloc=0/0 | report `kernel/user/stage3/case0_misc/reports/multi_path_open_trace_report.md`

@@ -3,8 +3,8 @@
 - Userspace source: `kernel/user/stage3/case14_symmetry_break/user_symmetry_break.c`
 - Driver source: `kernel/drivers/stage3/case14_symmetry_break/trace_user_symmetry_break/trace_user_symmetry_break.c`
 - Module: `trace_user_symmetry_break`
-- Binary: `kernel/user/stage3/case14_symmetry_break/user_symmetry_break.out`
-- Run timestamp: `2026-02-15T13:49:07`
+- Binary: `kernel/user/stage3/case14_symmetry_break/user_symmetry_break`
+- Run timestamp: `2026-02-15T23:32:10`
 - Final status: `pass_probe_hits`
 
 ## Probe Counts
@@ -20,7 +20,7 @@
 ## Commands
 ```bash
 make -C kernel/drivers/stage3/case14_symmetry_break/trace_user_symmetry_break
-kernel/user/stage3/case14_symmetry_break/user_symmetry_break.out
+kernel/user/stage3/case14_symmetry_break/user_symmetry_break
 sudo dmesg -C
 sudo insmod kernel/drivers/stage3/case14_symmetry_break/trace_user_symmetry_break/trace_user_symmetry_break.ko target_comm="user_symmetry_b"
 sudo rmmod trace_user_symmetry_break

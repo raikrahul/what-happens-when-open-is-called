@@ -1,0 +1,127 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+  <meta charset="UTF-8">
+  <title>Worksheet: Stage 3 (Path Walk)</title>
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/styles/github.min.css">
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/highlight.min.js"></script>
+  <script>window.addEventListener('DOMContentLoaded', () => { if (window.hljs) hljs.highlightAll(); });</script>
+  <style>
+    body {
+      background: #fff;
+      color: #000;
+      font-family: monospace;
+      font-size: 13px;
+      line-height: 1.2;
+      padding: 0 5px;
+      margin: 0;
+    }
+
+    pre {
+      margin: 0.5em 0;
+      white-space: pre-wrap;
+      word-wrap: break-word;
+    }
+
+    pre code {
+      display: block;
+      white-space: pre;
+    }
+
+    h1,
+    h2,
+    h3,
+    h4,
+    h5,
+    h6 {
+      margin: 0.5em 0 0.2em 0;
+      font-size: 1em;
+      font-weight: bold;
+      text-transform: uppercase;
+    }
+
+    p,
+    ul,
+    ol {
+      margin: 0.5em 0;
+    }
+
+    hr {
+      margin: 0.5em 0;
+      border: none;
+      border-bottom: 1px dashed #000;
+    }
+
+    .blank {
+      display: inline-block;
+      min-width: 150px;
+      border-bottom: 1px solid #000;
+      color: #000;
+    }
+
+    @media print {
+
+      button,
+      div[style*="text-align: right"] {
+        display: none !important;
+      }
+
+      body {
+        padding: 0;
+      }
+    }
+  </style>
+</head>
+
+<body>
+  <div style="text-align: right; font-size: 10px; padding: 2px;">
+    <button onclick="window.print()" style="font-size: 10px; cursor: pointer;">Print</button>
+  </div>
+  <div class="content">
+    <pre style="white-space: pre-wrap; word-wrap: break-word; margin: 0; font-family: monospace;">[STAGE 3 WORKSHEET: COMPONENT WALK]
+Input: 7 target paths
+Computation: system execution + dmesg capture
+Output: verified state values
+
+[CASE 1: RELATIVE]
+Input: "some_relative_file.txt"
+Computation: link_path_walk
+Output: nd-&gt;last_type = ________
+
+[CASE 2: MISS]
+Input: middle component missing
+Computation: walk_component return
+Output: return = ________ (Expected ENOENT)
+
+[CASE 3: HIT]
+Input: repeating path
+Computation: lookup_fast
+Output: dentry addr = 0x________
+
+[CASE 4: CREAT]
+Input: O_CREAT
+Computation: do_last
+Output: dentry-&gt;d_inode = 0x________
+
+[CASE 5: MOUNT]
+Input: ext2 loopback jump
+Computation: step_into
+Output: mnt_A = 0x________ | mnt_B = 0x________
+
+[CASE 6: LOOP]
+Input: recursive symlink
+Computation: total_link_count
+Output: count = ________ (Expected 40)
+
+[CASE 7: FOLLOW]
+Input: valid symlink
+Computation: get_link
+Output: target = "________"
+
+🐾 DONE. 🐾</pre>
+  </div>
+
+</body>
+
+</html>

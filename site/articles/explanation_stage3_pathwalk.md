@@ -1,3 +1,8 @@
+---
+layout: default
+title: "Explanation: Stage 3 (Path Walk)"
+---
+
 [STAGE 3: FILENAME WALK COMPONENTS]
 Input: path string
 Computation: iterative resolution

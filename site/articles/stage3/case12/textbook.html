@@ -93,7 +93,22 @@
 [DATA SOURCES]
 - reports root: [kernel/user/stage3/case12_harder_puzzle/reports](https://github.com/raikrahul/what-happens-when-open-is-called/blob/main/kernel/user/stage3/case12_harder_puzzle/reports)
 - worksheets root: [kernel/user/stage3/case12_harder_puzzle/worksheets](https://github.com/raikrahul/what-happens-when-open-is-called/blob/main/kernel/user/stage3/case12_harder_puzzle/worksheets)
-- planning summary: [STAGE3_FULL_TEST_SUMMARY](https://github.com/raikrahul/what-happens-when-open-is-called/blob/main/kernel/user/stage3/planning/STAGE3_FULL_TEST_SUMMARY.md)</pre>
+- planning summary: [STAGE3_FULL_TEST_SUMMARY](https://github.com/raikrahul/what-happens-when-open-is-called/blob/main/kernel/user/stage3/planning/STAGE3_FULL_TEST_SUMMARY.md)
+
+&lt;!-- AUTO-EMBED START --&gt;
+[AUTO] case=case12
+
+[FOLDER] case12_harder_puzzle
+[INTENT] complex open puzzle
+
+[INVARIANTS] source=kernel/user/stage3/case12_harder_puzzle/reports/puzzle_verify_trace_report.md
+- filp_open entry=8 ret=8
+- __d_alloc entry=0 ret=0
+- ERR_PTR(-ENOENT) count=6
+- non-error file* count=2
+- check: entry==ret (filp_open) =&gt; 1
+- check: entry==ret (__d_alloc) =&gt; 1
+&lt;!-- AUTO-EMBED END --&gt;</pre>
   </div>
 
 </body>

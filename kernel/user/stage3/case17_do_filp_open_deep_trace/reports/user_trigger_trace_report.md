@@ -3,8 +3,8 @@
 - Userspace source: `kernel/user/stage3/case17_do_filp_open_deep_trace/user_trigger.c`
 - Driver source: `kernel/drivers/stage3/case17_do_filp_open_deep_trace/trace_user_trigger/trace_user_trigger.c`
 - Module: `trace_user_trigger`
-- Binary: `kernel/user/stage3/case17_do_filp_open_deep_trace/user_trigger.out`
-- Run timestamp: `2026-02-15T13:49:13`
+- Binary: `kernel/user/stage3/case17_do_filp_open_deep_trace/user_trigger`
+- Run timestamp: `2026-02-15T23:32:16`
 - Final status: `pass_probe_hits`
 
 ## Probe Counts
@@ -20,9 +20,9 @@
 ## Commands
 ```bash
 make -C kernel/drivers/stage3/case17_do_filp_open_deep_trace/trace_user_trigger
-kernel/user/stage3/case17_do_filp_open_deep_trace/user_trigger.out
+kernel/user/stage3/case17_do_filp_open_deep_trace/user_trigger
 sudo dmesg -C
-sudo insmod kernel/drivers/stage3/case17_do_filp_open_deep_trace/trace_user_trigger/trace_user_trigger.ko target_comm="user_trigger.ou"
+sudo insmod kernel/drivers/stage3/case17_do_filp_open_deep_trace/trace_user_trigger/trace_user_trigger.ko target_comm="user_trigger"
 sudo rmmod trace_user_trigger
 ```
 

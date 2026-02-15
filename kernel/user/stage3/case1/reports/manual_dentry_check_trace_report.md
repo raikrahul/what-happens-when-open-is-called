@@ -3,8 +3,8 @@
 - Userspace source: `kernel/user/stage3/case1/manual_dentry_check.c`
 - Driver source: `kernel/drivers/stage3/case1/trace_manual_dentry_check/trace_manual_dentry_check.c`
 - Module: `trace_manual_dentry_check`
-- Binary: `kernel/user/stage3/case1/manual_dentry_check.out`
-- Run timestamp: `2026-02-15T13:48:59`
+- Binary: `kernel/user/stage3/case1/manual_dentry_check`
+- Run timestamp: `2026-02-15T23:32:00`
 - Final status: `pass_probe_hits`
 
 ## Probe Counts
@@ -20,7 +20,7 @@
 ## Commands
 ```bash
 make -C kernel/drivers/stage3/case1/trace_manual_dentry_check
-kernel/user/stage3/case1/manual_dentry_check.out
+kernel/user/stage3/case1/manual_dentry_check
 sudo dmesg -C
 sudo insmod kernel/drivers/stage3/case1/trace_manual_dentry_check/trace_manual_dentry_check.ko target_comm="manual_dentry_c"
 sudo rmmod trace_manual_dentry_check

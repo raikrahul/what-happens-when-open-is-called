@@ -3,8 +3,8 @@
 - Userspace source: `kernel/user/stage3/case1/case1_relative/case1_relative.c`
 - Driver source: `kernel/drivers/stage3/case1/trace_case1_relative/trace_case1_relative.c`
 - Module: `trace_case1_relative`
-- Binary: `kernel/user/stage3/case1/case1_relative/case1_relative.out`
-- Run timestamp: `2026-02-15T13:48:47`
+- Binary: `kernel/user/stage3/case1/case1_relative/case1_relative`
+- Run timestamp: `2026-02-15T23:31:47`
 - Final status: `pass_probe_hits`
 
 ## Probe Counts
@@ -20,9 +20,9 @@
 ## Commands
 ```bash
 make -C kernel/drivers/stage3/case1/trace_case1_relative
-kernel/user/stage3/case1/case1_relative/case1_relative.out
+kernel/user/stage3/case1/case1_relative/case1_relative
 sudo dmesg -C
-sudo insmod kernel/drivers/stage3/case1/trace_case1_relative/trace_case1_relative.ko target_comm="case1_relative."
+sudo insmod kernel/drivers/stage3/case1/trace_case1_relative/trace_case1_relative.ko target_comm="case1_relative"
 sudo rmmod trace_case1_relative
 ```
 

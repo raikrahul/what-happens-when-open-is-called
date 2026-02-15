@@ -20,3 +20,129 @@ title: "Stage 3 CASE12: Proof"
 - worksheet index: [STAGE3_WORKSHEET_INDEX](https://github.com/raikrahul/what-happens-when-open-is-called/blob/main/kernel/user/stage3/planning/STAGE3_WORKSHEET_INDEX.md)
 - axiom index: [STAGE3_AXIOM_WORKSHEET_INDEX](https://github.com/raikrahul/what-happens-when-open-is-called/blob/main/kernel/user/stage3/planning/STAGE3_AXIOM_WORKSHEET_INDEX.md)
 - hard index: [STAGE3_AXIOM_HARD_WORKSHEET_INDEX](https://github.com/raikrahul/what-happens-when-open-is-called/blob/main/kernel/user/stage3/planning/STAGE3_AXIOM_HARD_WORKSHEET_INDEX.md)
+
+<!-- AUTO-EMBED START -->
+[AUTO] case=case12
+
+[USERDIR] kernel/user/stage3/case12_harder_puzzle
+
+================================================================================
+[EMBED] puzzle_verify_trace_report.md
+[SOURCE] kernel/user/stage3/case12_harder_puzzle/reports/puzzle_verify_trace_report.md
+================================================================================
+# Trace Report: puzzle_verify.c
+
+- Userspace source: `kernel/user/stage3/case12_harder_puzzle/puzzle_verify.c`
+- Driver source: `kernel/drivers/stage3/case12_harder_puzzle/trace_puzzle_verify/trace_puzzle_verify.c`
+- Module: `trace_puzzle_verify`
+- Binary: `kernel/user/stage3/case12_harder_puzzle/puzzle_verify`
+- Run timestamp: `2026-02-15T23:32:06`
+- Final status: `pass_probe_hits`
+
+## Probe Counts
+- do_filp_open.entry: 8
+- do_filp_open.ret: 8
+- __d_alloc.entry: 0
+- __d_alloc.ret: 0
+
+## Return Signature Counts
+- ERR_PTR(-ENOENT) observed (fffffffffffffffe): 6
+- Non-error pointer returns observed: 2
+
+## Commands
+```bash
+make -C kernel/drivers/stage3/case12_harder_puzzle/trace_puzzle_verify
+kernel/user/stage3/case12_harder_puzzle/puzzle_verify
+sudo dmesg -C
+sudo insmod kernel/drivers/stage3/case12_harder_puzzle/trace_puzzle_verify/trace_puzzle_verify.ko target_comm="puzzle_verify"
+sudo rmmod trace_puzzle_verify
+```
+
+## Dmesg
+`kernel/user/stage3/case12_harder_puzzle/reports/puzzle_verify_dmesg.txt`
+
+================================================================================
+[EMBED] user_puzzle_trace_report.md
+[SOURCE] kernel/user/stage3/case12_harder_puzzle/reports/user_puzzle_trace_report.md
+================================================================================
+# Trace Report: user_puzzle.c
+
+- Userspace source: `kernel/user/stage3/case12_harder_puzzle/user_puzzle.c`
+- Driver source: `kernel/drivers/stage3/case12_harder_puzzle/trace_user_puzzle/trace_user_puzzle.c`
+- Module: `trace_user_puzzle`
+- Binary: `kernel/user/stage3/case12_harder_puzzle/user_puzzle`
+- Run timestamp: `2026-02-15T23:32:07`
+- Final status: `pass_probe_hits`
+
+## Probe Counts
+- do_filp_open.entry: 11
+- do_filp_open.ret: 11
+- __d_alloc.entry: 0
+- __d_alloc.ret: 0
+
+## Return Signature Counts
+- ERR_PTR(-ENOENT) observed (fffffffffffffffe): 6
+- Non-error pointer returns observed: 5
+
+## Commands
+```bash
+make -C kernel/drivers/stage3/case12_harder_puzzle/trace_user_puzzle
+kernel/user/stage3/case12_harder_puzzle/user_puzzle
+sudo dmesg -C
+sudo insmod kernel/drivers/stage3/case12_harder_puzzle/trace_user_puzzle/trace_user_puzzle.ko target_comm="user_puzzle"
+sudo rmmod trace_user_puzzle
+```
+
+## Dmesg
+`kernel/user/stage3/case12_harder_puzzle/reports/user_puzzle_dmesg.txt`
+
+================================================================================
+[EMBED] puzzle_verify_dmesg.txt
+[SOURCE] kernel/user/stage3/case12_harder_puzzle/reports/puzzle_verify_dmesg.txt
+================================================================================
+[38307.617569] [trace_puzzle_verify] loaded target_comm=puzzle_verify user=kernel/user/stage3/case12_harder_puzzle/puzzle_verify.c
+[38307.621140] [trace_puzzle_verify] do_filp_open.entry pid=179519 comm=puzzle_verify dfd=4294967196 pathname=ffff8dda082f2000 op=ffffd0c9407f7cf4
+[38307.621162] [trace_puzzle_verify] do_filp_open.ret pid=179519 comm=puzzle_verify ret=fffffffffffffffe
+[38307.621177] [trace_puzzle_verify] do_filp_open.entry pid=179519 comm=puzzle_verify dfd=4294967196 pathname=ffff8dda082f2000 op=ffffd0c9407f7d24
+[38307.621191] [trace_puzzle_verify] do_filp_open.ret pid=179519 comm=puzzle_verify ret=fffffffffffffffe
+[38307.621205] [trace_puzzle_verify] do_filp_open.entry pid=179519 comm=puzzle_verify dfd=4294967196 pathname=ffff8dda082f2000 op=ffffd0c9407f7bd4
+[38307.621218] [trace_puzzle_verify] do_filp_open.ret pid=179519 comm=puzzle_verify ret=fffffffffffffffe
+[38307.621236] [trace_puzzle_verify] do_filp_open.entry pid=179519 comm=puzzle_verify dfd=4294967196 pathname=ffff8dda082f2000 op=ffffd0c9407f7d94
+[38307.621244] [trace_puzzle_verify] do_filp_open.ret pid=179519 comm=puzzle_verify ret=fffffffffffffffe
+[38307.621253] [trace_puzzle_verify] do_filp_open.entry pid=179519 comm=puzzle_verify dfd=4294967196 pathname=ffff8dda082f2000 op=ffffd0c9407f7b74
+[38307.621283] [trace_puzzle_verify] do_filp_open.ret pid=179519 comm=puzzle_verify ret=fffffffffffffffe
+[38307.621293] [trace_puzzle_verify] do_filp_open.entry pid=179519 comm=puzzle_verify dfd=4294967196 pathname=ffff8dda082f2000 op=ffffd0c9407f7c84
+[38307.621301] [trace_puzzle_verify] do_filp_open.ret pid=179519 comm=puzzle_verify ret=fffffffffffffffe
+[38307.621308] [trace_puzzle_verify] do_filp_open.entry pid=179519 comm=puzzle_verify dfd=4294967196 pathname=ffff8dda082f2000 op=ffffd0c9407f7dc4
+[38307.621319] [trace_puzzle_verify] do_filp_open.ret pid=179519 comm=puzzle_verify ret=ffff8ddc28873d80
+[38307.621361] [trace_puzzle_verify] do_filp_open.entry pid=179519 comm=puzzle_verify dfd=4294967196 pathname=ffff8dda082f2000 op=ffffd0c9407f7ad4
+[38307.621371] [trace_puzzle_verify] do_filp_open.ret pid=179519 comm=puzzle_verify ret=ffff8ddc288733c0
+
+================================================================================
+[EMBED] user_puzzle_dmesg.txt
+[SOURCE] kernel/user/stage3/case12_harder_puzzle/reports/user_puzzle_dmesg.txt
+================================================================================
+[38308.723970] [trace_user_puzzle] loaded target_comm=user_puzzle user=kernel/user/stage3/case12_harder_puzzle/user_puzzle.c
+[38308.727215] [trace_user_puzzle] do_filp_open.entry pid=179776 comm=user_puzzle dfd=4294967196 pathname=ffff8dda13f5a000 op=ffffd0c940e2fcf4
+[38308.727236] [trace_user_puzzle] do_filp_open.ret pid=179776 comm=user_puzzle ret=fffffffffffffffe
+[38308.727250] [trace_user_puzzle] do_filp_open.entry pid=179776 comm=user_puzzle dfd=4294967196 pathname=ffff8dda13f5a000 op=ffffd0c940e2fcf4
+[38308.727261] [trace_user_puzzle] do_filp_open.ret pid=179776 comm=user_puzzle ret=fffffffffffffffe
+[38308.727273] [trace_user_puzzle] do_filp_open.entry pid=179776 comm=user_puzzle dfd=4294967196 pathname=ffff8dda13f5a000 op=ffffd0c940e2fd84
+[38308.727284] [trace_user_puzzle] do_filp_open.ret pid=179776 comm=user_puzzle ret=fffffffffffffffe
+[38308.727299] [trace_user_puzzle] do_filp_open.entry pid=179776 comm=user_puzzle dfd=4294967196 pathname=ffff8dda13f5a000 op=ffffd0c940e2fc84
+[38308.727307] [trace_user_puzzle] do_filp_open.ret pid=179776 comm=user_puzzle ret=fffffffffffffffe
+[38308.727313] [trace_user_puzzle] do_filp_open.entry pid=179776 comm=user_puzzle dfd=4294967196 pathname=ffff8dda13f5a000 op=ffffd0c940e2fca4
+[38308.727321] [trace_user_puzzle] do_filp_open.ret pid=179776 comm=user_puzzle ret=fffffffffffffffe
+[38308.727327] [trace_user_puzzle] do_filp_open.entry pid=179776 comm=user_puzzle dfd=4294967196 pathname=ffff8dda13f5a000 op=ffffd0c940e2fda4
+[38308.727335] [trace_user_puzzle] do_filp_open.ret pid=179776 comm=user_puzzle ret=fffffffffffffffe
+[38308.727342] [trace_user_puzzle] do_filp_open.entry pid=179776 comm=user_puzzle dfd=4294967196 pathname=ffff8dda13f5a000 op=ffffd0c940e2faf4
+[38308.727352] [trace_user_puzzle] do_filp_open.ret pid=179776 comm=user_puzzle ret=ffff8dda07ba0c00
+[38308.727385] [trace_user_puzzle] do_filp_open.entry pid=179776 comm=user_puzzle dfd=4294967196 pathname=ffff8dda13f5a000 op=ffffd0c940e2fb24
+[38308.727395] [trace_user_puzzle] do_filp_open.ret pid=179776 comm=user_puzzle ret=ffff8dda07ba0d80
+[38308.727731] [trace_user_puzzle] do_filp_open.entry pid=179776 comm=user_puzzle dfd=4294967196 pathname=ffff8dda13f5a000 op=ffffd0c940e2fe24
+[38308.727801] [trace_user_puzzle] do_filp_open.ret pid=179776 comm=user_puzzle ret=ffff8dda07ba0c00
+[38308.727878] [trace_user_puzzle] do_filp_open.entry pid=179776 comm=user_puzzle dfd=4294967196 pathname=ffff8dda13f5a000 op=ffffd0c940e2fc24
+[38308.727890] [trace_user_puzzle] do_filp_open.ret pid=179776 comm=user_puzzle ret=ffff8dda07ba0c00
+[38308.727990] [trace_user_puzzle] do_filp_open.entry pid=179776 comm=user_puzzle dfd=4294967196 pathname=ffff8dda13f5a000 op=ffffd0c940e2fd34
+[38308.728005] [trace_user_puzzle] do_filp_open.ret pid=179776 comm=user_puzzle ret=ffff8dda07ba0c00
+<!-- AUTO-EMBED END -->

@@ -32,3 +32,68 @@ title: "Stage 3 CASE1: Proof"
 - worksheet index: [STAGE3_WORKSHEET_INDEX](https://github.com/raikrahul/what-happens-when-open-is-called/blob/main/kernel/user/stage3/planning/STAGE3_WORKSHEET_INDEX.md)
 - axiom index: [STAGE3_AXIOM_WORKSHEET_INDEX](https://github.com/raikrahul/what-happens-when-open-is-called/blob/main/kernel/user/stage3/planning/STAGE3_AXIOM_WORKSHEET_INDEX.md)
 - hard index: [STAGE3_AXIOM_HARD_WORKSHEET_INDEX](https://github.com/raikrahul/what-happens-when-open-is-called/blob/main/kernel/user/stage3/planning/STAGE3_AXIOM_HARD_WORKSHEET_INDEX.md)
+
+<!-- AUTO-EMBED START -->
+[AUTO] case=case1
+
+[USERDIR] kernel/user/stage3/case1
+
+================================================================================
+[EMBED] case1_relative_trace_report.md
+[SOURCE] kernel/user/stage3/case1/reports/case1_relative_trace_report.md
+================================================================================
+# Trace Report: case1_relative.c
+
+- Userspace source: `kernel/user/stage3/case1/case1_relative/case1_relative.c`
+- Driver source: `kernel/drivers/stage3/case1/trace_case1_relative/trace_case1_relative.c`
+- Module: `trace_case1_relative`
+- Binary: `kernel/user/stage3/case1/case1_relative/case1_relative`
+- Run timestamp: `2026-02-15T23:31:47`
+- Final status: `pass_probe_hits`
+
+## Probe Counts
+- do_filp_open.entry: 9
+- do_filp_open.ret: 9
+- __d_alloc.entry: 0
+- __d_alloc.ret: 0
+
+## Return Signature Counts
+- ERR_PTR(-ENOENT) observed (fffffffffffffffe): 6
+- Non-error pointer returns observed: 3
+
+## Commands
+```bash
+make -C kernel/drivers/stage3/case1/trace_case1_relative
+kernel/user/stage3/case1/case1_relative/case1_relative
+sudo dmesg -C
+sudo insmod kernel/drivers/stage3/case1/trace_case1_relative/trace_case1_relative.ko target_comm="case1_relative"
+sudo rmmod trace_case1_relative
+```
+
+## Dmesg
+`kernel/user/stage3/case1/reports/case1_relative_dmesg.txt`
+
+================================================================================
+[EMBED] case1_relative_dmesg.txt
+[SOURCE] kernel/user/stage3/case1/reports/case1_relative_dmesg.txt
+================================================================================
+[38288.718432] [trace_case1_relative] loaded target_comm=case1_relative user=kernel/user/stage3/case1/case1_relative/case1_relative.c
+[38288.720661] [trace_case1_relative] do_filp_open.entry pid=175396 comm=case1_relative dfd=4294967196 pathname=ffff8dda0a2d7000 op=ffffd0c953c37e54
+[38288.720683] [trace_case1_relative] do_filp_open.ret pid=175396 comm=case1_relative ret=fffffffffffffffe
+[38288.720694] [trace_case1_relative] do_filp_open.entry pid=175396 comm=case1_relative dfd=4294967196 pathname=ffff8dda0a2d7000 op=ffffd0c953c37b44
+[38288.720698] [trace_case1_relative] do_filp_open.ret pid=175396 comm=case1_relative ret=fffffffffffffffe
+[38288.720704] [trace_case1_relative] do_filp_open.entry pid=175396 comm=case1_relative dfd=4294967196 pathname=ffff8dda0a2d7000 op=ffffd0c953c37b24
+[38288.720710] [trace_case1_relative] do_filp_open.ret pid=175396 comm=case1_relative ret=fffffffffffffffe
+[38288.720718] [trace_case1_relative] do_filp_open.entry pid=175396 comm=case1_relative dfd=4294967196 pathname=ffff8dda0a2d7000 op=ffffd0c953c37c64
+[38288.720723] [trace_case1_relative] do_filp_open.ret pid=175396 comm=case1_relative ret=fffffffffffffffe
+[38288.720726] [trace_case1_relative] do_filp_open.entry pid=175396 comm=case1_relative dfd=4294967196 pathname=ffff8dda0a2d7000 op=ffffd0c953c37b44
+[38288.720729] [trace_case1_relative] do_filp_open.ret pid=175396 comm=case1_relative ret=fffffffffffffffe
+[38288.720732] [trace_case1_relative] do_filp_open.entry pid=175396 comm=case1_relative dfd=4294967196 pathname=ffff8dda0a2d7000 op=ffffd0c953c37b44
+[38288.720736] [trace_case1_relative] do_filp_open.ret pid=175396 comm=case1_relative ret=fffffffffffffffe
+[38288.720739] [trace_case1_relative] do_filp_open.entry pid=175396 comm=case1_relative dfd=4294967196 pathname=ffff8dda0a2d7000 op=ffffd0c953c37d44
+[38288.720744] [trace_case1_relative] do_filp_open.ret pid=175396 comm=case1_relative ret=ffff8dda306d2d80
+[38288.720779] [trace_case1_relative] do_filp_open.entry pid=175396 comm=case1_relative dfd=4294967196 pathname=ffff8dda0a2d7000 op=ffffd0c953c37cf4
+[38288.720785] [trace_case1_relative] do_filp_open.ret pid=175396 comm=case1_relative ret=ffff8dda306d2a80
+[38288.720970] [trace_case1_relative] do_filp_open.entry pid=175396 comm=case1_relative dfd=4294967196 pathname=ffff8dda0a2d7000 op=ffffd0c953c37d64
+[38288.720976] [trace_case1_relative] do_filp_open.ret pid=175396 comm=case1_relative ret=ffff8dda306d2d80
+<!-- AUTO-EMBED END -->

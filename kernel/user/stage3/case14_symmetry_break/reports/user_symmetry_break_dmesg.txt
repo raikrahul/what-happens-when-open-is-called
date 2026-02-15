@@ -1,21 +1,21 @@
-[ 3331.286422] [trace_user_symmetry_break] loaded target_comm=user_symmetry_b user=kernel/user/stage3/case14_symmetry_break/user_symmetry_break.c
-[ 3331.289116] [trace_user_symmetry_break] do_filp_open.entry pid=62263 comm=user_symmetry_b dfd=4294967196 pathname=ffff8dda12eb0000 op=ffffd0c940ac3d74
-[ 3331.289130] [trace_user_symmetry_break] do_filp_open.ret pid=62263 comm=user_symmetry_b ret=fffffffffffffffe
-[ 3331.289137] [trace_user_symmetry_break] do_filp_open.entry pid=62263 comm=user_symmetry_b dfd=4294967196 pathname=ffff8dda12eb0000 op=ffffd0c940ac3b44
-[ 3331.289142] [trace_user_symmetry_break] do_filp_open.ret pid=62263 comm=user_symmetry_b ret=fffffffffffffffe
-[ 3331.289147] [trace_user_symmetry_break] do_filp_open.entry pid=62263 comm=user_symmetry_b dfd=4294967196 pathname=ffff8dda12eb0000 op=ffffd0c940ac3ba4
-[ 3331.289152] [trace_user_symmetry_break] do_filp_open.ret pid=62263 comm=user_symmetry_b ret=fffffffffffffffe
-[ 3331.289159] [trace_user_symmetry_break] do_filp_open.entry pid=62263 comm=user_symmetry_b dfd=4294967196 pathname=ffff8dda12eb0000 op=ffffd0c940ac3c74
-[ 3331.289162] [trace_user_symmetry_break] do_filp_open.ret pid=62263 comm=user_symmetry_b ret=fffffffffffffffe
-[ 3331.289165] [trace_user_symmetry_break] do_filp_open.entry pid=62263 comm=user_symmetry_b dfd=4294967196 pathname=ffff8dda12eb0000 op=ffffd0c940ac3d64
-[ 3331.289169] [trace_user_symmetry_break] do_filp_open.ret pid=62263 comm=user_symmetry_b ret=fffffffffffffffe
-[ 3331.289172] [trace_user_symmetry_break] do_filp_open.entry pid=62263 comm=user_symmetry_b dfd=4294967196 pathname=ffff8dda12eb0000 op=ffffd0c940ac3ce4
-[ 3331.289175] [trace_user_symmetry_break] do_filp_open.ret pid=62263 comm=user_symmetry_b ret=fffffffffffffffe
-[ 3331.289178] [trace_user_symmetry_break] do_filp_open.entry pid=62263 comm=user_symmetry_b dfd=4294967196 pathname=ffff8dda12eb0000 op=ffffd0c940ac3d84
-[ 3331.289183] [trace_user_symmetry_break] do_filp_open.ret pid=62263 comm=user_symmetry_b ret=ffff8dd904370780
-[ 3331.289221] [trace_user_symmetry_break] do_filp_open.entry pid=62263 comm=user_symmetry_b dfd=4294967196 pathname=ffff8dda12eb0000 op=ffffd0c940ac3b34
-[ 3331.289235] [trace_user_symmetry_break] do_filp_open.ret pid=62263 comm=user_symmetry_b ret=ffff8dd904370600
-[ 3331.289656] [trace_user_symmetry_break] do_filp_open.entry pid=62263 comm=user_symmetry_b dfd=4294967196 pathname=ffff8dda12eb0000 op=ffffd0c940ac3de4
-[ 3331.289676] [trace_user_symmetry_break] do_filp_open.ret pid=62263 comm=user_symmetry_b ret=ffff8dd904370780
-[ 3331.289688] [trace_user_symmetry_break] do_filp_open.entry pid=62263 comm=user_symmetry_b dfd=4294967196 pathname=ffff8dda12eb0000 op=ffffd0c940ac3b24
-[ 3331.289700] [trace_user_symmetry_break] do_filp_open.ret pid=62263 comm=user_symmetry_b ret=ffff8dd904370780
+[38311.131346] [trace_user_symmetry_break] loaded target_comm=user_symmetry_b user=kernel/user/stage3/case14_symmetry_break/user_symmetry_break.c
+[38311.134777] [trace_user_symmetry_break] do_filp_open.entry pid=180304 comm=user_symmetry_b dfd=4294967196 pathname=ffff8dda294d3000 op=ffffd0c9407a3c24
+[38311.134790] [trace_user_symmetry_break] do_filp_open.ret pid=180304 comm=user_symmetry_b ret=fffffffffffffffe
+[38311.134796] [trace_user_symmetry_break] do_filp_open.entry pid=180304 comm=user_symmetry_b dfd=4294967196 pathname=ffff8dda294d3000 op=ffffd0c9407a3af4
+[38311.134801] [trace_user_symmetry_break] do_filp_open.ret pid=180304 comm=user_symmetry_b ret=fffffffffffffffe
+[38311.134806] [trace_user_symmetry_break] do_filp_open.entry pid=180304 comm=user_symmetry_b dfd=4294967196 pathname=ffff8dda294d3000 op=ffffd0c9407a3ca4
+[38311.134811] [trace_user_symmetry_break] do_filp_open.ret pid=180304 comm=user_symmetry_b ret=fffffffffffffffe
+[38311.134818] [trace_user_symmetry_break] do_filp_open.entry pid=180304 comm=user_symmetry_b dfd=4294967196 pathname=ffff8dda294d3000 op=ffffd0c9407a3ba4
+[38311.134822] [trace_user_symmetry_break] do_filp_open.ret pid=180304 comm=user_symmetry_b ret=fffffffffffffffe
+[38311.134825] [trace_user_symmetry_break] do_filp_open.entry pid=180304 comm=user_symmetry_b dfd=4294967196 pathname=ffff8dda294d3000 op=ffffd0c9407a3e64
+[38311.134828] [trace_user_symmetry_break] do_filp_open.ret pid=180304 comm=user_symmetry_b ret=fffffffffffffffe
+[38311.134831] [trace_user_symmetry_break] do_filp_open.entry pid=180304 comm=user_symmetry_b dfd=4294967196 pathname=ffff8dda294d3000 op=ffffd0c9407a3cb4
+[38311.134834] [trace_user_symmetry_break] do_filp_open.ret pid=180304 comm=user_symmetry_b ret=fffffffffffffffe
+[38311.134838] [trace_user_symmetry_break] do_filp_open.entry pid=180304 comm=user_symmetry_b dfd=4294967196 pathname=ffff8dda294d3000 op=ffffd0c9407a3ae4
+[38311.134842] [trace_user_symmetry_break] do_filp_open.ret pid=180304 comm=user_symmetry_b ret=ffff8dda04ae9480
+[38311.134862] [trace_user_symmetry_break] do_filp_open.entry pid=180304 comm=user_symmetry_b dfd=4294967196 pathname=ffff8dda294d3000 op=ffffd0c9407a3cb4
+[38311.134866] [trace_user_symmetry_break] do_filp_open.ret pid=180304 comm=user_symmetry_b ret=ffff8dda04ae9540
+[38311.135057] [trace_user_symmetry_break] do_filp_open.entry pid=180304 comm=user_symmetry_b dfd=4294967196 pathname=ffff8dda294d3000 op=ffffd0c9407a3b44
+[38311.135064] [trace_user_symmetry_break] do_filp_open.ret pid=180304 comm=user_symmetry_b ret=ffff8dda04ae9480
+[38311.135069] [trace_user_symmetry_break] do_filp_open.entry pid=180304 comm=user_symmetry_b dfd=4294967196 pathname=ffff8dda294d3000 op=ffffd0c9407a3d44
+[38311.135073] [trace_user_symmetry_break] do_filp_open.ret pid=180304 comm=user_symmetry_b ret=ffff8dda04ae9480

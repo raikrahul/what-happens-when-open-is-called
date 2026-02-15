@@ -3,8 +3,8 @@
 - Userspace source: `kernel/user/stage3/case8_creation_proof/user_create_long.c`
 - Driver source: `kernel/drivers/stage3/case8_creation_proof/trace_user_create_long/trace_user_create_long.c`
 - Module: `trace_user_create_long`
-- Binary: `kernel/user/stage3/case8_creation_proof/user_create_long.out`
-- Run timestamp: `2026-02-15T13:49:29`
+- Binary: `kernel/user/stage3/case8_creation_proof/user_create_long`
+- Run timestamp: `2026-02-15T23:32:33`
 - Final status: `pass_probe_hits`
 
 ## Probe Counts
@@ -20,7 +20,7 @@
 ## Commands
 ```bash
 make -C kernel/drivers/stage3/case8_creation_proof/trace_user_create_long
-kernel/user/stage3/case8_creation_proof/user_create_long.out
+kernel/user/stage3/case8_creation_proof/user_create_long
 sudo dmesg -C
 sudo insmod kernel/drivers/stage3/case8_creation_proof/trace_user_create_long/trace_user_create_long.ko target_comm="user_create_lon"
 sudo rmmod trace_user_create_long

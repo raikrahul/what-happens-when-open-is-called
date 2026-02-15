@@ -1,19 +1,19 @@
-[ 3349.646618] [trace_case7_symlink_fast] loaded target_comm=case7_symlink_f user=kernel/user/stage3/case7_symlink_fast/case7_symlink_fast.c
-[ 3349.649325] [trace_case7_symlink_fast] do_filp_open.entry pid=65686 comm=case7_symlink_f dfd=4294967196 pathname=ffff8dda082f2000 op=ffffd0c940653ae4
-[ 3349.649348] [trace_case7_symlink_fast] do_filp_open.ret pid=65686 comm=case7_symlink_f ret=fffffffffffffffe
-[ 3349.649362] [trace_case7_symlink_fast] do_filp_open.entry pid=65686 comm=case7_symlink_f dfd=4294967196 pathname=ffff8dda082f2000 op=ffffd0c940653b64
-[ 3349.649373] [trace_case7_symlink_fast] do_filp_open.ret pid=65686 comm=case7_symlink_f ret=fffffffffffffffe
-[ 3349.649385] [trace_case7_symlink_fast] do_filp_open.entry pid=65686 comm=case7_symlink_f dfd=4294967196 pathname=ffff8dda082f2000 op=ffffd0c940653dd4
-[ 3349.649396] [trace_case7_symlink_fast] do_filp_open.ret pid=65686 comm=case7_symlink_f ret=fffffffffffffffe
-[ 3349.649410] [trace_case7_symlink_fast] do_filp_open.entry pid=65686 comm=case7_symlink_f dfd=4294967196 pathname=ffff8dda082f2000 op=ffffd0c940653cc4
-[ 3349.649418] [trace_case7_symlink_fast] do_filp_open.ret pid=65686 comm=case7_symlink_f ret=fffffffffffffffe
-[ 3349.649425] [trace_case7_symlink_fast] do_filp_open.entry pid=65686 comm=case7_symlink_f dfd=4294967196 pathname=ffff8dda082f2000 op=ffffd0c940653de4
-[ 3349.649432] [trace_case7_symlink_fast] do_filp_open.ret pid=65686 comm=case7_symlink_f ret=fffffffffffffffe
-[ 3349.649438] [trace_case7_symlink_fast] do_filp_open.entry pid=65686 comm=case7_symlink_f dfd=4294967196 pathname=ffff8dda082f2000 op=ffffd0c940653e84
-[ 3349.649446] [trace_case7_symlink_fast] do_filp_open.ret pid=65686 comm=case7_symlink_f ret=fffffffffffffffe
-[ 3349.649453] [trace_case7_symlink_fast] do_filp_open.entry pid=65686 comm=case7_symlink_f dfd=4294967196 pathname=ffff8dda082f2000 op=ffffd0c940653c74
-[ 3349.649463] [trace_case7_symlink_fast] do_filp_open.ret pid=65686 comm=case7_symlink_f ret=ffff8dda14a2b300
-[ 3349.649496] [trace_case7_symlink_fast] do_filp_open.entry pid=65686 comm=case7_symlink_f dfd=4294967196 pathname=ffff8dda082f2000 op=ffffd0c940653cb4
-[ 3349.649507] [trace_case7_symlink_fast] do_filp_open.ret pid=65686 comm=case7_symlink_f ret=ffff8dda14a2b900
-[ 3349.649919] [trace_case7_symlink_fast] do_filp_open.entry pid=65686 comm=case7_symlink_f dfd=4294967196 pathname=ffff8dda082f2000 op=ffffd0c940653e14
-[ 3349.649930] [trace_case7_symlink_fast] do_filp_open.ret pid=65686 comm=case7_symlink_f ret=fffffffffffffffe
+[38331.135080] [trace_case7_symlink_fast] loaded target_comm=case7_symlink_f user=kernel/user/stage3/case7_symlink_fast/case7_symlink_fast.c
+[38331.137554] [trace_case7_symlink_fast] do_filp_open.entry pid=183660 comm=case7_symlink_f dfd=4294967196 pathname=ffff8dda082af000 op=ffffd0c941c53cf4
+[38331.137566] [trace_case7_symlink_fast] do_filp_open.ret pid=183660 comm=case7_symlink_f ret=fffffffffffffffe
+[38331.137573] [trace_case7_symlink_fast] do_filp_open.entry pid=183660 comm=case7_symlink_f dfd=4294967196 pathname=ffff8dda082af000 op=ffffd0c941c53ba4
+[38331.137578] [trace_case7_symlink_fast] do_filp_open.ret pid=183660 comm=case7_symlink_f ret=fffffffffffffffe
+[38331.137583] [trace_case7_symlink_fast] do_filp_open.entry pid=183660 comm=case7_symlink_f dfd=4294967196 pathname=ffff8dda082af000 op=ffffd0c941c53b44
+[38331.137588] [trace_case7_symlink_fast] do_filp_open.ret pid=183660 comm=case7_symlink_f ret=fffffffffffffffe
+[38331.137594] [trace_case7_symlink_fast] do_filp_open.entry pid=183660 comm=case7_symlink_f dfd=4294967196 pathname=ffff8dda082af000 op=ffffd0c941c53c94
+[38331.137598] [trace_case7_symlink_fast] do_filp_open.ret pid=183660 comm=case7_symlink_f ret=fffffffffffffffe
+[38331.137601] [trace_case7_symlink_fast] do_filp_open.entry pid=183660 comm=case7_symlink_f dfd=4294967196 pathname=ffff8dda082af000 op=ffffd0c941c53af4
+[38331.137604] [trace_case7_symlink_fast] do_filp_open.ret pid=183660 comm=case7_symlink_f ret=fffffffffffffffe
+[38331.137607] [trace_case7_symlink_fast] do_filp_open.entry pid=183660 comm=case7_symlink_f dfd=4294967196 pathname=ffff8dda082af000 op=ffffd0c941c53cc4
+[38331.137611] [trace_case7_symlink_fast] do_filp_open.ret pid=183660 comm=case7_symlink_f ret=fffffffffffffffe
+[38331.137614] [trace_case7_symlink_fast] do_filp_open.entry pid=183660 comm=case7_symlink_f dfd=4294967196 pathname=ffff8dda082af000 op=ffffd0c941c53ae4
+[38331.137619] [trace_case7_symlink_fast] do_filp_open.ret pid=183660 comm=case7_symlink_f ret=ffff8dda05063000
+[38331.137637] [trace_case7_symlink_fast] do_filp_open.entry pid=183660 comm=case7_symlink_f dfd=4294967196 pathname=ffff8dda082af000 op=ffffd0c941c53c34
+[38331.137642] [trace_case7_symlink_fast] do_filp_open.ret pid=183660 comm=case7_symlink_f ret=ffff8dda05063c00
+[38331.137842] [trace_case7_symlink_fast] do_filp_open.entry pid=183660 comm=case7_symlink_f dfd=4294967196 pathname=ffff8dda082af000 op=ffffd0c941c53be4
+[38331.137848] [trace_case7_symlink_fast] do_filp_open.ret pid=183660 comm=case7_symlink_f ret=fffffffffffffffe

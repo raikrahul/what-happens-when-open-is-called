@@ -17,3 +17,18 @@ title: "Stage 3 CASE8: Textbook"
 - reports root: [kernel/user/stage3/case8_creation_proof/reports](https://github.com/raikrahul/what-happens-when-open-is-called/blob/main/kernel/user/stage3/case8_creation_proof/reports)
 - worksheets root: [kernel/user/stage3/case8_creation_proof/worksheets](https://github.com/raikrahul/what-happens-when-open-is-called/blob/main/kernel/user/stage3/case8_creation_proof/worksheets)
 - planning summary: [STAGE3_FULL_TEST_SUMMARY](https://github.com/raikrahul/what-happens-when-open-is-called/blob/main/kernel/user/stage3/planning/STAGE3_FULL_TEST_SUMMARY.md)
+
+<!-- AUTO-EMBED START -->
+[AUTO] case=case8
+
+[FOLDER] case8_creation_proof
+[INTENT] creation and dcache proof
+
+[INVARIANTS] source=kernel/user/stage3/case8_creation_proof/reports/derive_hash_trace_report.md
+- filp_open entry=8 ret=8
+- __d_alloc entry=0 ret=0
+- ERR_PTR(-ENOENT) count=6
+- non-error file* count=2
+- check: entry==ret (filp_open) => 1
+- check: entry==ret (__d_alloc) => 1
+<!-- AUTO-EMBED END -->

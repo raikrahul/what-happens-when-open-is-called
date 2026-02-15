@@ -3,8 +3,8 @@
 - Userspace source: `kernel/user/stage3/case8_creation_proof/user_hash_collision.c`
 - Driver source: `kernel/drivers/stage3/case8_creation_proof/trace_user_hash_collision/trace_user_hash_collision.c`
 - Module: `trace_user_hash_collision`
-- Binary: `kernel/user/stage3/case8_creation_proof/user_hash_collision.out`
-- Run timestamp: `2026-02-15T13:49:31`
+- Binary: `kernel/user/stage3/case8_creation_proof/user_hash_collision`
+- Run timestamp: `2026-02-15T23:32:36`
 - Final status: `pass_probe_hits`
 
 ## Probe Counts
@@ -20,7 +20,7 @@
 ## Commands
 ```bash
 make -C kernel/drivers/stage3/case8_creation_proof/trace_user_hash_collision
-kernel/user/stage3/case8_creation_proof/user_hash_collision.out
+kernel/user/stage3/case8_creation_proof/user_hash_collision
 sudo dmesg -C
 sudo insmod kernel/drivers/stage3/case8_creation_proof/trace_user_hash_collision/trace_user_hash_collision.ko target_comm="user_hash_colli"
 sudo rmmod trace_user_hash_collision

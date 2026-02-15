@@ -1,0 +1,61 @@
+struct dentry {
+  unsigned int d_flags;         → 0x00040000 (DCACHE_LRU_LIST)
+  struct lockref d_lockref;     → count == 0
+  struct list_head d_lru;       → { .next, .prev }
+  struct hlist_bl_node d_hash;  → { .next, .pprev }
+}
+↓
+super_block {
+  struct list_lru s_dentry_lru; → { .node, .xa }
+}
+↓
+list_lru {
+  struct xarray xa;             → [memcg_id] → mlru
+}
+↓
+list_lru_memcg {
+  struct list_lru_one node[];   → node[nid] → l
+}
+↓
+list_lru_one {
+  struct list_head list;        → { .next = oldest, .prev = newest }
+  spinlock_t lock;
+  long nr_items;
+}
+
+INSERTION (dput):
+d_count: 1 → 0
+retain_dentry(dentry) → ✓
+d_lru_add(dentry)
+↓
+dentry->d_flags |= DCACHE_LRU_LIST
+list_lru_add_obj(sb->s_dentry_lru, dentry->d_lru)
+↓
+l->list.prev->next = dentry->d_lru
+l->list.prev = dentry->d_lru
+∴ NEWEST @ TAIL
+
+EVICTION (shrinker):
+memory_pressure → ✓
+list_lru_walk(sb->s_dentry_lru, dentry_lru_isolate)
+↓
+l->list.next → dentry
+↓
+d_count == 0 → ✓
+dentry_lru_isolate(dentry)
+↓
+list_lru_isolate(l, dentry->d_lru)
+↓
+__dentry_kill(dentry)
+∴ OLDEST @ HEAD EVICTED
+
+GET/PUT (promotion):
+d_lookup() → dentry
+d_count: 0 → 1
+d_flags & DCACHE_LRU_LIST → ✓
+↓
+d_lru_del(dentry)
+↓
+list_lru_del_obj(sb->s_dentry_lru, dentry->d_lru)
+dentry->d_flags &= ~DCACHE_LRU_LIST
+∴ ACTIVE ITEMS NOT IN LRU

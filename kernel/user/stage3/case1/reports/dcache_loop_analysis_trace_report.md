@@ -3,8 +3,8 @@
 - Userspace source: `kernel/user/stage3/case1/dcache_loop_analysis.c`
 - Driver source: `kernel/drivers/stage3/case1/trace_dcache_loop_analysis/trace_dcache_loop_analysis.c`
 - Module: `trace_dcache_loop_analysis`
-- Binary: `kernel/user/stage3/case1/dcache_loop_analysis.out`
-- Run timestamp: `2026-02-15T13:48:51`
+- Binary: `kernel/user/stage3/case1/dcache_loop_analysis`
+- Run timestamp: `2026-02-15T23:31:50`
 - Final status: `pass_probe_hits`
 
 ## Probe Counts
@@ -20,7 +20,7 @@
 ## Commands
 ```bash
 make -C kernel/drivers/stage3/case1/trace_dcache_loop_analysis
-kernel/user/stage3/case1/dcache_loop_analysis.out
+kernel/user/stage3/case1/dcache_loop_analysis
 sudo dmesg -C
 sudo insmod kernel/drivers/stage3/case1/trace_dcache_loop_analysis/trace_dcache_loop_analysis.ko target_comm="dcache_loop_ana"
 sudo rmmod trace_dcache_loop_analysis

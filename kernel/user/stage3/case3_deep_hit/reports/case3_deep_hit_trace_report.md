@@ -3,8 +3,8 @@
 - Userspace source: `kernel/user/stage3/case3_deep_hit/case3_deep_hit.c`
 - Driver source: `kernel/drivers/stage3/case3_deep_hit/trace_case3_deep_hit/trace_case3_deep_hit.c`
 - Module: `trace_case3_deep_hit`
-- Binary: `kernel/user/stage3/case3_deep_hit/case3_deep_hit.out`
-- Run timestamp: `2026-02-15T13:49:17`
+- Binary: `kernel/user/stage3/case3_deep_hit/case3_deep_hit`
+- Run timestamp: `2026-02-15T23:32:20`
 - Final status: `pass_probe_hits`
 
 ## Probe Counts
@@ -20,9 +20,9 @@
 ## Commands
 ```bash
 make -C kernel/drivers/stage3/case3_deep_hit/trace_case3_deep_hit
-kernel/user/stage3/case3_deep_hit/case3_deep_hit.out
+kernel/user/stage3/case3_deep_hit/case3_deep_hit
 sudo dmesg -C
-sudo insmod kernel/drivers/stage3/case3_deep_hit/trace_case3_deep_hit/trace_case3_deep_hit.ko target_comm="case3_deep_hit."
+sudo insmod kernel/drivers/stage3/case3_deep_hit/trace_case3_deep_hit/trace_case3_deep_hit.ko target_comm="case3_deep_hit"
 sudo rmmod trace_case3_deep_hit
 ```
 

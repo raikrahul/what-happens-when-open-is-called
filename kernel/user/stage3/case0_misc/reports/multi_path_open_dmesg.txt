@@ -1,19 +1,19 @@
-[ 3358.364187] [trace_multi_path_open] loaded target_comm=multi_path_open user=kernel/user/stage3/multi_path_open.c
-[ 3358.367168] [trace_multi_path_open] do_filp_open.entry pid=67759 comm=multi_path_open dfd=4294967196 pathname=ffff8dda082ad000 op=ffffd0c940cdfb14
-[ 3358.367196] [trace_multi_path_open] do_filp_open.ret pid=67759 comm=multi_path_open ret=fffffffffffffffe
-[ 3358.367214] [trace_multi_path_open] do_filp_open.entry pid=67759 comm=multi_path_open dfd=4294967196 pathname=ffff8dda082ad000 op=ffffd0c940cdfac4
-[ 3358.367228] [trace_multi_path_open] do_filp_open.ret pid=67759 comm=multi_path_open ret=fffffffffffffffe
-[ 3358.367243] [trace_multi_path_open] do_filp_open.entry pid=67759 comm=multi_path_open dfd=4294967196 pathname=ffff8dda082ad000 op=ffffd0c940cdfa94
-[ 3358.367257] [trace_multi_path_open] do_filp_open.ret pid=67759 comm=multi_path_open ret=fffffffffffffffe
-[ 3358.367275] [trace_multi_path_open] do_filp_open.entry pid=67759 comm=multi_path_open dfd=4294967196 pathname=ffff8dda082ad000 op=ffffd0c940cdfe24
-[ 3358.367285] [trace_multi_path_open] do_filp_open.ret pid=67759 comm=multi_path_open ret=fffffffffffffffe
-[ 3358.367293] [trace_multi_path_open] do_filp_open.entry pid=67759 comm=multi_path_open dfd=4294967196 pathname=ffff8dda082ad000 op=ffffd0c940cdfca4
-[ 3358.367303] [trace_multi_path_open] do_filp_open.ret pid=67759 comm=multi_path_open ret=fffffffffffffffe
-[ 3358.367311] [trace_multi_path_open] do_filp_open.entry pid=67759 comm=multi_path_open dfd=4294967196 pathname=ffff8dda082ad000 op=ffffd0c940cdfcb4
-[ 3358.367321] [trace_multi_path_open] do_filp_open.ret pid=67759 comm=multi_path_open ret=fffffffffffffffe
-[ 3358.367330] [trace_multi_path_open] do_filp_open.entry pid=67759 comm=multi_path_open dfd=4294967196 pathname=ffff8dda082ad000 op=ffffd0c940cdfad4
-[ 3358.367342] [trace_multi_path_open] do_filp_open.ret pid=67759 comm=multi_path_open ret=ffff8dda384f0900
-[ 3358.367384] [trace_multi_path_open] do_filp_open.entry pid=67759 comm=multi_path_open dfd=4294967196 pathname=ffff8dda082ad000 op=ffffd0c940cdfdb4
-[ 3358.367396] [trace_multi_path_open] do_filp_open.ret pid=67759 comm=multi_path_open ret=ffff8dda384f00c0
-[ 3358.367849] [trace_multi_path_open] do_filp_open.entry pid=67759 comm=multi_path_open dfd=4294967196 pathname=ffff8dda082ad000 op=ffffd0c940cdfb24
-[ 3358.367866] [trace_multi_path_open] do_filp_open.ret pid=67759 comm=multi_path_open ret=ffff8dda384f0900
+[38340.708192] [trace_multi_path_open] loaded target_comm=multi_path_open user=kernel/user/stage3/multi_path_open.c
+[38340.711767] [trace_multi_path_open] do_filp_open.entry pid=185705 comm=multi_path_open dfd=4294967196 pathname=ffff8dda294d5000 op=ffffd0c9407f7bf4
+[38340.711790] [trace_multi_path_open] do_filp_open.ret pid=185705 comm=multi_path_open ret=fffffffffffffffe
+[38340.711804] [trace_multi_path_open] do_filp_open.entry pid=185705 comm=multi_path_open dfd=4294967196 pathname=ffff8dda294d5000 op=ffffd0c9407f7b84
+[38340.711816] [trace_multi_path_open] do_filp_open.ret pid=185705 comm=multi_path_open ret=fffffffffffffffe
+[38340.711828] [trace_multi_path_open] do_filp_open.entry pid=185705 comm=multi_path_open dfd=4294967196 pathname=ffff8dda294d5000 op=ffffd0c9407f7c04
+[38340.711840] [trace_multi_path_open] do_filp_open.ret pid=185705 comm=multi_path_open ret=fffffffffffffffe
+[38340.711855] [trace_multi_path_open] do_filp_open.entry pid=185705 comm=multi_path_open dfd=4294967196 pathname=ffff8dda294d5000 op=ffffd0c9407f7c14
+[38340.711864] [trace_multi_path_open] do_filp_open.ret pid=185705 comm=multi_path_open ret=fffffffffffffffe
+[38340.711871] [trace_multi_path_open] do_filp_open.entry pid=185705 comm=multi_path_open dfd=4294967196 pathname=ffff8dda294d5000 op=ffffd0c9407f7ca4
+[38340.711879] [trace_multi_path_open] do_filp_open.ret pid=185705 comm=multi_path_open ret=fffffffffffffffe
+[38340.711886] [trace_multi_path_open] do_filp_open.entry pid=185705 comm=multi_path_open dfd=4294967196 pathname=ffff8dda294d5000 op=ffffd0c9407f7aa4
+[38340.711894] [trace_multi_path_open] do_filp_open.ret pid=185705 comm=multi_path_open ret=fffffffffffffffe
+[38340.711902] [trace_multi_path_open] do_filp_open.entry pid=185705 comm=multi_path_open dfd=4294967196 pathname=ffff8dda294d5000 op=ffffd0c9407f7cc4
+[38340.711912] [trace_multi_path_open] do_filp_open.ret pid=185705 comm=multi_path_open ret=ffff8dda05bbbf00
+[38340.711952] [trace_multi_path_open] do_filp_open.entry pid=185705 comm=multi_path_open dfd=4294967196 pathname=ffff8dda294d5000 op=ffffd0c9407f7ce4
+[38340.711962] [trace_multi_path_open] do_filp_open.ret pid=185705 comm=multi_path_open ret=ffff8dda05bbbb40
+[38340.712340] [trace_multi_path_open] do_filp_open.entry pid=185705 comm=multi_path_open dfd=4294967196 pathname=ffff8dda294d5000 op=ffffd0c9407f7d94
+[38340.712354] [trace_multi_path_open] do_filp_open.ret pid=185705 comm=multi_path_open ret=ffff8dda05bbbf00

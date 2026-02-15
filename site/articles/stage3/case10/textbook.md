@@ -17,3 +17,18 @@ title: "Stage 3 CASE10: Textbook"
 - reports root: [kernel/user/stage3/case10_rename_investigation/reports](https://github.com/raikrahul/what-happens-when-open-is-called/blob/main/kernel/user/stage3/case10_rename_investigation/reports)
 - worksheets root: [kernel/user/stage3/case10_rename_investigation/worksheets](https://github.com/raikrahul/what-happens-when-open-is-called/blob/main/kernel/user/stage3/case10_rename_investigation/worksheets)
 - planning summary: [STAGE3_FULL_TEST_SUMMARY](https://github.com/raikrahul/what-happens-when-open-is-called/blob/main/kernel/user/stage3/planning/STAGE3_FULL_TEST_SUMMARY.md)
+
+<!-- AUTO-EMBED START -->
+[AUTO] case=case10
+
+[FOLDER] case10_rename_investigation
+[INTENT] single rename internals
+
+[INVARIANTS] source=kernel/user/stage3/case10_rename_investigation/reports/user_dir_rename_trace_report.md
+- filp_open entry=8 ret=8
+- __d_alloc entry=1 ret=1
+- ERR_PTR(-ENOENT) count=6
+- non-error file* count=2
+- check: entry==ret (filp_open) => 1
+- check: entry==ret (__d_alloc) => 1
+<!-- AUTO-EMBED END -->

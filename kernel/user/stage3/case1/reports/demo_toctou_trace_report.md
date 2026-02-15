@@ -3,8 +3,8 @@
 - Userspace source: `kernel/user/stage3/case1/demo_toctou/demo_toctou.c`
 - Driver source: `kernel/drivers/stage3/case1/trace_demo_toctou/trace_demo_toctou.c`
 - Module: `trace_demo_toctou`
-- Binary: `kernel/user/stage3/case1/demo_toctou/demo_toctou.out`
-- Run timestamp: `2026-02-15T13:48:58`
+- Binary: `kernel/user/stage3/case1/demo_toctou/demo_toctou`
+- Run timestamp: `2026-02-15T23:31:59`
 - Final status: `pass_probe_hits`
 
 ## Probe Counts
@@ -20,9 +20,9 @@
 ## Commands
 ```bash
 make -C kernel/drivers/stage3/case1/trace_demo_toctou
-kernel/user/stage3/case1/demo_toctou/demo_toctou.out
+kernel/user/stage3/case1/demo_toctou/demo_toctou
 sudo dmesg -C
-sudo insmod kernel/drivers/stage3/case1/trace_demo_toctou/trace_demo_toctou.ko target_comm="demo_toctou.out"
+sudo insmod kernel/drivers/stage3/case1/trace_demo_toctou/trace_demo_toctou.ko target_comm="demo_toctou"
 sudo rmmod trace_demo_toctou
 ```
 

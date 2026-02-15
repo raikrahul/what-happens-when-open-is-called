@@ -3,8 +3,8 @@
 - Userspace source: `kernel/user/stage3/case8_creation_proof/user_create_deep.c`
 - Driver source: `kernel/drivers/stage3/case8_creation_proof/trace_user_create_deep/trace_user_create_deep.c`
 - Module: `trace_user_create_deep`
-- Binary: `kernel/user/stage3/case8_creation_proof/user_create_deep.out`
-- Run timestamp: `2026-02-15T13:49:28`
+- Binary: `kernel/user/stage3/case8_creation_proof/user_create_deep`
+- Run timestamp: `2026-02-15T23:32:32`
 - Final status: `pass_probe_hits`
 
 ## Probe Counts
@@ -20,7 +20,7 @@
 ## Commands
 ```bash
 make -C kernel/drivers/stage3/case8_creation_proof/trace_user_create_deep
-kernel/user/stage3/case8_creation_proof/user_create_deep.out
+kernel/user/stage3/case8_creation_proof/user_create_deep
 sudo dmesg -C
 sudo insmod kernel/drivers/stage3/case8_creation_proof/trace_user_create_deep/trace_user_create_deep.ko target_comm="user_create_dee"
 sudo rmmod trace_user_create_deep

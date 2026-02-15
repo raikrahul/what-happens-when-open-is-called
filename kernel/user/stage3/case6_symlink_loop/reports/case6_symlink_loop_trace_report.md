@@ -3,8 +3,8 @@
 - Userspace source: `kernel/user/stage3/case6_symlink_loop/case6_symlink_loop.c`
 - Driver source: `kernel/drivers/stage3/case6_symlink_loop/trace_case6_symlink_loop/trace_case6_symlink_loop.c`
 - Module: `trace_case6_symlink_loop`
-- Binary: `kernel/user/stage3/case6_symlink_loop/case6_symlink_loop.out`
-- Run timestamp: `2026-02-15T13:49:25`
+- Binary: `kernel/user/stage3/case6_symlink_loop/case6_symlink_loop`
+- Run timestamp: `2026-02-15T23:32:28`
 - Final status: `pass_probe_hits`
 
 ## Probe Counts
@@ -20,7 +20,7 @@
 ## Commands
 ```bash
 make -C kernel/drivers/stage3/case6_symlink_loop/trace_case6_symlink_loop
-kernel/user/stage3/case6_symlink_loop/case6_symlink_loop.out
+kernel/user/stage3/case6_symlink_loop/case6_symlink_loop
 sudo dmesg -C
 sudo insmod kernel/drivers/stage3/case6_symlink_loop/trace_case6_symlink_loop/trace_case6_symlink_loop.ko target_comm="case6_symlink_l"
 sudo rmmod trace_case6_symlink_loop

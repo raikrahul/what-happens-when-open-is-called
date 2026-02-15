@@ -3,8 +3,8 @@
 - Userspace source: `kernel/user/stage3/case15_deep_trace/user_deep_open.c`
 - Driver source: `kernel/drivers/stage3/case15_deep_trace/trace_user_deep_open/trace_user_deep_open.c`
 - Module: `trace_user_deep_open`
-- Binary: `kernel/user/stage3/case15_deep_trace/user_deep_open.out`
-- Run timestamp: `2026-02-15T13:49:09`
+- Binary: `kernel/user/stage3/case15_deep_trace/user_deep_open`
+- Run timestamp: `2026-02-15T23:32:12`
 - Final status: `pass_probe_hits`
 
 ## Probe Counts
@@ -20,9 +20,9 @@
 ## Commands
 ```bash
 make -C kernel/drivers/stage3/case15_deep_trace/trace_user_deep_open
-kernel/user/stage3/case15_deep_trace/user_deep_open.out
+kernel/user/stage3/case15_deep_trace/user_deep_open
 sudo dmesg -C
-sudo insmod kernel/drivers/stage3/case15_deep_trace/trace_user_deep_open/trace_user_deep_open.ko target_comm="user_deep_open."
+sudo insmod kernel/drivers/stage3/case15_deep_trace/trace_user_deep_open/trace_user_deep_open.ko target_comm="user_deep_open"
 sudo rmmod trace_user_deep_open
 ```
 

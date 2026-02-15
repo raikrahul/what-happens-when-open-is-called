@@ -3,8 +3,8 @@
 - Userspace source: `kernel/user/stage3/case1/demo_o_tmpfile/demo_o_tmpfile.c`
 - Driver source: `kernel/drivers/stage3/case1/trace_demo_o_tmpfile/trace_demo_o_tmpfile.c`
 - Module: `trace_demo_o_tmpfile`
-- Binary: `kernel/user/stage3/case1/demo_o_tmpfile/demo_o_tmpfile.out`
-- Run timestamp: `2026-02-15T13:48:56`
+- Binary: `kernel/user/stage3/case1/demo_o_tmpfile/demo_o_tmpfile`
+- Run timestamp: `2026-02-15T23:31:56`
 - Final status: `pass_probe_hits`
 
 ## Probe Counts
@@ -20,9 +20,9 @@
 ## Commands
 ```bash
 make -C kernel/drivers/stage3/case1/trace_demo_o_tmpfile
-kernel/user/stage3/case1/demo_o_tmpfile/demo_o_tmpfile.out
+kernel/user/stage3/case1/demo_o_tmpfile/demo_o_tmpfile
 sudo dmesg -C
-sudo insmod kernel/drivers/stage3/case1/trace_demo_o_tmpfile/trace_demo_o_tmpfile.ko target_comm="demo_o_tmpfile."
+sudo insmod kernel/drivers/stage3/case1/trace_demo_o_tmpfile/trace_demo_o_tmpfile.ko target_comm="demo_o_tmpfile"
 sudo rmmod trace_demo_o_tmpfile
 ```
 

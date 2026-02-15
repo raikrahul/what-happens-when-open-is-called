@@ -3,8 +3,8 @@
 - Userspace source: `kernel/user/stage3/case13_salt_avalanche/user_salt_avalanche.c`
 - Driver source: `kernel/drivers/stage3/case13_salt_avalanche/trace_user_salt_avalanche/trace_user_salt_avalanche.c`
 - Module: `trace_user_salt_avalanche`
-- Binary: `kernel/user/stage3/case13_salt_avalanche/user_salt_avalanche.out`
-- Run timestamp: `2026-02-15T13:49:06`
+- Binary: `kernel/user/stage3/case13_salt_avalanche/user_salt_avalanche`
+- Run timestamp: `2026-02-15T23:32:08`
 - Final status: `pass_probe_hits`
 
 ## Probe Counts
@@ -20,7 +20,7 @@
 ## Commands
 ```bash
 make -C kernel/drivers/stage3/case13_salt_avalanche/trace_user_salt_avalanche
-kernel/user/stage3/case13_salt_avalanche/user_salt_avalanche.out
+kernel/user/stage3/case13_salt_avalanche/user_salt_avalanche
 sudo dmesg -C
 sudo insmod kernel/drivers/stage3/case13_salt_avalanche/trace_user_salt_avalanche/trace_user_salt_avalanche.ko target_comm="user_salt_avala"
 sudo rmmod trace_user_salt_avalanche
