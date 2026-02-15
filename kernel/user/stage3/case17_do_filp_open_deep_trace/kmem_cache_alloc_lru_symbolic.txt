@@ -1,0 +1,43 @@
+kmem_cache_alloc_lru(s, lru, gfp)
+↓
+alloc_hooks(kmem_cache_alloc_lru_noprof(s, lru, gfp))
+↓
+kmem_cache_alloc_lru_noprof(s, lru, gfp)
+↓
+slab_alloc_node(s, lru, gfp, -1, IP, s->object_size)
+↓
+slab_pre_alloc_hook(s, gfp) → s
+↓
+kfence_alloc(s, s->object_size, gfp) → obj
+obj == 0 → ✓
+↓
+__slab_alloc_node(s, gfp, -1, 0, s->object_size) → obj
+↓
+slab_post_alloc_hook(s, lru, gfp, 1, &obj, 0, s->object_size)
+↓
+memcg_kmem_online() → 1
+↓
+memcg_slab_post_alloc_hook(s, lru, gfp, 1, &obj)
+↓
+current_obj_cgroup() → objcg
+objcg ≠ 0 → ✓
+lru ≠ 0 → ✓
+↓
+memcg_list_lru_alloc(objcg->memcg, lru, gfp)
+↓
+list_lru_memcg_aware(lru) → 1
+memcg_list_lru_allocated(objcg->memcg, lru) → 0
+↓
+memcg_init_list_lru_one(lru, gfp) → mlru
+xas_store(&lru->xa, objcg->memcg->css.id, mlru)
+↓
+virt_to_slab(obj) → slab
+alloc_slab_obj_exts(slab, s, gfp, 0)
+↓
+obj_cgroup_charge_account(objcg, gfp, obj_full_size(s), slab_pgdat(slab), ...) → 0
+↓
+obj_to_index(s, slab, obj) → off
+↓
+slab_obj_exts(slab)[off].objcg ← objcg
+↓
+∴ obj

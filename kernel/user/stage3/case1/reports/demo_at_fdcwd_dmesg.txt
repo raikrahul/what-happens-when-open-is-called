@@ -1,23 +1,23 @@
-[  856.935220] [trace_demo_at_fdcwd] loaded target_comm=demo_at_fdcwd.o user=kernel/user/stage3/case1/demo_at_fdcwd/demo_at_fdcwd.c
-[  856.937832] [trace_demo_at_fdcwd] do_filp_open.entry pid=22423 comm=demo_at_fdcwd.o dfd=4294967196 pathname=ffff8dda0d5e4000 op=ffffd0c95683be44
-[  856.937864] [trace_demo_at_fdcwd] do_filp_open.ret pid=22423 comm=demo_at_fdcwd.o ret=fffffffffffffffe
-[  856.937887] [trace_demo_at_fdcwd] do_filp_open.entry pid=22423 comm=demo_at_fdcwd.o dfd=4294967196 pathname=ffff8dda0d5e4000 op=ffffd0c95683bac4
-[  856.937904] [trace_demo_at_fdcwd] do_filp_open.ret pid=22423 comm=demo_at_fdcwd.o ret=fffffffffffffffe
-[  856.937921] [trace_demo_at_fdcwd] do_filp_open.entry pid=22423 comm=demo_at_fdcwd.o dfd=4294967196 pathname=ffff8dda0d5e4000 op=ffffd0c95683bd44
-[  856.937937] [trace_demo_at_fdcwd] do_filp_open.ret pid=22423 comm=demo_at_fdcwd.o ret=fffffffffffffffe
-[  856.937958] [trace_demo_at_fdcwd] do_filp_open.entry pid=22423 comm=demo_at_fdcwd.o dfd=4294967196 pathname=ffff8dda0d5e4000 op=ffffd0c95683be64
-[  856.937969] [trace_demo_at_fdcwd] do_filp_open.ret pid=22423 comm=demo_at_fdcwd.o ret=fffffffffffffffe
-[  856.937979] [trace_demo_at_fdcwd] do_filp_open.entry pid=22423 comm=demo_at_fdcwd.o dfd=4294967196 pathname=ffff8dda0d5e4000 op=ffffd0c95683bc94
-[  856.937990] [trace_demo_at_fdcwd] do_filp_open.ret pid=22423 comm=demo_at_fdcwd.o ret=fffffffffffffffe
-[  856.937999] [trace_demo_at_fdcwd] do_filp_open.entry pid=22423 comm=demo_at_fdcwd.o dfd=4294967196 pathname=ffff8dda0d5e4000 op=ffffd0c95683baa4
-[  856.938010] [trace_demo_at_fdcwd] do_filp_open.ret pid=22423 comm=demo_at_fdcwd.o ret=fffffffffffffffe
-[  856.938021] [trace_demo_at_fdcwd] do_filp_open.entry pid=22423 comm=demo_at_fdcwd.o dfd=4294967196 pathname=ffff8dda0d5e4000 op=ffffd0c95683bb24
-[  856.938036] [trace_demo_at_fdcwd] do_filp_open.ret pid=22423 comm=demo_at_fdcwd.o ret=ffff8dda09f6d0c0
-[  856.938134] [trace_demo_at_fdcwd] do_filp_open.entry pid=22423 comm=demo_at_fdcwd.o dfd=4294967196 pathname=ffff8dda0d5e4000 op=ffffd0c95683bc64
-[  856.938152] [trace_demo_at_fdcwd] do_filp_open.ret pid=22423 comm=demo_at_fdcwd.o ret=ffff8ddc12465f00
-[  856.938692] [trace_demo_at_fdcwd] do_filp_open.entry pid=22423 comm=demo_at_fdcwd.o dfd=4294967196 pathname=ffff8dda0d5e4000 op=ffffd0c95683bc94
-[  856.938798] [trace_demo_at_fdcwd] do_filp_open.ret pid=22423 comm=demo_at_fdcwd.o ret=ffff8ddc12465180
-[  856.938819] [trace_demo_at_fdcwd] do_filp_open.entry pid=22423 comm=demo_at_fdcwd.o dfd=4294967196 pathname=ffff8dda0d5e4000 op=ffffd0c95683bdf4
-[  856.938890] [trace_demo_at_fdcwd] do_filp_open.ret pid=22423 comm=demo_at_fdcwd.o ret=ffff8ddc12465840
-[  856.938901] [trace_demo_at_fdcwd] do_filp_open.entry pid=22423 comm=demo_at_fdcwd.o dfd=4294967196 pathname=ffff8dda0d5e4000 op=ffffd0c95683bd24
-[  856.938963] [trace_demo_at_fdcwd] do_filp_open.ret pid=22423 comm=demo_at_fdcwd.o ret=ffff8ddc124656c0
+[ 1714.061680] [trace_demo_at_fdcwd] loaded target_comm=demo_at_fdcwd.o user=kernel/user/stage3/case1/demo_at_fdcwd/demo_at_fdcwd.c
+[ 1714.065042] [trace_demo_at_fdcwd] do_filp_open.entry pid=41503 comm=demo_at_fdcwd.o dfd=4294967196 pathname=ffff8dda294d2000 op=ffffd0c95380fe64
+[ 1714.065064] [trace_demo_at_fdcwd] do_filp_open.ret pid=41503 comm=demo_at_fdcwd.o ret=fffffffffffffffe
+[ 1714.065078] [trace_demo_at_fdcwd] do_filp_open.entry pid=41503 comm=demo_at_fdcwd.o dfd=4294967196 pathname=ffff8dda294d2000 op=ffffd0c95380fb64
+[ 1714.065089] [trace_demo_at_fdcwd] do_filp_open.ret pid=41503 comm=demo_at_fdcwd.o ret=fffffffffffffffe
+[ 1714.065101] [trace_demo_at_fdcwd] do_filp_open.entry pid=41503 comm=demo_at_fdcwd.o dfd=4294967196 pathname=ffff8dda294d2000 op=ffffd0c95380fd54
+[ 1714.065112] [trace_demo_at_fdcwd] do_filp_open.ret pid=41503 comm=demo_at_fdcwd.o ret=fffffffffffffffe
+[ 1714.065126] [trace_demo_at_fdcwd] do_filp_open.entry pid=41503 comm=demo_at_fdcwd.o dfd=4294967196 pathname=ffff8dda294d2000 op=ffffd0c95380fcd4
+[ 1714.065134] [trace_demo_at_fdcwd] do_filp_open.ret pid=41503 comm=demo_at_fdcwd.o ret=fffffffffffffffe
+[ 1714.065141] [trace_demo_at_fdcwd] do_filp_open.entry pid=41503 comm=demo_at_fdcwd.o dfd=4294967196 pathname=ffff8dda294d2000 op=ffffd0c95380fb24
+[ 1714.065148] [trace_demo_at_fdcwd] do_filp_open.ret pid=41503 comm=demo_at_fdcwd.o ret=fffffffffffffffe
+[ 1714.065155] [trace_demo_at_fdcwd] do_filp_open.entry pid=41503 comm=demo_at_fdcwd.o dfd=4294967196 pathname=ffff8dda294d2000 op=ffffd0c95380fb64
+[ 1714.065162] [trace_demo_at_fdcwd] do_filp_open.ret pid=41503 comm=demo_at_fdcwd.o ret=fffffffffffffffe
+[ 1714.065169] [trace_demo_at_fdcwd] do_filp_open.entry pid=41503 comm=demo_at_fdcwd.o dfd=4294967196 pathname=ffff8dda294d2000 op=ffffd0c95380fe44
+[ 1714.065179] [trace_demo_at_fdcwd] do_filp_open.ret pid=41503 comm=demo_at_fdcwd.o ret=ffff8dda3a4a7780
+[ 1714.065213] [trace_demo_at_fdcwd] do_filp_open.entry pid=41503 comm=demo_at_fdcwd.o dfd=4294967196 pathname=ffff8dda294d2000 op=ffffd0c95380fc84
+[ 1714.065223] [trace_demo_at_fdcwd] do_filp_open.ret pid=41503 comm=demo_at_fdcwd.o ret=ffff8dda3a4a7c00
+[ 1714.065631] [trace_demo_at_fdcwd] do_filp_open.entry pid=41503 comm=demo_at_fdcwd.o dfd=4294967196 pathname=ffff8dda294d2000 op=ffffd0c95380fdc4
+[ 1714.065711] [trace_demo_at_fdcwd] do_filp_open.ret pid=41503 comm=demo_at_fdcwd.o ret=ffff8dda3a4a7780
+[ 1714.065729] [trace_demo_at_fdcwd] do_filp_open.entry pid=41503 comm=demo_at_fdcwd.o dfd=4294967196 pathname=ffff8dda294d2000 op=ffffd0c95380fd14
+[ 1714.065785] [trace_demo_at_fdcwd] do_filp_open.ret pid=41503 comm=demo_at_fdcwd.o ret=ffff8dda3a4a7d80
+[ 1714.065794] [trace_demo_at_fdcwd] do_filp_open.entry pid=41503 comm=demo_at_fdcwd.o dfd=4294967196 pathname=ffff8dda294d2000 op=ffffd0c95380fc04
+[ 1714.065846] [trace_demo_at_fdcwd] do_filp_open.ret pid=41503 comm=demo_at_fdcwd.o ret=ffff8dda3a4a79c0

@@ -1,20 +1,19 @@
 ---
 layout: default
-title: "Stage 3 Case 17: do_filp_open Deep Trace: Textbook"
+title: "Stage 3 CASE17: Textbook"
 ---
-[OBJECTIVE]
-- Trace open path transitions and validate entry/return pair integrity.
+[INVARIANTS]
+1. do_filp_open.entry count = do_filp_open.ret count.
+2. __d_alloc.entry count = __d_alloc.ret count when allocation path is active.
+3. Missing-file paths must show error-pointer class in ret stream.
+4. Cross-check invariant failure paths with worksheet failure-prediction block.
 
-[MANDATORY CHECKS]
-1. do_filp_open.entry count == do_filp_open.ret count
-2. __d_alloc.entry count == __d_alloc.ret count
-3. error-pointer observations align with missing-file paths
+[DERIVATION CHAIN]
+- source: reports + dmesg
+- transform: count + classify + verify
+- output: pass/fail per invariant
 
 [DATA SOURCES]
-- [reports](https://github.com/raikrahul/what-happens-when-open-is-called/tree/main/kernel/user/stage3/case17_do_filp_open_deep_trace/reports)
-- [worksheets](https://github.com/raikrahul/what-happens-when-open-is-called/tree/main/kernel/user/stage3/case17_do_filp_open_deep_trace/worksheets)
-
-[OUTPUT]
-- Pair-level reports
-- Pair-level worksheets
-- Axiom + hard-axiom worksheet tiers
+- reports root: [kernel/user/stage3/case17_do_filp_open_deep_trace/reports](https://github.com/raikrahul/what-happens-when-open-is-called/blob/main/kernel/user/stage3/case17_do_filp_open_deep_trace/reports)
+- worksheets root: [kernel/user/stage3/case17_do_filp_open_deep_trace/worksheets](https://github.com/raikrahul/what-happens-when-open-is-called/blob/main/kernel/user/stage3/case17_do_filp_open_deep_trace/worksheets)
+- planning summary: [STAGE3_FULL_TEST_SUMMARY](https://github.com/raikrahul/what-happens-when-open-is-called/blob/main/kernel/user/stage3/planning/STAGE3_FULL_TEST_SUMMARY.md)

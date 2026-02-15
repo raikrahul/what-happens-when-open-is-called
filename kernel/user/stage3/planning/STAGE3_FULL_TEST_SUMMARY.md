@@ -21,10 +21,10 @@
 - 12. `kernel/user/stage3/case1/manual_dentry_check.c` -> `pass_probe_hits` | filp=8/8 dalloc=0/0 | report `kernel/user/stage3/case1/reports/manual_dentry_check_trace_report.md`
 - 13. `kernel/user/stage3/case1/test_vfs_trace.c` -> `pass_probe_hits` | filp=12/12 dalloc=0/0 | report `kernel/user/stage3/case1/reports/test_vfs_trace_trace_report.md`
 - 14. `kernel/user/stage3/case1/vfs_trigger.c` -> `pass_probe_hits` | filp=10/10 dalloc=0/0 | report `kernel/user/stage3/case1/reports/vfs_trigger_trace_report.md`
-- 15. `kernel/user/stage3/case10_rename_investigation/user_dir_rename.c` -> `pass_probe_hits` | filp=8/8 dalloc=0/0 | report `kernel/user/stage3/case10_rename_investigation/reports/user_dir_rename_trace_report.md`
+- 15. `kernel/user/stage3/case10_rename_investigation/user_dir_rename.c` -> `pass_probe_hits` | filp=8/8 dalloc=1/1 | report `kernel/user/stage3/case10_rename_investigation/reports/user_dir_rename_trace_report.md`
 - 16. `kernel/user/stage3/case11_bulk_rename/user_bulk_rename.c` -> `pass_probe_hits` | filp=110/110 dalloc=0/0 | report `kernel/user/stage3/case11_bulk_rename/reports/user_bulk_rename_trace_report.md`
 - 17. `kernel/user/stage3/case12_harder_puzzle/puzzle_verify.c` -> `pass_probe_hits` | filp=8/8 dalloc=0/0 | report `kernel/user/stage3/case12_harder_puzzle/reports/puzzle_verify_trace_report.md`
-- 18. `kernel/user/stage3/case12_harder_puzzle/user_puzzle.c` -> `pass_probe_hits` | filp=11/11 dalloc=0/0 | report `kernel/user/stage3/case12_harder_puzzle/reports/user_puzzle_trace_report.md`
+- 18. `kernel/user/stage3/case12_harder_puzzle/user_puzzle.c` -> `pass_probe_hits` | filp=11/11 dalloc=1/1 | report `kernel/user/stage3/case12_harder_puzzle/reports/user_puzzle_trace_report.md`
 - 19. `kernel/user/stage3/case13_salt_avalanche/user_salt_avalanche.c` -> `pass_probe_hits` | filp=10/10 dalloc=0/0 | report `kernel/user/stage3/case13_salt_avalanche/reports/user_salt_avalanche_trace_report.md`
 - 20. `kernel/user/stage3/case14_symmetry_break/user_symmetry_break.c` -> `pass_probe_hits` | filp=10/10 dalloc=0/0 | report `kernel/user/stage3/case14_symmetry_break/reports/user_symmetry_break_trace_report.md`
 - 21. `kernel/user/stage3/case15_deep_trace/user_deep_create.c` -> `pass_probe_hits` | filp=9/9 dalloc=0/0 | report `kernel/user/stage3/case15_deep_trace/reports/user_deep_create_trace_report.md`
@@ -34,8 +34,8 @@
 - 25. `kernel/user/stage3/case16_do_sys_openat2_trace/user_trigger.c` -> `pass_probe_hits` | filp=9/9 dalloc=0/0 | report `kernel/user/stage3/case16_do_sys_openat2_trace/reports/user_trigger_trace_report.md`
 - 26. `kernel/user/stage3/case17_do_filp_open_deep_trace/user_trigger.c` -> `pass_probe_hits` | filp=9/9 dalloc=1/1 | report `kernel/user/stage3/case17_do_filp_open_deep_trace/reports/user_trigger_trace_report.md`
 - 27. `kernel/user/stage3/case17_do_filp_open_deep_trace/user_trigger_raw_openat.S` -> `pass_probe_hits` | filp=1/1 dalloc=0/0 | report `kernel/user/stage3/case17_do_filp_open_deep_trace/reports/user_trigger_raw_openat_trace_report.md`
-- 28. `kernel/user/stage3/case2_deep_miss/case2_deep_miss.c` -> `pass_probe_hits` | filp=9/9 dalloc=1/1 | report `kernel/user/stage3/case2_deep_miss/reports/case2_deep_miss_trace_report.md`
-- 29. `kernel/user/stage3/case3_deep_hit/case3_deep_hit.c` -> `pass_probe_hits` | filp=10/10 dalloc=1/1 | report `kernel/user/stage3/case3_deep_hit/reports/case3_deep_hit_trace_report.md`
+- 28. `kernel/user/stage3/case2_deep_miss/case2_deep_miss.c` -> `pass_probe_hits` | filp=9/9 dalloc=0/0 | report `kernel/user/stage3/case2_deep_miss/reports/case2_deep_miss_trace_report.md`
+- 29. `kernel/user/stage3/case3_deep_hit/case3_deep_hit.c` -> `pass_probe_hits` | filp=10/10 dalloc=0/0 | report `kernel/user/stage3/case3_deep_hit/reports/case3_deep_hit_trace_report.md`
 - 30. `kernel/user/stage3/case4_create_flow/case4_create_flow.c` -> `pass_probe_hits` | filp=10/10 dalloc=0/0 | report `kernel/user/stage3/case4_create_flow/reports/case4_create_flow_trace_report.md`
 - 31. `kernel/user/stage3/case5_mount_jump/case5_mount_jump.c` -> `pass_probe_hits` | filp=9/9 dalloc=0/0 | report `kernel/user/stage3/case5_mount_jump/reports/case5_mount_jump_trace_report.md`
 - 32. `kernel/user/stage3/case6_symlink_loop/case6_symlink_loop.c` -> `pass_probe_hits` | filp=9/9 dalloc=0/0 | report `kernel/user/stage3/case6_symlink_loop/reports/case6_symlink_loop_trace_report.md`
@@ -46,5 +46,5 @@
 - 37. `kernel/user/stage3/case8_creation_proof/user_create_simple.c` -> `pass_probe_hits` | filp=9/9 dalloc=1/1 | report `kernel/user/stage3/case8_creation_proof/reports/user_create_simple_trace_report.md`
 - 38. `kernel/user/stage3/case8_creation_proof/user_hash_collision.c` -> `pass_probe_hits` | filp=11/11 dalloc=0/0 | report `kernel/user/stage3/case8_creation_proof/reports/user_hash_collision_trace_report.md`
 - 39. `kernel/user/stage3/case8_creation_proof/user_open_existing.c` -> `pass_probe_hits` | filp=9/9 dalloc=0/0 | report `kernel/user/stage3/case8_creation_proof/reports/user_open_existing_trace_report.md`
-- 40. `kernel/user/stage3/case8_creation_proof/user_rename.c` -> `pass_probe_hits` | filp=9/9 dalloc=0/0 | report `kernel/user/stage3/case8_creation_proof/reports/user_rename_trace_report.md`
+- 40. `kernel/user/stage3/case8_creation_proof/user_rename.c` -> `pass_probe_hits` | filp=9/9 dalloc=1/1 | report `kernel/user/stage3/case8_creation_proof/reports/user_rename_trace_report.md`
 - 41. `kernel/user/stage3/multi_path_open.c` -> `pass_probe_hits` | filp=9/9 dalloc=0/0 | report `kernel/user/stage3/case0_misc/reports/multi_path_open_trace_report.md`

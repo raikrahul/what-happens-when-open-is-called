@@ -1,5 +1,4 @@
 ---
-layout: container
-title: "Stage 3 Case 7: Path Walk"
+layout: container4
+title: "Stage 3 CASE7: Symlink Follow"
 ---
-

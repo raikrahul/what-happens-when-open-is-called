@@ -1,4 +1,4 @@
 ---
-layout: container
-title: "Stage 3 Case 15: Deep Trace"
+layout: container4
+title: "Stage 3 CASE15: Deep Trace"
 ---

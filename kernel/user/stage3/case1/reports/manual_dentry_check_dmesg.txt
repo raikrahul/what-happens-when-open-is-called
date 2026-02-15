@@ -1,17 +1,17 @@
-[  864.131324] [trace_manual_dentry_check] loaded target_comm=manual_dentry_c user=kernel/user/stage3/case1/manual_dentry_check.c
-[  864.135385] [trace_manual_dentry_check] do_filp_open.entry pid=24241 comm=manual_dentry_c dfd=4294967196 pathname=ffff8dda294d7000 op=ffffd0c954bebc14
-[  864.135414] [trace_manual_dentry_check] do_filp_open.ret pid=24241 comm=manual_dentry_c ret=fffffffffffffffe
-[  864.135432] [trace_manual_dentry_check] do_filp_open.entry pid=24241 comm=manual_dentry_c dfd=4294967196 pathname=ffff8dda294d7000 op=ffffd0c954bebca4
-[  864.135446] [trace_manual_dentry_check] do_filp_open.ret pid=24241 comm=manual_dentry_c ret=fffffffffffffffe
-[  864.135461] [trace_manual_dentry_check] do_filp_open.entry pid=24241 comm=manual_dentry_c dfd=4294967196 pathname=ffff8dda294d7000 op=ffffd0c954bebb54
-[  864.135475] [trace_manual_dentry_check] do_filp_open.ret pid=24241 comm=manual_dentry_c ret=fffffffffffffffe
-[  864.135494] [trace_manual_dentry_check] do_filp_open.entry pid=24241 comm=manual_dentry_c dfd=4294967196 pathname=ffff8dda294d7000 op=ffffd0c954bebd04
-[  864.135503] [trace_manual_dentry_check] do_filp_open.ret pid=24241 comm=manual_dentry_c ret=fffffffffffffffe
-[  864.135512] [trace_manual_dentry_check] do_filp_open.entry pid=24241 comm=manual_dentry_c dfd=4294967196 pathname=ffff8dda294d7000 op=ffffd0c954bebe24
-[  864.135521] [trace_manual_dentry_check] do_filp_open.ret pid=24241 comm=manual_dentry_c ret=fffffffffffffffe
-[  864.135529] [trace_manual_dentry_check] do_filp_open.entry pid=24241 comm=manual_dentry_c dfd=4294967196 pathname=ffff8dda294d7000 op=ffffd0c954bebbb4
-[  864.135539] [trace_manual_dentry_check] do_filp_open.ret pid=24241 comm=manual_dentry_c ret=fffffffffffffffe
-[  864.135548] [trace_manual_dentry_check] do_filp_open.entry pid=24241 comm=manual_dentry_c dfd=4294967196 pathname=ffff8dda294d7000 op=ffffd0c954bebc94
-[  864.135561] [trace_manual_dentry_check] do_filp_open.ret pid=24241 comm=manual_dentry_c ret=ffff8dda1f38e9c0
-[  864.135605] [trace_manual_dentry_check] do_filp_open.entry pid=24241 comm=manual_dentry_c dfd=4294967196 pathname=ffff8dda294d7000 op=ffffd0c954bebd54
-[  864.135617] [trace_manual_dentry_check] do_filp_open.ret pid=24241 comm=manual_dentry_c ret=ffff8dda1f38ec00
+[ 1721.900299] [trace_manual_dentry_check] loaded target_comm=manual_dentry_c user=kernel/user/stage3/case1/manual_dentry_check.c
+[ 1721.903670] [trace_manual_dentry_check] do_filp_open.entry pid=43320 comm=manual_dentry_c dfd=4294967196 pathname=ffff8dda12eb5000 op=ffffd0c952927bb4
+[ 1721.903692] [trace_manual_dentry_check] do_filp_open.ret pid=43320 comm=manual_dentry_c ret=fffffffffffffffe
+[ 1721.903706] [trace_manual_dentry_check] do_filp_open.entry pid=43320 comm=manual_dentry_c dfd=4294967196 pathname=ffff8dda12eb5000 op=ffffd0c952927e04
+[ 1721.903717] [trace_manual_dentry_check] do_filp_open.ret pid=43320 comm=manual_dentry_c ret=fffffffffffffffe
+[ 1721.903729] [trace_manual_dentry_check] do_filp_open.entry pid=43320 comm=manual_dentry_c dfd=4294967196 pathname=ffff8dda12eb5000 op=ffffd0c952927cf4
+[ 1721.903740] [trace_manual_dentry_check] do_filp_open.ret pid=43320 comm=manual_dentry_c ret=fffffffffffffffe
+[ 1721.903754] [trace_manual_dentry_check] do_filp_open.entry pid=43320 comm=manual_dentry_c dfd=4294967196 pathname=ffff8dda12eb5000 op=ffffd0c952927b24
+[ 1721.903762] [trace_manual_dentry_check] do_filp_open.ret pid=43320 comm=manual_dentry_c ret=fffffffffffffffe
+[ 1721.903769] [trace_manual_dentry_check] do_filp_open.entry pid=43320 comm=manual_dentry_c dfd=4294967196 pathname=ffff8dda12eb5000 op=ffffd0c952927e74
+[ 1721.903776] [trace_manual_dentry_check] do_filp_open.ret pid=43320 comm=manual_dentry_c ret=fffffffffffffffe
+[ 1721.903783] [trace_manual_dentry_check] do_filp_open.entry pid=43320 comm=manual_dentry_c dfd=4294967196 pathname=ffff8dda12eb5000 op=ffffd0c952927c24
+[ 1721.903790] [trace_manual_dentry_check] do_filp_open.ret pid=43320 comm=manual_dentry_c ret=fffffffffffffffe
+[ 1721.903797] [trace_manual_dentry_check] do_filp_open.entry pid=43320 comm=manual_dentry_c dfd=4294967196 pathname=ffff8dda12eb5000 op=ffffd0c952927cc4
+[ 1721.903808] [trace_manual_dentry_check] do_filp_open.ret pid=43320 comm=manual_dentry_c ret=ffff8dda38037840
+[ 1721.903842] [trace_manual_dentry_check] do_filp_open.entry pid=43320 comm=manual_dentry_c dfd=4294967196 pathname=ffff8dda12eb5000 op=ffffd0c952927c54
+[ 1721.903853] [trace_manual_dentry_check] do_filp_open.ret pid=43320 comm=manual_dentry_c ret=ffff8dda38037c00

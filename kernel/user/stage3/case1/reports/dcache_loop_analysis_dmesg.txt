@@ -1,17 +1,17 @@
-[  855.869067] [trace_dcache_loop_analysis] loaded target_comm=dcache_loop_ana user=kernel/user/stage3/case1/dcache_loop_analysis.c
-[  855.872341] [trace_dcache_loop_analysis] do_filp_open.entry pid=22168 comm=dcache_loop_ana dfd=4294967196 pathname=ffff8dda0d5e4000 op=ffffd0c9567dfb84
-[  855.872363] [trace_dcache_loop_analysis] do_filp_open.ret pid=22168 comm=dcache_loop_ana ret=fffffffffffffffe
-[  855.872377] [trace_dcache_loop_analysis] do_filp_open.entry pid=22168 comm=dcache_loop_ana dfd=4294967196 pathname=ffff8dda0d5e4000 op=ffffd0c9567dfab4
-[  855.872388] [trace_dcache_loop_analysis] do_filp_open.ret pid=22168 comm=dcache_loop_ana ret=fffffffffffffffe
-[  855.872400] [trace_dcache_loop_analysis] do_filp_open.entry pid=22168 comm=dcache_loop_ana dfd=4294967196 pathname=ffff8dda0d5e4000 op=ffffd0c9567dfd44
-[  855.872411] [trace_dcache_loop_analysis] do_filp_open.ret pid=22168 comm=dcache_loop_ana ret=fffffffffffffffe
-[  855.872466] [trace_dcache_loop_analysis] do_filp_open.entry pid=22168 comm=dcache_loop_ana dfd=4294967196 pathname=ffff8dda0d5e4000 op=ffffd0c9567dfbe4
-[  855.872477] [trace_dcache_loop_analysis] do_filp_open.ret pid=22168 comm=dcache_loop_ana ret=fffffffffffffffe
-[  855.872484] [trace_dcache_loop_analysis] do_filp_open.entry pid=22168 comm=dcache_loop_ana dfd=4294967196 pathname=ffff8dda0d5e4000 op=ffffd0c9567dfe84
-[  855.872491] [trace_dcache_loop_analysis] do_filp_open.ret pid=22168 comm=dcache_loop_ana ret=fffffffffffffffe
-[  855.872498] [trace_dcache_loop_analysis] do_filp_open.entry pid=22168 comm=dcache_loop_ana dfd=4294967196 pathname=ffff8dda0d5e4000 op=ffffd0c9567dfdd4
-[  855.872506] [trace_dcache_loop_analysis] do_filp_open.ret pid=22168 comm=dcache_loop_ana ret=fffffffffffffffe
-[  855.872513] [trace_dcache_loop_analysis] do_filp_open.entry pid=22168 comm=dcache_loop_ana dfd=4294967196 pathname=ffff8dda0d5e4000 op=ffffd0c9567dfc04
-[  855.872524] [trace_dcache_loop_analysis] do_filp_open.ret pid=22168 comm=dcache_loop_ana ret=ffff8ddc124659c0
-[  855.872565] [trace_dcache_loop_analysis] do_filp_open.entry pid=22168 comm=dcache_loop_ana dfd=4294967196 pathname=ffff8dda0d5e4000 op=ffffd0c9567dfcb4
-[  855.872576] [trace_dcache_loop_analysis] do_filp_open.ret pid=22168 comm=dcache_loop_ana ret=ffff8ddc12465300
+[ 1713.021943] [trace_dcache_loop_analysis] loaded target_comm=dcache_loop_ana user=kernel/user/stage3/case1/dcache_loop_analysis.c
+[ 1713.025620] [trace_dcache_loop_analysis] do_filp_open.entry pid=41248 comm=dcache_loop_ana dfd=4294967196 pathname=ffff8dda0a2d7000 op=ffffd0c941fbbc44
+[ 1713.025646] [trace_dcache_loop_analysis] do_filp_open.ret pid=41248 comm=dcache_loop_ana ret=fffffffffffffffe
+[ 1713.025664] [trace_dcache_loop_analysis] do_filp_open.entry pid=41248 comm=dcache_loop_ana dfd=4294967196 pathname=ffff8dda0a2d7000 op=ffffd0c941fbbd94
+[ 1713.025678] [trace_dcache_loop_analysis] do_filp_open.ret pid=41248 comm=dcache_loop_ana ret=fffffffffffffffe
+[ 1713.025693] [trace_dcache_loop_analysis] do_filp_open.entry pid=41248 comm=dcache_loop_ana dfd=4294967196 pathname=ffff8dda0a2d7000 op=ffffd0c941fbbc84
+[ 1713.025707] [trace_dcache_loop_analysis] do_filp_open.ret pid=41248 comm=dcache_loop_ana ret=fffffffffffffffe
+[ 1713.025725] [trace_dcache_loop_analysis] do_filp_open.entry pid=41248 comm=dcache_loop_ana dfd=4294967196 pathname=ffff8dda0a2d7000 op=ffffd0c941fbbdd4
+[ 1713.025735] [trace_dcache_loop_analysis] do_filp_open.ret pid=41248 comm=dcache_loop_ana ret=fffffffffffffffe
+[ 1713.025744] [trace_dcache_loop_analysis] do_filp_open.entry pid=41248 comm=dcache_loop_ana dfd=4294967196 pathname=ffff8dda0a2d7000 op=ffffd0c941fbbdb4
+[ 1713.025753] [trace_dcache_loop_analysis] do_filp_open.ret pid=41248 comm=dcache_loop_ana ret=fffffffffffffffe
+[ 1713.025762] [trace_dcache_loop_analysis] do_filp_open.entry pid=41248 comm=dcache_loop_ana dfd=4294967196 pathname=ffff8dda0a2d7000 op=ffffd0c941fbbe24
+[ 1713.025771] [trace_dcache_loop_analysis] do_filp_open.ret pid=41248 comm=dcache_loop_ana ret=fffffffffffffffe
+[ 1713.025780] [trace_dcache_loop_analysis] do_filp_open.entry pid=41248 comm=dcache_loop_ana dfd=4294967196 pathname=ffff8dda0a2d7000 op=ffffd0c941fbbc24
+[ 1713.025793] [trace_dcache_loop_analysis] do_filp_open.ret pid=41248 comm=dcache_loop_ana ret=ffff8ddb8df8d180
+[ 1713.025840] [trace_dcache_loop_analysis] do_filp_open.entry pid=41248 comm=dcache_loop_ana dfd=4294967196 pathname=ffff8dda0a2d7000 op=ffffd0c941fbbbd4
+[ 1713.025853] [trace_dcache_loop_analysis] do_filp_open.ret pid=41248 comm=dcache_loop_ana ret=ffff8ddb8df8dc00

@@ -1,25 +1,25 @@
-[  861.043837] [trace_demo_o_tmpfile] loaded target_comm=demo_o_tmpfile. user=kernel/user/stage3/case1/demo_o_tmpfile/demo_o_tmpfile.c
-[  861.046723] [trace_demo_o_tmpfile] do_filp_open.entry pid=23449 comm=demo_o_tmpfile. dfd=4294967196 pathname=ffff8dda13f5f000 op=ffffd0c954babb94
-[  861.046736] [trace_demo_o_tmpfile] do_filp_open.ret pid=23449 comm=demo_o_tmpfile. ret=fffffffffffffffe
-[  861.046743] [trace_demo_o_tmpfile] do_filp_open.entry pid=23449 comm=demo_o_tmpfile. dfd=4294967196 pathname=ffff8dda13f5f000 op=ffffd0c954babdc4
-[  861.046748] [trace_demo_o_tmpfile] do_filp_open.ret pid=23449 comm=demo_o_tmpfile. ret=fffffffffffffffe
-[  861.046753] [trace_demo_o_tmpfile] do_filp_open.entry pid=23449 comm=demo_o_tmpfile. dfd=4294967196 pathname=ffff8dda13f5f000 op=ffffd0c954babc04
-[  861.046758] [trace_demo_o_tmpfile] do_filp_open.ret pid=23449 comm=demo_o_tmpfile. ret=fffffffffffffffe
-[  861.046765] [trace_demo_o_tmpfile] do_filp_open.entry pid=23449 comm=demo_o_tmpfile. dfd=4294967196 pathname=ffff8dda13f5f000 op=ffffd0c954babd64
-[  861.046768] [trace_demo_o_tmpfile] do_filp_open.ret pid=23449 comm=demo_o_tmpfile. ret=fffffffffffffffe
-[  861.046771] [trace_demo_o_tmpfile] do_filp_open.entry pid=23449 comm=demo_o_tmpfile. dfd=4294967196 pathname=ffff8dda13f5f000 op=ffffd0c954babcb4
-[  861.046774] [trace_demo_o_tmpfile] do_filp_open.ret pid=23449 comm=demo_o_tmpfile. ret=fffffffffffffffe
-[  861.046777] [trace_demo_o_tmpfile] do_filp_open.entry pid=23449 comm=demo_o_tmpfile. dfd=4294967196 pathname=ffff8dda13f5f000 op=ffffd0c954babbb4
-[  861.046781] [trace_demo_o_tmpfile] do_filp_open.ret pid=23449 comm=demo_o_tmpfile. ret=fffffffffffffffe
-[  861.046784] [trace_demo_o_tmpfile] do_filp_open.entry pid=23449 comm=demo_o_tmpfile. dfd=4294967196 pathname=ffff8dda13f5f000 op=ffffd0c954babc04
-[  861.046789] [trace_demo_o_tmpfile] do_filp_open.ret pid=23449 comm=demo_o_tmpfile. ret=ffff8dd9306159c0
-[  861.046802] [trace_demo_o_tmpfile] do_filp_open.entry pid=23449 comm=demo_o_tmpfile. dfd=4294967196 pathname=ffff8dda13f5f000 op=ffffd0c954babb04
-[  861.046807] [trace_demo_o_tmpfile] do_filp_open.ret pid=23449 comm=demo_o_tmpfile. ret=ffff8dd9306156c0
-[  861.046998] [trace_demo_o_tmpfile] do_filp_open.entry pid=23449 comm=demo_o_tmpfile. dfd=4294967196 pathname=ffff8dda13f5f000 op=ffffd0c954babb14
-[  861.047003] [trace_demo_o_tmpfile] __d_alloc.entry pid=23449 comm=demo_o_tmpfile. sb=ffff8dda0bce8000 name_qstr=ffffffff9ba50400
-[  861.047007] [trace_demo_o_tmpfile] __d_alloc.ret pid=23449 comm=demo_o_tmpfile. dentry=ffff8ddc034410c0
-[  861.047036] [trace_demo_o_tmpfile] do_filp_open.ret pid=23449 comm=demo_o_tmpfile. ret=ffff8dd9306159c0
-[  861.047135] [trace_demo_o_tmpfile] do_filp_open.entry pid=23450 comm=demo_o_tmpfile. dfd=4294967196 pathname=ffff8dda12eb4000 op=ffffd0c95685bd80
-[  861.047155] [trace_demo_o_tmpfile] do_filp_open.ret pid=23450 comm=demo_o_tmpfile. ret=ffff8dd92815cd80
-[  861.047298] [trace_demo_o_tmpfile] do_filp_open.entry pid=23450 comm=demo_o_tmpfile. dfd=4294967196 pathname=ffff8dda12eb0000 op=ffffd0c95685bc18
-[  861.047311] [trace_demo_o_tmpfile] do_filp_open.ret pid=23450 comm=demo_o_tmpfile. ret=ffff8dd92815cf00
+[ 1718.432419] [trace_demo_o_tmpfile] loaded target_comm=demo_o_tmpfile. user=kernel/user/stage3/case1/demo_o_tmpfile/demo_o_tmpfile.c
+[ 1718.435865] [trace_demo_o_tmpfile] do_filp_open.entry pid=42533 comm=demo_o_tmpfile. dfd=4294967196 pathname=ffff8dda12eb0000 op=ffffd0c9533ffcf4
+[ 1718.435891] [trace_demo_o_tmpfile] do_filp_open.ret pid=42533 comm=demo_o_tmpfile. ret=fffffffffffffffe
+[ 1718.435909] [trace_demo_o_tmpfile] do_filp_open.entry pid=42533 comm=demo_o_tmpfile. dfd=4294967196 pathname=ffff8dda12eb0000 op=ffffd0c9533ffbb4
+[ 1718.435923] [trace_demo_o_tmpfile] do_filp_open.ret pid=42533 comm=demo_o_tmpfile. ret=fffffffffffffffe
+[ 1718.435938] [trace_demo_o_tmpfile] do_filp_open.entry pid=42533 comm=demo_o_tmpfile. dfd=4294967196 pathname=ffff8dda12eb0000 op=ffffd0c9533ffe34
+[ 1718.435952] [trace_demo_o_tmpfile] do_filp_open.ret pid=42533 comm=demo_o_tmpfile. ret=fffffffffffffffe
+[ 1718.435971] [trace_demo_o_tmpfile] do_filp_open.entry pid=42533 comm=demo_o_tmpfile. dfd=4294967196 pathname=ffff8dda12eb0000 op=ffffd0c9533ffda4
+[ 1718.435981] [trace_demo_o_tmpfile] do_filp_open.ret pid=42533 comm=demo_o_tmpfile. ret=fffffffffffffffe
+[ 1718.436012] [trace_demo_o_tmpfile] do_filp_open.entry pid=42533 comm=demo_o_tmpfile. dfd=4294967196 pathname=ffff8dda12eb0000 op=ffffd0c9533ffe74
+[ 1718.436025] [trace_demo_o_tmpfile] do_filp_open.ret pid=42533 comm=demo_o_tmpfile. ret=fffffffffffffffe
+[ 1718.436035] [trace_demo_o_tmpfile] do_filp_open.entry pid=42533 comm=demo_o_tmpfile. dfd=4294967196 pathname=ffff8dda12eb0000 op=ffffd0c9533ffe54
+[ 1718.436047] [trace_demo_o_tmpfile] do_filp_open.ret pid=42533 comm=demo_o_tmpfile. ret=fffffffffffffffe
+[ 1718.436058] [trace_demo_o_tmpfile] do_filp_open.entry pid=42533 comm=demo_o_tmpfile. dfd=4294967196 pathname=ffff8dda12eb0000 op=ffffd0c9533ffbc4
+[ 1718.436074] [trace_demo_o_tmpfile] do_filp_open.ret pid=42533 comm=demo_o_tmpfile. ret=ffff8ddb0496f840
+[ 1718.436132] [trace_demo_o_tmpfile] do_filp_open.entry pid=42533 comm=demo_o_tmpfile. dfd=4294967196 pathname=ffff8dda12eb0000 op=ffffd0c9533ffe44
+[ 1718.436149] [trace_demo_o_tmpfile] do_filp_open.ret pid=42533 comm=demo_o_tmpfile. ret=ffff8ddb0496f000
+[ 1718.436656] [trace_demo_o_tmpfile] do_filp_open.entry pid=42533 comm=demo_o_tmpfile. dfd=4294967196 pathname=ffff8dda12eb0000 op=ffffd0c9533ffe84
+[ 1718.436670] [trace_demo_o_tmpfile] __d_alloc.entry pid=42533 comm=demo_o_tmpfile. sb=ffff8dda0bce8000 name_qstr=ffffffff9ba50400
+[ 1718.436680] [trace_demo_o_tmpfile] __d_alloc.ret pid=42533 comm=demo_o_tmpfile. dentry=ffff8dda2f56c900
+[ 1718.436737] [trace_demo_o_tmpfile] do_filp_open.ret pid=42533 comm=demo_o_tmpfile. ret=ffff8ddb0496f840
+[ 1718.436908] [trace_demo_o_tmpfile] do_filp_open.entry pid=42534 comm=demo_o_tmpfile. dfd=4294967196 pathname=ffff8dda0a2d3000 op=ffffd0c953793e10
+[ 1718.436919] [trace_demo_o_tmpfile] do_filp_open.ret pid=42534 comm=demo_o_tmpfile. ret=ffff8ddb310be0c0
+[ 1718.437064] [trace_demo_o_tmpfile] do_filp_open.entry pid=42534 comm=demo_o_tmpfile. dfd=4294967196 pathname=ffff8dda0a2d2000 op=ffffd0c953793ca8
+[ 1718.437073] [trace_demo_o_tmpfile] do_filp_open.ret pid=42534 comm=demo_o_tmpfile. ret=ffff8ddb310bea80

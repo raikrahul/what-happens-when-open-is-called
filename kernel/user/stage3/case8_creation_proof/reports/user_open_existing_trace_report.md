@@ -4,7 +4,7 @@
 - Driver source: `kernel/drivers/stage3/case8_creation_proof/trace_user_open_existing/trace_user_open_existing.c`
 - Module: `trace_user_open_existing`
 - Binary: `kernel/user/stage3/case8_creation_proof/user_open_existing.out`
-- Run timestamp: `2026-02-15T13:08:32`
+- Run timestamp: `2026-02-15T13:22:52`
 - Final status: `pass_probe_hits`
 
 ## Probe Counts

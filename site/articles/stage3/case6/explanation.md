@@ -1,21 +1,24 @@
 ---
 layout: default
-title: "Stage 3 Case 6: Explanation"
+title: "Stage 3 CASE6: Explanation"
 ---
+[CASE]
+- id: case6
+- title: Symlink Loop
+- userspace root: [kernel/user/stage3/case6_symlink_loop](https://github.com/raikrahul/what-happens-when-open-is-called/blob/main/kernel/user/stage3/case6_symlink_loop)
+- driver root: [kernel/drivers/stage3/case6_symlink_loop](https://github.com/raikrahul/what-happens-when-open-is-called/blob/main/kernel/drivers/stage3/case6_symlink_loop)
 
-[CASE 6 EXPLANATION: SYMLINK LOOP]
-Input: A -> B -> A
-Computation: recursion tracking
-Output: stack protection
+[OBJECTIVE]
+- Match Stage1/Stage2 intensity by linking every claim to reproducible logs and worksheets.
 
-[LOGIC]
-1. follow link ✓
-2. increment counter ✓
-3. limit reached ∴ kill walk
+[TRACE CLAIM BLOCK]
+1. Entry/return pair integrity for do_filp_open.
+2. Entry/return pair integrity for __d_alloc where applicable.
+3. Error-pointer vs non-error-pointer branch classification.
+4. Case-specific branch proof for Symlink Loop.
 
-[RESULTS]
-Input: ./case6_symlink_loop.out
-Computation: errno check
-Output: -40 (-ELOOP) verified ✓
+[REPORT ARTIFACTS]
+- [case6_symlink_loop_trace_report.md](https://github.com/raikrahul/what-happens-when-open-is-called/blob/main/kernel/user/stage3/case6_symlink_loop/reports/case6_symlink_loop_trace_report.md)
 
-🐾 DONE. 🐾
+[RAW LOG ARTIFACTS]
+- [case6_symlink_loop_dmesg.txt](https://github.com/raikrahul/what-happens-when-open-is-called/blob/main/kernel/user/stage3/case6_symlink_loop/reports/case6_symlink_loop_dmesg.txt)

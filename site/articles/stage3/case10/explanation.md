@@ -1,17 +1,24 @@
 ---
 layout: default
-title: "Stage 3 Case 10: Rename Investigation: Explanation"
+title: "Stage 3 CASE10: Explanation"
 ---
-[STAGE 3 CASE 10: RENAME INVESTIGATION]
-Single-directory rename path with probe and worksheet evidence.
+[CASE]
+- id: case10
+- title: Rename Investigation
+- userspace root: [kernel/user/stage3/case10_rename_investigation](https://github.com/raikrahul/what-happens-when-open-is-called/blob/main/kernel/user/stage3/case10_rename_investigation)
+- driver root: [kernel/drivers/stage3/case10_rename_investigation](https://github.com/raikrahul/what-happens-when-open-is-called/blob/main/kernel/drivers/stage3/case10_rename_investigation)
 
-[REPO PATHS]
-- [kernel/user/stage3/case10_rename_investigation](https://github.com/raikrahul/what-happens-when-open-is-called/tree/main/kernel/user/stage3/case10_rename_investigation)
-- [kernel/drivers/stage3/case10_rename_investigation](https://github.com/raikrahul/what-happens-when-open-is-called/tree/main/kernel/drivers/stage3/case10_rename_investigation)
+[OBJECTIVE]
+- Match Stage1/Stage2 intensity by linking every claim to reproducible logs and worksheets.
 
-[ARTIFACT LINKS]
-- [reports](https://github.com/raikrahul/what-happens-when-open-is-called/tree/main/kernel/user/stage3/case10_rename_investigation/reports)
-- [worksheets](https://github.com/raikrahul/what-happens-when-open-is-called/tree/main/kernel/user/stage3/case10_rename_investigation/worksheets)
+[TRACE CLAIM BLOCK]
+1. Entry/return pair integrity for do_filp_open.
+2. Entry/return pair integrity for __d_alloc where applicable.
+3. Error-pointer vs non-error-pointer branch classification.
+4. Case-specific branch proof for Rename Investigation.
 
-[STATUS]
-- Stage3 execution artifacts are in-repo and linked above.
+[REPORT ARTIFACTS]
+- [user_dir_rename_trace_report.md](https://github.com/raikrahul/what-happens-when-open-is-called/blob/main/kernel/user/stage3/case10_rename_investigation/reports/user_dir_rename_trace_report.md)
+
+[RAW LOG ARTIFACTS]
+- [user_dir_rename_dmesg.txt](https://github.com/raikrahul/what-happens-when-open-is-called/blob/main/kernel/user/stage3/case10_rename_investigation/reports/user_dir_rename_dmesg.txt)

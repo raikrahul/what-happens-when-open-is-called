@@ -1,67 +1,67 @@
-[  863.170298] [trace_demo_toctou] loaded target_comm=demo_toctou.out user=kernel/user/stage3/case1/demo_toctou/demo_toctou.c
-[  863.173302] [trace_demo_toctou] do_filp_open.entry pid=23979 comm=demo_toctou.out dfd=4294967196 pathname=ffff8dda0a2d0000 op=ffffd0c9563e3c34
-[  863.173315] [trace_demo_toctou] do_filp_open.ret pid=23979 comm=demo_toctou.out ret=fffffffffffffffe
-[  863.173322] [trace_demo_toctou] do_filp_open.entry pid=23979 comm=demo_toctou.out dfd=4294967196 pathname=ffff8dda0a2d0000 op=ffffd0c9563e3cb4
-[  863.173327] [trace_demo_toctou] do_filp_open.ret pid=23979 comm=demo_toctou.out ret=fffffffffffffffe
-[  863.173332] [trace_demo_toctou] do_filp_open.entry pid=23979 comm=demo_toctou.out dfd=4294967196 pathname=ffff8dda0a2d0000 op=ffffd0c9563e3cb4
-[  863.173337] [trace_demo_toctou] do_filp_open.ret pid=23979 comm=demo_toctou.out ret=fffffffffffffffe
-[  863.173345] [trace_demo_toctou] do_filp_open.entry pid=23979 comm=demo_toctou.out dfd=4294967196 pathname=ffff8dda0a2d0000 op=ffffd0c9563e3ba4
-[  863.173349] [trace_demo_toctou] do_filp_open.ret pid=23979 comm=demo_toctou.out ret=fffffffffffffffe
-[  863.173352] [trace_demo_toctou] do_filp_open.entry pid=23979 comm=demo_toctou.out dfd=4294967196 pathname=ffff8dda0a2d0000 op=ffffd0c9563e3c94
-[  863.173355] [trace_demo_toctou] do_filp_open.ret pid=23979 comm=demo_toctou.out ret=fffffffffffffffe
-[  863.173358] [trace_demo_toctou] do_filp_open.entry pid=23979 comm=demo_toctou.out dfd=4294967196 pathname=ffff8dda0a2d0000 op=ffffd0c9563e3ce4
-[  863.173361] [trace_demo_toctou] do_filp_open.ret pid=23979 comm=demo_toctou.out ret=fffffffffffffffe
-[  863.173365] [trace_demo_toctou] do_filp_open.entry pid=23979 comm=demo_toctou.out dfd=4294967196 pathname=ffff8dda0a2d0000 op=ffffd0c9563e3e84
-[  863.173369] [trace_demo_toctou] do_filp_open.ret pid=23979 comm=demo_toctou.out ret=ffff8dd93f954c00
-[  863.173387] [trace_demo_toctou] do_filp_open.entry pid=23979 comm=demo_toctou.out dfd=4294967196 pathname=ffff8dda0a2d0000 op=ffffd0c9563e3c84
-[  863.173392] [trace_demo_toctou] do_filp_open.ret pid=23979 comm=demo_toctou.out ret=ffff8dd93f954480
-[  863.173678] [trace_demo_toctou] do_filp_open.entry pid=23980 comm=demo_toctou.out dfd=4294967196 pathname=ffff8dda12eb5000 op=ffffd0c956843de0
-[  863.173690] [trace_demo_toctou] do_filp_open.ret pid=23980 comm=demo_toctou.out ret=ffff8ddc124653c0
-[  863.173806] [trace_demo_toctou] do_filp_open.entry pid=23980 comm=demo_toctou.out dfd=4294967196 pathname=ffff8dda12eb6000 op=ffffd0c956843c78
-[  863.173813] [trace_demo_toctou] do_filp_open.ret pid=23980 comm=demo_toctou.out ret=ffff8ddc12465300
-[  863.175388] [trace_demo_toctou] __d_alloc.entry pid=23979 comm=demo_toctou.out sb=ffff8dda0bce8000 name_qstr=ffffd0c9563e3e40
-[  863.175395] [trace_demo_toctou] __d_alloc.ret pid=23979 comm=demo_toctou.out dentry=ffff8dda2f55fe40
-[  863.175422] [trace_demo_toctou] __d_alloc.entry pid=23979 comm=demo_toctou.out sb=ffff8dda0bce8000 name_qstr=ffffd0c9563e3d80
-[  863.175425] [trace_demo_toctou] __d_alloc.ret pid=23979 comm=demo_toctou.out dentry=ffff8dda2f55f480
-[  863.175451] [trace_demo_toctou] do_filp_open.entry pid=23979 comm=demo_toctou.out dfd=4294967196 pathname=ffff8dda0a2d0000 op=ffffd0c9563e3e44
-[  863.175455] [trace_demo_toctou] __d_alloc.entry pid=23979 comm=demo_toctou.out sb=ffff8dda0bce8000 name_qstr=ffffd0c9563e3d10
-[  863.175458] [trace_demo_toctou] __d_alloc.ret pid=23979 comm=demo_toctou.out dentry=ffff8dda025c2e40
-[  863.175472] [trace_demo_toctou] do_filp_open.ret pid=23979 comm=demo_toctou.out ret=ffff8dd93f954c00
-[  863.175486] [trace_demo_toctou] do_filp_open.entry pid=23979 comm=demo_toctou.out dfd=4294967196 pathname=ffff8dda0a2d0000 op=ffffd0c9563e3b34
-[  863.175490] [trace_demo_toctou] __d_alloc.entry pid=23979 comm=demo_toctou.out sb=ffff8dda0bce8000 name_qstr=ffffd0c9563e3a00
-[  863.175493] [trace_demo_toctou] __d_alloc.ret pid=23979 comm=demo_toctou.out dentry=ffff8dda06f12480
-[  863.175504] [trace_demo_toctou] do_filp_open.ret pid=23979 comm=demo_toctou.out ret=ffff8dd93f954c00
-[  863.175524] [trace_demo_toctou] __d_alloc.entry pid=23979 comm=demo_toctou.out sb=ffff8dda0bce8000 name_qstr=ffffd0c9563e3dc0
-[  863.175527] [trace_demo_toctou] __d_alloc.ret pid=23979 comm=demo_toctou.out dentry=ffff8dda06f12300
-[  863.175542] [trace_demo_toctou] __d_alloc.entry pid=23979 comm=demo_toctou.out sb=ffff8dda0bce8000 name_qstr=ffffd0c9563e3de0
-[  863.175545] [trace_demo_toctou] __d_alloc.ret pid=23979 comm=demo_toctou.out dentry=ffff8dda06f12e40
-[  863.175560] [trace_demo_toctou] do_filp_open.entry pid=23979 comm=demo_toctou.out dfd=4294967196 pathname=ffff8dda0a2d7000 op=ffffd0c9563e3aa4
-[  863.175565] [trace_demo_toctou] do_filp_open.ret pid=23979 comm=demo_toctou.out ret=ffff8dd93f954c00
-[  863.175663] [trace_demo_toctou] do_filp_open.entry pid=23982 comm=demo_toctou.out dfd=4294967196 pathname=ffff8dda0fe68000 op=ffffd0c954bebce0
-[  863.175676] [trace_demo_toctou] do_filp_open.ret pid=23982 comm=demo_toctou.out ret=ffff8dda0348a9c0
-[  863.175797] [trace_demo_toctou] do_filp_open.entry pid=23982 comm=demo_toctou.out dfd=4294967196 pathname=ffff8dda0fe69000 op=ffffd0c954bebb78
-[  863.175803] [trace_demo_toctou] do_filp_open.ret pid=23982 comm=demo_toctou.out ret=ffff8dda0348ae40
-[  863.177391] [trace_demo_toctou] __d_alloc.entry pid=23979 comm=demo_toctou.out sb=ffff8dda0bce8000 name_qstr=ffffd0c9563e3ce0
-[  863.177396] [trace_demo_toctou] __d_alloc.ret pid=23979 comm=demo_toctou.out dentry=ffff8dda06f12900
-[  863.177422] [trace_demo_toctou] __d_alloc.entry pid=23979 comm=demo_toctou.out sb=ffff8dda0bce8000 name_qstr=ffffd0c9563e3be0
-[  863.177425] [trace_demo_toctou] __d_alloc.ret pid=23979 comm=demo_toctou.out dentry=ffff8dda06f120c0
-[  863.177449] [trace_demo_toctou] do_filp_open.entry pid=23979 comm=demo_toctou.out dfd=4294967196 pathname=ffff8dda0a2d7000 op=ffffd0c9563e3dc4
-[  863.177454] [trace_demo_toctou] __d_alloc.entry pid=23979 comm=demo_toctou.out sb=ffff8dda0bce8000 name_qstr=ffffd0c9563e3c90
-[  863.177457] [trace_demo_toctou] __d_alloc.ret pid=23979 comm=demo_toctou.out dentry=ffff8dda06f123c0
-[  863.177469] [trace_demo_toctou] do_filp_open.ret pid=23979 comm=demo_toctou.out ret=ffff8dd93f954c00
-[  863.177481] [trace_demo_toctou] do_filp_open.entry pid=23979 comm=demo_toctou.out dfd=4294967196 pathname=ffff8dda0a2d7000 op=ffffd0c9563e3ce4
-[  863.177485] [trace_demo_toctou] __d_alloc.entry pid=23979 comm=demo_toctou.out sb=ffff8dda0bce8000 name_qstr=ffffd0c9563e3bb0
-[  863.177488] [trace_demo_toctou] __d_alloc.ret pid=23979 comm=demo_toctou.out dentry=ffff8dda06f12180
-[  863.177501] [trace_demo_toctou] do_filp_open.ret pid=23979 comm=demo_toctou.out ret=ffff8dd93f954c00
-[  863.177511] [trace_demo_toctou] do_filp_open.entry pid=23979 comm=demo_toctou.out dfd=4294967196 pathname=ffff8dda0a2d7000 op=ffffd0c9563e3cd4
-[  863.177516] [trace_demo_toctou] do_filp_open.ret pid=23979 comm=demo_toctou.out ret=ffff8dd93f954c00
-[  863.177521] [trace_demo_toctou] __d_alloc.entry pid=23979 comm=demo_toctou.out sb=ffff8dda0bce8000 name_qstr=ffffd0c9563e3cb0
-[  863.177524] [trace_demo_toctou] __d_alloc.ret pid=23979 comm=demo_toctou.out dentry=ffff8dda0d939b40
-[  863.177538] [trace_demo_toctou] __d_alloc.entry pid=23979 comm=demo_toctou.out sb=ffff8dda0bce8000 name_qstr=ffffd0c9563e3cb0
-[  863.177541] [trace_demo_toctou] __d_alloc.ret pid=23979 comm=demo_toctou.out dentry=ffff8dda0d939000
-[  863.177553] [trace_demo_toctou] do_filp_open.entry pid=23979 comm=demo_toctou.out dfd=3 pathname=ffff8dda0a2d0000 op=ffffd0c9563e3c34
-[  863.177557] [trace_demo_toctou] do_filp_open.ret pid=23979 comm=demo_toctou.out ret=ffff8dd93f9543c0
-[  863.177627] [trace_demo_toctou] do_filp_open.entry pid=23984 comm=demo_toctou.out dfd=4294967196 pathname=ffff8dda082f7000 op=ffffd0c954b73b10
-[  863.177648] [trace_demo_toctou] do_filp_open.ret pid=23984 comm=demo_toctou.out ret=ffff8dd9081dcf00
-[  863.177793] [trace_demo_toctou] do_filp_open.entry pid=23984 comm=demo_toctou.out dfd=4294967196 pathname=ffff8dda082f2000 op=ffffd0c954b739a8
-[  863.177806] [trace_demo_toctou] do_filp_open.ret pid=23984 comm=demo_toctou.out ret=ffff8dd9081dc480
+[ 1720.844968] [trace_demo_toctou] loaded target_comm=demo_toctou.out user=kernel/user/stage3/case1/demo_toctou/demo_toctou.c
+[ 1720.849007] [trace_demo_toctou] do_filp_open.entry pid=43052 comm=demo_toctou.out dfd=4294967196 pathname=ffff8dda13f5d000 op=ffffd0c95290fdc4
+[ 1720.849033] [trace_demo_toctou] do_filp_open.ret pid=43052 comm=demo_toctou.out ret=fffffffffffffffe
+[ 1720.849051] [trace_demo_toctou] do_filp_open.entry pid=43052 comm=demo_toctou.out dfd=4294967196 pathname=ffff8dda13f5d000 op=ffffd0c95290fc74
+[ 1720.849065] [trace_demo_toctou] do_filp_open.ret pid=43052 comm=demo_toctou.out ret=fffffffffffffffe
+[ 1720.849080] [trace_demo_toctou] do_filp_open.entry pid=43052 comm=demo_toctou.out dfd=4294967196 pathname=ffff8dda13f5d000 op=ffffd0c95290fde4
+[ 1720.849094] [trace_demo_toctou] do_filp_open.ret pid=43052 comm=demo_toctou.out ret=fffffffffffffffe
+[ 1720.849112] [trace_demo_toctou] do_filp_open.entry pid=43052 comm=demo_toctou.out dfd=4294967196 pathname=ffff8dda13f5d000 op=ffffd0c95290fd24
+[ 1720.849122] [trace_demo_toctou] do_filp_open.ret pid=43052 comm=demo_toctou.out ret=fffffffffffffffe
+[ 1720.849130] [trace_demo_toctou] do_filp_open.entry pid=43052 comm=demo_toctou.out dfd=4294967196 pathname=ffff8dda13f5d000 op=ffffd0c95290fb04
+[ 1720.849139] [trace_demo_toctou] do_filp_open.ret pid=43052 comm=demo_toctou.out ret=fffffffffffffffe
+[ 1720.849148] [trace_demo_toctou] do_filp_open.entry pid=43052 comm=demo_toctou.out dfd=4294967196 pathname=ffff8dda13f5d000 op=ffffd0c95290fcc4
+[ 1720.849157] [trace_demo_toctou] do_filp_open.ret pid=43052 comm=demo_toctou.out ret=fffffffffffffffe
+[ 1720.849166] [trace_demo_toctou] do_filp_open.entry pid=43052 comm=demo_toctou.out dfd=4294967196 pathname=ffff8dda13f5d000 op=ffffd0c95290fe04
+[ 1720.849179] [trace_demo_toctou] do_filp_open.ret pid=43052 comm=demo_toctou.out ret=ffff8ddc26eb8cc0
+[ 1720.849219] [trace_demo_toctou] do_filp_open.entry pid=43052 comm=demo_toctou.out dfd=4294967196 pathname=ffff8dda13f5d000 op=ffffd0c95290fe84
+[ 1720.849232] [trace_demo_toctou] do_filp_open.ret pid=43052 comm=demo_toctou.out ret=ffff8ddc26eb8d80
+[ 1720.849864] [trace_demo_toctou] do_filp_open.entry pid=43053 comm=demo_toctou.out dfd=4294967196 pathname=ffff8dda0a268000 op=ffffd0c953407b70
+[ 1720.849887] [trace_demo_toctou] do_filp_open.ret pid=43053 comm=demo_toctou.out ret=ffff8ddb15564d80
+[ 1720.850082] [trace_demo_toctou] do_filp_open.entry pid=43053 comm=demo_toctou.out dfd=4294967196 pathname=ffff8dda0a26f000 op=ffffd0c953407a08
+[ 1720.850096] [trace_demo_toctou] do_filp_open.ret pid=43053 comm=demo_toctou.out ret=ffff8ddb15564c00
+[ 1720.853574] [trace_demo_toctou] __d_alloc.entry pid=43052 comm=demo_toctou.out sb=ffff8dda0bce8000 name_qstr=ffffd0c95290fe40
+[ 1720.853591] [trace_demo_toctou] __d_alloc.ret pid=43052 comm=demo_toctou.out dentry=ffff8ddc06c31d80
+[ 1720.853661] [trace_demo_toctou] __d_alloc.entry pid=43052 comm=demo_toctou.out sb=ffff8dda0bce8000 name_qstr=ffffd0c95290fae0
+[ 1720.853670] [trace_demo_toctou] __d_alloc.ret pid=43052 comm=demo_toctou.out dentry=ffff8dda369976c0
+[ 1720.853728] [trace_demo_toctou] do_filp_open.entry pid=43052 comm=demo_toctou.out dfd=4294967196 pathname=ffff8dda13f5d000 op=ffffd0c95290fc14
+[ 1720.853741] [trace_demo_toctou] __d_alloc.entry pid=43052 comm=demo_toctou.out sb=ffff8dda0bce8000 name_qstr=ffffd0c95290fae0
+[ 1720.853785] [trace_demo_toctou] __d_alloc.ret pid=43052 comm=demo_toctou.out dentry=ffff8dda06e6d540
+[ 1720.853831] [trace_demo_toctou] do_filp_open.ret pid=43052 comm=demo_toctou.out ret=ffff8ddc26eb8cc0
+[ 1720.853877] [trace_demo_toctou] do_filp_open.entry pid=43052 comm=demo_toctou.out dfd=4294967196 pathname=ffff8dda13f5d000 op=ffffd0c95290fcb4
+[ 1720.853892] [trace_demo_toctou] __d_alloc.entry pid=43052 comm=demo_toctou.out sb=ffff8dda0bce8000 name_qstr=ffffd0c95290fb80
+[ 1720.853902] [trace_demo_toctou] __d_alloc.ret pid=43052 comm=demo_toctou.out dentry=ffff8dda06e6d240
+[ 1720.853947] [trace_demo_toctou] do_filp_open.ret pid=43052 comm=demo_toctou.out ret=ffff8ddc26eb8cc0
+[ 1720.854006] [trace_demo_toctou] __d_alloc.entry pid=43052 comm=demo_toctou.out sb=ffff8dda0bce8000 name_qstr=ffffd0c95290fe40
+[ 1720.854014] [trace_demo_toctou] __d_alloc.ret pid=43052 comm=demo_toctou.out dentry=ffff8dda06e6de40
+[ 1720.854056] [trace_demo_toctou] __d_alloc.entry pid=43052 comm=demo_toctou.out sb=ffff8dda0bce8000 name_qstr=ffffd0c95290fda0
+[ 1720.854064] [trace_demo_toctou] __d_alloc.ret pid=43052 comm=demo_toctou.out dentry=ffff8dda06e6d3c0
+[ 1720.854100] [trace_demo_toctou] do_filp_open.entry pid=43052 comm=demo_toctou.out dfd=4294967196 pathname=ffff8dda13f5b000 op=ffffd0c95290fbe4
+[ 1720.854115] [trace_demo_toctou] do_filp_open.ret pid=43052 comm=demo_toctou.out ret=ffff8ddc26eb8cc0
+[ 1720.854311] [trace_demo_toctou] do_filp_open.entry pid=43055 comm=demo_toctou.out dfd=4294967196 pathname=ffff8dda0a268000 op=ffffd0c952a37bf0
+[ 1720.854340] [trace_demo_toctou] do_filp_open.ret pid=43055 comm=demo_toctou.out ret=ffff8ddb15564180
+[ 1720.854598] [trace_demo_toctou] do_filp_open.entry pid=43055 comm=demo_toctou.out dfd=4294967196 pathname=ffff8dda13f5b000 op=ffffd0c952a37a88
+[ 1720.854616] [trace_demo_toctou] do_filp_open.ret pid=43055 comm=demo_toctou.out ret=ffff8ddc26eb8cc0
+[ 1720.858583] [trace_demo_toctou] __d_alloc.entry pid=43052 comm=demo_toctou.out sb=ffff8dda0bce8000 name_qstr=ffffd0c95290fae0
+[ 1720.858600] [trace_demo_toctou] __d_alloc.ret pid=43052 comm=demo_toctou.out dentry=ffff8ddb470a96c0
+[ 1720.858673] [trace_demo_toctou] __d_alloc.entry pid=43052 comm=demo_toctou.out sb=ffff8dda0bce8000 name_qstr=ffffd0c95290fc20
+[ 1720.858682] [trace_demo_toctou] __d_alloc.ret pid=43052 comm=demo_toctou.out dentry=ffff8ddb470a99c0
+[ 1720.858764] [trace_demo_toctou] do_filp_open.entry pid=43052 comm=demo_toctou.out dfd=4294967196 pathname=ffff8dda12eb6000 op=ffffd0c95290fba4
+[ 1720.858778] [trace_demo_toctou] __d_alloc.entry pid=43052 comm=demo_toctou.out sb=ffff8dda0bce8000 name_qstr=ffffd0c95290fa70
+[ 1720.858786] [trace_demo_toctou] __d_alloc.ret pid=43052 comm=demo_toctou.out dentry=ffff8ddb470a9540
+[ 1720.858826] [trace_demo_toctou] do_filp_open.ret pid=43052 comm=demo_toctou.out ret=ffff8dda38037cc0
+[ 1720.858861] [trace_demo_toctou] do_filp_open.entry pid=43052 comm=demo_toctou.out dfd=4294967196 pathname=ffff8dda12eb6000 op=ffffd0c95290fd54
+[ 1720.858873] [trace_demo_toctou] __d_alloc.entry pid=43052 comm=demo_toctou.out sb=ffff8dda0bce8000 name_qstr=ffffd0c95290fc20
+[ 1720.858881] [trace_demo_toctou] __d_alloc.ret pid=43052 comm=demo_toctou.out dentry=ffff8ddb470a9900
+[ 1720.858920] [trace_demo_toctou] do_filp_open.ret pid=43052 comm=demo_toctou.out ret=ffff8dda38037cc0
+[ 1720.858956] [trace_demo_toctou] do_filp_open.entry pid=43052 comm=demo_toctou.out dfd=4294967196 pathname=ffff8dda12eb6000 op=ffffd0c95290fb04
+[ 1720.858972] [trace_demo_toctou] do_filp_open.ret pid=43052 comm=demo_toctou.out ret=ffff8dda38037cc0
+[ 1720.858989] [trace_demo_toctou] __d_alloc.entry pid=43052 comm=demo_toctou.out sb=ffff8dda0bce8000 name_qstr=ffffd0c95290fcf0
+[ 1720.858997] [trace_demo_toctou] __d_alloc.ret pid=43052 comm=demo_toctou.out dentry=ffff8ddb470a90c0
+[ 1720.859038] [trace_demo_toctou] __d_alloc.entry pid=43052 comm=demo_toctou.out sb=ffff8dda0bce8000 name_qstr=ffffd0c95290faf0
+[ 1720.859046] [trace_demo_toctou] __d_alloc.ret pid=43052 comm=demo_toctou.out dentry=ffff8ddb470a93c0
+[ 1720.859082] [trace_demo_toctou] do_filp_open.entry pid=43052 comm=demo_toctou.out dfd=3 pathname=ffff8dda12eb5000 op=ffffd0c95290fd34
+[ 1720.859094] [trace_demo_toctou] do_filp_open.ret pid=43052 comm=demo_toctou.out ret=ffff8dda38037600
+[ 1720.859214] [trace_demo_toctou] do_filp_open.entry pid=43057 comm=demo_toctou.out dfd=4294967196 pathname=ffff8dda0a26f000 op=ffffd0c953783ae0
+[ 1720.859234] [trace_demo_toctou] do_filp_open.ret pid=43057 comm=demo_toctou.out ret=ffff8ddc15a9ee40
+[ 1720.859400] [trace_demo_toctou] do_filp_open.entry pid=43057 comm=demo_toctou.out dfd=4294967196 pathname=ffff8dda0a26c000 op=ffffd0c953783978
+[ 1720.859417] [trace_demo_toctou] do_filp_open.ret pid=43057 comm=demo_toctou.out ret=ffff8ddc15a9e600

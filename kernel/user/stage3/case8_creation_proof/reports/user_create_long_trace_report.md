@@ -4,7 +4,7 @@
 - Driver source: `kernel/drivers/stage3/case8_creation_proof/trace_user_create_long/trace_user_create_long.c`
 - Module: `trace_user_create_long`
 - Binary: `kernel/user/stage3/case8_creation_proof/user_create_long.out`
-- Run timestamp: `2026-02-15T13:08:29`
+- Run timestamp: `2026-02-15T13:22:48`
 - Final status: `pass_probe_hits`
 
 ## Probe Counts

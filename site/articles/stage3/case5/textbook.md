@@ -1,21 +1,19 @@
 ---
 layout: default
-title: "Stage 3 Case 5: Textbook"
+title: "Stage 3 CASE5: Textbook"
 ---
+[INVARIANTS]
+1. do_filp_open.entry count = do_filp_open.ret count.
+2. __d_alloc.entry count = __d_alloc.ret count when allocation path is active.
+3. Missing-file paths must show error-pointer class in ret stream.
+4. Cross-check invariant failure paths with worksheet failure-prediction block.
 
-[STAGE 3 CASE 5: MOUNT]
-Input: boundary crossing
-Computation: step_into jump
-Output: vfsmount transition ✓
+[DERIVATION CHAIN]
+- source: reports + dmesg
+- transform: count + classify + verify
+- output: pass/fail per invariant
 
-[AXIOMS]
-1. dentry -> d_flags & DCACHE_MOUNTED ✓
-2. path_init -> root vfsmount ✓
-3. step_into -> new vfsmount ✓
-
-[PROBE]
-Input: step_into
-Computation: extract nd->path.mnt
-Output: MNT_A != MNT_B ✓
-
-🐾 DONE. 🐾
+[DATA SOURCES]
+- reports root: [kernel/user/stage3/case5_mount_jump/reports](https://github.com/raikrahul/what-happens-when-open-is-called/blob/main/kernel/user/stage3/case5_mount_jump/reports)
+- worksheets root: [kernel/user/stage3/case5_mount_jump/worksheets](https://github.com/raikrahul/what-happens-when-open-is-called/blob/main/kernel/user/stage3/case5_mount_jump/worksheets)
+- planning summary: [STAGE3_FULL_TEST_SUMMARY](https://github.com/raikrahul/what-happens-when-open-is-called/blob/main/kernel/user/stage3/planning/STAGE3_FULL_TEST_SUMMARY.md)

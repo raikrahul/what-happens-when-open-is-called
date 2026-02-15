@@ -1,23 +1,25 @@
-[  870.170882] [trace_user_puzzle] loaded target_comm=user_puzzle.out user=kernel/user/stage3/case12_harder_puzzle/user_puzzle.c
-[  870.174482] [trace_user_puzzle] do_filp_open.entry pid=25776 comm=user_puzzle.out dfd=4294967196 pathname=ffff8dda294d2000 op=ffffd0c9569a7bb4
-[  870.174506] [trace_user_puzzle] do_filp_open.ret pid=25776 comm=user_puzzle.out ret=fffffffffffffffe
-[  870.174520] [trace_user_puzzle] do_filp_open.entry pid=25776 comm=user_puzzle.out dfd=4294967196 pathname=ffff8dda294d2000 op=ffffd0c9569a7bd4
-[  870.174532] [trace_user_puzzle] do_filp_open.ret pid=25776 comm=user_puzzle.out ret=fffffffffffffffe
-[  870.174546] [trace_user_puzzle] do_filp_open.entry pid=25776 comm=user_puzzle.out dfd=4294967196 pathname=ffff8dda294d2000 op=ffffd0c9569a7de4
-[  870.174559] [trace_user_puzzle] do_filp_open.ret pid=25776 comm=user_puzzle.out ret=fffffffffffffffe
-[  870.174577] [trace_user_puzzle] do_filp_open.entry pid=25776 comm=user_puzzle.out dfd=4294967196 pathname=ffff8dda294d2000 op=ffffd0c9569a7e14
-[  870.174586] [trace_user_puzzle] do_filp_open.ret pid=25776 comm=user_puzzle.out ret=fffffffffffffffe
-[  870.174593] [trace_user_puzzle] do_filp_open.entry pid=25776 comm=user_puzzle.out dfd=4294967196 pathname=ffff8dda294d2000 op=ffffd0c9569a7c74
-[  870.174601] [trace_user_puzzle] do_filp_open.ret pid=25776 comm=user_puzzle.out ret=fffffffffffffffe
-[  870.174608] [trace_user_puzzle] do_filp_open.entry pid=25776 comm=user_puzzle.out dfd=4294967196 pathname=ffff8dda294d2000 op=ffffd0c9569a7b54
-[  870.174616] [trace_user_puzzle] do_filp_open.ret pid=25776 comm=user_puzzle.out ret=fffffffffffffffe
-[  870.174624] [trace_user_puzzle] do_filp_open.entry pid=25776 comm=user_puzzle.out dfd=4294967196 pathname=ffff8dda294d2000 op=ffffd0c9569a7e04
-[  870.174635] [trace_user_puzzle] do_filp_open.ret pid=25776 comm=user_puzzle.out ret=ffff8dda08002f00
-[  870.174672] [trace_user_puzzle] do_filp_open.entry pid=25776 comm=user_puzzle.out dfd=4294967196 pathname=ffff8dda294d2000 op=ffffd0c9569a7bc4
-[  870.174682] [trace_user_puzzle] do_filp_open.ret pid=25776 comm=user_puzzle.out ret=ffff8dda080023c0
-[  870.175086] [trace_user_puzzle] do_filp_open.entry pid=25776 comm=user_puzzle.out dfd=4294967196 pathname=ffff8dda294d2000 op=ffffd0c9569a7bc4
-[  870.175184] [trace_user_puzzle] do_filp_open.ret pid=25776 comm=user_puzzle.out ret=ffff8dda08002f00
-[  870.175244] [trace_user_puzzle] do_filp_open.entry pid=25776 comm=user_puzzle.out dfd=4294967196 pathname=ffff8dda294d2000 op=ffffd0c9569a7bd4
-[  870.175255] [trace_user_puzzle] do_filp_open.ret pid=25776 comm=user_puzzle.out ret=ffff8dda08002f00
-[  870.175336] [trace_user_puzzle] do_filp_open.entry pid=25776 comm=user_puzzle.out dfd=4294967196 pathname=ffff8dda294d2000 op=ffffd0c9569a7c44
-[  870.175348] [trace_user_puzzle] do_filp_open.ret pid=25776 comm=user_puzzle.out ret=ffff8dda08002f00
+[ 1728.324086] [trace_user_puzzle] loaded target_comm=user_puzzle.out user=kernel/user/stage3/case12_harder_puzzle/user_puzzle.c
+[ 1728.326093] [trace_user_puzzle] do_filp_open.entry pid=44861 comm=user_puzzle.out dfd=4294967196 pathname=ffff8dda13f58000 op=ffffd0c940617b14
+[ 1728.326104] [trace_user_puzzle] do_filp_open.ret pid=44861 comm=user_puzzle.out ret=fffffffffffffffe
+[ 1728.326111] [trace_user_puzzle] do_filp_open.entry pid=44861 comm=user_puzzle.out dfd=4294967196 pathname=ffff8dda13f58000 op=ffffd0c940617d54
+[ 1728.326116] [trace_user_puzzle] do_filp_open.ret pid=44861 comm=user_puzzle.out ret=fffffffffffffffe
+[ 1728.326121] [trace_user_puzzle] do_filp_open.entry pid=44861 comm=user_puzzle.out dfd=4294967196 pathname=ffff8dda13f58000 op=ffffd0c940617cd4
+[ 1728.326126] [trace_user_puzzle] do_filp_open.ret pid=44861 comm=user_puzzle.out ret=fffffffffffffffe
+[ 1728.326132] [trace_user_puzzle] do_filp_open.entry pid=44861 comm=user_puzzle.out dfd=4294967196 pathname=ffff8dda13f58000 op=ffffd0c940617b14
+[ 1728.326136] [trace_user_puzzle] do_filp_open.ret pid=44861 comm=user_puzzle.out ret=fffffffffffffffe
+[ 1728.326139] [trace_user_puzzle] do_filp_open.entry pid=44861 comm=user_puzzle.out dfd=4294967196 pathname=ffff8dda13f58000 op=ffffd0c940617d24
+[ 1728.326142] [trace_user_puzzle] do_filp_open.ret pid=44861 comm=user_puzzle.out ret=fffffffffffffffe
+[ 1728.326145] [trace_user_puzzle] do_filp_open.entry pid=44861 comm=user_puzzle.out dfd=4294967196 pathname=ffff8dda13f58000 op=ffffd0c940617cc4
+[ 1728.326148] [trace_user_puzzle] do_filp_open.ret pid=44861 comm=user_puzzle.out ret=fffffffffffffffe
+[ 1728.326151] [trace_user_puzzle] do_filp_open.entry pid=44861 comm=user_puzzle.out dfd=4294967196 pathname=ffff8dda13f58000 op=ffffd0c940617ad4
+[ 1728.326156] [trace_user_puzzle] do_filp_open.ret pid=44861 comm=user_puzzle.out ret=ffff8ddbf1437e40
+[ 1728.326174] [trace_user_puzzle] do_filp_open.entry pid=44861 comm=user_puzzle.out dfd=4294967196 pathname=ffff8dda13f58000 op=ffffd0c940617cb4
+[ 1728.326179] [trace_user_puzzle] do_filp_open.ret pid=44861 comm=user_puzzle.out ret=ffff8ddbf1437000
+[ 1728.326352] [trace_user_puzzle] do_filp_open.entry pid=44861 comm=user_puzzle.out dfd=4294967196 pathname=ffff8dda13f58000 op=ffffd0c940617c24
+[ 1728.326357] [trace_user_puzzle] __d_alloc.entry pid=44861 comm=user_puzzle.out sb=ffff8dda0bce8000 name_qstr=ffffd0c940617af0
+[ 1728.326360] [trace_user_puzzle] __d_alloc.ret pid=44861 comm=user_puzzle.out dentry=ffff8dda06e6bb40
+[ 1728.326399] [trace_user_puzzle] do_filp_open.ret pid=44861 comm=user_puzzle.out ret=ffff8ddbf1437e40
+[ 1728.326429] [trace_user_puzzle] do_filp_open.entry pid=44861 comm=user_puzzle.out dfd=4294967196 pathname=ffff8dda13f58000 op=ffffd0c940617c64
+[ 1728.326435] [trace_user_puzzle] do_filp_open.ret pid=44861 comm=user_puzzle.out ret=ffff8ddbf1437e40
+[ 1728.326478] [trace_user_puzzle] do_filp_open.entry pid=44861 comm=user_puzzle.out dfd=4294967196 pathname=ffff8dda13f58000 op=ffffd0c940617be4
+[ 1728.326484] [trace_user_puzzle] do_filp_open.ret pid=44861 comm=user_puzzle.out ret=ffff8ddbf1437e40

@@ -1,17 +1,17 @@
-[  869.125832] [trace_puzzle_verify] loaded target_comm=puzzle_verify.o user=kernel/user/stage3/case12_harder_puzzle/puzzle_verify.c
-[  869.129540] [trace_puzzle_verify] do_filp_open.entry pid=25519 comm=puzzle_verify.o dfd=4294967196 pathname=ffff8dda0c841000 op=ffffd0c9566cbdc4
-[  869.129562] [trace_puzzle_verify] do_filp_open.ret pid=25519 comm=puzzle_verify.o ret=fffffffffffffffe
-[  869.129575] [trace_puzzle_verify] do_filp_open.entry pid=25519 comm=puzzle_verify.o dfd=4294967196 pathname=ffff8dda0c841000 op=ffffd0c9566cbd24
-[  869.129586] [trace_puzzle_verify] do_filp_open.ret pid=25519 comm=puzzle_verify.o ret=fffffffffffffffe
-[  869.129598] [trace_puzzle_verify] do_filp_open.entry pid=25519 comm=puzzle_verify.o dfd=4294967196 pathname=ffff8dda0c841000 op=ffffd0c9566cbc64
-[  869.129609] [trace_puzzle_verify] do_filp_open.ret pid=25519 comm=puzzle_verify.o ret=fffffffffffffffe
-[  869.129623] [trace_puzzle_verify] do_filp_open.entry pid=25519 comm=puzzle_verify.o dfd=4294967196 pathname=ffff8dda0c841000 op=ffffd0c9566cbba4
-[  869.129631] [trace_puzzle_verify] do_filp_open.ret pid=25519 comm=puzzle_verify.o ret=fffffffffffffffe
-[  869.129638] [trace_puzzle_verify] do_filp_open.entry pid=25519 comm=puzzle_verify.o dfd=4294967196 pathname=ffff8dda0c841000 op=ffffd0c9566cbce4
-[  869.129645] [trace_puzzle_verify] do_filp_open.ret pid=25519 comm=puzzle_verify.o ret=fffffffffffffffe
-[  869.129652] [trace_puzzle_verify] do_filp_open.entry pid=25519 comm=puzzle_verify.o dfd=4294967196 pathname=ffff8dda0c841000 op=ffffd0c9566cbca4
-[  869.129681] [trace_puzzle_verify] do_filp_open.ret pid=25519 comm=puzzle_verify.o ret=fffffffffffffffe
-[  869.129689] [trace_puzzle_verify] do_filp_open.entry pid=25519 comm=puzzle_verify.o dfd=4294967196 pathname=ffff8dda0c841000 op=ffffd0c9566cbb04
-[  869.129699] [trace_puzzle_verify] do_filp_open.ret pid=25519 comm=puzzle_verify.o ret=ffff8dda1c460780
-[  869.129738] [trace_puzzle_verify] do_filp_open.entry pid=25519 comm=puzzle_verify.o dfd=4294967196 pathname=ffff8dda0c841000 op=ffffd0c9566cbd14
-[  869.129748] [trace_puzzle_verify] do_filp_open.ret pid=25519 comm=puzzle_verify.o ret=ffff8dda1c460600
+[ 1727.276057] [trace_puzzle_verify] loaded target_comm=puzzle_verify.o user=kernel/user/stage3/case12_harder_puzzle/puzzle_verify.c
+[ 1727.279490] [trace_puzzle_verify] do_filp_open.entry pid=44604 comm=puzzle_verify.o dfd=4294967196 pathname=ffff8dda294d4000 op=ffffd0c9529bfba4
+[ 1727.279503] [trace_puzzle_verify] do_filp_open.ret pid=44604 comm=puzzle_verify.o ret=fffffffffffffffe
+[ 1727.279509] [trace_puzzle_verify] do_filp_open.entry pid=44604 comm=puzzle_verify.o dfd=4294967196 pathname=ffff8dda294d4000 op=ffffd0c9529bfc14
+[ 1727.279514] [trace_puzzle_verify] do_filp_open.ret pid=44604 comm=puzzle_verify.o ret=fffffffffffffffe
+[ 1727.279519] [trace_puzzle_verify] do_filp_open.entry pid=44604 comm=puzzle_verify.o dfd=4294967196 pathname=ffff8dda294d4000 op=ffffd0c9529bfce4
+[ 1727.279524] [trace_puzzle_verify] do_filp_open.ret pid=44604 comm=puzzle_verify.o ret=fffffffffffffffe
+[ 1727.279531] [trace_puzzle_verify] do_filp_open.entry pid=44604 comm=puzzle_verify.o dfd=4294967196 pathname=ffff8dda294d4000 op=ffffd0c9529bfe24
+[ 1727.279535] [trace_puzzle_verify] do_filp_open.ret pid=44604 comm=puzzle_verify.o ret=fffffffffffffffe
+[ 1727.279538] [trace_puzzle_verify] do_filp_open.entry pid=44604 comm=puzzle_verify.o dfd=4294967196 pathname=ffff8dda294d4000 op=ffffd0c9529bfb84
+[ 1727.279541] [trace_puzzle_verify] do_filp_open.ret pid=44604 comm=puzzle_verify.o ret=fffffffffffffffe
+[ 1727.279544] [trace_puzzle_verify] do_filp_open.entry pid=44604 comm=puzzle_verify.o dfd=4294967196 pathname=ffff8dda294d4000 op=ffffd0c9529bfc54
+[ 1727.279548] [trace_puzzle_verify] do_filp_open.ret pid=44604 comm=puzzle_verify.o ret=fffffffffffffffe
+[ 1727.279551] [trace_puzzle_verify] do_filp_open.entry pid=44604 comm=puzzle_verify.o dfd=4294967196 pathname=ffff8dda294d4000 op=ffffd0c9529bfb04
+[ 1727.279556] [trace_puzzle_verify] do_filp_open.ret pid=44604 comm=puzzle_verify.o ret=ffff8dd904158840
+[ 1727.279574] [trace_puzzle_verify] do_filp_open.entry pid=44604 comm=puzzle_verify.o dfd=4294967196 pathname=ffff8dda294d4000 op=ffffd0c9529bfcb4
+[ 1727.279579] [trace_puzzle_verify] do_filp_open.ret pid=44604 comm=puzzle_verify.o ret=ffff8dd904158480

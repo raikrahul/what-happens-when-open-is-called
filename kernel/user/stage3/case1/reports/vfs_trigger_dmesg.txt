@@ -1,21 +1,21 @@
-[  866.043532] [trace_vfs_trigger] loaded target_comm=vfs_trigger.out user=kernel/user/stage3/case1/vfs_trigger.c
-[  866.047006] [trace_vfs_trigger] do_filp_open.entry pid=24753 comm=vfs_trigger.out dfd=4294967196 pathname=ffff8dda294d4000 op=ffffd0c9568cbc24
-[  866.047034] [trace_vfs_trigger] do_filp_open.ret pid=24753 comm=vfs_trigger.out ret=fffffffffffffffe
-[  866.047051] [trace_vfs_trigger] do_filp_open.entry pid=24753 comm=vfs_trigger.out dfd=4294967196 pathname=ffff8dda294d4000 op=ffffd0c9568cbe84
-[  866.047066] [trace_vfs_trigger] do_filp_open.ret pid=24753 comm=vfs_trigger.out ret=fffffffffffffffe
-[  866.047080] [trace_vfs_trigger] do_filp_open.entry pid=24753 comm=vfs_trigger.out dfd=4294967196 pathname=ffff8dda294d4000 op=ffffd0c9568cbc84
-[  866.047095] [trace_vfs_trigger] do_filp_open.ret pid=24753 comm=vfs_trigger.out ret=fffffffffffffffe
-[  866.047113] [trace_vfs_trigger] do_filp_open.entry pid=24753 comm=vfs_trigger.out dfd=4294967196 pathname=ffff8dda294d4000 op=ffffd0c9568cbe64
-[  866.047156] [trace_vfs_trigger] do_filp_open.ret pid=24753 comm=vfs_trigger.out ret=fffffffffffffffe
-[  866.047168] [trace_vfs_trigger] do_filp_open.entry pid=24753 comm=vfs_trigger.out dfd=4294967196 pathname=ffff8dda294d4000 op=ffffd0c9568cbc94
-[  866.047180] [trace_vfs_trigger] do_filp_open.ret pid=24753 comm=vfs_trigger.out ret=fffffffffffffffe
-[  866.047191] [trace_vfs_trigger] do_filp_open.entry pid=24753 comm=vfs_trigger.out dfd=4294967196 pathname=ffff8dda294d4000 op=ffffd0c9568cbda4
-[  866.047203] [trace_vfs_trigger] do_filp_open.ret pid=24753 comm=vfs_trigger.out ret=fffffffffffffffe
-[  866.047214] [trace_vfs_trigger] do_filp_open.entry pid=24753 comm=vfs_trigger.out dfd=4294967196 pathname=ffff8dda294d4000 op=ffffd0c9568cbb84
-[  866.047230] [trace_vfs_trigger] do_filp_open.ret pid=24753 comm=vfs_trigger.out ret=ffff8ddbf3649e40
-[  866.047293] [trace_vfs_trigger] do_filp_open.entry pid=24753 comm=vfs_trigger.out dfd=4294967196 pathname=ffff8dda294d4000 op=ffffd0c9568cbc24
-[  866.047311] [trace_vfs_trigger] do_filp_open.ret pid=24753 comm=vfs_trigger.out ret=ffff8ddbf36493c0
-[  866.047890] [trace_vfs_trigger] do_filp_open.entry pid=24753 comm=vfs_trigger.out dfd=4294967196 pathname=ffff8dda294d4000 op=ffffd0c9568cbb04
-[  866.047908] [trace_vfs_trigger] do_filp_open.ret pid=24753 comm=vfs_trigger.out ret=ffff8ddbf3649e40
-[  866.047968] [trace_vfs_trigger] do_filp_open.entry pid=24753 comm=vfs_trigger.out dfd=3 pathname=ffff8dda294d4000 op=ffffd0c9568cbd14
-[  866.047982] [trace_vfs_trigger] do_filp_open.ret pid=24753 comm=vfs_trigger.out ret=ffff8ddbf3649300
+[ 1724.087989] [trace_vfs_trigger] loaded target_comm=vfs_trigger.out user=kernel/user/stage3/case1/vfs_trigger.c
+[ 1724.090302] [trace_vfs_trigger] do_filp_open.entry pid=43830 comm=vfs_trigger.out dfd=4294967196 pathname=ffff8dda082a9000 op=ffffd0c95290fc84
+[ 1724.090314] [trace_vfs_trigger] do_filp_open.ret pid=43830 comm=vfs_trigger.out ret=fffffffffffffffe
+[ 1724.090320] [trace_vfs_trigger] do_filp_open.entry pid=43830 comm=vfs_trigger.out dfd=4294967196 pathname=ffff8dda082a9000 op=ffffd0c95290fbe4
+[ 1724.090325] [trace_vfs_trigger] do_filp_open.ret pid=43830 comm=vfs_trigger.out ret=fffffffffffffffe
+[ 1724.090330] [trace_vfs_trigger] do_filp_open.entry pid=43830 comm=vfs_trigger.out dfd=4294967196 pathname=ffff8dda082a9000 op=ffffd0c95290fe64
+[ 1724.090335] [trace_vfs_trigger] do_filp_open.ret pid=43830 comm=vfs_trigger.out ret=fffffffffffffffe
+[ 1724.090342] [trace_vfs_trigger] do_filp_open.entry pid=43830 comm=vfs_trigger.out dfd=4294967196 pathname=ffff8dda082a9000 op=ffffd0c95290fb94
+[ 1724.090346] [trace_vfs_trigger] do_filp_open.ret pid=43830 comm=vfs_trigger.out ret=fffffffffffffffe
+[ 1724.090349] [trace_vfs_trigger] do_filp_open.entry pid=43830 comm=vfs_trigger.out dfd=4294967196 pathname=ffff8dda082a9000 op=ffffd0c95290fdd4
+[ 1724.090352] [trace_vfs_trigger] do_filp_open.ret pid=43830 comm=vfs_trigger.out ret=fffffffffffffffe
+[ 1724.090355] [trace_vfs_trigger] do_filp_open.entry pid=43830 comm=vfs_trigger.out dfd=4294967196 pathname=ffff8dda082a9000 op=ffffd0c95290faa4
+[ 1724.090358] [trace_vfs_trigger] do_filp_open.ret pid=43830 comm=vfs_trigger.out ret=fffffffffffffffe
+[ 1724.090361] [trace_vfs_trigger] do_filp_open.entry pid=43830 comm=vfs_trigger.out dfd=4294967196 pathname=ffff8dda082a9000 op=ffffd0c95290fe24
+[ 1724.090366] [trace_vfs_trigger] do_filp_open.ret pid=43830 comm=vfs_trigger.out ret=ffff8ddc26eb8900
+[ 1724.090387] [trace_vfs_trigger] do_filp_open.entry pid=43830 comm=vfs_trigger.out dfd=4294967196 pathname=ffff8dda082a9000 op=ffffd0c95290fbd4
+[ 1724.090393] [trace_vfs_trigger] do_filp_open.ret pid=43830 comm=vfs_trigger.out ret=ffff8ddc26eb8c00
+[ 1724.090626] [trace_vfs_trigger] do_filp_open.entry pid=43830 comm=vfs_trigger.out dfd=4294967196 pathname=ffff8dda082a9000 op=ffffd0c95290fa94
+[ 1724.090634] [trace_vfs_trigger] do_filp_open.ret pid=43830 comm=vfs_trigger.out ret=ffff8ddc26eb8900
+[ 1724.090661] [trace_vfs_trigger] do_filp_open.entry pid=43830 comm=vfs_trigger.out dfd=3 pathname=ffff8dda082a9000 op=ffffd0c95290fd64
+[ 1724.090668] [trace_vfs_trigger] do_filp_open.ret pid=43830 comm=vfs_trigger.out ret=ffff8ddc26eb8d80

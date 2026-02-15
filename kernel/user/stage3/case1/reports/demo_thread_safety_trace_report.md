@@ -4,7 +4,7 @@
 - Driver source: `kernel/drivers/stage3/case1/trace_demo_thread_safety/trace_demo_thread_safety.c`
 - Module: `trace_demo_thread_safety`
 - Binary: `kernel/user/stage3/case1/demo_thread_safety/demo_thread_safety.out`
-- Run timestamp: `2026-02-15T13:07:58`
+- Run timestamp: `2026-02-15T13:22:15`
 - Final status: `pass_probe_hits`
 
 ## Probe Counts

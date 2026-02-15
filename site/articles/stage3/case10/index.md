@@ -1,4 +1,4 @@
 ---
-layout: container
-title: "Stage 3 Case 10: Rename Investigation"
+layout: container4
+title: "Stage 3 CASE10: Rename Investigation"
 ---

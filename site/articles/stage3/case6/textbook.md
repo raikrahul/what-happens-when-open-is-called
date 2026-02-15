@@ -1,21 +1,19 @@
 ---
 layout: default
-title: "Stage 3 Case 6: Textbook"
+title: "Stage 3 CASE6: Textbook"
 ---
+[INVARIANTS]
+1. do_filp_open.entry count = do_filp_open.ret count.
+2. __d_alloc.entry count = __d_alloc.ret count when allocation path is active.
+3. Missing-file paths must show error-pointer class in ret stream.
+4. Cross-check invariant failure paths with worksheet failure-prediction block.
 
-[STAGE 3 CASE 6: LOOP]
-Input: infinite symlink
-Computation: total_link_count increment
-Output: ELOOP ✓
+[DERIVATION CHAIN]
+- source: reports + dmesg
+- transform: count + classify + verify
+- output: pass/fail per invariant
 
-[AXIOMS]
-1. trailing_symlink -> follow ✓
-2. restart link_path_walk ✓
-3. link_count > 40 -> abort ✓
-
-[PROBE]
-Input: total_link_count
-Computation: capture @ trigger
-Output: 40 verified ✓
-
-🐾 DONE. 🐾
+[DATA SOURCES]
+- reports root: [kernel/user/stage3/case6_symlink_loop/reports](https://github.com/raikrahul/what-happens-when-open-is-called/blob/main/kernel/user/stage3/case6_symlink_loop/reports)
+- worksheets root: [kernel/user/stage3/case6_symlink_loop/worksheets](https://github.com/raikrahul/what-happens-when-open-is-called/blob/main/kernel/user/stage3/case6_symlink_loop/worksheets)
+- planning summary: [STAGE3_FULL_TEST_SUMMARY](https://github.com/raikrahul/what-happens-when-open-is-called/blob/main/kernel/user/stage3/planning/STAGE3_FULL_TEST_SUMMARY.md)

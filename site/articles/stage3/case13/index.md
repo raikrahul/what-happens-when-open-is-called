@@ -1,4 +1,4 @@
 ---
-layout: container
-title: "Stage 3 Case 13: Salt Avalanche"
+layout: container4
+title: "Stage 3 CASE13: Salt Avalanche"
 ---

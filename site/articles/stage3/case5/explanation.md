@@ -1,21 +1,24 @@
 ---
 layout: default
-title: "Stage 3 Case 5: Explanation"
+title: "Stage 3 CASE5: Explanation"
 ---
+[CASE]
+- id: case5
+- title: Mount Jump
+- userspace root: [kernel/user/stage3/case5_mount_jump](https://github.com/raikrahul/what-happens-when-open-is-called/blob/main/kernel/user/stage3/case5_mount_jump)
+- driver root: [kernel/drivers/stage3/case5_mount_jump](https://github.com/raikrahul/what-happens-when-open-is-called/blob/main/kernel/drivers/stage3/case5_mount_jump)
 
-[CASE 5 EXPLANATION: MOUNT JUMP]
-Input: path crossing loopback bound
-Computation: mount resolution
-Output: jump into sub-filesystem
+[OBJECTIVE]
+- Match Stage1/Stage2 intensity by linking every claim to reproducible logs and worksheets.
 
-[LOGIC]
-1. resolve /tmp/mnt ✓
-2. detect mount flag ✓
-3. replace path state
+[TRACE CLAIM BLOCK]
+1. Entry/return pair integrity for do_filp_open.
+2. Entry/return pair integrity for __d_alloc where applicable.
+3. Error-pointer vs non-error-pointer branch classification.
+4. Case-specific branch proof for Mount Jump.
 
-[RESULTS]
-Input: ./case5_mount_jump.out
-Computation: path.mnt capture
-Output: transition verified ✓
+[REPORT ARTIFACTS]
+- [case5_mount_jump_trace_report.md](https://github.com/raikrahul/what-happens-when-open-is-called/blob/main/kernel/user/stage3/case5_mount_jump/reports/case5_mount_jump_trace_report.md)
 
-🐾 DONE. 🐾
+[RAW LOG ARTIFACTS]
+- [case5_mount_jump_dmesg.txt](https://github.com/raikrahul/what-happens-when-open-is-called/blob/main/kernel/user/stage3/case5_mount_jump/reports/case5_mount_jump_dmesg.txt)

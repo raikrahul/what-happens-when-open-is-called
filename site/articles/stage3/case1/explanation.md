@@ -1,22 +1,38 @@
 ---
 layout: default
-title: "Stage 3 Case 1: Explanation"
+title: "Stage 3 CASE1: Explanation"
 ---
+[CASE]
+- id: case1
+- title: Relative Path
+- userspace root: [kernel/user/stage3/case1](https://github.com/raikrahul/what-happens-when-open-is-called/blob/main/kernel/user/stage3/case1)
+- driver root: [kernel/drivers/stage3/case1](https://github.com/raikrahul/what-happens-when-open-is-called/blob/main/kernel/drivers/stage3/case1)
 
-[CASE 1 EXPLANATION: RELATIVE PATH]
-Input: open("file")
-Computation: path walk entry
-Output: no separation logic triggered
+[OBJECTIVE]
+- Match Stage1/Stage2 intensity by linking every claim to reproducible logs and worksheets.
 
-[LOGIC]
-1. link_path_walk(name) -> search for '/'
-2. No '/' -> nd->last = name
-3. nd->last_type = LAST_NORM
-4. Return to do_last
+[TRACE CLAIM BLOCK]
+1. Entry/return pair integrity for do_filp_open.
+2. Entry/return pair integrity for __d_alloc where applicable.
+3. Error-pointer vs non-error-pointer branch classification.
+4. Case-specific branch proof for Relative Path.
 
-[RESULTS]
-Input: kprobe @ link_path_walk
-Computation: print nd->last.name
-Output: "some_relative_file.txt" ✓
+[REPORT ARTIFACTS]
+- [case1_relative_trace_report.md](https://github.com/raikrahul/what-happens-when-open-is-called/blob/main/kernel/user/stage3/case1/reports/case1_relative_trace_report.md)
+- [case6_symlink_loop_trace_report.md](https://github.com/raikrahul/what-happens-when-open-is-called/blob/main/kernel/user/stage3/case1/reports/case6_symlink_loop_trace_report.md)
+- [case7_symlink_fast_trace_report.md](https://github.com/raikrahul/what-happens-when-open-is-called/blob/main/kernel/user/stage3/case1/reports/case7_symlink_fast_trace_report.md)
+- [dcache_loop_analysis_trace_report.md](https://github.com/raikrahul/what-happens-when-open-is-called/blob/main/kernel/user/stage3/case1/reports/dcache_loop_analysis_trace_report.md)
+- [demo_at_fdcwd_trace_report.md](https://github.com/raikrahul/what-happens-when-open-is-called/blob/main/kernel/user/stage3/case1/reports/demo_at_fdcwd_trace_report.md)
+- [demo_dup_names_trace_report.md](https://github.com/raikrahul/what-happens-when-open-is-called/blob/main/kernel/user/stage3/case1/reports/demo_dup_names_trace_report.md)
+- [demo_o_path_dir_trace_report.md](https://github.com/raikrahul/what-happens-when-open-is-called/blob/main/kernel/user/stage3/case1/reports/demo_o_path_dir_trace_report.md)
+- [demo_o_path_trace_report.md](https://github.com/raikrahul/what-happens-when-open-is-called/blob/main/kernel/user/stage3/case1/reports/demo_o_path_trace_report.md)
 
-🐾 DONE. 🐾
+[RAW LOG ARTIFACTS]
+- [case1_relative_dmesg.txt](https://github.com/raikrahul/what-happens-when-open-is-called/blob/main/kernel/user/stage3/case1/reports/case1_relative_dmesg.txt)
+- [case6_symlink_loop_dmesg.txt](https://github.com/raikrahul/what-happens-when-open-is-called/blob/main/kernel/user/stage3/case1/reports/case6_symlink_loop_dmesg.txt)
+- [case7_symlink_fast_dmesg.txt](https://github.com/raikrahul/what-happens-when-open-is-called/blob/main/kernel/user/stage3/case1/reports/case7_symlink_fast_dmesg.txt)
+- [dcache_loop_analysis_dmesg.txt](https://github.com/raikrahul/what-happens-when-open-is-called/blob/main/kernel/user/stage3/case1/reports/dcache_loop_analysis_dmesg.txt)
+- [demo_at_fdcwd_dmesg.txt](https://github.com/raikrahul/what-happens-when-open-is-called/blob/main/kernel/user/stage3/case1/reports/demo_at_fdcwd_dmesg.txt)
+- [demo_dup_names_dmesg.txt](https://github.com/raikrahul/what-happens-when-open-is-called/blob/main/kernel/user/stage3/case1/reports/demo_dup_names_dmesg.txt)
+- [demo_o_path_dir_dmesg.txt](https://github.com/raikrahul/what-happens-when-open-is-called/blob/main/kernel/user/stage3/case1/reports/demo_o_path_dir_dmesg.txt)
+- [demo_o_path_dmesg.txt](https://github.com/raikrahul/what-happens-when-open-is-called/blob/main/kernel/user/stage3/case1/reports/demo_o_path_dmesg.txt)

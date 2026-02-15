@@ -3,7 +3,7 @@
 
 <head>
   <meta charset="UTF-8">
-  <title>Stage 3 Case 1: Worksheet</title>
+  <title>Stage 3 CASE1: Worksheet</title>
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/styles/github.min.css">
   <script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/highlight.min.js"></script>
   <script>window.addEventListener('DOMContentLoaded', () => { if (window.hljs) hljs.highlightAll(); });</script>
@@ -79,191 +79,41 @@
     <button onclick="window.print()" style="font-size: 10px; cursor: pointer;">Print</button>
   </div>
   <div class="content">
-    <pre style="white-space: pre-wrap; word-wrap: break-word; margin: 0; font-family: monospace;">[PROGRAM: case1_relative.c]
-https://github.com/raikrahul/what-happens-when-open-is-called/blob/main/kernel/user/stage3/case1_relative/case1_relative.c</pre>
-<pre><code class="language-c">#include &lt;fcntl.h&gt;
-#include &lt;unistd.h&gt;
+    <pre style="white-space: pre-wrap; word-wrap: break-word; margin: 0; font-family: monospace;">[WORKSHEET BASE]
+- [case1_relative_worksheet.md](https://github.com/raikrahul/what-happens-when-open-is-called/blob/main/kernel/user/stage3/case1/worksheets/case1_relative_worksheet.md)
+- [case6_symlink_loop_worksheet.md](https://github.com/raikrahul/what-happens-when-open-is-called/blob/main/kernel/user/stage3/case1/worksheets/case6_symlink_loop_worksheet.md)
+- [case7_symlink_fast_worksheet.md](https://github.com/raikrahul/what-happens-when-open-is-called/blob/main/kernel/user/stage3/case1/worksheets/case7_symlink_fast_worksheet.md)
+- [dcache_loop_analysis_worksheet.md](https://github.com/raikrahul/what-happens-when-open-is-called/blob/main/kernel/user/stage3/case1/worksheets/dcache_loop_analysis_worksheet.md)
+- [demo_at_fdcwd_worksheet.md](https://github.com/raikrahul/what-happens-when-open-is-called/blob/main/kernel/user/stage3/case1/worksheets/demo_at_fdcwd_worksheet.md)
+- [demo_dup_names_worksheet.md](https://github.com/raikrahul/what-happens-when-open-is-called/blob/main/kernel/user/stage3/case1/worksheets/demo_dup_names_worksheet.md)
+- [demo_o_path_dir_worksheet.md](https://github.com/raikrahul/what-happens-when-open-is-called/blob/main/kernel/user/stage3/case1/worksheets/demo_o_path_dir_worksheet.md)
+- [demo_o_path_worksheet.md](https://github.com/raikrahul/what-happens-when-open-is-called/blob/main/kernel/user/stage3/case1/worksheets/demo_o_path_worksheet.md)
 
-int main(void) { open("some_relative_file.txt", O_CREAT | O_WRONLY, 0644); }</code></pre>
-<pre style="white-space: pre-wrap; word-wrap: break-word; margin: 0; font-family: monospace;">
+[WORKSHEET AXIOM]
+- [case1_relative_worksheet_axiom.md](https://github.com/raikrahul/what-happens-when-open-is-called/blob/main/kernel/user/stage3/case1/worksheets/case1_relative_worksheet_axiom.md)
+- [case6_symlink_loop_worksheet_axiom.md](https://github.com/raikrahul/what-happens-when-open-is-called/blob/main/kernel/user/stage3/case1/worksheets/case6_symlink_loop_worksheet_axiom.md)
+- [case7_symlink_fast_worksheet_axiom.md](https://github.com/raikrahul/what-happens-when-open-is-called/blob/main/kernel/user/stage3/case1/worksheets/case7_symlink_fast_worksheet_axiom.md)
+- [dcache_loop_analysis_worksheet_axiom.md](https://github.com/raikrahul/what-happens-when-open-is-called/blob/main/kernel/user/stage3/case1/worksheets/dcache_loop_analysis_worksheet_axiom.md)
+- [demo_at_fdcwd_worksheet_axiom.md](https://github.com/raikrahul/what-happens-when-open-is-called/blob/main/kernel/user/stage3/case1/worksheets/demo_at_fdcwd_worksheet_axiom.md)
+- [demo_dup_names_worksheet_axiom.md](https://github.com/raikrahul/what-happens-when-open-is-called/blob/main/kernel/user/stage3/case1/worksheets/demo_dup_names_worksheet_axiom.md)
+- [demo_o_path_dir_worksheet_axiom.md](https://github.com/raikrahul/what-happens-when-open-is-called/blob/main/kernel/user/stage3/case1/worksheets/demo_o_path_dir_worksheet_axiom.md)
+- [demo_o_path_worksheet_axiom.md](https://github.com/raikrahul/what-happens-when-open-is-called/blob/main/kernel/user/stage3/case1/worksheets/demo_o_path_worksheet_axiom.md)
 
-[FILES YOU NEED]
-- Disassembly (virtual addresses): kernel/user/stage3/case1_relative/case1_relative.dump
-- Listing (mnemonics + source): kernel/user/stage3/case1_relative/case1_listing.txt
-- Binary: kernel/user/stage3/case1_relative/case1_relative.out
+[WORKSHEET AXIOM HARD]
+- [case1_relative_worksheet_axiom_hard.md](https://github.com/raikrahul/what-happens-when-open-is-called/blob/main/kernel/user/stage3/case1/worksheets/case1_relative_worksheet_axiom_hard.md)
+- [case6_symlink_loop_worksheet_axiom_hard.md](https://github.com/raikrahul/what-happens-when-open-is-called/blob/main/kernel/user/stage3/case1/worksheets/case6_symlink_loop_worksheet_axiom_hard.md)
+- [case7_symlink_fast_worksheet_axiom_hard.md](https://github.com/raikrahul/what-happens-when-open-is-called/blob/main/kernel/user/stage3/case1/worksheets/case7_symlink_fast_worksheet_axiom_hard.md)
+- [dcache_loop_analysis_worksheet_axiom_hard.md](https://github.com/raikrahul/what-happens-when-open-is-called/blob/main/kernel/user/stage3/case1/worksheets/dcache_loop_analysis_worksheet_axiom_hard.md)
+- [demo_at_fdcwd_worksheet_axiom_hard.md](https://github.com/raikrahul/what-happens-when-open-is-called/blob/main/kernel/user/stage3/case1/worksheets/demo_at_fdcwd_worksheet_axiom_hard.md)
+- [demo_dup_names_worksheet_axiom_hard.md](https://github.com/raikrahul/what-happens-when-open-is-called/blob/main/kernel/user/stage3/case1/worksheets/demo_dup_names_worksheet_axiom_hard.md)
+- [demo_o_path_dir_worksheet_axiom_hard.md](https://github.com/raikrahul/what-happens-when-open-is-called/blob/main/kernel/user/stage3/case1/worksheets/demo_o_path_dir_worksheet_axiom_hard.md)
+- [demo_o_path_worksheet_axiom_hard.md](https://github.com/raikrahul/what-happens-when-open-is-called/blob/main/kernel/user/stage3/case1/worksheets/demo_o_path_worksheet_axiom_hard.md)
 
-[STAGE 3 CASE 1 WORKSHEET: FIND VIRTUAL ADDRESS OF open]
-
-1. open case1_relative.dump → find `&lt;main&gt;:` → first address on that line = 0x________ → write: main_va = 0x________ → find `&lt;open@plt&gt;:` → first address on that line = 0x________ → write: open_va = 0x________ → find `&lt;_start&gt;:` → first address = 0x________ → write: start_va = 0x________
-
-2. DRAW:</pre>
-<pre><code>nm case1_relative.out
-|-----------|----------|
-| Address   | Symbol   |
-|-----------|----------|
-| 0x_______ | _start   |
-| 0x_______ | main     |
-| 0x_______ | open@plt |
-|-----------|----------|</code></pre>
-<pre style="white-space: pre-wrap; word-wrap: break-word; margin: 0; font-family: monospace;">
-fill from step 1 → verify: _start &lt; open@plt &lt; main ✓ ∨ ✗ → if ✗ re-read .dump
-
-3. open case1_relative.dump → inside `&lt;main&gt;:` section → find the line containing `call` → full line = `____: e8 __ __ __ __    call   ____ &lt;open@plt&gt;` → write: call_va = 0x________ → write: patched_bytes = 0x________ (the 4 bytes after e8)
-
-4. CALCULATE call target from patched bytes: patched_bytes from step 3 = __ __ __ __ → little-endian → as 32-bit signed = 0x________ → is this negative? MSB ≥ 0x80 → yes/no → two's complement: invert = 0x________, add 1 = 0x________ → magnitude = ________ decimal → displacement = -________ → call_target = (call_va + 5) + displacement = (0x________ + 0x5) + (-________) = 0x________ → compare call_target to open_va from step 1 → equal ✓ ∨ not equal ✗
-
-5. SHORTCUT: the .dump already shows the target after `call` → `call 0x________ &lt;open@plt&gt;` → this must match open_va from step 1 → if it does, step 4 arithmetic is confirmed ✓ → step 4 exists to prove the CPU does this math, not the disassembler
-
-6. open case1_relative.dump → `&lt;open@plt&gt;:` section → second instruction = `jmp *0x________(%rip)` → write: rip_offset = 0x________ → the jmp instruction is at address 0x________, length = 6 bytes (ff 25 + 4 bytes) → rip_at_jmp = 0x________ + 6 = 0x________ → GOT_slot = rip_at_jmp + rip_offset = 0x________ + 0x________ = 0x________ → .dump shows `# ____` as a comment after the jmp → that comment = GOT_slot → match ✓ ∨ ✗
-
-7. VERIFY GOT: run `readelf -r case1_relative.out | grep open` → relocation offset = 0x________ → compare to GOT_slot from step 6 → equal ✓ ∨ ✗ → type = R_X86_64_JUMP_SLOT → this confirms the GOT entry is a lazy-binding jump slot
-
-8. DRAW:</pre>
-<pre><code>main                          PLT                           GOT
-+------------------------+    +------------------------+    +------------------+
-| 0x____: call 0x____ ---+---&gt;| 0x____: endbr64        |    | 0x____: [addr] --+--&gt; glibc open()
-|                        |    | 0x____: jmp *0x____(rip)+---&gt;|                  |
-+------------------------+    +------------------------+    +------------------+</code></pre>
-<pre style="white-space: pre-wrap; word-wrap: break-word; margin: 0; font-family: monospace;">
-fill ALL boxes from steps 1-7 → every address must come from a previous step → no new numbers
-
-9. STRING: open case1_relative.dump → find `.rodata` section → run `objdump -s -j .rodata case1_relative.out` → find "some_relative_file.txt" → starting address = 0x________ → write: string_va = 0x________ → go to `&lt;main&gt;:` in .dump → find `lea` instruction → `lea 0x________(%rip),%rax` at address 0x________ → lea length = 7 bytes → rip_at_lea = 0x________ + 7 = 0x________ → string_computed = rip_at_lea + lea_offset = 0x________ + 0x________ = 0x________ → compare to string_va → equal ✓ ∨ ✗
-
-10. ARGUMENTS before call: open case1_relative.dump → `&lt;main&gt;:` → read backwards from call instruction → movl $________, %edx → decimal = ________ → octal = 0________ → this is mode → 0644₈ = 6×64 + 4×8 + 4 = 384+32+4 = 420 → matches ✓ ∨ ✗ → movl $________, %esi → decimal = ________ → O_CREAT=0x40=64, O_WRONLY=0x1=1 → 64+1=65 → matches ✓ ∨ ✗ → %rdi = string address from step 9 ✓ ∨ ✗
-
-11. DRAW REGISTER STATE AT call instruction (address from step 3):</pre>
-<pre><code>+--------+------------+-------------------------------+
-| %rdi   | 0x________ | → "some_relative_file.txt"    |
-| %esi   | 0x________ | → O_CREAT|O_WRONLY = 65 = 0x41|
-| %edx   | 0x________ | → 0644₈ = 420₁₀ = 0x1A4      |
-| %eax   | 0x________ | → 0 (variadic ABI marker)     |
-| %rip   | 0x________ | → next instr after call       |
-+--------+------------+-------------------------------+</code></pre>
-<pre style="white-space: pre-wrap; word-wrap: break-word; margin: 0; font-family: monospace;">
-fill from steps 3, 9, 10 → %rip = call_va + 5
-
-12. REFRESH: main_va = 0x________ (step 1) → open_va = 0x________ (step 1) → call_va = 0x________ (step 3) → GOT_slot = 0x________ (step 6) → string_va = 0x________ (step 9) → all 5 filled ✓ ∨ missing ✗ → if ✗ go back → ORTHOGONAL CHECK: call_va - main_va = 0x________ - 0x________ = 0x________ → open case1_listing.txt → find `call open@PLT` → offset = 0x________ → match ✓ ∨ ✗ → this confirms listing offset = linked offset from main
-
-[CROSSING INTO GLIBC: open → openat]
-
-13. RUNTIME: run `gdb -batch -ex "break open" -ex "run" -ex "disas" ./case1_relative.out` → gdb stops inside glibc → function name shown = `__libc_open64` or `__open_nocancel` → write: glibc_open_va = 0x________ → this is the REAL address of open after ASLR → compare to open_va from step 1 (0x1050) → DIFFERENT ✓ → 0x1050 was the PLT stub, this is the actual function → VERIFY: `nm -D /lib/x86_64-linux-gnu/libc.so.6 | grep " open@"` → offset = 0x________ → glibc_open_va - libc_base = offset ✓ ∨ ✗ → libc_base = glibc_open_va - offset = 0x________
-
-14. INSIDE GLIBC: run `gdb -batch -ex "break open" -ex "run" -ex "x/30i \$rip" ./case1_relative.out` → scan output for `syscall` instruction → find instruction before syscall → `mov $0x________,%eax` → write: syscall_number = ________ decimal → VERIFY: `grep __NR_openat /usr/include/asm/unistd_64.h` → `#define __NR_openat 257` → syscall_number == 257 ✓ ∨ ✗ → if ✗ search for `mov.*%eax` lines near syscall → the one just before it is the syscall number
-
-15. AT_FDCWD: in same gdb output → find `mov $0x________,%edi` near syscall → write: edi_value = 0x________ → CALCULATE: 0xffffff9c → is this negative? MSB = 0xff ≥ 0x80 → yes → two's complement (32-bit): invert 0x00000063, add 1 = 0x00000064 = 100 → value = -100 → VERIFY: `grep AT_FDCWD /usr/include/linux/fcntl.h` → `#define AT_FDCWD -100` → match ✓ ∨ ✗ → AT_FDCWD means "resolve relative to current working directory"
-
-16. DRAW REGISTER STATE AT syscall instruction (inside glibc):</pre>
-<pre><code>+--------+--------------+--------------------------------------+
-| %rdi   | 0x__________ | → AT_FDCWD = -100 = 0xffffff9c      |
-| %rsi   | 0x__________ | → filename ptr (from step 9)         |
-| %rdx   | 0x__________ | → O_CREAT|O_WRONLY = 65 = 0x41       |
-| %r10   | 0x__________ | → mode 0644₈ = 420₁₀ = 0x1A4        |
-| %rax   | 0x__________ | → syscall# = 257 = __NR_openat       |
-+--------+--------------+--------------------------------------+</code></pre>
-<pre style="white-space: pre-wrap; word-wrap: break-word; margin: 0; font-family: monospace;">
-fill from steps 13-15 → NOTICE: registers SHIFTED → your open(file, flags, mode) became openat(AT_FDCWD, file, flags, mode) → %rdi changed from filename to AT_FDCWD → %rsi changed from flags to filename → glibc did this shuffle
-
-17. FULL CHAIN SUMMARY: fill every 0x____ from previous steps:</pre>
-<pre><code>case1_relative.c           .S file              PLT               GOT              glibc              kernel
-open(file,flags,mode) → call open@PLT → 0x____ endbr64 → 0x____ [ptr] → 0x____ __open → syscall
-                         at 0x____        jmp *0x____(rip)                  mov $257,%eax     (openat)
-                                                                           mov $0xffffff9c,%edi
-                                                                           syscall ← CROSSES INTO KERNEL</code></pre>
-<pre style="white-space: pre-wrap; word-wrap: break-word; margin: 0; font-family: monospace;">
-every address from a previous step → no new numbers → VERIFY: count addresses filled = ________ → expected ≥ 8
-
-[CROSSING INTO KERNEL: probe do_sys_openat2]
-
-18. KERNEL PROOF: build and load driver `kernel/drivers/trace_do_sys_openat2/trace_do_sys_openat2.c` → this places a kprobe (entry) and kretprobe (return) on `do_sys_openat2` (fs/open.c line 1420) → commands:</pre>
-<pre><code>cd kernel/drivers/trace_do_sys_openat2 &amp;&amp; make
-sudo insmod trace_do_sys_openat2.ko target_comm="case1_relative."
-cd kernel/user/stage3/case1_relative &amp;&amp; ./case1_relative.out
-sudo dmesg | grep OPENAT2
-sudo rmmod trace_do_sys_openat2</code></pre>
-<pre style="white-space: pre-wrap; word-wrap: break-word; margin: 0; font-family: monospace;">
-→ NOTE: target_comm = "case1_relative." (15 chars) because Linux `comm` truncates argv[0] to 15 bytes → `case1_relative.out` → `case1_relative.`
-
-user-space output: `fd=________ path_addr=0x__________ path="some_relative_file.txt"`
-
-dmesg output (last 3 lines = our open call):</pre>
-<pre><code>[OPENAT2] ENTRY pid=______ comm=case1_relative. dfd=________ filename_uptr=0x__________
-[OPENAT2] RETURN pid=______ comm=case1_relative. fd=________</code></pre>
-<pre style="white-space: pre-wrap; word-wrap: break-word; margin: 0; font-family: monospace;">
-
-PROOF TABLE — fill from user-space output and dmesg:</pre>
-<pre><code>+-----------------------+------------------+-------------------+-------+
-| Claim                 | User-Space       | Kernel (dmesg)    | Match |
-+-----------------------+------------------+-------------------+-------+
-| dfd == AT_FDCWD       | (glibc, -100)    | dfd=__________    | ✓ ∨ ✗ |
-| filename ptr same     | path_addr=0x___  | uptr=0x_________  | ✓ ∨ ✗ |
-| fd round-trip         | fd=__________    | fd=__________     | ✓ ∨ ✗ |
-+-----------------------+------------------+-------------------+-------+</code></pre>
-<pre style="white-space: pre-wrap; word-wrap: break-word; margin: 0; font-family: monospace;">
-→ ALL THREE ✓ required → if any ✗ → re-run dmesg, check comm filter, check ASLR
-
-CHAIN with kernel entry:</pre>
-<pre><code>case1_relative.c → PLT → GOT → glibc → syscall → SYSCALL_DEFINE4(openat) → do_sys_open → do_sys_openat2
-                                                    fs/open.c:1463            :1449          :1420
-                                                                                              │
-                                                                                              ▼
-                                                                              do_filp_open (fs/namei.c:4073)</code></pre>
-<pre style="white-space: pre-wrap; word-wrap: break-word; margin: 0; font-family: monospace;">
-
-BONUS: dmesg will also show dynamic linker openat calls (ld-linux searching for libc.so.6) → all with dfd=-100 → your call is the LAST entry with your .rodata address
-
-see: proofs.md for complete raw dmesg and worked proofs
-
-[CROSSING DEEPER: probe path_init branching]
-
-19. KERNEL PROOF: build and load driver `kernel/drivers/trace_path_init/trace_path_init.c` → this places kprobes on `do_filp_open` (entry), `path_openat` (entry/ret), `alloc_empty_file` (entry/ret), and `fdget_raw` (else-branch only) → commands:</pre>
-<pre><code>cd kernel/drivers/trace_path_init &amp;&amp; make
-sudo insmod trace_path_init.ko target_comm="demo_thread_saf"</code></pre>
-<pre style="white-space: pre-wrap; word-wrap: break-word; margin: 0; font-family: monospace;">
-
-20. RUN DEMOS: verify branching behavior
-   a) Thread Safety race:
-   ```
-   cd kernel/user/stage3/demo_thread_safety &amp;&amp; ./demo_thread_safety.out
-   sudo dmesg | grep PATH_INIT
-   ```
-   → Thread 1 (dfd=3): MUST show `FDGET_RAW` and `BRANCH: FD_LOOKUP`
-   → Thread 3 (dfd=-100): MUST show `BRANCH: AT_FDCWD` and atomic `get_fs_pwd` (no fdget_raw)
-
-   b) TOCTOU race:
-   ```
-   sudo rmmod trace_path_init; sudo insmod ../../drivers/trace_path_init/trace_path_init.ko target_comm="demo_toctou.out"
-   cd ../demo_toctou &amp;&amp; ./demo_toctou.out
-   sudo dmesg | grep PATH_INIT
-   ```
-   → Scenario A (open): `BRANCH: AT_FDCWD` → followed symlink → WRONG data
-   → Scenario B (openat): `BRANCH: FD_LOOKUP` + `FDGET_RAW` → pinned inode → CORRECT data
-
-   c) AT_FDCWD Equivalence:
-   ```
-   sudo rmmod trace_path_init; sudo insmod ../../drivers/trace_path_init/trace_path_init.ko target_comm="demo_at_fdcwd.o"
-   cd ../demo_at_fdcwd &amp;&amp; ./demo_at_fdcwd.out
-   sudo dmesg | grep PATH_INIT
-   ```
-   → All 3 calls (open, openat, syscall) MUST show `BRANCH: AT_FDCWD` and Identical behavior.
-
-21. UNLOAD:</pre>
-<pre><code>sudo rmmod trace_path_init</code></pre>
-<pre style="white-space: pre-wrap; word-wrap: break-word; margin: 0; font-family: monospace;">
-
-[FAILURE PREDICTIONS]
-F1. call_target ≠ open_va → user forgot: E8 displacement is relative to NEXT instruction → must add 5 to call_va before adding displacement → call_target = (call_va + 5) + displacement, NOT call_va + displacement
-F2. GOT_slot mismatch → user added rip_offset to jmp_address instead of next_instruction_address → rip = address AFTER the jmp, not AT it → jmp at 0x1054, length 6 → rip = 0x105a not 0x1054
-F3. string_computed ≠ string_va → same rip mistake as F2 → lea instruction length = 7 bytes → rip_at_lea = lea_address + 7, not lea_address
-F4. mode 420 ≠ 0644 → user forgot decimal vs octal → 0644 is OCTAL → 0644₈ = 6×64 + 4×8 + 4 = 420₁₀ = 0x1A4
-F5. user opens case1_listing.txt looking for virtual addresses → listing has section-relative offsets (0021) NOT virtual addresses → only .dump has virtual addresses → listing offset ≠ virtual address
-F6. displacement sign error → bytes `e1 fe ff ff` → little-endian = 0xfffffee1 → MSB = 0xff ≥ 0x80 → NEGATIVE → two's complement: invert 0x0000011e, add 1 = 0x0000011f = 287 → displacement = -287 → if user gets positive 0xfffffee1, they forgot sign
-F7. user confuses `open@plt` (0x1050, the PLT stub) with `open` in glibc (unknown until runtime ASLR) → the .dump only shows the PLT stub address, NOT the glibc function address → glibc address only visible via gdb at runtime
-F8. syscall number ≠ 257 → user found wrong `mov` instruction → multiple `mov %eax` may exist → the correct one is the LAST mov to %eax BEFORE the syscall instruction, not the first one
-F9. AT_FDCWD two's complement error → user computed on 64-bit (0xffffffffffffff9c) instead of 32-bit (0xffffff9c) → `mov $0xffffff9c,%edi` is a 32-bit move → use 32-bit two's complement
-F10. register shuffle confusion → user expects %rdi = filename at syscall → WRONG → glibc shifted: %rdi = AT_FDCWD, %rsi = filename → open(file, flags, mode) became openat(dirfd, file, flags, mode) → 3 args became 4 args
-F11. no dmesg output after insmod + run → comm mismatch → binary name `case1_relative.out` truncates to `case1_relative.` (15 chars including the dot) → must pass `target_comm="case1_relative."` with the trailing dot → `case1_relativ` or `case1_relative` will NOT match
-F12. filename string shows "(copy failed)" in dmesg → `strncpy_from_user` may fail on PIE .rodata addresses (0x5xxx range) depending on kernel access_ok checks → the ADDRESS MATCH is still the proof → the pointer is identical regardless of string copy
-F13. dmesg shows many openat calls before yours → the dynamic linker opens /etc/ld.so.cache and /lib/.../libc.so.6 during startup → YOUR call is the LAST one → look for your .rodata address (0x________ from path_addr) to identify it</pre>
+[REQUIRED HAND TASKS]
+1. Verify entry/ret pair counts.
+2. Verify pointer class counts.
+3. Record contradiction lines and expected fixes.
+4. Cross-compare with one adjacent case.</pre>
   </div>
 
 </body>

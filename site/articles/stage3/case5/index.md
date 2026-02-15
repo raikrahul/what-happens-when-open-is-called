@@ -1,5 +1,4 @@
 ---
-layout: container
-title: "Stage 3 Case 5: Path Walk"
+layout: container4
+title: "Stage 3 CASE5: Mount Jump"
 ---
-

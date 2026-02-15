@@ -3,7 +3,7 @@
 
 <head>
   <meta charset="UTF-8">
-  <title>Stage 3 Case 12: Harder Puzzle: Textbook</title>
+  <title>Stage 3 CASE12: Textbook</title>
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/styles/github.min.css">
   <script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/highlight.min.js"></script>
   <script>window.addEventListener('DOMContentLoaded', () => { if (window.hljs) hljs.highlightAll(); });</script>
@@ -79,22 +79,21 @@
     <button onclick="window.print()" style="font-size: 10px; cursor: pointer;">Print</button>
   </div>
   <div class="content">
-    <pre style="white-space: pre-wrap; word-wrap: break-word; margin: 0; font-family: monospace;">[OBJECTIVE]
-- Trace open path transitions and validate entry/return pair integrity.
+    <pre style="white-space: pre-wrap; word-wrap: break-word; margin: 0; font-family: monospace;">[INVARIANTS]
+1. do_filp_open.entry count = do_filp_open.ret count.
+2. __d_alloc.entry count = __d_alloc.ret count when allocation path is active.
+3. Missing-file paths must show error-pointer class in ret stream.
+4. Cross-check invariant failure paths with worksheet failure-prediction block.
 
-[MANDATORY CHECKS]
-1. do_filp_open.entry count == do_filp_open.ret count
-2. __d_alloc.entry count == __d_alloc.ret count
-3. error-pointer observations align with missing-file paths
+[DERIVATION CHAIN]
+- source: reports + dmesg
+- transform: count + classify + verify
+- output: pass/fail per invariant
 
 [DATA SOURCES]
-- [reports](https://github.com/raikrahul/what-happens-when-open-is-called/tree/main/kernel/user/stage3/case12_harder_puzzle/reports)
-- [worksheets](https://github.com/raikrahul/what-happens-when-open-is-called/tree/main/kernel/user/stage3/case12_harder_puzzle/worksheets)
-
-[OUTPUT]
-- Pair-level reports
-- Pair-level worksheets
-- Axiom + hard-axiom worksheet tiers</pre>
+- reports root: [kernel/user/stage3/case12_harder_puzzle/reports](https://github.com/raikrahul/what-happens-when-open-is-called/blob/main/kernel/user/stage3/case12_harder_puzzle/reports)
+- worksheets root: [kernel/user/stage3/case12_harder_puzzle/worksheets](https://github.com/raikrahul/what-happens-when-open-is-called/blob/main/kernel/user/stage3/case12_harder_puzzle/worksheets)
+- planning summary: [STAGE3_FULL_TEST_SUMMARY](https://github.com/raikrahul/what-happens-when-open-is-called/blob/main/kernel/user/stage3/planning/STAGE3_FULL_TEST_SUMMARY.md)</pre>
   </div>
 
 </body>

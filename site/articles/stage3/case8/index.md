@@ -1,4 +1,4 @@
 ---
-layout: container
-title: "Stage 3 Case 8: Creation Proof"
+layout: container4
+title: "Stage 3 CASE8: Creation Proof"
 ---

@@ -1,21 +1,19 @@
 ---
 layout: default
-title: "Stage 3 Case 1: Textbook"
+title: "Stage 3 CASE1: Textbook"
 ---
+[INVARIANTS]
+1. do_filp_open.entry count = do_filp_open.ret count.
+2. __d_alloc.entry count = __d_alloc.ret count when allocation path is active.
+3. Missing-file paths must show error-pointer class in ret stream.
+4. Cross-check invariant failure paths with worksheet failure-prediction block.
 
-[STAGE 3 CASE 1: RELATIVE PATH]
-Input: "some_relative_file.txt"
-Computation: path walk short‑circuit
-Output: settlement ✓
+[DERIVATION CHAIN]
+- source: reports + dmesg
+- transform: count + classify + verify
+- output: pass/fail per invariant
 
-[AXIOMS]
-1. No slash found -> loop bypassed ✓
-2. nd->last_type = LAST_NORM ✓
-3. component = "some_relative_file.txt" ✓
-
-[PROBE]
-Input: link_path_walk
-Computation: extract nd->last
-Output: qstr verified ✓
-
-🐾 DONE. 🐾
+[DATA SOURCES]
+- reports root: [kernel/user/stage3/case1/reports](https://github.com/raikrahul/what-happens-when-open-is-called/blob/main/kernel/user/stage3/case1/reports)
+- worksheets root: [kernel/user/stage3/case1/worksheets](https://github.com/raikrahul/what-happens-when-open-is-called/blob/main/kernel/user/stage3/case1/worksheets)
+- planning summary: [STAGE3_FULL_TEST_SUMMARY](https://github.com/raikrahul/what-happens-when-open-is-called/blob/main/kernel/user/stage3/planning/STAGE3_FULL_TEST_SUMMARY.md)

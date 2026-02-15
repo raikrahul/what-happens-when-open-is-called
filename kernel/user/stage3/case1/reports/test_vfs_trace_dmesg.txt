@@ -1,25 +1,25 @@
-[  865.028549] [trace_test_vfs_trace] loaded target_comm=test_vfs_trace. user=kernel/user/stage3/case1/test_vfs_trace.c
-[  865.031180] [trace_test_vfs_trace] do_filp_open.entry pid=24496 comm=test_vfs_trace. dfd=4294967196 pathname=ffff8dda13f5f000 op=ffffd0c95687bd74
-[  865.031202] [trace_test_vfs_trace] do_filp_open.ret pid=24496 comm=test_vfs_trace. ret=fffffffffffffffe
-[  865.031216] [trace_test_vfs_trace] do_filp_open.entry pid=24496 comm=test_vfs_trace. dfd=4294967196 pathname=ffff8dda13f5f000 op=ffffd0c95687bc84
-[  865.031227] [trace_test_vfs_trace] do_filp_open.ret pid=24496 comm=test_vfs_trace. ret=fffffffffffffffe
-[  865.031239] [trace_test_vfs_trace] do_filp_open.entry pid=24496 comm=test_vfs_trace. dfd=4294967196 pathname=ffff8dda13f5f000 op=ffffd0c95687bcd4
-[  865.031250] [trace_test_vfs_trace] do_filp_open.ret pid=24496 comm=test_vfs_trace. ret=fffffffffffffffe
-[  865.031264] [trace_test_vfs_trace] do_filp_open.entry pid=24496 comm=test_vfs_trace. dfd=4294967196 pathname=ffff8dda13f5f000 op=ffffd0c95687bd94
-[  865.031272] [trace_test_vfs_trace] do_filp_open.ret pid=24496 comm=test_vfs_trace. ret=fffffffffffffffe
-[  865.031279] [trace_test_vfs_trace] do_filp_open.entry pid=24496 comm=test_vfs_trace. dfd=4294967196 pathname=ffff8dda13f5f000 op=ffffd0c95687bb84
-[  865.031286] [trace_test_vfs_trace] do_filp_open.ret pid=24496 comm=test_vfs_trace. ret=fffffffffffffffe
-[  865.031292] [trace_test_vfs_trace] do_filp_open.entry pid=24496 comm=test_vfs_trace. dfd=4294967196 pathname=ffff8dda13f5f000 op=ffffd0c95687bd04
-[  865.031300] [trace_test_vfs_trace] do_filp_open.ret pid=24496 comm=test_vfs_trace. ret=fffffffffffffffe
-[  865.031312] [trace_test_vfs_trace] do_filp_open.entry pid=24496 comm=test_vfs_trace. dfd=4294967196 pathname=ffff8dda13f5f000 op=ffffd0c95687ba94
-[  865.031324] [trace_test_vfs_trace] do_filp_open.ret pid=24496 comm=test_vfs_trace. ret=ffff8ddc187ff540
-[  865.031366] [trace_test_vfs_trace] do_filp_open.entry pid=24496 comm=test_vfs_trace. dfd=4294967196 pathname=ffff8dda13f5f000 op=ffffd0c95687bcb4
-[  865.031377] [trace_test_vfs_trace] do_filp_open.ret pid=24496 comm=test_vfs_trace. ret=ffff8ddc187ff480
-[  865.031824] [trace_test_vfs_trace] do_filp_open.entry pid=24496 comm=test_vfs_trace. dfd=4294967196 pathname=ffff8dda13f5f000 op=ffffd0c95687bb34
-[  865.031838] [trace_test_vfs_trace] do_filp_open.ret pid=24496 comm=test_vfs_trace. ret=ffff8ddc187ff540
-[  865.031848] [trace_test_vfs_trace] do_filp_open.entry pid=24496 comm=test_vfs_trace. dfd=4294967196 pathname=ffff8dda13f5f000 op=ffffd0c95687bc14
-[  865.031858] [trace_test_vfs_trace] do_filp_open.ret pid=24496 comm=test_vfs_trace. ret=ffff8ddc187ff540
-[  865.031867] [trace_test_vfs_trace] do_filp_open.entry pid=24496 comm=test_vfs_trace. dfd=4294967196 pathname=ffff8dda13f5f000 op=ffffd0c95687bb24
-[  865.031875] [trace_test_vfs_trace] do_filp_open.ret pid=24496 comm=test_vfs_trace. ret=fffffffffffffffe
-[  865.031907] [trace_test_vfs_trace] do_filp_open.entry pid=24496 comm=test_vfs_trace. dfd=4294967196 pathname=ffff8dda13f5f000 op=ffffd0c95687bd44
-[  865.031915] [trace_test_vfs_trace] do_filp_open.ret pid=24496 comm=test_vfs_trace. ret=fffffffffffffffe
+[ 1722.956950] [trace_test_vfs_trace] loaded target_comm=test_vfs_trace. user=kernel/user/stage3/case1/test_vfs_trace.c
+[ 1722.960949] [trace_test_vfs_trace] do_filp_open.entry pid=43575 comm=test_vfs_trace. dfd=4294967196 pathname=ffff8dda0fe69000 op=ffffd0c953ccfb74
+[ 1722.960972] [trace_test_vfs_trace] do_filp_open.ret pid=43575 comm=test_vfs_trace. ret=fffffffffffffffe
+[ 1722.960987] [trace_test_vfs_trace] do_filp_open.entry pid=43575 comm=test_vfs_trace. dfd=4294967196 pathname=ffff8dda0fe69000 op=ffffd0c953ccfd14
+[ 1722.960999] [trace_test_vfs_trace] do_filp_open.ret pid=43575 comm=test_vfs_trace. ret=fffffffffffffffe
+[ 1722.961011] [trace_test_vfs_trace] do_filp_open.entry pid=43575 comm=test_vfs_trace. dfd=4294967196 pathname=ffff8dda0fe69000 op=ffffd0c953ccfbd4
+[ 1722.961022] [trace_test_vfs_trace] do_filp_open.ret pid=43575 comm=test_vfs_trace. ret=fffffffffffffffe
+[ 1722.961038] [trace_test_vfs_trace] do_filp_open.entry pid=43575 comm=test_vfs_trace. dfd=4294967196 pathname=ffff8dda0fe69000 op=ffffd0c953ccfb44
+[ 1722.961046] [trace_test_vfs_trace] do_filp_open.ret pid=43575 comm=test_vfs_trace. ret=fffffffffffffffe
+[ 1722.961052] [trace_test_vfs_trace] do_filp_open.entry pid=43575 comm=test_vfs_trace. dfd=4294967196 pathname=ffff8dda0fe69000 op=ffffd0c953ccfc04
+[ 1722.961060] [trace_test_vfs_trace] do_filp_open.ret pid=43575 comm=test_vfs_trace. ret=fffffffffffffffe
+[ 1722.961067] [trace_test_vfs_trace] do_filp_open.entry pid=43575 comm=test_vfs_trace. dfd=4294967196 pathname=ffff8dda0fe69000 op=ffffd0c953ccfe74
+[ 1722.961075] [trace_test_vfs_trace] do_filp_open.ret pid=43575 comm=test_vfs_trace. ret=fffffffffffffffe
+[ 1722.961082] [trace_test_vfs_trace] do_filp_open.entry pid=43575 comm=test_vfs_trace. dfd=4294967196 pathname=ffff8dda0fe69000 op=ffffd0c953ccfb34
+[ 1722.961093] [trace_test_vfs_trace] do_filp_open.ret pid=43575 comm=test_vfs_trace. ret=ffff8ddb26166840
+[ 1722.961132] [trace_test_vfs_trace] do_filp_open.entry pid=43575 comm=test_vfs_trace. dfd=4294967196 pathname=ffff8dda0fe69000 op=ffffd0c953ccfb94
+[ 1722.961143] [trace_test_vfs_trace] do_filp_open.ret pid=43575 comm=test_vfs_trace. ret=ffff8ddb26166900
+[ 1722.961601] [trace_test_vfs_trace] do_filp_open.entry pid=43575 comm=test_vfs_trace. dfd=4294967196 pathname=ffff8dda0fe69000 op=ffffd0c953ccfe54
+[ 1722.961617] [trace_test_vfs_trace] do_filp_open.ret pid=43575 comm=test_vfs_trace. ret=ffff8ddb26166840
+[ 1722.961632] [trace_test_vfs_trace] do_filp_open.entry pid=43575 comm=test_vfs_trace. dfd=4294967196 pathname=ffff8dda0fe69000 op=ffffd0c953ccfce4
+[ 1722.961645] [trace_test_vfs_trace] do_filp_open.ret pid=43575 comm=test_vfs_trace. ret=ffff8ddb26166840
+[ 1722.961658] [trace_test_vfs_trace] do_filp_open.entry pid=43575 comm=test_vfs_trace. dfd=4294967196 pathname=ffff8dda0fe69000 op=ffffd0c953ccfbd4
+[ 1722.961669] [trace_test_vfs_trace] do_filp_open.ret pid=43575 comm=test_vfs_trace. ret=fffffffffffffffe
+[ 1722.961711] [trace_test_vfs_trace] do_filp_open.entry pid=43575 comm=test_vfs_trace. dfd=4294967196 pathname=ffff8dda0fe69000 op=ffffd0c953ccfc94
+[ 1722.961722] [trace_test_vfs_trace] do_filp_open.ret pid=43575 comm=test_vfs_trace. ret=fffffffffffffffe
