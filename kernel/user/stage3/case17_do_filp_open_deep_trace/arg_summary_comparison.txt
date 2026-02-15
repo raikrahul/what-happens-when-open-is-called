@@ -1,0 +1,24 @@
+Arg 1: s
+Type: struct kmem_cache *
+Role: The Factory
+Data 1: s->size (Object Size, e.g., 192)
+Data 2: s->object_size (Payload Size)
+Data 3: s->ctor (Constructor Function)
+Data 4: s->cpu_slab (Per-CPU Free List)
+State: Describes WHAT we are allocating.
+
+Arg 2: lru
+Type: struct list_lru *
+Role: The List Manager
+Data 1: lru->node (Per-Node Lists)
+Data 2: lru->xa (Map: Cgroup ID → List)
+Data 3: lru->memcg_aware (Boolean Flag)
+State: Describes WHERE we track the allocation for reclaim.
+
+Relationship:
+alloc_lru(s, lru, ...)
+1. Use s to get Memory Object (M).
+2. Use lru to track M.
+   - Find Cgroup ID (ID).
+   - Find List L = lru->xa[ID].
+   - Insert M into L.

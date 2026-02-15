@@ -4,7 +4,7 @@
 - Driver source: `kernel/drivers/stage3/case16_do_sys_openat2_trace/trace_user_trigger/trace_user_trigger.c`
 - Module: `trace_user_trigger`
 - Binary: `kernel/user/stage3/case16_do_sys_openat2_trace/user_trigger`
-- Run timestamp: `2026-02-15T13:22:32`
+- Run timestamp: `2026-02-15T13:49:12`
 - Final status: `pass_probe_hits`
 
 ## Probe Counts

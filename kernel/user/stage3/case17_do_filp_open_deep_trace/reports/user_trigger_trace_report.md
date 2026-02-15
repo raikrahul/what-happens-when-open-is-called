@@ -4,7 +4,7 @@
 - Driver source: `kernel/drivers/stage3/case17_do_filp_open_deep_trace/trace_user_trigger/trace_user_trigger.c`
 - Module: `trace_user_trigger`
 - Binary: `kernel/user/stage3/case17_do_filp_open_deep_trace/user_trigger.out`
-- Run timestamp: `2026-02-15T13:22:33`
+- Run timestamp: `2026-02-15T13:49:13`
 - Final status: `pass_probe_hits`
 
 ## Probe Counts

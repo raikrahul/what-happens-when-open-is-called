@@ -1,19 +1,19 @@
-[ 1725.165068] [trace_user_dir_rename] loaded target_comm=user_dir_rename user=kernel/user/stage3/case10_rename_investigation/user_dir_rename.c
-[ 1725.168693] [trace_user_dir_rename] do_filp_open.entry pid=44085 comm=user_dir_rename dfd=4294967196 pathname=ffff8dda0eca0000 op=ffffd0c953d03bb4
-[ 1725.168727] [trace_user_dir_rename] do_filp_open.ret pid=44085 comm=user_dir_rename ret=fffffffffffffffe
-[ 1725.168747] [trace_user_dir_rename] do_filp_open.entry pid=44085 comm=user_dir_rename dfd=4294967196 pathname=ffff8dda0eca0000 op=ffffd0c953d03c54
-[ 1725.168764] [trace_user_dir_rename] do_filp_open.ret pid=44085 comm=user_dir_rename ret=fffffffffffffffe
-[ 1725.168784] [trace_user_dir_rename] do_filp_open.entry pid=44085 comm=user_dir_rename dfd=4294967196 pathname=ffff8dda0eca0000 op=ffffd0c953d03e14
-[ 1725.168802] [trace_user_dir_rename] do_filp_open.ret pid=44085 comm=user_dir_rename ret=fffffffffffffffe
-[ 1725.168824] [trace_user_dir_rename] do_filp_open.entry pid=44085 comm=user_dir_rename dfd=4294967196 pathname=ffff8dda0eca0000 op=ffffd0c953d03be4
-[ 1725.168835] [trace_user_dir_rename] do_filp_open.ret pid=44085 comm=user_dir_rename ret=fffffffffffffffe
-[ 1725.168845] [trace_user_dir_rename] do_filp_open.entry pid=44085 comm=user_dir_rename dfd=4294967196 pathname=ffff8dda0eca0000 op=ffffd0c953d03da4
-[ 1725.168856] [trace_user_dir_rename] do_filp_open.ret pid=44085 comm=user_dir_rename ret=fffffffffffffffe
-[ 1725.168868] [trace_user_dir_rename] do_filp_open.entry pid=44085 comm=user_dir_rename dfd=4294967196 pathname=ffff8dda0eca0000 op=ffffd0c953d03d94
-[ 1725.168882] [trace_user_dir_rename] do_filp_open.ret pid=44085 comm=user_dir_rename ret=fffffffffffffffe
-[ 1725.168892] [trace_user_dir_rename] do_filp_open.entry pid=44085 comm=user_dir_rename dfd=4294967196 pathname=ffff8dda0eca0000 op=ffffd0c953d03ce4
-[ 1725.168907] [trace_user_dir_rename] do_filp_open.ret pid=44085 comm=user_dir_rename ret=ffff8dda055e0300
-[ 1725.168962] [trace_user_dir_rename] do_filp_open.entry pid=44085 comm=user_dir_rename dfd=4294967196 pathname=ffff8dda0eca0000 op=ffffd0c953d03c64
-[ 1725.168978] [trace_user_dir_rename] do_filp_open.ret pid=44085 comm=user_dir_rename ret=ffff8dda055e00c0
-[ 1725.169559] [trace_user_dir_rename] __d_alloc.entry pid=44085 comm=user_dir_rename sb=ffff8dda0bce8000 name_qstr=ffffd0c953d03dd0
-[ 1725.169576] [trace_user_dir_rename] __d_alloc.ret pid=44085 comm=user_dir_rename dentry=ffff8dda3b2e8780
+[ 3326.399578] [trace_user_dir_rename] loaded target_comm=user_dir_rename user=kernel/user/stage3/case10_rename_investigation/user_dir_rename.c
+[ 3326.402732] [trace_user_dir_rename] do_filp_open.entry pid=60973 comm=user_dir_rename dfd=4294967196 pathname=ffff8dda0fe6d000 op=ffffd0c940e17ae4
+[ 3326.402746] [trace_user_dir_rename] do_filp_open.ret pid=60973 comm=user_dir_rename ret=fffffffffffffffe
+[ 3326.402752] [trace_user_dir_rename] do_filp_open.entry pid=60973 comm=user_dir_rename dfd=4294967196 pathname=ffff8dda0fe6d000 op=ffffd0c940e17ac4
+[ 3326.402757] [trace_user_dir_rename] do_filp_open.ret pid=60973 comm=user_dir_rename ret=fffffffffffffffe
+[ 3326.402762] [trace_user_dir_rename] do_filp_open.entry pid=60973 comm=user_dir_rename dfd=4294967196 pathname=ffff8dda0fe6d000 op=ffffd0c940e17aa4
+[ 3326.402767] [trace_user_dir_rename] do_filp_open.ret pid=60973 comm=user_dir_rename ret=fffffffffffffffe
+[ 3326.402774] [trace_user_dir_rename] do_filp_open.entry pid=60973 comm=user_dir_rename dfd=4294967196 pathname=ffff8dda0fe6d000 op=ffffd0c940e17ab4
+[ 3326.402778] [trace_user_dir_rename] do_filp_open.ret pid=60973 comm=user_dir_rename ret=fffffffffffffffe
+[ 3326.402781] [trace_user_dir_rename] do_filp_open.entry pid=60973 comm=user_dir_rename dfd=4294967196 pathname=ffff8dda0fe6d000 op=ffffd0c940e17b84
+[ 3326.402784] [trace_user_dir_rename] do_filp_open.ret pid=60973 comm=user_dir_rename ret=fffffffffffffffe
+[ 3326.402787] [trace_user_dir_rename] do_filp_open.entry pid=60973 comm=user_dir_rename dfd=4294967196 pathname=ffff8dda0fe6d000 op=ffffd0c940e17a94
+[ 3326.402791] [trace_user_dir_rename] do_filp_open.ret pid=60973 comm=user_dir_rename ret=fffffffffffffffe
+[ 3326.402794] [trace_user_dir_rename] do_filp_open.entry pid=60973 comm=user_dir_rename dfd=4294967196 pathname=ffff8dda0fe6d000 op=ffffd0c940e17aa4
+[ 3326.402799] [trace_user_dir_rename] do_filp_open.ret pid=60973 comm=user_dir_rename ret=ffff8dda35d35900
+[ 3326.402818] [trace_user_dir_rename] do_filp_open.entry pid=60973 comm=user_dir_rename dfd=4294967196 pathname=ffff8dda0fe6d000 op=ffffd0c940e17e44
+[ 3326.402823] [trace_user_dir_rename] do_filp_open.ret pid=60973 comm=user_dir_rename ret=ffff8dda35d350c0
+[ 3326.403007] [trace_user_dir_rename] __d_alloc.entry pid=60973 comm=user_dir_rename sb=ffff8dda0bce8000 name_qstr=ffffd0c940e17d30
+[ 3326.403012] [trace_user_dir_rename] __d_alloc.ret pid=60973 comm=user_dir_rename dentry=ffff8ddc162eb180

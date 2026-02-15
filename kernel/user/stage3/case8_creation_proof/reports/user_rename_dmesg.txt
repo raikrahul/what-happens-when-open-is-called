@@ -1,21 +1,21 @@
-[ 1756.884901] [trace_user_rename] loaded target_comm=user_rename.out user=kernel/user/stage3/case8_creation_proof/user_rename.c
-[ 1756.888476] [trace_user_rename] do_filp_open.entry pid=50533 comm=user_rename.out dfd=4294967196 pathname=ffff8dda082ad000 op=ffffd0c95290fd74
-[ 1756.888501] [trace_user_rename] do_filp_open.ret pid=50533 comm=user_rename.out ret=fffffffffffffffe
-[ 1756.888517] [trace_user_rename] do_filp_open.entry pid=50533 comm=user_rename.out dfd=4294967196 pathname=ffff8dda082ad000 op=ffffd0c95290fdb4
-[ 1756.888529] [trace_user_rename] do_filp_open.ret pid=50533 comm=user_rename.out ret=fffffffffffffffe
-[ 1756.888542] [trace_user_rename] do_filp_open.entry pid=50533 comm=user_rename.out dfd=4294967196 pathname=ffff8dda082ad000 op=ffffd0c95290fd14
-[ 1756.888554] [trace_user_rename] do_filp_open.ret pid=50533 comm=user_rename.out ret=fffffffffffffffe
-[ 1756.888570] [trace_user_rename] do_filp_open.entry pid=50533 comm=user_rename.out dfd=4294967196 pathname=ffff8dda082ad000 op=ffffd0c95290fd44
-[ 1756.888579] [trace_user_rename] do_filp_open.ret pid=50533 comm=user_rename.out ret=fffffffffffffffe
-[ 1756.888587] [trace_user_rename] do_filp_open.entry pid=50533 comm=user_rename.out dfd=4294967196 pathname=ffff8dda082ad000 op=ffffd0c95290fe74
-[ 1756.888596] [trace_user_rename] do_filp_open.ret pid=50533 comm=user_rename.out ret=fffffffffffffffe
-[ 1756.888604] [trace_user_rename] do_filp_open.entry pid=50533 comm=user_rename.out dfd=4294967196 pathname=ffff8dda082ad000 op=ffffd0c95290faa4
-[ 1756.888613] [trace_user_rename] do_filp_open.ret pid=50533 comm=user_rename.out ret=fffffffffffffffe
-[ 1756.888620] [trace_user_rename] do_filp_open.entry pid=50533 comm=user_rename.out dfd=4294967196 pathname=ffff8dda082ad000 op=ffffd0c95290fd94
-[ 1756.888630] [trace_user_rename] do_filp_open.ret pid=50533 comm=user_rename.out ret=ffff8dda27fa4600
-[ 1756.888670] [trace_user_rename] do_filp_open.entry pid=50533 comm=user_rename.out dfd=4294967196 pathname=ffff8dda082ad000 op=ffffd0c95290fe84
-[ 1756.888680] [trace_user_rename] do_filp_open.ret pid=50533 comm=user_rename.out ret=ffff8dda27fa4c00
-[ 1756.889031] [trace_user_rename] do_filp_open.entry pid=50533 comm=user_rename.out dfd=4294967196 pathname=ffff8dda082ad000 op=ffffd0c95290fb44
-[ 1756.889041] [trace_user_rename] __d_alloc.entry pid=50533 comm=user_rename.out sb=ffff8dda0bce8000 name_qstr=ffffd0c95290fa10
-[ 1756.889048] [trace_user_rename] __d_alloc.ret pid=50533 comm=user_rename.out dentry=ffff8dda36ab29c0
-[ 1756.889134] [trace_user_rename] do_filp_open.ret pid=50533 comm=user_rename.out ret=ffff8dda27fa4600
+[ 3357.229239] [trace_user_rename] loaded target_comm=user_rename.out user=kernel/user/stage3/case8_creation_proof/user_rename.c
+[ 3357.232473] [trace_user_rename] do_filp_open.entry pid=67498 comm=user_rename.out dfd=4294967196 pathname=ffff8dda0a26d000 op=ffffd0c94079fb64
+[ 3357.232495] [trace_user_rename] do_filp_open.ret pid=67498 comm=user_rename.out ret=fffffffffffffffe
+[ 3357.232509] [trace_user_rename] do_filp_open.entry pid=67498 comm=user_rename.out dfd=4294967196 pathname=ffff8dda0a26d000 op=ffffd0c94079fd44
+[ 3357.232520] [trace_user_rename] do_filp_open.ret pid=67498 comm=user_rename.out ret=fffffffffffffffe
+[ 3357.232532] [trace_user_rename] do_filp_open.entry pid=67498 comm=user_rename.out dfd=4294967196 pathname=ffff8dda0a26d000 op=ffffd0c94079fd74
+[ 3357.232543] [trace_user_rename] do_filp_open.ret pid=67498 comm=user_rename.out ret=fffffffffffffffe
+[ 3357.232557] [trace_user_rename] do_filp_open.entry pid=67498 comm=user_rename.out dfd=4294967196 pathname=ffff8dda0a26d000 op=ffffd0c94079fbf4
+[ 3357.232564] [trace_user_rename] do_filp_open.ret pid=67498 comm=user_rename.out ret=fffffffffffffffe
+[ 3357.232571] [trace_user_rename] do_filp_open.entry pid=67498 comm=user_rename.out dfd=4294967196 pathname=ffff8dda0a26d000 op=ffffd0c94079fdf4
+[ 3357.232578] [trace_user_rename] do_filp_open.ret pid=67498 comm=user_rename.out ret=fffffffffffffffe
+[ 3357.232585] [trace_user_rename] do_filp_open.entry pid=67498 comm=user_rename.out dfd=4294967196 pathname=ffff8dda0a26d000 op=ffffd0c94079fac4
+[ 3357.232593] [trace_user_rename] do_filp_open.ret pid=67498 comm=user_rename.out ret=fffffffffffffffe
+[ 3357.232600] [trace_user_rename] do_filp_open.entry pid=67498 comm=user_rename.out dfd=4294967196 pathname=ffff8dda0a26d000 op=ffffd0c94079fdb4
+[ 3357.232610] [trace_user_rename] do_filp_open.ret pid=67498 comm=user_rename.out ret=ffff8dd904158c00
+[ 3357.232644] [trace_user_rename] do_filp_open.entry pid=67498 comm=user_rename.out dfd=4294967196 pathname=ffff8dda0a26d000 op=ffffd0c94079fb14
+[ 3357.232654] [trace_user_rename] do_filp_open.ret pid=67498 comm=user_rename.out ret=ffff8dd904158cc0
+[ 3357.232879] [trace_user_rename] do_filp_open.entry pid=67498 comm=user_rename.out dfd=4294967196 pathname=ffff8dda0a26d000 op=ffffd0c94079fda4
+[ 3357.232885] [trace_user_rename] __d_alloc.entry pid=67498 comm=user_rename.out sb=ffff8dda0bce8000 name_qstr=ffffd0c94079fc70
+[ 3357.232888] [trace_user_rename] __d_alloc.ret pid=67498 comm=user_rename.out dentry=ffff8ddc06fa1e40
+[ 3357.232941] [trace_user_rename] do_filp_open.ret pid=67498 comm=user_rename.out ret=ffff8dd904158c00

@@ -1,0 +1,47 @@
+list_lru_add(lru, item, nid, memcg)
+↓
+lock_list_lru_of_memcg(lru, nid, memcg) → l
+l == 0xFFFF888100000000
+l->list.next == 0xFFFF888100000000
+l->list.prev == 0xFFFF888100000000
+item == 0xFFFF888200000000
+↓
+list_empty(item) → ✓
+↓
+list_add_tail(item, &l->list)
+↓
+item->next ← l->list (0xFFFF888100000000)
+item->prev ← l->list.prev (0xFFFF888100000000)
+l->list.prev->next (0xFFFF888100000000) ← item (0xFFFF888200000000)
+l->list.prev (0xFFFF888100080000) ← item (0xFFFF888200000000)
+↓
+l->list.next == 0xFFFF888200000000
+l->list.prev == 0xFFFF888200000000
+item->next == 0xFFFF888100000000
+item->prev == 0xFFFF888100000000
+↓
+l->nr_items++ → 1
+↓
+set_shrinker_bit(memcg, nid, shrinker_id)
+↓
+unlock_list_lru(l)
+↓
+∴ ✓
+
+list_lru_add(lru, item2, nid, memcg)
+↓
+item2 == 0xFFFF888300000000
+↓
+list_add_tail(item2, &l->list)
+↓
+item2->next ← l->list (0xFFFF888100000000)
+item2->prev ← l->list.prev (0xFFFF888200000000)
+l->list.prev->next (0xFFFF888200000000) ← item2 (0xFFFF888300000000)
+l->list.prev (0xFFFF888100080000) ← item2 (0xFFFF888300000000)
+↓
+l->list.next == 0xFFFF888200000000 (Item 1)
+Item1->next == 0xFFFF888300000000 (Item 2)
+Item2->next == 0xFFFF888100000000 (Head)
+l->list.prev == 0xFFFF888300000000 (Item 2)
+↓
+∴ Order: Head → Item1 → Item2 → Tail

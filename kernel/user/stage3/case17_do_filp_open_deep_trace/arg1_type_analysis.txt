@@ -1,0 +1,8 @@
+Argument 1: s
+Type: struct kmem_cache *
+Is Linked List: ✗ (No)
+Explanation:
+s is a Structure (Cache Descriptor).
+s → contains Linkage (s->list), but is not the List itself.
+s → manages Lists (s->node[n]->partial), but is the Manager.
+∴ s is the Factory.

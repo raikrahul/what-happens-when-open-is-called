@@ -24,7 +24,7 @@
 - 15. `kernel/user/stage3/case10_rename_investigation/user_dir_rename.c` -> `pass_probe_hits` | filp=8/8 dalloc=1/1 | report `kernel/user/stage3/case10_rename_investigation/reports/user_dir_rename_trace_report.md`
 - 16. `kernel/user/stage3/case11_bulk_rename/user_bulk_rename.c` -> `pass_probe_hits` | filp=110/110 dalloc=0/0 | report `kernel/user/stage3/case11_bulk_rename/reports/user_bulk_rename_trace_report.md`
 - 17. `kernel/user/stage3/case12_harder_puzzle/puzzle_verify.c` -> `pass_probe_hits` | filp=8/8 dalloc=0/0 | report `kernel/user/stage3/case12_harder_puzzle/reports/puzzle_verify_trace_report.md`
-- 18. `kernel/user/stage3/case12_harder_puzzle/user_puzzle.c` -> `pass_probe_hits` | filp=11/11 dalloc=1/1 | report `kernel/user/stage3/case12_harder_puzzle/reports/user_puzzle_trace_report.md`
+- 18. `kernel/user/stage3/case12_harder_puzzle/user_puzzle.c` -> `pass_probe_hits` | filp=11/11 dalloc=0/0 | report `kernel/user/stage3/case12_harder_puzzle/reports/user_puzzle_trace_report.md`
 - 19. `kernel/user/stage3/case13_salt_avalanche/user_salt_avalanche.c` -> `pass_probe_hits` | filp=10/10 dalloc=0/0 | report `kernel/user/stage3/case13_salt_avalanche/reports/user_salt_avalanche_trace_report.md`
 - 20. `kernel/user/stage3/case14_symmetry_break/user_symmetry_break.c` -> `pass_probe_hits` | filp=10/10 dalloc=0/0 | report `kernel/user/stage3/case14_symmetry_break/reports/user_symmetry_break_trace_report.md`
 - 21. `kernel/user/stage3/case15_deep_trace/user_deep_create.c` -> `pass_probe_hits` | filp=9/9 dalloc=0/0 | report `kernel/user/stage3/case15_deep_trace/reports/user_deep_create_trace_report.md`

@@ -1,21 +1,21 @@
-[ 1739.746387] [trace_case3_deep_hit] loaded target_comm=case3_deep_hit. user=kernel/user/stage3/case3_deep_hit/case3_deep_hit.c
-[ 1739.748492] [trace_case3_deep_hit] do_filp_open.entry pid=47699 comm=case3_deep_hit. dfd=4294967196 pathname=ffff8dda294d3000 op=ffffd0c953cf3d64
-[ 1739.748506] [trace_case3_deep_hit] do_filp_open.ret pid=47699 comm=case3_deep_hit. ret=fffffffffffffffe
-[ 1739.748512] [trace_case3_deep_hit] do_filp_open.entry pid=47699 comm=case3_deep_hit. dfd=4294967196 pathname=ffff8dda294d3000 op=ffffd0c953cf3e64
-[ 1739.748517] [trace_case3_deep_hit] do_filp_open.ret pid=47699 comm=case3_deep_hit. ret=fffffffffffffffe
-[ 1739.748522] [trace_case3_deep_hit] do_filp_open.entry pid=47699 comm=case3_deep_hit. dfd=4294967196 pathname=ffff8dda294d3000 op=ffffd0c953cf3dd4
-[ 1739.748527] [trace_case3_deep_hit] do_filp_open.ret pid=47699 comm=case3_deep_hit. ret=fffffffffffffffe
-[ 1739.748534] [trace_case3_deep_hit] do_filp_open.entry pid=47699 comm=case3_deep_hit. dfd=4294967196 pathname=ffff8dda294d3000 op=ffffd0c953cf3dc4
-[ 1739.748537] [trace_case3_deep_hit] do_filp_open.ret pid=47699 comm=case3_deep_hit. ret=fffffffffffffffe
-[ 1739.748540] [trace_case3_deep_hit] do_filp_open.entry pid=47699 comm=case3_deep_hit. dfd=4294967196 pathname=ffff8dda294d3000 op=ffffd0c953cf3c34
-[ 1739.748543] [trace_case3_deep_hit] do_filp_open.ret pid=47699 comm=case3_deep_hit. ret=fffffffffffffffe
-[ 1739.748546] [trace_case3_deep_hit] do_filp_open.entry pid=47699 comm=case3_deep_hit. dfd=4294967196 pathname=ffff8dda294d3000 op=ffffd0c953cf3b54
-[ 1739.748550] [trace_case3_deep_hit] do_filp_open.ret pid=47699 comm=case3_deep_hit. ret=fffffffffffffffe
-[ 1739.748553] [trace_case3_deep_hit] do_filp_open.entry pid=47699 comm=case3_deep_hit. dfd=4294967196 pathname=ffff8dda294d3000 op=ffffd0c953cf3ab4
-[ 1739.748558] [trace_case3_deep_hit] do_filp_open.ret pid=47699 comm=case3_deep_hit. ret=ffff8dd904158b40
-[ 1739.748576] [trace_case3_deep_hit] do_filp_open.entry pid=47699 comm=case3_deep_hit. dfd=4294967196 pathname=ffff8dda294d3000 op=ffffd0c953cf3b74
-[ 1739.748580] [trace_case3_deep_hit] do_filp_open.ret pid=47699 comm=case3_deep_hit. ret=ffff8dd904158a80
-[ 1739.748794] [trace_case3_deep_hit] do_filp_open.entry pid=47699 comm=case3_deep_hit. dfd=4294967196 pathname=ffff8dda294d3000 op=ffffd0c953cf3c14
-[ 1739.748800] [trace_case3_deep_hit] do_filp_open.ret pid=47699 comm=case3_deep_hit. ret=fffffffffffffffe
-[ 1739.748815] [trace_case3_deep_hit] do_filp_open.entry pid=47699 comm=case3_deep_hit. dfd=4294967196 pathname=ffff8dda294d3000 op=ffffd0c953cf3c14
-[ 1739.748819] [trace_case3_deep_hit] do_filp_open.ret pid=47699 comm=case3_deep_hit. ret=fffffffffffffffe
+[ 3340.650088] [trace_case3_deep_hit] loaded target_comm=case3_deep_hit. user=kernel/user/stage3/case3_deep_hit/case3_deep_hit.c
+[ 3340.652757] [trace_case3_deep_hit] do_filp_open.entry pid=64616 comm=case3_deep_hit. dfd=4294967196 pathname=ffff8dda082f4000 op=ffffd0c9408e7c44
+[ 3340.652772] [trace_case3_deep_hit] do_filp_open.ret pid=64616 comm=case3_deep_hit. ret=fffffffffffffffe
+[ 3340.652778] [trace_case3_deep_hit] do_filp_open.entry pid=64616 comm=case3_deep_hit. dfd=4294967196 pathname=ffff8dda082f4000 op=ffffd0c9408e7c44
+[ 3340.652783] [trace_case3_deep_hit] do_filp_open.ret pid=64616 comm=case3_deep_hit. ret=fffffffffffffffe
+[ 3340.652789] [trace_case3_deep_hit] do_filp_open.entry pid=64616 comm=case3_deep_hit. dfd=4294967196 pathname=ffff8dda082f4000 op=ffffd0c9408e7d34
+[ 3340.652794] [trace_case3_deep_hit] do_filp_open.ret pid=64616 comm=case3_deep_hit. ret=fffffffffffffffe
+[ 3340.652802] [trace_case3_deep_hit] do_filp_open.entry pid=64616 comm=case3_deep_hit. dfd=4294967196 pathname=ffff8dda082f4000 op=ffffd0c9408e7cd4
+[ 3340.652806] [trace_case3_deep_hit] do_filp_open.ret pid=64616 comm=case3_deep_hit. ret=fffffffffffffffe
+[ 3340.652809] [trace_case3_deep_hit] do_filp_open.entry pid=64616 comm=case3_deep_hit. dfd=4294967196 pathname=ffff8dda082f4000 op=ffffd0c9408e7d84
+[ 3340.652812] [trace_case3_deep_hit] do_filp_open.ret pid=64616 comm=case3_deep_hit. ret=fffffffffffffffe
+[ 3340.652815] [trace_case3_deep_hit] do_filp_open.entry pid=64616 comm=case3_deep_hit. dfd=4294967196 pathname=ffff8dda082f4000 op=ffffd0c9408e7e34
+[ 3340.652818] [trace_case3_deep_hit] do_filp_open.ret pid=64616 comm=case3_deep_hit. ret=fffffffffffffffe
+[ 3340.652822] [trace_case3_deep_hit] do_filp_open.entry pid=64616 comm=case3_deep_hit. dfd=4294967196 pathname=ffff8dda082f4000 op=ffffd0c9408e7de4
+[ 3340.652827] [trace_case3_deep_hit] do_filp_open.ret pid=64616 comm=case3_deep_hit. ret=ffff8ddc26c20840
+[ 3340.652846] [trace_case3_deep_hit] do_filp_open.entry pid=64616 comm=case3_deep_hit. dfd=4294967196 pathname=ffff8dda082f4000 op=ffffd0c9408e7c94
+[ 3340.652852] [trace_case3_deep_hit] do_filp_open.ret pid=64616 comm=case3_deep_hit. ret=ffff8ddc26c20240
+[ 3340.653113] [trace_case3_deep_hit] do_filp_open.entry pid=64616 comm=case3_deep_hit. dfd=4294967196 pathname=ffff8dda082f4000 op=ffffd0c9408e7e74
+[ 3340.653121] [trace_case3_deep_hit] do_filp_open.ret pid=64616 comm=case3_deep_hit. ret=fffffffffffffffe
+[ 3340.653142] [trace_case3_deep_hit] do_filp_open.entry pid=64616 comm=case3_deep_hit. dfd=4294967196 pathname=ffff8dda082f4000 op=ffffd0c9408e7d84
+[ 3340.653145] [trace_case3_deep_hit] do_filp_open.ret pid=64616 comm=case3_deep_hit. ret=fffffffffffffffe

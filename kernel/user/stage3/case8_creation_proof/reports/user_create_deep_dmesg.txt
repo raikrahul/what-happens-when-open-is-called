@@ -1,19 +1,19 @@
-[ 1751.091444] [trace_user_create_deep] loaded target_comm=user_create_dee user=kernel/user/stage3/case8_creation_proof/user_create_deep.c
-[ 1751.094895] [trace_user_create_deep] do_filp_open.entry pid=49257 comm=user_create_dee dfd=4294967196 pathname=ffff8dda082a8000 op=ffffd0c950c47b74
-[ 1751.094908] [trace_user_create_deep] do_filp_open.ret pid=49257 comm=user_create_dee ret=fffffffffffffffe
-[ 1751.094914] [trace_user_create_deep] do_filp_open.entry pid=49257 comm=user_create_dee dfd=4294967196 pathname=ffff8dda082a8000 op=ffffd0c950c47ba4
-[ 1751.094919] [trace_user_create_deep] do_filp_open.ret pid=49257 comm=user_create_dee ret=fffffffffffffffe
-[ 1751.094924] [trace_user_create_deep] do_filp_open.entry pid=49257 comm=user_create_dee dfd=4294967196 pathname=ffff8dda082a8000 op=ffffd0c950c47ab4
-[ 1751.094929] [trace_user_create_deep] do_filp_open.ret pid=49257 comm=user_create_dee ret=fffffffffffffffe
-[ 1751.094936] [trace_user_create_deep] do_filp_open.entry pid=49257 comm=user_create_dee dfd=4294967196 pathname=ffff8dda082a8000 op=ffffd0c950c47e14
-[ 1751.094940] [trace_user_create_deep] do_filp_open.ret pid=49257 comm=user_create_dee ret=fffffffffffffffe
-[ 1751.094943] [trace_user_create_deep] do_filp_open.entry pid=49257 comm=user_create_dee dfd=4294967196 pathname=ffff8dda082a8000 op=ffffd0c950c47e14
-[ 1751.094946] [trace_user_create_deep] do_filp_open.ret pid=49257 comm=user_create_dee ret=fffffffffffffffe
-[ 1751.094949] [trace_user_create_deep] do_filp_open.entry pid=49257 comm=user_create_dee dfd=4294967196 pathname=ffff8dda082a8000 op=ffffd0c950c47ca4
-[ 1751.094952] [trace_user_create_deep] do_filp_open.ret pid=49257 comm=user_create_dee ret=fffffffffffffffe
-[ 1751.094955] [trace_user_create_deep] do_filp_open.entry pid=49257 comm=user_create_dee dfd=4294967196 pathname=ffff8dda082a8000 op=ffffd0c950c47cb4
-[ 1751.094960] [trace_user_create_deep] do_filp_open.ret pid=49257 comm=user_create_dee ret=ffff8dda27fa4600
-[ 1751.094977] [trace_user_create_deep] do_filp_open.entry pid=49257 comm=user_create_dee dfd=4294967196 pathname=ffff8dda082a8000 op=ffffd0c950c47b34
-[ 1751.094982] [trace_user_create_deep] do_filp_open.ret pid=49257 comm=user_create_dee ret=ffff8dda27fa4a80
-[ 1751.095151] [trace_user_create_deep] do_filp_open.entry pid=49257 comm=user_create_dee dfd=4294967196 pathname=ffff8dda082a8000 op=ffffd0c950c47b94
-[ 1751.095156] [trace_user_create_deep] do_filp_open.ret pid=49257 comm=user_create_dee ret=ffffffffffffffef
+[ 3351.933177] [trace_user_create_deep] loaded target_comm=user_create_dee user=kernel/user/stage3/case8_creation_proof/user_create_deep.c
+[ 3351.936364] [trace_user_create_deep] do_filp_open.entry pid=66202 comm=user_create_dee dfd=4294967196 pathname=ffff8dda294d5000 op=ffffd0c9407b7b54
+[ 3351.936377] [trace_user_create_deep] do_filp_open.ret pid=66202 comm=user_create_dee ret=fffffffffffffffe
+[ 3351.936383] [trace_user_create_deep] do_filp_open.entry pid=66202 comm=user_create_dee dfd=4294967196 pathname=ffff8dda294d5000 op=ffffd0c9407b7b64
+[ 3351.936388] [trace_user_create_deep] do_filp_open.ret pid=66202 comm=user_create_dee ret=fffffffffffffffe
+[ 3351.936393] [trace_user_create_deep] do_filp_open.entry pid=66202 comm=user_create_dee dfd=4294967196 pathname=ffff8dda294d5000 op=ffffd0c9407b7d34
+[ 3351.936398] [trace_user_create_deep] do_filp_open.ret pid=66202 comm=user_create_dee ret=fffffffffffffffe
+[ 3351.936405] [trace_user_create_deep] do_filp_open.entry pid=66202 comm=user_create_dee dfd=4294967196 pathname=ffff8dda294d5000 op=ffffd0c9407b7b04
+[ 3351.936408] [trace_user_create_deep] do_filp_open.ret pid=66202 comm=user_create_dee ret=fffffffffffffffe
+[ 3351.936411] [trace_user_create_deep] do_filp_open.entry pid=66202 comm=user_create_dee dfd=4294967196 pathname=ffff8dda294d5000 op=ffffd0c9407b7b54
+[ 3351.936415] [trace_user_create_deep] do_filp_open.ret pid=66202 comm=user_create_dee ret=fffffffffffffffe
+[ 3351.936417] [trace_user_create_deep] do_filp_open.entry pid=66202 comm=user_create_dee dfd=4294967196 pathname=ffff8dda294d5000 op=ffffd0c9407b7e44
+[ 3351.936421] [trace_user_create_deep] do_filp_open.ret pid=66202 comm=user_create_dee ret=fffffffffffffffe
+[ 3351.936424] [trace_user_create_deep] do_filp_open.entry pid=66202 comm=user_create_dee dfd=4294967196 pathname=ffff8dda294d5000 op=ffffd0c9407b7b04
+[ 3351.936429] [trace_user_create_deep] do_filp_open.ret pid=66202 comm=user_create_dee ret=ffff8ddc475d8f00
+[ 3351.936447] [trace_user_create_deep] do_filp_open.entry pid=66202 comm=user_create_dee dfd=4294967196 pathname=ffff8dda294d5000 op=ffffd0c9407b7e74
+[ 3351.936452] [trace_user_create_deep] do_filp_open.ret pid=66202 comm=user_create_dee ret=ffff8ddc475d8cc0
+[ 3351.936685] [trace_user_create_deep] do_filp_open.entry pid=66202 comm=user_create_dee dfd=4294967196 pathname=ffff8dda294d5000 op=ffffd0c9407b7d64
+[ 3351.936692] [trace_user_create_deep] do_filp_open.ret pid=66202 comm=user_create_dee ret=ffffffffffffffef

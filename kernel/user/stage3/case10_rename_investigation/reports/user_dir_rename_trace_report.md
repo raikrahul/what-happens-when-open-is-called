@@ -4,7 +4,7 @@
 - Driver source: `kernel/drivers/stage3/case10_rename_investigation/trace_user_dir_rename/trace_user_dir_rename.c`
 - Module: `trace_user_dir_rename`
 - Binary: `kernel/user/stage3/case10_rename_investigation/user_dir_rename.out`
-- Run timestamp: `2026-02-15T13:22:21`
+- Run timestamp: `2026-02-15T13:49:03`
 - Final status: `pass_probe_hits`
 
 ## Probe Counts
