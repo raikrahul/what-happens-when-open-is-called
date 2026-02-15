@@ -1,0 +1,27 @@
+Chat session saved: 2026-02-15
+Project: /home/r/Desktop/what-happens-when-open-is-called
+
+Key outcomes from this session:
+1. Full Stage3 userspace+driver pair sweep executed and rerun.
+2. Full reports and worksheets generated for 41 pairs.
+3. Visual artifacts created:
+   - kernel/user/stage3/planning/STAGE3_PROBE_FLOW_GRAPH.md
+   - kernel/user/stage3/planning/STAGE3_PROBE_HEATMAP_SOURCE.csv
+4. Sales funnel implemented and published:
+   - site/sell.html
+   - product/sell-now/*
+   - tools/sales/*
+5. GitHub release created for sales assets:
+   - v-sales-20260215-0120
+6. India compliance checklist added:
+   - product/sell-now/INDIA_COMPLIANCE_CHECKLIST_2026-02-15.md
+
+Recent commits pushed on main:
+- 8545503 sales: add India compliance checklist for GST/FEMA/tax workflow
+- 948871b sales: activate live links and launch release funnel
+- 1754927 sales: upgrade funnel, add offer asset builder, and 60-min go-live playbook
+- b525ad5 stage3: rerun full 41-pair tests, fill worksheets, add visual probe artifacts
+- 5461c93 sales: add sell page, checkout templates, and revenue calculator
+
+Note:
+This file stores a structured session record and outcomes for continuity.
