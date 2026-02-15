@@ -4,7 +4,7 @@
 - Driver source: `kernel/drivers/stage3/case2_deep_miss/trace_case2_deep_miss/trace_case2_deep_miss.c`
 - Module: `trace_case2_deep_miss`
 - Binary: `kernel/user/stage3/case2_deep_miss/case2_deep_miss.out`
-- Run timestamp: `2026-02-15T01:15:23`
+- Run timestamp: `2026-02-15T13:08:16`
 - Final status: `pass_probe_hits`
 
 ## Probe Counts

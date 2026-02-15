@@ -4,7 +4,7 @@
 - Driver source: `kernel/drivers/stage3/case7_symlink_fast/trace_case7_symlink_fast/trace_case7_symlink_fast.c`
 - Module: `trace_case7_symlink_fast`
 - Binary: `kernel/user/stage3/case7_symlink_fast/case7_symlink_fast.out`
-- Run timestamp: `2026-02-15T01:15:34`
+- Run timestamp: `2026-02-15T13:08:26`
 - Final status: `pass_probe_hits`
 
 ## Probe Counts

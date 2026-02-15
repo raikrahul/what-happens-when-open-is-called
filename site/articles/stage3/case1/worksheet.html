@@ -172,6 +172,84 @@ open(file,flags,mode) → call open@PLT → 0x____ endbr64 → 0x____ [ptr] → 
 <pre style="white-space: pre-wrap; word-wrap: break-word; margin: 0; font-family: monospace;">
 every address from a previous step → no new numbers → VERIFY: count addresses filled = ________ → expected ≥ 8
 
+[CROSSING INTO KERNEL: probe do_sys_openat2]
+
+18. KERNEL PROOF: build and load driver `kernel/drivers/trace_do_sys_openat2/trace_do_sys_openat2.c` → this places a kprobe (entry) and kretprobe (return) on `do_sys_openat2` (fs/open.c line 1420) → commands:</pre>
+<pre><code>cd kernel/drivers/trace_do_sys_openat2 &amp;&amp; make
+sudo insmod trace_do_sys_openat2.ko target_comm="case1_relative."
+cd kernel/user/stage3/case1_relative &amp;&amp; ./case1_relative.out
+sudo dmesg | grep OPENAT2
+sudo rmmod trace_do_sys_openat2</code></pre>
+<pre style="white-space: pre-wrap; word-wrap: break-word; margin: 0; font-family: monospace;">
+→ NOTE: target_comm = "case1_relative." (15 chars) because Linux `comm` truncates argv[0] to 15 bytes → `case1_relative.out` → `case1_relative.`
+
+user-space output: `fd=________ path_addr=0x__________ path="some_relative_file.txt"`
+
+dmesg output (last 3 lines = our open call):</pre>
+<pre><code>[OPENAT2] ENTRY pid=______ comm=case1_relative. dfd=________ filename_uptr=0x__________
+[OPENAT2] RETURN pid=______ comm=case1_relative. fd=________</code></pre>
+<pre style="white-space: pre-wrap; word-wrap: break-word; margin: 0; font-family: monospace;">
+
+PROOF TABLE — fill from user-space output and dmesg:</pre>
+<pre><code>+-----------------------+------------------+-------------------+-------+
+| Claim                 | User-Space       | Kernel (dmesg)    | Match |
++-----------------------+------------------+-------------------+-------+
+| dfd == AT_FDCWD       | (glibc, -100)    | dfd=__________    | ✓ ∨ ✗ |
+| filename ptr same     | path_addr=0x___  | uptr=0x_________  | ✓ ∨ ✗ |
+| fd round-trip         | fd=__________    | fd=__________     | ✓ ∨ ✗ |
++-----------------------+------------------+-------------------+-------+</code></pre>
+<pre style="white-space: pre-wrap; word-wrap: break-word; margin: 0; font-family: monospace;">
+→ ALL THREE ✓ required → if any ✗ → re-run dmesg, check comm filter, check ASLR
+
+CHAIN with kernel entry:</pre>
+<pre><code>case1_relative.c → PLT → GOT → glibc → syscall → SYSCALL_DEFINE4(openat) → do_sys_open → do_sys_openat2
+                                                    fs/open.c:1463            :1449          :1420
+                                                                                              │
+                                                                                              ▼
+                                                                              do_filp_open (fs/namei.c:4073)</code></pre>
+<pre style="white-space: pre-wrap; word-wrap: break-word; margin: 0; font-family: monospace;">
+
+BONUS: dmesg will also show dynamic linker openat calls (ld-linux searching for libc.so.6) → all with dfd=-100 → your call is the LAST entry with your .rodata address
+
+see: proofs.md for complete raw dmesg and worked proofs
+
+[CROSSING DEEPER: probe path_init branching]
+
+19. KERNEL PROOF: build and load driver `kernel/drivers/trace_path_init/trace_path_init.c` → this places kprobes on `do_filp_open` (entry), `path_openat` (entry/ret), `alloc_empty_file` (entry/ret), and `fdget_raw` (else-branch only) → commands:</pre>
+<pre><code>cd kernel/drivers/trace_path_init &amp;&amp; make
+sudo insmod trace_path_init.ko target_comm="demo_thread_saf"</code></pre>
+<pre style="white-space: pre-wrap; word-wrap: break-word; margin: 0; font-family: monospace;">
+
+20. RUN DEMOS: verify branching behavior
+   a) Thread Safety race:
+   ```
+   cd kernel/user/stage3/demo_thread_safety &amp;&amp; ./demo_thread_safety.out
+   sudo dmesg | grep PATH_INIT
+   ```
+   → Thread 1 (dfd=3): MUST show `FDGET_RAW` and `BRANCH: FD_LOOKUP`
+   → Thread 3 (dfd=-100): MUST show `BRANCH: AT_FDCWD` and atomic `get_fs_pwd` (no fdget_raw)
+
+   b) TOCTOU race:
+   ```
+   sudo rmmod trace_path_init; sudo insmod ../../drivers/trace_path_init/trace_path_init.ko target_comm="demo_toctou.out"
+   cd ../demo_toctou &amp;&amp; ./demo_toctou.out
+   sudo dmesg | grep PATH_INIT
+   ```
+   → Scenario A (open): `BRANCH: AT_FDCWD` → followed symlink → WRONG data
+   → Scenario B (openat): `BRANCH: FD_LOOKUP` + `FDGET_RAW` → pinned inode → CORRECT data
+
+   c) AT_FDCWD Equivalence:
+   ```
+   sudo rmmod trace_path_init; sudo insmod ../../drivers/trace_path_init/trace_path_init.ko target_comm="demo_at_fdcwd.o"
+   cd ../demo_at_fdcwd &amp;&amp; ./demo_at_fdcwd.out
+   sudo dmesg | grep PATH_INIT
+   ```
+   → All 3 calls (open, openat, syscall) MUST show `BRANCH: AT_FDCWD` and Identical behavior.
+
+21. UNLOAD:</pre>
+<pre><code>sudo rmmod trace_path_init</code></pre>
+<pre style="white-space: pre-wrap; word-wrap: break-word; margin: 0; font-family: monospace;">
+
 [FAILURE PREDICTIONS]
 F1. call_target ≠ open_va → user forgot: E8 displacement is relative to NEXT instruction → must add 5 to call_va before adding displacement → call_target = (call_va + 5) + displacement, NOT call_va + displacement
 F2. GOT_slot mismatch → user added rip_offset to jmp_address instead of next_instruction_address → rip = address AFTER the jmp, not AT it → jmp at 0x1054, length 6 → rip = 0x105a not 0x1054
@@ -182,7 +260,10 @@ F6. displacement sign error → bytes `e1 fe ff ff` → little-endian = 0xfffffe
 F7. user confuses `open@plt` (0x1050, the PLT stub) with `open` in glibc (unknown until runtime ASLR) → the .dump only shows the PLT stub address, NOT the glibc function address → glibc address only visible via gdb at runtime
 F8. syscall number ≠ 257 → user found wrong `mov` instruction → multiple `mov %eax` may exist → the correct one is the LAST mov to %eax BEFORE the syscall instruction, not the first one
 F9. AT_FDCWD two's complement error → user computed on 64-bit (0xffffffffffffff9c) instead of 32-bit (0xffffff9c) → `mov $0xffffff9c,%edi` is a 32-bit move → use 32-bit two's complement
-F10. register shuffle confusion → user expects %rdi = filename at syscall → WRONG → glibc shifted: %rdi = AT_FDCWD, %rsi = filename → open(file, flags, mode) became openat(dirfd, file, flags, mode) → 3 args became 4 args</pre>
+F10. register shuffle confusion → user expects %rdi = filename at syscall → WRONG → glibc shifted: %rdi = AT_FDCWD, %rsi = filename → open(file, flags, mode) became openat(dirfd, file, flags, mode) → 3 args became 4 args
+F11. no dmesg output after insmod + run → comm mismatch → binary name `case1_relative.out` truncates to `case1_relative.` (15 chars including the dot) → must pass `target_comm="case1_relative."` with the trailing dot → `case1_relativ` or `case1_relative` will NOT match
+F12. filename string shows "(copy failed)" in dmesg → `strncpy_from_user` may fail on PIE .rodata addresses (0x5xxx range) depending on kernel access_ok checks → the ADDRESS MATCH is still the proof → the pointer is identical regardless of string copy
+F13. dmesg shows many openat calls before yours → the dynamic linker opens /etc/ld.so.cache and /lib/.../libc.so.6 during startup → YOUR call is the LAST one → look for your .rodata address (0x________ from path_addr) to identify it</pre>
   </div>
 
 </body>

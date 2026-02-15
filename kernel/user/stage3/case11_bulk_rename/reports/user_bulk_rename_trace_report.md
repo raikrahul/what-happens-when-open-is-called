@@ -4,14 +4,14 @@
 - Driver source: `kernel/drivers/stage3/case11_bulk_rename/trace_user_bulk_rename/trace_user_bulk_rename.c`
 - Module: `trace_user_bulk_rename`
 - Binary: `kernel/user/stage3/case11_bulk_rename/user_bulk_rename.out`
-- Run timestamp: `2026-02-15T01:15:10`
+- Run timestamp: `2026-02-15T13:08:04`
 - Final status: `pass_probe_hits`
 
 ## Probe Counts
 - do_filp_open.entry: 110
 - do_filp_open.ret: 110
-- __d_alloc.entry: 100
-- __d_alloc.ret: 100
+- __d_alloc.entry: 0
+- __d_alloc.ret: 0
 
 ## Return Signature Counts
 - ERR_PTR(-ENOENT) observed (fffffffffffffffe): 6

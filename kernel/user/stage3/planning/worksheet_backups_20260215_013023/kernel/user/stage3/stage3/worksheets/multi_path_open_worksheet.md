@@ -2,7 +2,7 @@
 
 - Generated: `2026-02-15T01:16:11`
 - Userspace: `kernel/user/stage3/multi_path_open.c`
-- Driver: `kernel/drivers/stage3/stage3/trace_multi_path_open/trace_multi_path_open.c`
+- Driver: `kernel/drivers/stage3/case0_misc/trace_multi_path_open/trace_multi_path_open.c`
 - Module: `trace_multi_path_open`
 - Binary: `kernel/user/stage3/multi_path_open.auto.out`
 - Status: `pass_probe_hits`
@@ -42,5 +42,5 @@
 - Count B entry=0 ret=0
 
 ## Raw Artifacts
-- report: `kernel/user/stage3/stage3/reports/multi_path_open_trace_report.md`
-- dmesg: `kernel/user/stage3/stage3/reports/multi_path_open_dmesg.txt`
+- report: `kernel/user/stage3/case0_misc/reports/multi_path_open_trace_report.md`
+- dmesg: `kernel/user/stage3/case0_misc/reports/multi_path_open_dmesg.txt`

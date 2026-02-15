@@ -40,4 +40,4 @@
 - `kernel/user/stage3/case8_creation_proof/user_hash_collision.c` -> `kernel/user/stage3/case8_creation_proof/worksheets/user_hash_collision_worksheet.md`
 - `kernel/user/stage3/case8_creation_proof/user_open_existing.c` -> `kernel/user/stage3/case8_creation_proof/worksheets/user_open_existing_worksheet.md`
 - `kernel/user/stage3/case8_creation_proof/user_rename.c` -> `kernel/user/stage3/case8_creation_proof/worksheets/user_rename_worksheet.md`
-- `kernel/user/stage3/multi_path_open.c` -> `kernel/user/stage3/stage3/worksheets/multi_path_open_worksheet.md`
+- `kernel/user/stage3/multi_path_open.c` -> `kernel/user/stage3/case0_misc/worksheets/multi_path_open_worksheet.md`

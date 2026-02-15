@@ -39,4 +39,4 @@ index,userspace_source,dedicated_driver_target,report_target,status
 38,kernel/user/stage3/case8_creation_proof/user_hash_collision.c,kernel/drivers/stage3/case8_creation_proof/trace_user_hash_collision/trace_user_hash_collision.c,kernel/user/stage3/case8_creation_proof/reports/user_hash_collision_trace_report.md,todo
 39,kernel/user/stage3/case8_creation_proof/user_open_existing.c,kernel/drivers/stage3/case8_creation_proof/trace_user_open_existing/trace_user_open_existing.c,kernel/user/stage3/case8_creation_proof/reports/user_open_existing_trace_report.md,todo
 40,kernel/user/stage3/case8_creation_proof/user_rename.c,kernel/drivers/stage3/case8_creation_proof/trace_user_rename/trace_user_rename.c,kernel/user/stage3/case8_creation_proof/reports/user_rename_trace_report.md,todo
-41,kernel/user/stage3/multi_path_open.c,kernel/drivers/stage3/stage3/trace_multi_path_open/trace_multi_path_open.c,kernel/user/stage3/stage3/reports/multi_path_open_trace_report.md,todo
+41,kernel/user/stage3/multi_path_open.c,kernel/drivers/stage3/case0_misc/trace_multi_path_open/trace_multi_path_open.c,kernel/user/stage3/case0_misc/reports/multi_path_open_trace_report.md,todo

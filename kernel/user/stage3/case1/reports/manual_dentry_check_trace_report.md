@@ -4,7 +4,7 @@
 - Driver source: `kernel/drivers/stage3/case1/trace_manual_dentry_check/trace_manual_dentry_check.c`
 - Module: `trace_manual_dentry_check`
 - Binary: `kernel/user/stage3/case1/manual_dentry_check.out`
-- Run timestamp: `2026-02-15T01:15:05`
+- Run timestamp: `2026-02-15T13:08:00`
 - Final status: `pass_probe_hits`
 
 ## Probe Counts

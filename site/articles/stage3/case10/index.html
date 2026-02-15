@@ -1,0 +1,84 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+    <meta charset="UTF-8">
+    <title>Stage 3 Case 10: Rename Investigation</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            background: #111;
+            font-family: monospace;
+            font-size: 12px;
+            overflow: hidden;
+        }
+
+        .header {
+            background: #222;
+            color: #888;
+            padding: 5px 20px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            height: 25px;
+        }
+
+        .container {
+            display: flex;
+            height: calc(100vh - 25px);
+        }
+
+        .panel {
+            width: 33.33%;
+            height: 100%;
+            overflow: auto;
+            border-right: 1px solid #333;
+        }
+
+        .panel:last-child {
+            border-right: none;
+        }
+
+        iframe {
+            width: 100%;
+            height: 100%;
+            border: none;
+        }
+
+        a {
+            color: #aaa;
+            text-decoration: none;
+        }
+
+        a:hover {
+            color: #fff;
+        }
+    </style>
+</head>
+
+<body>
+    <div class="header">
+        <span>EXPLANATION</span>
+        <span>TEXTBOOK</span>
+        <span><a href="/what-happens-when-open-is-called/index.html">[HOME]</a></span>
+        <span>WORKSHEET</span>
+    </div>
+    <div class="container">
+        <div class="panel">
+            <iframe src="explanation.html"></iframe>
+        </div>
+        <div class="panel">
+            <iframe src="textbook.html"></iframe>
+        </div>
+        <div class="panel">
+            <iframe src="worksheet.html"></iframe>
+        </div>
+    </div>
+</body>
+
+</html>

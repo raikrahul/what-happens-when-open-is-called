@@ -1,19 +1,19 @@
-[53112.107305] [trace_case5_mount_jump] loaded target_comm=case5_mount_jum user=kernel/user/stage3/case5_mount_jump/case5_mount_jump.c
-[53112.110737] [trace_case5_mount_jump] do_filp_open.entry pid=270526 comm=case5_mount_jum dfd=4294967196 pathname=ffff898e8d779000 op=ffffcc9700763de4
-[53112.110759] [trace_case5_mount_jump] do_filp_open.ret pid=270526 comm=case5_mount_jum ret=fffffffffffffffe
-[53112.110773] [trace_case5_mount_jump] do_filp_open.entry pid=270526 comm=case5_mount_jum dfd=4294967196 pathname=ffff898e8d779000 op=ffffcc9700763e44
-[53112.110784] [trace_case5_mount_jump] do_filp_open.ret pid=270526 comm=case5_mount_jum ret=fffffffffffffffe
-[53112.110796] [trace_case5_mount_jump] do_filp_open.entry pid=270526 comm=case5_mount_jum dfd=4294967196 pathname=ffff898e8d779000 op=ffffcc9700763d84
-[53112.110807] [trace_case5_mount_jump] do_filp_open.ret pid=270526 comm=case5_mount_jum ret=fffffffffffffffe
-[53112.110822] [trace_case5_mount_jump] do_filp_open.entry pid=270526 comm=case5_mount_jum dfd=4294967196 pathname=ffff898e8d779000 op=ffffcc9700763af4
-[53112.110829] [trace_case5_mount_jump] do_filp_open.ret pid=270526 comm=case5_mount_jum ret=fffffffffffffffe
-[53112.110836] [trace_case5_mount_jump] do_filp_open.entry pid=270526 comm=case5_mount_jum dfd=4294967196 pathname=ffff898e8d779000 op=ffffcc9700763da4
-[53112.110843] [trace_case5_mount_jump] do_filp_open.ret pid=270526 comm=case5_mount_jum ret=fffffffffffffffe
-[53112.110850] [trace_case5_mount_jump] do_filp_open.entry pid=270526 comm=case5_mount_jum dfd=4294967196 pathname=ffff898e8d779000 op=ffffcc9700763dd4
-[53112.110858] [trace_case5_mount_jump] do_filp_open.ret pid=270526 comm=case5_mount_jum ret=fffffffffffffffe
-[53112.110865] [trace_case5_mount_jump] do_filp_open.entry pid=270526 comm=case5_mount_jum dfd=4294967196 pathname=ffff898e8d779000 op=ffffcc9700763e54
-[53112.110880] [trace_case5_mount_jump] do_filp_open.ret pid=270526 comm=case5_mount_jum ret=ffff898f8b10ae40
-[53112.110912] [trace_case5_mount_jump] do_filp_open.entry pid=270526 comm=case5_mount_jum dfd=4294967196 pathname=ffff898e8d779000 op=ffffcc9700763b04
-[53112.110922] [trace_case5_mount_jump] do_filp_open.ret pid=270526 comm=case5_mount_jum ret=ffff898f8b10a9c0
-[53112.111330] [trace_case5_mount_jump] do_filp_open.entry pid=270526 comm=case5_mount_jum dfd=4294967196 pathname=ffff898e8d779000 op=ffffcc9700763d84
-[53112.111341] [trace_case5_mount_jump] do_filp_open.ret pid=270526 comm=case5_mount_jum ret=fffffffffffffffe
+[  887.929387] [trace_case5_mount_jump] loaded target_comm=case5_mount_jum user=kernel/user/stage3/case5_mount_jump/case5_mount_jump.c
+[  887.931915] [trace_case5_mount_jump] do_filp_open.entry pid=29157 comm=case5_mount_jum dfd=4294967196 pathname=ffff8dda13f5e000 op=ffffd0c9567ffd54
+[  887.931927] [trace_case5_mount_jump] do_filp_open.ret pid=29157 comm=case5_mount_jum ret=fffffffffffffffe
+[  887.931933] [trace_case5_mount_jump] do_filp_open.entry pid=29157 comm=case5_mount_jum dfd=4294967196 pathname=ffff8dda13f5e000 op=ffffd0c9567ffc64
+[  887.931938] [trace_case5_mount_jump] do_filp_open.ret pid=29157 comm=case5_mount_jum ret=fffffffffffffffe
+[  887.931944] [trace_case5_mount_jump] do_filp_open.entry pid=29157 comm=case5_mount_jum dfd=4294967196 pathname=ffff8dda13f5e000 op=ffffd0c9567ffb74
+[  887.931948] [trace_case5_mount_jump] do_filp_open.ret pid=29157 comm=case5_mount_jum ret=fffffffffffffffe
+[  887.931955] [trace_case5_mount_jump] do_filp_open.entry pid=29157 comm=case5_mount_jum dfd=4294967196 pathname=ffff8dda13f5e000 op=ffffd0c9567ffe34
+[  887.931959] [trace_case5_mount_jump] do_filp_open.ret pid=29157 comm=case5_mount_jum ret=fffffffffffffffe
+[  887.931962] [trace_case5_mount_jump] do_filp_open.entry pid=29157 comm=case5_mount_jum dfd=4294967196 pathname=ffff8dda13f5e000 op=ffffd0c9567ffe64
+[  887.931965] [trace_case5_mount_jump] do_filp_open.ret pid=29157 comm=case5_mount_jum ret=fffffffffffffffe
+[  887.931968] [trace_case5_mount_jump] do_filp_open.entry pid=29157 comm=case5_mount_jum dfd=4294967196 pathname=ffff8dda13f5e000 op=ffffd0c9567ffdb4
+[  887.931971] [trace_case5_mount_jump] do_filp_open.ret pid=29157 comm=case5_mount_jum ret=fffffffffffffffe
+[  887.931975] [trace_case5_mount_jump] do_filp_open.entry pid=29157 comm=case5_mount_jum dfd=4294967196 pathname=ffff8dda13f5e000 op=ffffd0c9567ffe44
+[  887.931979] [trace_case5_mount_jump] do_filp_open.ret pid=29157 comm=case5_mount_jum ret=ffff8ddbffc2d000
+[  887.931996] [trace_case5_mount_jump] do_filp_open.entry pid=29157 comm=case5_mount_jum dfd=4294967196 pathname=ffff8dda13f5e000 op=ffffd0c9567ffb04
+[  887.932001] [trace_case5_mount_jump] do_filp_open.ret pid=29157 comm=case5_mount_jum ret=ffff8ddbffc2d480
+[  887.932195] [trace_case5_mount_jump] do_filp_open.entry pid=29157 comm=case5_mount_jum dfd=4294967196 pathname=ffff8dda13f5e000 op=ffffd0c9567ffd64
+[  887.932201] [trace_case5_mount_jump] do_filp_open.ret pid=29157 comm=case5_mount_jum ret=fffffffffffffffe

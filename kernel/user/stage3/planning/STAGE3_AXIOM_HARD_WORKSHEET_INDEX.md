@@ -40,4 +40,4 @@
 - `kernel/user/stage3/case8_creation_proof/worksheets/user_hash_collision_worksheet_axiom_hard.md`
 - `kernel/user/stage3/case8_creation_proof/worksheets/user_open_existing_worksheet_axiom_hard.md`
 - `kernel/user/stage3/case8_creation_proof/worksheets/user_rename_worksheet_axiom_hard.md`
-- `kernel/user/stage3/stage3/worksheets/multi_path_open_worksheet_axiom_hard.md`
+- `kernel/user/stage3/case0_misc/worksheets/multi_path_open_worksheet_axiom_hard.md`

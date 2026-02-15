@@ -4,7 +4,7 @@
 - Driver source: `kernel/drivers/stage3/case1/trace_demo_dup_names/trace_demo_dup_names.c`
 - Module: `trace_demo_dup_names`
 - Binary: `kernel/user/stage3/case1/demo_dup_names.out`
-- Run timestamp: `2026-02-15T01:14:59`
+- Run timestamp: `2026-02-15T13:07:54`
 - Final status: `pass_probe_hits`
 
 ## Probe Counts

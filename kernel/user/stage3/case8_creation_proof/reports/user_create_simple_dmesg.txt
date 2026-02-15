@@ -1,21 +1,21 @@
-[53118.761315] [trace_user_create_simple] loaded target_comm=user_create_sim user=kernel/user/stage3/case8_creation_proof/user_create_simple.c
-[53118.764421] [trace_user_create_simple] do_filp_open.entry pid=272074 comm=user_create_sim dfd=4294967196 pathname=ffff898e99619000 op=ffffcc97007dbbb4
-[53118.764458] [trace_user_create_simple] do_filp_open.ret pid=272074 comm=user_create_sim ret=fffffffffffffffe
-[53118.764466] [trace_user_create_simple] do_filp_open.entry pid=272074 comm=user_create_sim dfd=4294967196 pathname=ffff898e99619000 op=ffffcc97007dbac4
-[53118.764471] [trace_user_create_simple] do_filp_open.ret pid=272074 comm=user_create_sim ret=fffffffffffffffe
-[53118.764476] [trace_user_create_simple] do_filp_open.entry pid=272074 comm=user_create_sim dfd=4294967196 pathname=ffff898e99619000 op=ffffcc97007dbd54
-[53118.764481] [trace_user_create_simple] do_filp_open.ret pid=272074 comm=user_create_sim ret=fffffffffffffffe
-[53118.764488] [trace_user_create_simple] do_filp_open.entry pid=272074 comm=user_create_sim dfd=4294967196 pathname=ffff898e99619000 op=ffffcc97007dbcd4
-[53118.764492] [trace_user_create_simple] do_filp_open.ret pid=272074 comm=user_create_sim ret=fffffffffffffffe
-[53118.764495] [trace_user_create_simple] do_filp_open.entry pid=272074 comm=user_create_sim dfd=4294967196 pathname=ffff898e99619000 op=ffffcc97007dbba4
-[53118.764498] [trace_user_create_simple] do_filp_open.ret pid=272074 comm=user_create_sim ret=fffffffffffffffe
-[53118.764501] [trace_user_create_simple] do_filp_open.entry pid=272074 comm=user_create_sim dfd=4294967196 pathname=ffff898e99619000 op=ffffcc97007dbad4
-[53118.764504] [trace_user_create_simple] do_filp_open.ret pid=272074 comm=user_create_sim ret=fffffffffffffffe
-[53118.764508] [trace_user_create_simple] do_filp_open.entry pid=272074 comm=user_create_sim dfd=4294967196 pathname=ffff898e99619000 op=ffffcc97007dbaf4
-[53118.764512] [trace_user_create_simple] do_filp_open.ret pid=272074 comm=user_create_sim ret=ffff898f8a349180
-[53118.764531] [trace_user_create_simple] do_filp_open.entry pid=272074 comm=user_create_sim dfd=4294967196 pathname=ffff898e99619000 op=ffffcc97007dbc84
-[53118.764536] [trace_user_create_simple] do_filp_open.ret pid=272074 comm=user_create_sim ret=ffff898f8a3493c0
-[53118.764724] [trace_user_create_simple] do_filp_open.entry pid=272074 comm=user_create_sim dfd=4294967196 pathname=ffff898e99619000 op=ffffcc97007dbc64
-[53118.764730] [trace_user_create_simple] __d_alloc.entry pid=272074 comm=user_create_sim sb=ffff898e906aa000 name_qstr=ffffcc97007dbb30
-[53118.764734] [trace_user_create_simple] __d_alloc.ret pid=272074 comm=user_create_sim dentry=ffff899145f55c00
-[53118.764786] [trace_user_create_simple] do_filp_open.ret pid=272074 comm=user_create_sim ret=ffff898f8a349180
+[  893.538620] [trace_user_create_simple] loaded target_comm=user_create_sim user=kernel/user/stage3/case8_creation_proof/user_create_simple.c
+[  893.542331] [trace_user_create_simple] do_filp_open.entry pid=30743 comm=user_create_sim dfd=4294967196 pathname=ffff8dda0a26b000 op=ffffd0c956873d84
+[  893.542361] [trace_user_create_simple] do_filp_open.ret pid=30743 comm=user_create_sim ret=fffffffffffffffe
+[  893.542381] [trace_user_create_simple] do_filp_open.entry pid=30743 comm=user_create_sim dfd=4294967196 pathname=ffff8dda0a26b000 op=ffffd0c956873da4
+[  893.542398] [trace_user_create_simple] do_filp_open.ret pid=30743 comm=user_create_sim ret=fffffffffffffffe
+[  893.542415] [trace_user_create_simple] do_filp_open.entry pid=30743 comm=user_create_sim dfd=4294967196 pathname=ffff8dda0a26b000 op=ffffd0c956873d24
+[  893.542431] [trace_user_create_simple] do_filp_open.ret pid=30743 comm=user_create_sim ret=fffffffffffffffe
+[  893.542451] [trace_user_create_simple] do_filp_open.entry pid=30743 comm=user_create_sim dfd=4294967196 pathname=ffff8dda0a26b000 op=ffffd0c956873af4
+[  893.542463] [trace_user_create_simple] do_filp_open.ret pid=30743 comm=user_create_sim ret=fffffffffffffffe
+[  893.542473] [trace_user_create_simple] do_filp_open.entry pid=30743 comm=user_create_sim dfd=4294967196 pathname=ffff8dda0a26b000 op=ffffd0c956873e14
+[  893.542483] [trace_user_create_simple] do_filp_open.ret pid=30743 comm=user_create_sim ret=fffffffffffffffe
+[  893.542493] [trace_user_create_simple] do_filp_open.entry pid=30743 comm=user_create_sim dfd=4294967196 pathname=ffff8dda0a26b000 op=ffffd0c956873b04
+[  893.542504] [trace_user_create_simple] do_filp_open.ret pid=30743 comm=user_create_sim ret=fffffffffffffffe
+[  893.542514] [trace_user_create_simple] do_filp_open.entry pid=30743 comm=user_create_sim dfd=4294967196 pathname=ffff8dda0a26b000 op=ffffd0c956873cb4
+[  893.542529] [trace_user_create_simple] do_filp_open.ret pid=30743 comm=user_create_sim ret=ffff8dd999d3bc00
+[  893.542583] [trace_user_create_simple] do_filp_open.entry pid=30743 comm=user_create_sim dfd=4294967196 pathname=ffff8dda0a26b000 op=ffffd0c956873b54
+[  893.542598] [trace_user_create_simple] do_filp_open.ret pid=30743 comm=user_create_sim ret=ffff8dd999d3bcc0
+[  893.543117] [trace_user_create_simple] do_filp_open.entry pid=30743 comm=user_create_sim dfd=4294967196 pathname=ffff8dda0a26b000 op=ffffd0c956873ba4
+[  893.543131] [trace_user_create_simple] __d_alloc.entry pid=30743 comm=user_create_sim sb=ffff8dda0bce8000 name_qstr=ffffd0c956873a70
+[  893.543142] [trace_user_create_simple] __d_alloc.ret pid=30743 comm=user_create_sim dentry=ffff8dda3c515cc0
+[  893.543290] [trace_user_create_simple] do_filp_open.ret pid=30743 comm=user_create_sim ret=ffff8dd999d3bc00

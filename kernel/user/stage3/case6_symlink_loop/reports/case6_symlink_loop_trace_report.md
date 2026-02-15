@@ -4,7 +4,7 @@
 - Driver source: `kernel/drivers/stage3/case6_symlink_loop/trace_case6_symlink_loop/trace_case6_symlink_loop.c`
 - Module: `trace_case6_symlink_loop`
 - Binary: `kernel/user/stage3/case6_symlink_loop/case6_symlink_loop.out`
-- Run timestamp: `2026-02-15T01:15:33`
+- Run timestamp: `2026-02-15T13:08:25`
 - Final status: `pass_probe_hits`
 
 ## Probe Counts
