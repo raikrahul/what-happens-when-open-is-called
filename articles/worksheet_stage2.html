@@ -1,0 +1,359 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+    <meta charset="UTF-8">
+    <title>Worksheet: Stage 2 - Tracing getname()</title>
+    <style>
+        body {
+            background: #fff;
+            color: #000;
+            font-family: monospace;
+            font-size: 14px;
+            line-height: 1.6;
+            padding: 20px;
+            margin: 0;
+        }
+
+        pre {
+            margin: 0;
+            white-space: pre-wrap;
+            word-wrap: break-word;
+        }
+
+        .blank {
+            display: inline-block;
+            min-width: 150px;
+            border-bottom: 1px solid #000;
+            color: #fff;
+        }
+
+        @media print {
+
+            button,
+            div[style*="text-align: right"] {
+                display: none !important;
+            }
+
+            body {
+                padding: 0;
+            }
+        }
+    </style>
+</head>
+
+<body>
+    <div style="text-align: right; padding-bottom: 20px;">
+        <button onclick="window.print()" style="padding: 5px 10px; cursor: pointer;">Print Page</button>
+    </div>
+    <pre>
+================================================================================
+WORKSHEET: STAGE 2 - TRACING getname() IN KERNEL SPACE
+================================================================================
+Each step: DO something, SEE output, FILL blanks, VERIFY axioms.
+No magic. No new things without derivation.
+
+================================================================================
+STEP 01: PREPARE THE TEST PROGRAM
+================================================================================
+
+DO:   Create the minimal test program.
+RUN:  cat &gt; minimal_open.c &lt;&lt; 'EOF'
+      #include &lt;fcntl.h&gt;
+      int main() {
+          int fd = open("somefile", O_RDWR);
+          return 0;
+      }
+      EOF
+
+RUN:  gcc minimal_open.c -o minimal_open
+
+VERIFY:
+    $ file minimal_open
+    ELF 64-bit LSB pie executable, x86-64, dynamically linked
+
+================================================================================
+STEP 02: FIND KERNEL SOURCE FOR getname()
+================================================================================
+
+DO:   Locate the function definition.
+RUN:  grep -rn "^struct filename \*$" /usr/src/linux-source-6.8.0/fs/ | head -5
+      grep -rn "getname(" /usr/src/linux-source-6.8.0/fs/namei.c | head -5
+
+OBSERVE:
+    getname() is defined in: fs/namei.c
+    At line number: _____________
+
+DO:   View the function.
+RUN:  sed -n '216,220p' /usr/src/linux-source-6.8.0/fs/namei.c
+
+FILL:
+    getname() calls which internal function? _____________
+    With how many arguments? _____________
+
+
+================================================================================
+STEP 03: UNDERSTAND STRUCT FILENAME
+================================================================================
+
+DO:   Find the structure definition.
+RUN:  grep -A 10 "^struct filename {" /usr/src/linux-source-6.8.0/include/linux/fs.h
+
+FILL THE LAYOUT:
+    +0x00: name   = _____ bytes (pointer to pathname)
+    +0x08: uptr   = _____ bytes (original user pointer)
+    +0x10: refcnt = _____ bytes (reference count)
+    +0x14: padding= _____ bytes (alignment)
+    +0x18: aname  = _____ bytes (audit)
+    +0x20: iname[]= flexible array
+
+    sizeof(struct filename) = _____ bytes
+
+================================================================================
+STEP 04: FIND SLAB CACHE SIZE
+================================================================================
+
+DO:   Check slab allocation.
+RUN:  sudo cat /proc/slabinfo | grep names
+
+OUTPUT:
+    names_cache   ___   ___   ____   _   _
+
+FILL:
+    Size of each names_cache object: _____ bytes
+    This equals: PATH_MAX = _____
+
+================================================================================
+STEP 05: BUILD THE KPROBE MODULE
+================================================================================
+
+DO:   Navigate to driver directory.
+RUN:  cd kernel/drivers/arg2_filename
+
+DO:   View the critical parts of trace_filename.c
+      <a href="https://github.com/raikrahul/what-happens-when-open-is-called/blob/main/kernel/drivers/arg2_filename/trace_filename.c" target="_blank">[VIEW SOURCE ON GITHUB]</a>
+RUN:  head -60 trace_filename.c
+
+FILL THE AXIOMS FROM COMMENTS:
+    Register for first argument (x86_64): _____
+    Register for return value: _____
+    sizeof(struct filename): _____ bytes
+    offsetof(name): _____
+    offsetof(uptr): _____
+
+================================================================================
+STEP 06: COMPILE THE MODULE
+================================================================================
+
+DO:   Build the kernel module.
+RUN:  make
+
+EXPECTED:
+    make -C /lib/modules/$(uname -r)/build M=$(pwd) modules
+    Building modules, stage 2.
+    CC [M]  trace_filename.o
+    ...
+    LD [M]  trace_filename.ko
+
+VERIFY:
+    $ ls -la trace_filename.ko
+    Size: approximately _____ KB
+
+FAILURE PREDICTION:
+    If "no rule to make target" -> Makefile missing or wrong syntax
+    If "linux/kprobes.h not found" -> kernel headers not installed
+
+================================================================================
+STEP 07: LOAD THE MODULE
+================================================================================
+
+DO:   Clear dmesg and load module.
+RUN:  sudo dmesg -C
+      sudo insmod trace_filename.ko
+
+VERIFY:
+    $ sudo dmesg
+    ARG2: Module loaded. Probing getname(). sizeof(my_data)=_____
+
+FILL:
+    sizeof(my_data) should be: 8 + 16 + 4 = _____ bytes
+
+================================================================================
+STEP 08: RUN THE TEST PROGRAM
+================================================================================
+
+DO:   Execute minimal_open to trigger getname().
+RUN:  ./minimal_open
+
+DO:   Check trace output.
+RUN:  sudo dmesg | grep "#2"
+
+EXPECTED OUTPUT:
+    #2. getname. SUCCESS.
+        user_ptr (RDI saved) = 0x0000____________
+        fn (RAX)             = 0xffff____________
+        fn-&gt;name (+0x00)     = 0xffff____________
+        fn-&gt;uptr (+0x08)     = 0x0000____________
+        string               = "_________"
+        [OK] AXIOM: fn-&gt;uptr == saved RDI
+
+================================================================================
+STEP 09: VERIFICATION EXERCISE
+================================================================================
+
+From your captured output, fill in:
+
+USER POINTER:
+    user_ptr = 0x____________________
+
+KERNEL POINTER:
+    fn = 0x____________________
+
+MATH CHECK 1: Is name pointing to iname[]?
+    fn + 0x20 = 0x____________________ + 0x20 = 0x____________________
+    fn-&gt;name = 0x____________________
+    
+    Are they equal? [ YES / NO ]
+    
+    If YES -> Phase 1 (embedded buffer) was used
+    If NO  -> Phase 2 (separate allocation) was used
+
+MATH CHECK 2: User pointer preserved?
+    saved RDI  = 0x____________________
+    fn-&gt;uptr   = 0x____________________
+    
+    Are they equal? [ YES / NO ]
+    
+    If NO -> Something is wrong! Check your filter.
+
+MATH CHECK 3: Address space boundaries
+    User pointer bits 63-48: 0x____
+        If 0x0000 -> valid user address
+        If 0xffff -> ERROR! kernel address in user field
+    
+    Kernel pointer bits 63-48: 0x____
+        If 0xffff -> valid kernel address
+        If 0x0000 -> ERROR! user address returned by getname()
+
+================================================================================
+STEP 10: UNLOAD AND CLEAN
+================================================================================
+
+DO:   Unload module.
+RUN:  sudo rmmod trace_filename
+
+VERIFY:
+    $ sudo dmesg | tail -1
+    ARG2: Module unloaded. Missed _____ probes.
+
+DO:   Clean build artifacts (optional).
+RUN:  make clean
+
+================================================================================
+STEP 11: ERROR PATH EXERCISE
+================================================================================
+
+Trigger each error and observe:
+
+TEST 1: Empty path (-ENOENT = -2)
+RUN:  cat &gt; test_empty.c &lt;&lt; 'EOF'
+      #include &lt;fcntl.h&gt;
+      int main() { return open("", O_RDWR); }
+      EOF
+      gcc test_empty.c -o test_empty
+      ./test_empty
+
+EXPECTED in dmesg:
+    #2. getname. FAIL. err=_____
+
+TEST 2: Path too long (-ENAMETOOLONG = -36)
+RUN:  python3 -c "print('a'*4097)" > /tmp/longpath
+      # Cannot actually test this easily, but document expected behavior
+
+================================================================================
+STEP 12: SUMMARY FILL-IN
+================================================================================
+
+COMPLETE THE SUMMARY:
+
+1. open() is transformed by libc to: _____________()
+2. The syscall number for openat is: _____
+3. getname() is called at line _____ of fs/open.c
+4. getname() returns a pointer to: struct _____________
+5. The struct is allocated from slab cache: _____________
+6. Each allocation is _____ bytes
+7. For short paths, name points to: _____________[] at offset _____
+8. The user pointer is saved in field: _____________
+9. Reference count starts at: _____
+10. The function that frees the struct is: _____________()
+
+================================================================================
+STEP 13: FAILURE PREDICTIONS
+================================================================================
+
+For each failure scenario, write what you EXPECT to happen:
+
+F1: If I forget to load the module before running minimal_open:
+    Expected: _________________________________________________
+
+F2: If my filter checks for "wrong_name" instead of "minimal_open":
+    Expected: _________________________________________________
+
+F3: If I try to access fn-&gt;name without checking IS_ERR(fn) first:
+    Expected: _________________________________________________
+
+F4: If getname() receives a NULL pointer from user space:
+    Expected error code: _____ (hint: look at ERROR 2)
+
+F5: If the path is exactly 4096 bytes:
+    Expected error code: _____ (hint: look at ERROR 5)
+
+================================================================================
+ANSWERS (DO NOT LOOK UNTIL YOU COMPLETE THE WORKSHEET)
+================================================================================
+
+STEP 02:
+    getname() calls: getname_flags()
+    With: 3 arguments (filename, 0, NULL)
+
+STEP 03:
+    sizeof(struct filename) = 32 bytes
+
+STEP 04:
+    names_cache object size: 4096 bytes
+    PATH_MAX = 4096
+
+STEP 05:
+    First argument register: RDI
+    Return value register: RAX
+    sizeof(struct filename): 32 bytes
+    offsetof(name): 0
+    offsetof(uptr): 8
+
+STEP 07:
+    sizeof(my_data) = 8 + 16 + 4 = 28 bytes
+
+STEP 12 SUMMARY:
+    1. openat()
+    2. 257
+    3. 1398
+    4. filename
+    5. names_cache
+    6. 4096
+    7. iname[], 0x20
+    8. uptr
+    9. 1
+    10. putname()
+
+STEP 13 FAILURE PREDICTIONS:
+    F1: No dmesg output (module not probing)
+    F2: Only "Module loaded", no trace output (filter skips all)
+    F3: Kernel oops/panic (dereferencing error pointer)
+    F4: -14 (EFAULT)
+    F5: -36 (ENAMETOOLONG)
+
+================================================================================
+  </pre>
+</body>
+
+</html>

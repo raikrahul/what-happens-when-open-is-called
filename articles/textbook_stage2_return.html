@@ -1,0 +1,117 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+  <meta charset="UTF-8">
+  <title>Textbook: Stage 2 Return (Cache and Reuse)</title>
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/styles/github.min.css">
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/highlight.min.js"></script>
+  <script>window.addEventListener('DOMContentLoaded', () => { if (window.hljs) hljs.highlightAll(); });</script>
+  <style>
+    body {
+      background: #fff;
+      color: #000;
+      font-family: monospace;
+      font-size: 13px;
+      line-height: 1.2;
+      padding: 0 5px;
+      margin: 0;
+    }
+
+    pre {
+      margin: 0.5em 0;
+      white-space: pre-wrap;
+      word-wrap: break-word;
+    }
+
+    pre code {
+      display: block;
+      white-space: pre;
+    }
+
+    h1,
+    h2,
+    h3,
+    h4,
+    h5,
+    h6 {
+      margin: 0.5em 0 0.2em 0;
+      font-size: 1em;
+      font-weight: bold;
+      text-transform: uppercase;
+    }
+
+    p,
+    ul,
+    ol {
+      margin: 0.5em 0;
+    }
+
+    hr {
+      margin: 0.5em 0;
+      border: none;
+      border-bottom: 1px dashed #000;
+    }
+
+    .blank {
+      display: inline-block;
+      min-width: 150px;
+      border-bottom: 1px solid #000;
+      color: #000;
+    }
+
+    @media print {
+
+      button,
+      div[style*="text-align: right"] {
+        display: none !important;
+      }
+
+      body {
+        padding: 0;
+      }
+    }
+  </style>
+</head>
+
+<body>
+  <div style="text-align: right; font-size: 10px; padding: 2px;">
+    <button onclick="window.print()" style="font-size: 10px; cursor: pointer;">Print</button>
+  </div>
+  <div class="content">
+    <pre style="white-space: pre-wrap; word-wrap: break-word; margin: 0; font-family: monospace;"># Stage 2 Return — Cache, Copy, Insert, Return
+
+## Axioms
+1. A printed address is a number that can be compared.
+2. If two printed addresses are equal, they are the same value.
+3. If a subtraction is computed, the result is a byte offset.
+4. `d_lookup return: NULL` is a miss.
+5. `__d_add entry: X` is the cached name pointer.
+6. `do_filp_open return: X` is the file name pointer.
+
+## Basename Offset
+`SRC − IN = 0x5` for `/tmp/…` and `SRC − IN = 0xC` for `/mnt/loopfs/…`.  
+These match the prefix lengths, so the copy starts at the basename.
+
+## Copy → Insert → Return → Hit
+If the same address appears at:
+`__d_alloc return = __d_add entry = do_filp_open return = later d_lookup return`,  
+then one cached name pointer is reused.
+
+## Miss → Alloc
+`d_lookup return = NULL` followed by `__d_alloc` proves allocation on miss.
+
+## Negative Dentry
+Missing file: first open inserts a pointer; second open returns the same pointer with `fd = -1`.
+
+## Evict → Reuse or Rebuild
+`__dentry_kill` prints a pointer that was previously a hit.  
+After drop_caches: different pointer ⇒ new allocation; same pointer ⇒ allocator reuse.
+
+## Outcome
+All claims are equalities, inequalities, or subtractions on printed addresses.</pre>
+  </div>
+
+</body>
+
+</html>

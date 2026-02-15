@@ -1,0 +1,32 @@
+---
+layout: default
+title: Worksheet - struct file
+---
+
+00. Setup: `minimal_open.c` → `int main() { open("HALIFAX", 0); }` ✓ `gcc minimal_open.c -o minimal_open` ✓ GitHub: [trace_do_filp_open.c](https://github.com/raikrahul/what-happens-when-open-is-called/blob/master/stage2/drivers/trace_do_filp_open/trace_do_filp_open.c) ✓
+01.struct file *do_filp_open(int dfd, struct filename *pathname,
+		const struct open_flags *op). `grep " __d_alloc$" /proc/kallsyms` → 0xffffffff817e9370 ✓
+03. `ptype /o struct file` → `f_path` (+64) ✓
+04. `ptype /o struct path` → `dentry` (+8) ✓
+05. `ptype /o struct dentry` → `d_name` (+32), `d_shortname` (+56) ✓
+06. `ptype /o struct qstr` → `name` (+8) ✓
+07. `ptype /o struct filename` → `name` (+0) ✓
+08. Handover Path: `do_filp_open` (RSI) → `struct filename` → `name` (+0) = "HALIFAX" ✓
+09. Settlement Path: `__d_alloc` (RSI) → `struct qstr` → `name` (+8) = "HALIFAX" ✓
+10. Persistence Path: `__d_alloc` (RAX) → `struct dentry` → `d_shortname` (+56) = "HALIFAX" ✓
+11. Final Chain: `RAX(do_filp_open) + 72` (dentry) → `Dentry + 40` (name) = "HALIFAX" ✓
+
+1. 01. Code: `struct my_filename *f = (struct my_filename *)regs->si;` 02. `RSI` = Arg 2 (x86_64 ABI) ✓. 03. Paradox₁ (The Shadow Address): `Input Addr` is a pointer-to-pointer. 04. Calc: `Input Addr = f->name`. 05. Job: `trace_do_filp_open.c` → `// TODO [01]`. 06. Coding: `pr_info("[trace_open] Input Addr: 0x%px | Val: %s\n", f->name, f->name);` 07. Chk: `Input Addr == RSI`? ✗. 08. Pattern: `RSI → Metadata → String` ✓. Draw: `RSI(0x1000) → [+0x0]p → 0x1040 → "HALIFAX"`. 
+
+2. 01. Code: `void *rax_val = (void *)regs->ax;` 02. `RAX` = Return (x86_64 ABI) ✓. 03. Paradox₂ (The 3-Gate Jump): Handover settled in persistent object. 04. Calc₁: `Gate₁ = RAX + 64`. 05. Calc₂: `Gate₂ = *(void **)(RAX + 72)`. 06. Calc₃: `Result Addr = *(void **)((unsigned long)Gate₂ + 40)`. 07. Job: `trace_do_filp_open.c` → `// TODO [02]`. 08. Coding: `void *d = *(void **)((unsigned long)regs->ax + 72); void *s = *(void **)((unsigned long)d + 40); pr_info("[trace_open] Result Addr: 0x%px | Val: %s\n", s, (char *)s);` 09. Chk: `Result Addr - Input Addr` = Distance D ✓. Draw: `RAX → [+64] → [+8]p → 0x2000 (Dentry) → [+32] → [+8]p → 0x2038 → "HALIFAX"`. 
+
+3. 01. Code: `struct qstr *q = (struct qstr *)regs->si;` 02. Pattern₁ (The Mirror): `q->name` mirrors the input. 03. Calc: `SrcAddr == FileName.name` ✓. 04. Job: `trace_do_filp_open.c` → `// TODO [03]`. 05. Coding: `pr_info("[trace_alloc] Copy Source: 0x%px\n", q->name);` 06. Chk: `SrcAddr == 0x1040`? ✓. Draw: `RSI(0x3000) → [+0x8]p → 0x1040 → "HALIFAX"`. 
+
+4. 01. Code: `void *dest = (void *)((unsigned long)regs->ax + 56);` 02. Paradox₃ (The Settlement): `Copy Dest` is an internal buffer (Inline). 03. Calc: `RAX + 56` = String Dest. 04. Job: `trace_do_filp_open.c` → `// TODO [04]`. 05. Coding: `pr_info("[trace_alloc] Copy Dest: 0x%px\n", (void *)((unsigned long)regs->ax + 56));` 06. Chk: `Copy Dest == Result Addr`? ✓. Draw: `RAX(0x2000) → [+56]s → "HALIFAX"`. 
+
+5. 01. Chk: `RSI(open)` == `SrcAddr(alloc)`? ✗. 02. Chk: `SrcAddr(alloc)` == `NamePtr(open)`? ✓. 03. Chk: `RAX(alloc)` == `DentryPtr(open_ret)`? ✓. 04. Calc: `Total Hops = 3`. 05. Job: Draw 5-box memory map. Fill with captured 0x addresses ✓. 
+
+11 = (struct file *) 20 = 64 38 = 0xfffffffffffff001 43 = NO
+
+:00 - All failure predictions
+1. RSI captured as (char *) → offset +0 read fails → 0x0 value → ✗. 2. do_filp_open fails (f = -2) → IS_ERR(RAX) is true → RAX = 0xfffffffffffffffe → dereference RAX + 72 → 0x0000000000000046 → Page Fault → ✗. 3. Using 6.8 offsets (+56) on 6.14 kernel → pointing to union f_ra_state instead of f_path → junk address in dentry → ✗. 4. target_comm ✗ "minimal_open" → is_target() = 0 → trace skipped → ✗. 5. open_entry RAX read → RAX = dfd → 0x00000000ffffff9c + 72 → ✗. 6. name_len > 39 → name points to dynamic kmalloc buffer → Result Addr ≠ RAX + 56 → ✗. 7. f_ref = 0 → fput executed → memory unmapped → Result Addr read fails → ✗.
