@@ -22,7 +22,7 @@ AXIOMATIC_PROGS = $(LESSON_DIR)/00_failure_predictions/lesson_demo \
 ERROR_DEMOS = $(SRC_DIR)/demos/error_demo_enoent \
              $(SRC_DIR)/demos/error_demo_eacces
 
-.PHONY: all clean proofs axiomatic errors test install-deps
+.PHONY: all clean proofs axiomatic errors test install-deps check-stage3-gate
 
 all: proofs axiomatic errors
 
@@ -104,6 +104,7 @@ help:
 	@echo "  install-deps - Install build dependencies"
 	@echo "  build-site   - Build HTML from Markdown in site/articles"
 	@echo "  publish      - Build site, commit, and push (MSG='...')"
+	@echo "  check-stage3-gate - Verify Stage3 summary is publish-safe (41/41, zero partial/fail)"
 	@echo "  case17-demo  - Run case17 end-to-end trace demo"
 
 build-site:
@@ -111,6 +112,9 @@ build-site:
 
 publish:
 	@MSG="$(MSG)" ./tools/publish_all.sh
+
+check-stage3-gate:
+	@./tools/check_stage3_publish_gate.sh
 
 case17-demo:
 	@echo "[CASE17] building artifacts"
